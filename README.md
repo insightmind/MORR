@@ -1,9 +1,9 @@
-# Evaluationsapp zur Erfassung von Rechercheaktivitäten
+ï»¿# Evaluationsapp zur Erfassung von RechercheaktivitÃ¤ten
 (PSE Team 2)
 
 ## Allgemeines
 
-Teamkomunikation findet über Slack statt.
+Teamkomunikation findet Ã¼ber Slack statt.
 
 ## Phasenorganisation
 
@@ -24,19 +24,19 @@ Deadline: 13.Dezember 2019
 Deadline: 14. Februar 2020
 
 #### 3.1 Phase 1
-Phasenleitung: Niklas Bülow (urpdf@student.kit.edu)
+Phasenleitung: Niklas BÃ¼low (urpdf@student.kit.edu)
 
 #### 3.2 Phase 2
 Phasenleitung: Karl Rubel (udwvh@student.kit.edu)
 
-### 4. Qualitätsicherung
+### 4. QualitÃ¤tsicherung
 
-Phasenleitung: Sönke Jendral (uynfo@student.kit.edu)
+Phasenleitung: SÃ¶nke Jendral (uynfo@student.kit.edu)
 
-Deadline: 6. März 2020
+Deadline: 6. MÃ¤rz 2020
 
 ### 5. Abnahme
 
-Interne Abnahme: 9. - 13. März 2020
+Interne Abnahme: 9. - 13. MÃ¤rz 2020
 
-Abschlusspräsentation: 16. - 20. März 2020
+AbschlussprÃ¤sentation: 16. - 20. MÃ¤rz 2020
