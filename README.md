@@ -3,7 +3,7 @@
 
 ## Allgemeines
 
-Teamkomunikation findet über Slack statt.
+Teamkommunikation findet über Slack statt.
 
 ## Phasenorganisation
 
