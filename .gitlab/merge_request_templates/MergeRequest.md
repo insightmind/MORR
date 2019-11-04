@@ -1,11 +1,11 @@
-# Zusammenfassung
+# Short Summary
 
-(Kurze Zusammenfassung über die Änderungen durch den Merge Request)
+(Short Summary about most significant changes of this MR)
 
-# Zugehörige Issues
+# Associated Issues
 
-(Alle zugehörigen Issues verlinken und hinterlegen)
+(Please reference all associated Issues)
 
-# Wichtige Informationen
+# Important Informations
 
-(Wichtige Informationen für andere Teamkollegen)
+(Important informations for all teammates)
