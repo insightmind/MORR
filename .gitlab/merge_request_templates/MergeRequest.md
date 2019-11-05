@@ -8,4 +8,4 @@
 
 # Important Informations
 
-(Important informations for all teammates)
+(Important information for all teammates)
