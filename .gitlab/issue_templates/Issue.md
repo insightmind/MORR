@@ -8,7 +8,7 @@
 
 # Relevant links or documents
 
-(Additional informations about the issue, e.g. through links or document references)
+(Additional information about the issue, e.g. through links or document references)
 
 # Notes
 
