@@ -1,0 +1,33 @@
+\documentclass[parskip=full, 12pt, oneside]{scrbook}
+
+\usepackage[utf8]{inputenc} % use utf8 file encoding for TeX sources
+\usepackage[T1]{fontenc} % avoid garbled Unicode text in pdf
+\usepackage[english]{babel} % german hyphenation, quotes, etc
+\usepackage{hyperref} % detailed hyperlink/pdf configuration
+\usepackage{csquotes}
+\usepackage{authblk}
+\hypersetup{ % `texdoc hyperref` for options
+pdftitle={Functional Specifications},
+bookmarks=true,
+}
+
+\author{}
+\title{Functional Specifications}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\include{chapter/introduction}	% Introduction
+\include{chapter/goals}			% Definition of Goals
+\include{chapter/scope}			% Application Scope
+\include{chapter/environment}	% Project Environment
+\include{chapter/func}			% Functional Specifications
+\include{chapter/data}			% Application Data
+\include{chapter/nonfunc}		% Non-functional Specifications
+\include{chapter/tests}			% Global Testcases	
+\include{chapter/sysmodels}		% System Models
+\include{chapter/glossary}		% Glossary
+
+\end{document}
