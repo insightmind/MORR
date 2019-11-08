@@ -1,3 +1,19 @@
 \chapter{Functional Specifications}
 \label{ch:func}
 
+%% glossary candidates: session, user, event, input-event, recording, converter, administrator, computer, videostream
+\begin{itemize}
+\item[FS10] Recording sessions\\The application needs to record and store input-events together with their time of occurrence. The recorded events need to be associated with a session-identifier. %%TODO: link input-events to data section
+\item[FS20] Event types\\The application needs to be able to handle different event types such as raw user inputs or viewing a web-page. These will be more closely described in section \ref{ch:data}. %%TODO: same as in FS10
+\item[FS30] Videostream recording\\Each session recording contains a videostream containing the video-output of the computer in use.
+\item[FS40] Event processing\\The application needs to be able to process and filter events it detected. This includes filtering events by criteria preset through configuration during or before runtime as well as associating events to one another (i. e. a mouseclick might have resulted in a webbrowser-interaction). %%Configuration-data may also be listed in data section
+\item[FS50] User-interaction\\The user needs to be able to start and stop a session. A stopped session needs to be saved automatically.
+\item[FS60] Transparency\\The user needs to be informed if a session is running, therefore the application should clearly indicate a running session.
+\item[FS70] Insight into recorded sessions\\It needs to be possible to access and view past recorded sessions. The timespan covered by a specific session is an integral part of the accessible information, enabling a user to point out accidental recordings for deletion or cutting. %% deletion by whom?
+\item[FS80] Data provision\\The research team needs to be able to obtain and extract the recorded data loss-free. If the data is stored in a non-standardized format, the application needs to be shipped with a corresponding converter which allows for conversion into a standardized format.
+\item[FS90] Configurability\\Certain behavior needs to be configurable by the administrator. This includes
+\begin{itemize} %%make this optional?
+\item Filtering\\Discard certain event-types globally or only on specific websites.
+\item Framerate and video-resolution\\The framerate and resolution of the recorded videostream should be configurable to enable prioritizing of either resource-efficiency (storage and system load) or quality.
+\end{itemize}
+\end{itemize}
