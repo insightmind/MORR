@@ -1,19 +1,93 @@
 \chapter{Functional Specifications}
 \label{ch:func}
 
+\newcounter{specid}
+\newenvironment{specifications}{\newcommand*\spec{\addtocounter{specid}{10}\item[FS\thespecid]}\begin{itemize}}{\end{itemize}}
+
+\section{Purpose}
+
+This chapter is meant to organize and describe the specifications that dictate the way the application functions for different users.
+
+\section{High-level specification}
+
 %% glossary candidates: session, user, event, input-event, recording, converter, administrator, computer, videostream
+\begin{specifications}
+    %% TODO: Link to data section
+    \spec{Recording sessions\\The application needs to record and save timed events. All events need to be associated with the session they were recorded in. A session needs to be identifiable.}
+    \spec{Event types\\The application needs to be able to handle the recording of different event types. These are more closely described in section \ref{ch:data}.}
+    \spec{Event processing\\The application needs to be able to process events it records. This includes filtering events by criteria configured before or during runtime. It also includes matching events from different modules (i.e. a mouse click invokes an action in the browser).}
+    \spec{Configurability\\An administrator needs to have the ability to configure the following behavior:
+    \begin{itemize}
+        \item Filtering\\Discard certain event types globally or context-based
+        \item Framerate and video resolution\\The framerate and resolution of the recorded videostream should be configurable to allow the prioritization of either resource efficiency (storage and system load) or quality
+        \item Audio\\The recording of audio needs to be toggleable
+    \end{itemize}}
+    \spec{User controllable\\A user needs to able to start and stop the recording of a session. A stopped recording needs to be saved automatically.}
+    \spec{User awareness\\A user needs to be aware if a session is being recorded. The application should therefore indicate an active recording process.}
+    \spec{User reviewable\\A user should be able to view recordings of past sessions. An administrator should be able to edit or delete recordings of past sessions.}
+    \spec{Data provision\\A researcher needs to be able to extract the recorded data. If the data is stored in a non-standardized format, the application needs to either provide functionality for converting the data into a standardized format or ship with source code that would allow for such a converter to be written.}
+\end{specifications}
+
+\section{Per-module specification}
+
+\subsection{Browser module}
+
+\begin{specifications}
+    \spec{The application should record the following interactions with the browser:
+    \begin{itemize}
+        \item Opening a new tab
+        \item Navigating to a web page
+        \item Opening a menu
+        \item Selecting a menu item
+        \item Entering text into a form or input textbox
+        \item Hovering over an element
+    \end{itemize}}
+\end{specifications}
+
+\subsection{Window-management module}
+
+\begin{specifications}
+    \spec{The application should record the following interactions with other application's windows:
+    \begin{itemize}
+        \item Focusing a windows
+        \item Moving a window
+        \item Resizing a window
+    \end{itemize}}
+\end{specifications}
+
+\subsection{Mouse module}
+
+\begin{specifications}
+    \spec{The application should record the following interactions with the device's mouse:
+    \begin{itemize}
+        \item Pressing and releasing the left mouse button
+        \item Pressing and releasing the right mouse button
+        \item Using the scroll wheel
+        \item Moving the mouse
+    \end{itemize}}
+\end{specifications}
+
+\subsection{Keyboard module}
+
+\begin{specifications}
+    \spec{The application should record the following interactions with the device's keyboard:
+    \begin{itemize}
+        \item Pressing and releasing a key
+    \end{itemize}}
+\end{specifications}
+
+\subsection{Clipboard module}
+
+\begin{specifications}
+    \spec{The application should record the following interactions with the device's clipboard:
+    \begin{itemize}
+        \item Copying to the clipboard
+        \item Pasting from the clipboard
+    \end{itemize}}
+\end{specifications}
+
+%% This does not really fit into the per-module section, we should probably create another section for it
+%% Similiarly, process name and window title are not covered above
 \begin{itemize}
-\item[FS10] Recording sessions\\The application needs to record and store input-events together with their time of occurrence. The recorded events need to be associated with a session-identifier. %%TODO: link input-events to data section
-\item[FS20] Event types\\The application needs to be able to handle different event types such as raw user inputs or viewing a web-page. These will be more closely described in section \ref{ch:data}. %%TODO: same as in FS10
 \item[FS30] Videostream recording\\Each session recording contains a videostream containing the video-output of the computer in use.
-\item[FS40] Event processing\\The application needs to be able to process and filter events it detected. This includes filtering events by criteria preset through configuration during or before runtime as well as associating events to one another (i. e. a mouseclick might have resulted in a webbrowser-interaction). %%Configuration-data may also be listed in data section
-\item[FS50] User-interaction\\The user needs to be able to start and stop a session. A stopped session needs to be saved automatically.
-\item[FS60] Transparency\\The user needs to be informed if a session is running, therefore the application should clearly indicate a running session.
-\item[FS70] Insight into recorded sessions\\It needs to be possible to access and view past recorded sessions. The timespan covered by a specific session is an integral part of the accessible information, enabling a user to point out accidental recordings for deletion or cutting. %% deletion by whom?
-\item[FS80] Data provision\\The research team needs to be able to obtain and extract the recorded data loss-free. If the data is stored in a non-standardized format, the application needs to be shipped with a corresponding converter which allows for conversion into a standardized format.
-\item[FS90] Configurability\\Certain behavior needs to be configurable by the administrator. This includes
-\begin{itemize} %%make this optional?
-\item Filtering\\Discard certain event-types globally or only on specific websites.
-\item Framerate and video-resolution\\The framerate and resolution of the recorded videostream should be configurable to enable prioritizing of either resource-efficiency (storage and system load) or quality.
-\end{itemize}
 \end{itemize}
