@@ -1,8 +1,41 @@
 \label{ch:glossary}
-\newglossaryentry{user}
-{
-	name=user,
-	plural=users,
-	description={The medical staff conducting research on the device.},
-}
+%%A dot will be automatically added to the description.
+%%Keep in mind that only entries with at least one reference will be visible in the compiled PDF
+%%To refer to a glossary entry, use \gls{ID} (singular), \glspl (plural) or \Gls and \Glspl to print the first character in uppercase.
+%%The glossary will automatically be printed in alphabetical order
 
+\newglossaryentry{glossarydummy} %%this is the ID by which the entry will be referenced
+{
+	name=Dummy, %%the name displayed in the glossary
+	text=dummy, %%the name inserted in text
+	plural=dummies, %%the plural inserted when using \glspl
+	description={This entry will not be visible in the final document as it should stay unreferenced}, %%the description printed in the glossary
+}
+\newglossaryentry{user} %%this is the ID by which the entry will be referenced
+{
+	name=User,
+	text=user,
+	plural=users,
+	description={A medical staff member conducting research on the device}
+}
+\newglossaryentry{session}
+{
+	name=Session,
+	text=session,
+	plural=sessions,
+	description={A session refers to a continuous time interval in which a recording was made on a device}
+}
+\newglossaryentry{device}
+{
+	name=Device,
+	text = device,
+	plural=devices,
+	description={A single electronic device intended for direct usage by \glspl{user}. In the scope of this project this always refers to a Windows PC as specified in chapter \ref{ch:environment}}
+}
+\newglossaryentry{event}
+{
+	name=Event,
+	text=event,
+	plural=events,
+	description={Actions a user performs on a device such as pressing a key or launching a program. The specifics are discussed in chapter \ref{ch:data}}
+}
