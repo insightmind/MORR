@@ -34,28 +34,19 @@ This chapter is meant to organize and describe the specifications that dictate t
 The core application has to cover following responsibilities:
 \begin{specifications}
     \spec{Videostream recording\\Each session recording contains a videostream containing the video-output of the computer in use. The videostream is the base of every recording.}
-    \spec{Data consolidation\\The data from different modules should be stored in the same container.}
+    \spec{System Module invocation\\The application core is responsible for launching system modules based on availability and configuration.}
+    \spec{On-demand module detection\\The application core is responsible for listening for incoming connection from on-demand modules which are realized as extensions to third party software, such as browser-extensions.}
+    \spec{Data consolidation\\The data received from different modules needs to be stored in the same container.}
+    \spec{Combinability of modules\\The core application needs to be able to function with arbitrary combinations of enabled modules. Performance impacts may occur if non-default modules are enabled.}
 \end{specifications}
 
 \section{Per-module specification}
 
-This section discusses the modules which will be available and ship with the application at release in order to fulfill the functional requirements.
+This section discusses the default modules which will be available and ship with the application at release in order to fulfill the mandatory requirements.
 
-\subsection{Browser module}
-
-\begin{specifications}
-    \spec{The application should record the following interactions with the browser:
-    \begin{itemize}
-        \item Opening a new tab
-        \item Navigating to a web page
-        \item Opening a menu
-        \item Selecting a menu item
-        \item Entering text into a form or input textbox
-        \item Hovering over an element
-    \end{itemize}}
-\end{specifications}
-
-\subsection{Window-management module}
+\subsection{System modules}
+System modules are modules which communicate with the operating system. They are invoked as soon as a session is started and only terminate at the end of a session.
+\subsubsection{Window-management module}
 
 \begin{specifications}
     \spec{The application should record the following interactions with other application's windows:
@@ -67,7 +58,7 @@ This section discusses the modules which will be available and ship with the app
     \end{itemize}}
 \end{specifications}
 
-\subsection{Mouse module}
+\subsubsection{Mouse module}
 
 \begin{specifications}
     \spec{The application should record the following interactions with the device's mouse:
@@ -79,7 +70,7 @@ This section discusses the modules which will be available and ship with the app
     \end{itemize}}
 \end{specifications}
 
-\subsection{Keyboard module}
+\subsubsection{Keyboard module}
 
 \begin{specifications}
     \spec{The application should record the following interactions with the device's keyboard:
@@ -88,12 +79,28 @@ This section discusses the modules which will be available and ship with the app
     \end{itemize}}
 \end{specifications}
 
-\subsection{Clipboard module}
+\subsubsection{Clipboard module}
 
 \begin{specifications}
     \spec{The application should record the following interactions with the device's clipboard:
     \begin{itemize}
         \item Copying to the clipboard
         \item Pasting from the clipboard
+    \end{itemize}}
+\end{specifications}
+
+\subsection{On-demand modules}
+On-demand modules are modules which are dynamically run or stopped based on the software they are tracking. These modules need to register with the application core on runtime.
+\subsubsection{Browser module}
+
+\begin{specifications}
+    \spec{The application should record the following interactions with the browser:
+    \begin{itemize}
+        \item Opening a new tab
+        \item Navigating to a web page
+        \item Opening a menu
+        \item Selecting a menu item
+        \item Entering text into a form or input textbox
+        \item Hovering over an element
     \end{itemize}}
 \end{specifications}
