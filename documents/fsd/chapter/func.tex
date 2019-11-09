@@ -10,7 +10,7 @@ This chapter is meant to organize and describe the specifications that dictate t
 
 \section{High-level specification}
 
-%% glossary candidates: session, user, event, input-event, recording, converter, administrator, computer, videostream
+%% glossary candidates: session, user, event, input-event, recording, converter, administrator, computer, videostream, module
 \begin{specifications}
     %% TODO: Link to data section
     \spec{Recording sessions\\The application needs to record and save timed events. All events need to be associated with the session they were recorded in. A session needs to be identifiable.}
@@ -25,20 +25,21 @@ This chapter is meant to organize and describe the specifications that dictate t
     \spec{User controllable\\A user needs to able to start and stop the recording of a session. A stopped recording needs to be saved automatically.}
     \spec{User awareness\\A user needs to be aware if a session is being recorded. The application should therefore indicate an active recording process.}
     \spec{User reviewable\\A user should be able to view recordings of past sessions. An administrator should be able to edit or delete recordings of past sessions.}
-    \spec{Data provision\\A researcher needs to be able to extract the recorded data. If the data is stored in a non-standardized format, the application needs to either provide functionality for converting the data into a standardized format or ship with source code that would allow for such a converter to be written.}
+    \spec{Data provision\\A data scientist needs to be able to extract the recorded data. If the data is stored in a non-standardized format, the application needs to either provide functionality for converting the data into a standardized format or ship with source code that would allow for such a converter to be written.}
 \end{specifications}
 
 \section{Core application specification}
-%% This does not really fit into the per-module section
-%% Similiarly, process name and window title are not covered by modules
 The core application has to cover following responsibilities:
 \begin{specifications}
-    \spec{Videostream recording\\Each session recording contains a videostream containing the video-output of the computer in use. The videostream is the base of every recording.}
+    \spec{Videostream recording\\Each session recording contains a videostream containing the video-output of the computer in use. The videostream forms the basis for every recording.}
     \spec{System Module invocation\\The application core is responsible for launching system modules based on availability and configuration.}
-    \spec{On-demand module detection\\The application core is responsible for listening for incoming connection from on-demand modules which are realized as extensions to third party software, such as browser-extensions.}
+    \spec{On-demand module detection\\The application core is responsible for listening to incoming connections from on-demand modules which are realized as extensions to third party software, such as browser-extensions.}
     \spec{Data consolidation\\The data received from different modules needs to be stored in the same container.}
-    \spec{Combinability of modules\\The core application needs to be able to function with arbitrary combinations of enabled modules. Performance impacts may occur if non-default modules are enabled.}
+    \spec{Combinability of modules\\The core application needs to be able to function with arbitrary combinations of enabled modules. Performance impacts may occur if non-default modules are enabled.}%%Should the performance disclaimer be part of the functional specifications?
 \end{specifications}
+
+%% Should we add another section on rule-based and context-specific data filtering here?
+%% Our system may have to offer a way to turn on or off modules depending on the current application and website, we may even need a way to define more complex rules
 
 \section{Per-module specification}
 
@@ -84,13 +85,12 @@ System modules are modules which communicate with the operating system. They are
 \begin{specifications}
     \spec{The application should record the following interactions with the device's clipboard:
     \begin{itemize}
-        \item Copying to the clipboard
-        \item Pasting from the clipboard
+        \item Copying to and pasting from the clipboard
     \end{itemize}}
 \end{specifications}
 
 \subsection{On-demand modules}
-On-demand modules are modules which are dynamically run or stopped based on the software they are tracking. These modules need to register with the application core on runtime.
+On-demand modules are modules which are dynamically run or stopped based on the software they are tracking. These modules need to register with the application core at runtime.
 \subsubsection{Browser module}
 
 \begin{specifications}
