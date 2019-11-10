@@ -3,26 +3,30 @@
 
 The application's main purpose is all about collecting data. This data is supposed to help to find patterns in research activity using a personal computer. Therefore there is a great range of distinctive data sets that are interesting to collect.
 
-\section{User Interactions}
+\section{Session}
 \begin{itemize}
-\item[D100] It should record the following mouse interactions by the user:
+\item[D100] To persist the recorded data, a single session file should be saved.
+
+\item[D110] A general session should include several data:
 	\begin{itemize}
-	\item Left and right clicks.
-	\item Scroll events
-	\item Significant mouse movements
+	\item Unique session id
+	\item Date of start and stop of the session
+	\item The duration of the session.
+	\item A video recording of the session
+	\end{itemize}
+\end{itemize}
+
+\section{Events}
+\begin{itemize}
+\item[D100] An event should always include following data:
+	\begin{itemize}
+	\item A timestamp of the occurrence of the event
 	\end{itemize}
 
 \item[D110] User interactions with the keyboard, should include:
 	\begin{itemize}
 	\item Simple key taps
 	\item Shortcuts, e.g. Copy-Paste shortcut
-	\end{itemize}
-
-\item[D120] If a user starts or stops a recording session the application should collect the following data:
-	\begin{itemize}
-	\item Date of start and stop
-	\item Unique session id
-	\item In case of a stop the duration of the session.
 	\end{itemize}
 
 \item[D130] Browser usage and interactions by the user should include:
@@ -33,17 +37,9 @@ The application's main purpose is all about collecting data. This data is suppos
 	\end{itemize}
 \end{itemize}
 
-\section{Processes and System}
-\begin{itemize}
-\item[D200] Is a new window focused in the system, following data should be collected:
+\item[D140] Following data about mouse interactions by the user should be collected:
 	\begin{itemize}
-	\item Window name
-	\item Processes associated with the window instance
-	\item Window usage duration
+	\item // TODO
+	\item Scroll events
+	\item Significant mouse movements
 	\end{itemize}
-\end{itemize}
-
-\section{Data Persistance}
-\begin{itemize}
-\item[D300]
-\end{itemize}
