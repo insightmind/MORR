@@ -18,35 +18,47 @@ This chapter is meant to organize and describe the specifications that dictate t
     \spec{Event processing\\The application needs to be able to process events it records. This includes filtering events by criteria configured before or during runtime. It also includes matching events from different modules (i.e. a mouse click invokes an action in the browser).}
     \spec{Configurability\\An administrator needs to have the ability to configure the following behavior:
     \begin{itemize}
-        \item Filtering\\Discard certain event types globally or context-based
+        \item Active modules\\Select the modules the application is allowed to use
         \item Framerate and video resolution\\The framerate and resolution of the recorded videostream should be configurable to allow the prioritization of either resource efficiency (storage and system load) or quality
         \item Audio\\The recording of audio needs to be toggleable
     \end{itemize}}
-    \spec{User controllable\\A user needs to able to start and stop the recording of a session. A stopped recording needs to be saved automatically.}
+    \spec{User controllability\\A user needs to be able to start and stop the recording of a session. A stopped recording needs to be saved automatically.}
     \spec{User awareness\\A user needs to be aware if a session is being recorded. The application should therefore indicate an active recording process.}
-    \spec{User reviewable\\A user should be able to view recordings of past sessions. An administrator should be able to edit or delete recordings of past sessions.}
+    \spec{User reviewability\\A user should be able to view recordings of past sessions. An administrator should be able to edit or delete recordings of past sessions.}
     \spec{Data provision\\A data scientist needs to be able to extract the recorded data. If the data is stored in a non-standardized format, the application needs to either provide functionality for converting the data into a standardized format or ship with source code that would allow for such a converter to be written.}
 \end{specifications}
 
 \section{Core application specification}
 The core application has to cover the following responsibilities:
 \begin{specifications}
+    \spec{Global configuration\\The application core is responsible for parsing configuration files and providing the parsed configuration.}%%This overlaps with system module configuration, but it also includes for example video quality - any better way to phrase/organise it?
     \spec{Videostream recording\\Each session recording contains a videostream containing the video-output of the computer in use. The videostream forms the basis for every recording.}
-    \spec{System Module invocation\\The application core is responsible for launching system modules based on availability and configuration.}
+    \spec{System module invocation\\The application core is responsible for launching system modules based on availability and global configuration.}
+    \spec{System module configuration\\The application core is responsible for configuring system modules based on global configuration.}
     \spec{On-demand module detection\\The application core is responsible for listening for incoming connections from on-demand modules which are realized as extensions to third party software, such as browser-extensions.}
     \spec{Data consolidation\\The data received from different modules needs to be stored in the same container.}
-    \spec{Combinability of modules\\The core application needs to be able to function with arbitrary combinations of enabled modules. Performance impacts may occur if non-default modules are enabled.}%%Should the performance disclaimer be part of the functional specifications?
+    \spec{Combinability of modules\\The application core needs to be able to function with arbitrary combinations of enabled modules. Performance impacts may occur if non-default modules are enabled.}%%Should the performance disclaimer be part of the functional specifications?
+    \spec{Context management\\The application core needs to track the context in which events occur and notify modules of changes to it.}
 \end{specifications}
 
-%% Should we add another section on rule-based and context-specific data filtering here?
-%% Our system may have to offer a way to turn on or off modules depending on the current application and website, we may even need a way to define more complex rules
+\section{Module types}
+
+\begin{specifications}
+    \spec{\label{fs:module_types}The application needs to provide three different types of modules:
+    \begin{itemize}
+        \item Collecting modules\\Modules which accept no input events and generate one or more output events
+        \item Transforming modules\\Modules which accept one or more input events and generate one or more output events
+        \item Discarding modules\\Modules which accept one or more input events and generate no output events
+    \end{itemize}}
+\end{specifications}
 
 \section{Per-module specification}
 
 This section discusses the default modules which will be available and ship with the application at release in order to fulfill the mandatory requirements.
 
 \subsection{System modules}
-System modules are modules which communicate with the operating system. They are invoked as soon as a session is started and only terminate at the end of a session.
+System modules are modules which communicate with the operating system. They are invoked as soon as a session is started and only terminate at the end of a session. All system modules are collecting modules as specified in \ref{fs:module_types}.
+
 \subsubsection{Window-management module}
 
 \begin{specifications}
@@ -90,7 +102,7 @@ System modules are modules which communicate with the operating system. They are
 \end{specifications}
 
 \subsection{On-demand modules}
-On-demand modules are modules which are dynamically run or stopped based on the software they are tracking. These modules need to register with the application core at runtime.
+On-demand modules are modules which are dynamically run or stopped based on the software they are tracking. These modules need to register with the application core at runtime. All on-demand modules are collecting modules as specified in \ref{fs:module_types}.
 \subsubsection{Browser module}
 
 \begin{specifications}
