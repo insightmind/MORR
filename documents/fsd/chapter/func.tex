@@ -47,9 +47,9 @@ The core application has to cover the following responsibilities:
 \begin{specifications}
     \spec{\label{fs:module_types}The application needs to provide three different types of modules:
     \begin{itemize}
-        \item Collecting modules\\Modules which accept no input events and generate one or more output events
-        \item Transforming modules\\Modules which accept one or more input events and generate one or more output events
-        \item Discarding modules\\Modules which accept one or more input events and generate no output events
+        \item Collecting modules\\Modules which accept no input from other modules and generate one or more events as output.
+        \item Transforming modules\\Modules which accept one or more events as input from other modules and generate one or more events as output.
+        \item Discarding modules\\Modules which accept one or more events as input from other modules and output no events.
     \end{itemize}}
 \end{specifications}
 
