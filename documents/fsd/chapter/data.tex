@@ -19,7 +19,7 @@ The application's main purpose is all about collecting data. This data is suppos
 
 \section{Events}
 
-Each dataset in a session is described by an event, which has been recognized and issued by a module. Each event includes multiple properties, which define and describe the event.
+Each dataset in a session is described by an event, which has been recognized and issued by a collecting module. Each event includes multiple properties, which define and describe the event.
 
 \begin{itemize}
 \item[/D200/] A event must always include the following data:
@@ -64,9 +64,22 @@ A window-management event is issued by the window-management module.
 A mouse-interaction event is issued by the mouse module.
 
 \begin{itemize}
-\item[/D260/] A general Mouse-Interaction event must include the following data:
+\item[/D260/] A Mouse-Click-Interaction event should include the following data:
 	\begin{itemize}
-	\item 
+	\item Clicked button, e.g. "Left-Mouse-Button"
+	\item Type which identifies if the click is a single or double tap
+	\item The underlaying view, that was clicked on in the OS. 
+	\end{itemize}
+
+\item[/D270/] A Mouse-Scroll-Interaction event should include the following data:
+	\begin{itemize}
+	\item Scroll amount
+	\item The underlaying view, that was scrolled in the OS.
+	\end{itemize}
+
+\item[/D280/] A Mouse-Movement-Interaction event should include the following data:
+	\begin{itemize}
+	\item Movement vector
 	\end{itemize}
 \end{itemize}
 
@@ -75,7 +88,7 @@ A mouse-interaction event is issued by the mouse module.
 A keyboard-interaction event is issued by the keyboard module.
 
 \begin{itemize}
-\item[/D270/] A general Keyboard-Interaction event must include the following data:
+\item[/D290/] A general Keyboard-Interaction event must include the following data:
 	\begin{itemize}
 	\item Tapped keys, can be a single or multiple keys
 	\end{itemize}
@@ -86,9 +99,9 @@ A keyboard-interaction event is issued by the keyboard module.
 A clipboard event is issued by the clipboard module.
 
 \begin{itemize}
-\item[/D270/] A Clipboard-Interaction event must include the following data:
+\item[/D300/] A Clipboard-Interaction event must include the following data:
 	\begin{itemize}
-	\item The value of the contained text
+	\item Contained clipboard text
 	\item Interaction type: "Copy" or "Paste"
 	\end{itemize}
 \end{itemize}
@@ -98,8 +111,35 @@ A clipboard event is issued by the clipboard module.
 A browser event is issued by the browser module.
 
 \begin{itemize}
-\item[/D270/] A general Browser event must include the following data:
+\item[/D310/] A general browser event must include the following data:
 	\begin{itemize}
-	\item The url of the interacted website
+	\item URL of the interacted website
+	\end{itemize}
+
+\item[/D310/] A Open-Page event must include the following data:
+	\begin{itemize}
+	\item URL of the opened website
+	\end{itemize}
+	
+\item[/D320/] A Text-Input event must include the following data:
+	\begin{itemize}
+	\item Text which has been inputted by the user
+	\item Textbox or form
+	\end{itemize}
+	
+\item[/D330/] A Button-Tap Browser event must include the following data:
+	\begin{itemize}
+	\item Button item title
+	\item URL of the linked webpage
+	\end{itemize}
+	
+\item[/D340/] A Hover event must include the following data:
+	\begin{itemize}
+	\item View which has been hovered
+	\end{itemize}
+	
+\item[/D350/] A Text-Selection event must include the following data:
+	\begin{itemize}
+	\item Selected Text
 	\end{itemize}
 \end{itemize}
