@@ -5,41 +5,98 @@ The application's main purpose is all about collecting data. This data is suppos
 
 \section{Session}
 \begin{itemize}
-\item[D100] To persist the recorded data, a single session file should be saved.
-
-\item[D110] A general session should include several data:
+\item[/D100/] Each general session needs to include the following data:
 	\begin{itemize}
 	\item Unique session id
-	\item Date of start and stop of the session
-	\item The duration of the session.
-	\item A video recording of the session
+	\item Date of start and stop
+	\item Duration
+	\item Video-output stream
 	\end{itemize}
 \end{itemize}
 
 \section{Events}
+
+Each dataset in a session is described by an event, which has been recognized and issued by a module. Each event includes multiple properties, which define and describe the event.
+
 \begin{itemize}
-\item[D100] An event should always include following data:
+\item[/D200/] A event must always include the following data:
 	\begin{itemize}
-	\item A timestamp of the occurrence of the event
-	\end{itemize}
-
-\item[D110] User interactions with the keyboard, should include:
-	\begin{itemize}
-	\item Simple key taps
-	\item Shortcuts, e.g. Copy-Paste shortcut
-	\end{itemize}
-
-\item[D130] Browser usage and interactions by the user should include:
-	\begin{itemize}
-	\item Current website and browser-tab selection
-	\item Textfield input
-	\item Menu and item interaction
+	\item Timestap of the occurrence of the data
+	\item Identifier of the module the event came from
+	\item Type which identifies the events general action, e.g. a "MouseClick"
 	\end{itemize}
 \end{itemize}
 
-\item[D140] Following data about mouse interactions by the user should be collected:
+\subsection{Window Management Events}
+
+A window-management event is issued by the window-management module.
+
+\begin{itemize}
+\item[/D210/] A general Window-Management event must include the follwing data:
 	\begin{itemize}
-	\item // TODO
-	\item Scroll events
-	\item Significant mouse movements
+	\item The name of the interacted window
+	\item The process associated with the window
 	\end{itemize}
+
+\item[/D220/] A Window-Focus event should only include the general data.
+
+\item[/D230/] A Window-Movement event should include following additional data:
+	\begin{itemize}
+	\item Old and new location
+	\end{itemize}
+	
+\item[/D240/] A Window-Resizing event should include following additional data:
+	\begin{itemize}
+	\item Old and new window size
+	\end{itemize}
+	
+\item[/D250/] A Window-Maximizing/Minimizing event should include following additional data:
+	\begin{itemize}
+	\item The new state of the window, e.g. "Maximized".
+	\end{itemize}
+\end{itemize}
+
+\subsection{Mouse Interaction Events}
+
+A mouse-interaction event is issued by the mouse module.
+
+\begin{itemize}
+\item[/D260/] A general Mouse-Interaction event must include the following data:
+	\begin{itemize}
+	\item 
+	\end{itemize}
+\end{itemize}
+
+\subsection{Keyboard Interaction Events}
+
+A keyboard-interaction event is issued by the keyboard module.
+
+\begin{itemize}
+\item[/D270/] A general Keyboard-Interaction event must include the following data:
+	\begin{itemize}
+	\item Tapped keys, can be a single or multiple keys
+	\end{itemize}
+\end{itemize}
+
+\subsection{Clipboard Events}
+
+A clipboard event is issued by the clipboard module.
+
+\begin{itemize}
+\item[/D270/] A Clipboard-Interaction event must include the following data:
+	\begin{itemize}
+	\item The value of the contained text
+	\item Interaction type: "Copy" or "Paste"
+	\end{itemize}
+\end{itemize}
+
+\subsection{Browser Events}
+
+A browser event is issued by the browser module.
+
+\begin{itemize}
+\item[/D270/] A general Browser event must include the following data:
+	\begin{itemize}
+	\item The url of the interacted website
+	\end{itemize}
+\end{itemize}
