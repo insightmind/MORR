@@ -1,2 +1,145 @@
 \chapter{Application Data}
 \label{ch:data}
+
+The application's main purpose is all about collecting data. This data is supposed to help to find patterns in research activity using a personal computer. Therefore there is a great range of distinctive data sets that are interesting to collect.
+
+\section{Sessions}
+\begin{itemize}
+
+\item[D100] All sessions are stored locally in a document-based database and may be uploaded on a remote database storage.
+
+\item[D110] Each general session needs to include the following data:
+	\begin{itemize}
+	\item Unique session id
+	\item Date of start and stop
+	\item Duration
+	\item Video-output stream
+	\end{itemize}
+\end{itemize}
+
+\section{Events}
+
+Each dataset in a session is described by an event, which has been recognized and issued by a collecting module. Each event includes multiple properties, which define and describe the event.
+
+\begin{itemize}
+\item[D200] A event must always include the following data:
+	\begin{itemize}
+	\item Timestamp of the occurrence
+	\item Identifier of the module the event was issued by
+	\item Type which identifies the events general action, e.g. a "MouseClick"
+	\end{itemize}
+\end{itemize}
+
+\subsection{Window Management Events}
+
+A window-management event is issued by the window-management module.
+
+\begin{itemize}
+\item[D210] A general Window-Management event must include the follwing data:
+	\begin{itemize}
+	\item The name of the interacted window
+	\item The process associated with the window
+	\end{itemize}
+
+\item[D220] A Window-Focus event should only include the general data.
+
+\item[D230] A Window-Movement event should include following additional data:
+	\begin{itemize}
+	\item Old and new location
+	\end{itemize}
+	
+\item[D240] A Window-Resizing event should include following additional data:
+	\begin{itemize}
+	\item Old and new window size
+	\end{itemize}
+	
+\item[D250] A Window-Maximizing/Minimizing event should include following additional data:
+	\begin{itemize}
+	\item The new state of the window, e.g. "Maximized".
+	\end{itemize}
+\end{itemize}
+
+\subsection{Mouse Interaction Events}
+
+A mouse-interaction event is issued by the mouse module.
+
+\begin{itemize}
+\item[D260] A Mouse-Click-Interaction event should include the following data:
+	\begin{itemize}
+	\item Clicked button, e.g. "Left-Mouse-Button"
+	\item Type which identifies if the click is a single or double tap
+	\item The underlaying view, that was clicked on in the OS. 
+	\end{itemize}
+
+\item[D270] A Mouse-Scroll-Interaction event should include the following data:
+	\begin{itemize}
+	\item Scroll amount
+	\item The underlaying view, that was scrolled in the OS.
+	\end{itemize}
+
+\item[D280] A Mouse-Movement-Interaction event should include the following data:
+	\begin{itemize}
+	\item Movement vector
+	\end{itemize}
+\end{itemize}
+
+\subsection{Keyboard Interaction Events}
+
+A keyboard-interaction event is issued by the keyboard module.
+
+\begin{itemize}
+\item[D290] A general Keyboard-Interaction event must include the following data:
+	\begin{itemize}
+	\item Tapped keys, can be a single or multiple keys
+	\end{itemize}
+\end{itemize}
+
+\subsection{Clipboard Events}
+
+A clipboard event is issued by the clipboard module.
+
+\begin{itemize}
+\item[D300] A Clipboard-Interaction event must include the following data:
+	\begin{itemize}
+	\item Contained clipboard text
+	\item Interaction type: "Copy" or "Paste"
+	\end{itemize}
+\end{itemize}
+
+\subsection{Browser Events}
+
+A browser event is issued by the browser module.
+
+\begin{itemize}
+\item[D310] A general browser event must include the following data:
+	\begin{itemize}
+	\item URL of the interacted website
+	\end{itemize}
+
+\item[D310] A Open-Page event must include the following data:
+	\begin{itemize}
+	\item URL of the opened website
+	\end{itemize}
+	
+\item[D320] A Text-Input event must include the following data:
+	\begin{itemize}
+	\item Text which has been inputted by the user
+	\item Textbox or form
+	\end{itemize}
+	
+\item[D330] A Button-Tap Browser event must include the following data:
+	\begin{itemize}
+	\item Button item title
+	\item URL of the linked webpage
+	\end{itemize}
+	
+\item[D340] A Hover event must include the following data:
+	\begin{itemize}
+	\item View which has been hovered
+	\end{itemize}
+	
+\item[D350] A Text-Selection event must include the following data:
+	\begin{itemize}
+	\item Selected Text
+	\end{itemize}
+\end{itemize}
