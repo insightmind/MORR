@@ -1,11 +1,11 @@
 \chapter{Non-functional Specifications}
 \label{ch:nonfunc}
 \begin{itemize}
-    \item[NF10] Performance: The user should not notice the decrease of other processes' execution speed.
-    \item[NF20] Reliability: The recorded activity should and the user triggered activity should be the same.
-    \item[N30]  Usability: The user is able to work with the software alone after a 5-minute-long introduction.
-    \item[N40] Extensibility: The Software is able to be improved and extended.
-    \item[N50] Reliability: The Software is able to run without error. % Is this needed?
-    \item[N60] Notes on data protection will be shown at start of each record. %is this maybe functional?
-    
+    \item[NF10] Performance\\Running the application and recording a session should have no notable impact on a customary device's performance.
+    \item[NF20] Accuracy\\The recorded data should accurately represent the user's activity.
+    \item[NF30] Usability\\The user is able to correctly operate the application by himself after a 5-minute-long introduction.
+    \item[NF40] Extensibility\\The software can easily be maintained and extended.
+    \item[NF50] Reliability\\The probability of a failure during a 60-minute session is under 2\%. A failure is an unintended termination of a recording session with a possible loss of recorded data. This does not apply should the application be run in an unsupported environment or configuration (see chapter \ref{ch:environment}).%% 2% are completely made up without any analysis, adjust if necessary
+    \item[NF60] Transparency\\It should be made obvious to the user if the software is running.
+    \item[NF70] Nonintrusiveness\\The application should not interfere with the user's adopted workflow.
 \end{itemize}
