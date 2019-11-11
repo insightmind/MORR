@@ -1,8 +1,40 @@
 \chapter{Definition of Goals}
 \label{ch:goals}
 
+The purpose of this project is to create an application which records the online research process of doctors, who in this case are the users of the application. The focus of the application is to collect data and make it available to data scientists. This chapter gives an overview of the functionality of the product. It describes the informal requirements and is used to establish a context for the technical requirements specification in the following chapters.
+%%TODO: switch "application" to "application's name" 
+%%in second sentence
+
 \section{Necessary Criteria}
+
+\begin{itemize}
+
+	\item[NC10]Start of the recording session\\The recording session must be started by the user.
+	\item[NC20]Start notification\\Start notification informs the user about the start of the recording session and must be showed to the user before the start of the recording session. 
+	\item[NC30]Stoppage of the recording session\\The recording session must be stopped by the user.
+	\item[NC40]Saving the recorded data\\The recorded data must be saved automatically after the recording session has been stopped.
+	\item[NC50]User awareness\\ User must be aware of the recording process at any time during the session.
+	\item[NC60]Past recording sessions\\ User must be able to view the recordings of the past sessions.
+	\item[NC70]Data provisioning\\ Data scientist must be able to extract the recorded data.
+	
+\end{itemize}
 
 \section{Optional Criteria}
 
+\begin{itemize}
+
+	\item[OC10]Session duration\\ Minimal/maximal duration of the recording session can be set.
+	\item[OC20]Inactivity\\ A timer can be set in order to stop the recording of an event after a certain period of inactivity.
+	\item[OC30]Data visualization\\ The recorded data can be visualized.(e.g histograms, heatmap)
+	\item[OC40]Confirmation of the saving of the recorded data\\ User is asked to confirm if the recorded session is to be saved.
+	\item[OC50]Website-specific event types filtering\\The types of the recorded events can be filtered for any website.
+
+\end{itemize}
+
 \section{Delimiting Criteria}
+
+\begin{itemize}
+
+	\item[DC10]Data interpretation\\Application is not supposed to interpret the recorded data.
+	
+\end{itemize}
