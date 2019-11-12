@@ -9,8 +9,7 @@ The application's main purpose is all about collecting data. This data is suppos
 
 \section{Sessions}
 \begin{data}
-
-\spec{All sessions are stored locally in a document-based database and may be uploaded on a remote database storage. }
+\spec{All sessions are stored locally in a file-based format and may be uploaded to remote storage. }
 
 \spec{Each session needs to include the following data:
 	\begin{itemize}
@@ -52,10 +51,10 @@ Each dataset in a session is described by an event, which has been recognized an
 A window-management event is issued by the window-management module.
 
 \begin{data}
-\spec{A generic Window-Management event must include the follwing data:
+\spec{A generic Window-Management event must include the following data:
 	\begin{itemize}
-	\item The name of the interacted window
-	\item The process associated with the window
+	\item The title of the interacted window
+	\item The name of the process associated with the window
 	\end{itemize}
 }
 
@@ -99,14 +98,14 @@ A mouse-interaction event is issued by the mouse module.
 		\item Left-Mouse-Button
 		\end{itemize}
 	\item Type which identifies if the click is a single or double click
-	\item The HWND of the view, that was clicked
+	\item The HWND of the view that was clicked
 	\end{itemize}
 }
 
 \spec{A Mouse-Scroll-Interaction event should include the following data:
 	\begin{itemize}
 	\item Scroll amount
-	\item The HWND of the view, that was scrolled
+	\item The HWND of the view that was scrolled
 	\end{itemize}
 }
 
@@ -124,7 +123,8 @@ A keyboard-interaction event is issued by the keyboard module.
 \begin{data}
 \spec{A Keyboard-Interaction event must include the following data:
 	\begin{itemize}
-	\item Tapped keys, can be single or modified keys:
+	\item Pressed key
+	\item All of the modifier keys that are pressed:
 		\begin{itemize}
 		\item Ctrl
 		\item Alt
@@ -177,7 +177,7 @@ A browser event is issued by the browser module.
 	\end{itemize}
 }
 	
-\spec{A Button-Tap Browser event must include the following additional data:
+\spec{A Button-Click Browser event must include the following additional data:
 	\begin{itemize}
 	\item Button item title
 	\item URL of the linked webpage
