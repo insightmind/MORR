@@ -4,8 +4,6 @@
 \newcounter{specid}
 \newenvironment{specifications}{\newcommand*\spec{\addtocounter{specid}{10}\item[FS\thespecid]}\begin{itemize}}{\end{itemize}}
 
-\section{Purpose}
-
 This chapter is meant to organize and describe the specifications that dictate the way the application functions for different users.
 
 \section{High-level specification}
@@ -23,7 +21,7 @@ This chapter is meant to organize and describe the specifications that dictate t
         \item Audio\\The recording of audio needs to be toggleable
     \end{itemize}}
     \spec{User controllability\\A user needs to be able to start and stop the recording of a session. A stopped recording needs to be saved automatically.}
-    \spec{User awareness\\A user needs to be aware if a session is being recorded. The application should therefore indicate an active recording process.}
+    \spec{User awareness\\A user should be made aware of an ongoing recording by an on-screen indicator during the recording.}
     \spec{User instruction\\When a session is started, an information dialog should appear, advising the user not to enter any personal or confidential business information.}
     \spec{User reviewability\\A user should be able to view recordings of past sessions. An administrator should be able to edit or delete recordings of past sessions.}
     \spec{Data provision\\A data scientist needs to be able to extract the recorded data. If the data is stored in a non-standardized format, the application needs to either provide functionality for converting the data into a standardized format or ship with source code that would allow for such a converter to be written.}
@@ -32,13 +30,12 @@ This chapter is meant to organize and describe the specifications that dictate t
 \section{Core application specification}
 The core application has to cover the following responsibilities:
 \begin{specifications}
-    \spec{Global configuration\\The application core is responsible for parsing configuration files and providing the parsed configuration.}%%This overlaps with system module configuration, but it also includes for example video quality - any better way to phrase/organise it?
     \spec{Videostream recording\\Each session recording contains a videostream containing the video-output of the computer in use. The videostream forms the basis for every recording.}
     \spec{System module invocation\\The application core is responsible for launching system modules based on availability and global configuration.}
     \spec{System module configuration\\The application core is responsible for configuring system modules based on global configuration.}
     \spec{On-demand module detection\\The application core is responsible for listening for incoming connections from on-demand modules which are realized as extensions to third party software, such as browser-extensions.}
     \spec{Data consolidation\\The data received from different modules needs to be stored in the same container.}
-    \spec{Combinability of modules\\The application core needs to be able to function with arbitrary combinations of enabled modules. Performance impacts may occur if non-default modules are enabled.}%%Should the performance disclaimer be part of the functional specifications?
+    \spec{Combinability of modules\\The application core needs to be able to function with arbitrary combinations of enabled modules.}
     \spec{Context management\\The application core needs to track the context in which events occur and notify modules of changes to it.}
 \end{specifications}
 
