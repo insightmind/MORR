@@ -1,39 +1,37 @@
 \chapter{Definition of Goals}
 \label{ch:goals}
 
+\requirementscope{MC}{mspec}
+\requirementscope{OC}{ospec}
+\requirementscope{DC}{dlspec}
+
 The purpose of this project is to create an application which records the online research process of \glspl{user}. The focus of the application is to collect data and make it available to \glspl{scientist}. This chapter gives an overview of the functionality of the product. It describes the informal requirements and is used to establish a context for the technical requirements specification in the following chapters.
 
 
 \section{Mandatory Criteria}
 
 \begin{itemize}
-	\item[MC10]Data recording\\\Gls{user} interactions during the online research must be recorded.
-	\item[MC20]\Gls{user} controllability\\The recording \gls{session} is controlled by the \gls{user}. It must be started and stopped by the \gls{user}.
-	\item[MC30]Start notification\\Start notification informs the \gls{user} about the start of the recording \gls{session} and must be showed to the \gls{user} before the start of the recording \gls{session}. 
-	\item[MC40]\Gls{user} awareness\\A \gls{user} must be aware of the recording process at any time during the \gls{session}.
-	\item[MC50]Confirmation of the saving of the recorded data\\A \gls{user} is asked to confirm if the recorded \gls{session} is to be saved.
-	\item[MC60]Past recording \glspl{session}\\A \gls{user} must be able to view the recordings of the past \glspl{session}.
-	\item[MC70]Data provisioning\\A \gls{scientist}must be able to extract the recorded data.
-	
-
+	\mspec{Data recording\\\Gls{user} interactions during the online research must be recorded.}
+	\mspec{\Gls{user} controllability\\The recording \gls{session} is controlled by the \gls{user}. It must be started and stopped by the \gls{user}.}
+	\mspec{Start notification\\Start notification informs the \gls{user} about the start of the recording \gls{session} and must be showed to the \gls{user} before the start of the recording \gls{session}.}
+	\mspec{\Gls{user} awareness\\A \gls{user} must be aware of the recording process at any time during the \gls{session}.}
+	\mspec{Confirmation of the saving of the recorded data\\A \gls{user} is asked to confirm if the recorded \gls{session} is to be saved.}
+	\mspec{Past recording \glspl{session}\\A \gls{user} must be able to view the recordings of the past \glspl{session}.}
+	\mspec{Data provisioning\\A \gls{scientist}must be able to extract the recorded data.}
 \end{itemize}
 
 \section{Optional Criteria}
 
 \begin{itemize}
-
-	\item[OC10]\Gls{session} duration\\Minimal/maximal duration of the recording \gls{session} can be set.
-	\item[OC20]Inactivity\\A timer can be set in order to stop the recording of an \gls{event} after a certain period of inactivity.
-	\item[OC30]Data visualization\\The recorded data can be visualized.(e.g histograms, heatmap)
-	\item[OC40]Website-specific event types filtering\\The types of the recorded \glspl{event} can be filtered for any website.
-
+	\ospec{\Gls{session} duration\\Minimal/maximal duration of the recording \gls{session} can be set.}
+	\ospec{Inactivity\\A timer can be set in order to stop the recording of an \gls{event} after a certain period of inactivity.}
+	\ospec{Data visualization\\The recorded data can be visualized.(e.g histograms, heatmap)}
+	\ospec{Website-specific event types filtering\\The types of the recorded \glspl{event} can be filtered for any website.}
 \end{itemize}
 
 \section{Delimiting Criteria}
 
 \begin{itemize}
-
-	\item[DC10]Data interpretation\\The application does not interpret the recorded data.
-	\item[DC20]Spying on the \gls{user}\\The application does not secretly monitor and gather information about the \gls{user}.
-	
+	\dlspec{Data interpretation\\The application does not interpret the recorded data.}
+	\dlspec{Spying on the \gls{user}\\The application does not secretly monitor and gather information about the \gls{user}.}
 \end{itemize}

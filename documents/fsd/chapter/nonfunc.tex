@@ -1,11 +1,14 @@
 \chapter{Non-functional Specifications}
 \label{ch:nonfunc}
+
+\requirementscope{NF}{nfspec}
+
 \begin{itemize}
-    \item[NF10] Performance\\Running the application and recording a \gls{session} should have no notable impact on a customary \gls{device}'s performance.
-    \item[NF20] Accuracy\\The recorded data accurately represents the \gls{user}'s activity. %should to does
-    \item[NF30] Usability\\The \gls{user} is able to correctly operate the application by themselves after a 5-minute-long introduction.
-    \item[NF40] Extensibility\\The application can easily be maintained and extended.
-    \item[NF50] Reliability\\The probability of a failure during a 60-minute \gls{session} is under 2\%. A failure is an unintended termination of a recording \gls{session} with a possible loss of recorded data. This does not apply should the application be run in an unsupported environment or configuration (see chapter \ref{ch:environment}).%% 2% are completely made up without any analysis, adjust if necessary
-    \item[NF60] Transparency\\It should be made obvious to the \gls{user} if the application is running.
-    \item[NF70] Nonintrusiveness\\The application should not interfere with the \gls{user}'s adopted workflow.
+    \nfspec{Performance\\Running the application and recording a \gls{session} should have no notable impact on a customary \gls{device}'s performance.}
+    \nfspec{Accuracy\\The recorded data accurately represents the \gls{user}'s activity.} %should to does
+    \nfspec{Usability\\The \gls{user} is able to correctly operate the application by themselves after a 5-minute-long introduction.}
+    \nfspec{Extensibility\\The application can easily be maintained and extended.}
+    \nfspec{Reliability\\The probability of a failure during a 60-minute \gls{session} is under 2\%. A failure is an unintended termination of a recording \gls{session} with a possible loss of recorded data. This does not apply should the application be run in an unsupported environment or configuration (see chapter \ref{ch:environment}).}%% 2% are completely made up without any analysis, adjust if necessary
+    \nfspec{Transparency\\It should be made obvious to the \gls{user} if the application is running.}
+    \nfspec{Nonintrusiveness\\The application should not interfere with the \gls{user}'s adopted workflow.}
 \end{itemize}
