@@ -2,26 +2,41 @@
 \label{ch:sysmodels}
 
 \section{System architecture}
-The specified criteria demand for a minimalist user interface and little to no bidirectional data flow within the application. Therefore the applied architecture will be a modified version of the classic pipeline architecture.
+The specified criteria demand for a minimalist user interface and little to no bidirectional data flow within the application. As the main focus of this project is collecting, processing and finally storing data, the applied architecture will be a pipeline architecture.
 
 \subsection{Basic Pipeline}
-The traditional pipeline architecture refers to a process being split up into several sequential step, ideally with data buffers in between those, which can will be able to independently and possibly asynchronously perform a specific work on their data input, which will then be provided as output for the subsequent step. This works especially well in scenario were only an unidirectional data flow is required.
+The traditional pipeline architecture refers to a process being split up into several sequential steps, ideally with data buffers in between those, which will be able to independently and possibly asynchronously perform a specific transformation on their data input. The resulting data will then be provided as output for the subsequent step. This works especially well in a scenario where only an unidirectional data flow is required.
+\begin{figure}[h!]
+  \includegraphics[width=1.00\textwidth]{resources/simplepipeline.png}
+  \centering
+  \caption{A simple pipeline model}
+  \label{fig:simplepipe}
+\end{figure}
 
 \subsection{The extended pipeline}
 In this project, the basic pipeline is an insufficient model, as the initial input data will have to be gathered at several, mostly independent places. The \gls{browser} module (see \specref{FS220} will only capture \gls{browser} \glspl{event}, the window management \gls{module} (see \specref{FS180}) cannot also provide the keyboard input etc. In order to solidify all the collected \glspl{event}, the extended pipeline allows for a single processing step to accept input from multiple sources by utilizing the transforming modules as mentioned in \specref{FS170}. The result is a tree-structure where the \gls{event}-data strictly flows from the leafs towards the root, the root being the application core (see \specref{FS140}).
-
-\section{Object models}
-
-\section{Dynamic models}
-Following figure shows exemplarily how the application could deal with a user clicking on an element in his webbrowser. The actual flow might differ based on available modules and rule configuration.
 \begin{figure}[h!]
+  \includegraphics[width=1.00\textwidth]{resources/extendedpipeline.png}
+  \centering
+  \caption{An extended pipeline model}
+  \label{fig:extendedpipe}
+\end{figure}
+%\section{Object models}
+%%we might not want to specify object models yet
+
+\newpage %%formatting, can potentially be removed later
+\section{Dynamic model} %%change to models should addtional charts be added
+The following figure shows an example of how the application could deal with a \gls{user} clicking on an element in their \gls{browser}. The actual flow might differ based on available modules and rule configuration.
+\begin{figure}[H]
   \includegraphics[width=1.00\textwidth]{resources/clickactivity.png}
   \centering
   \caption{User-Click sample activity chart}
   \label{fig:clickactivity}
 \end{figure}
+\newpage %% for formatting
 \section{User Interface}
-The \gls{user}-interface is intentionally minimal as the \glspl{user} should not be disrupted during their usual work-routine.
+The \gls{user}-interface is intentionally minimal as the \glspl{user} should not be disrupted during their usual work-routine. The following figures show drafts and therefore do not represent the final product.
+
 \begin{figure}[h!]
   \includegraphics[width=1.00\textwidth]{resources/ui_recordindicator.jpg}
   \centering
@@ -29,8 +44,11 @@ The \gls{user}-interface is intentionally minimal as the \glspl{user} should not
   \label{fig:ui_recordindicator}
 \end{figure}
 \begin{figure}[h!]
-  \includegraphics[width=1.00\textwidth]{resources/ui_trayicon.jpg}
+  \includegraphics[width=0.90\textwidth]{resources/ui_trayicon.jpg}
   \centering
   \caption{The start/stop recording features may be quickly accessed by clicking on the tray-icon (represented by the red dot).}
   \label{fig:ui_trayicon}
 \end{figure}
+
+\subsection{Data extraction}
+The \glspl{scientist} will be able to extract \gls{event}-information from the videocontainer by utilizing an API (application programming interface) which will be supplied together with the application. Additionally, the application will be bundled with a commandline-tool which allows for extraction of the \gls{event}-data into the common CSV-format (comma-separated values).
