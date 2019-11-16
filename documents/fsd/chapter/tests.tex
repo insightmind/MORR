@@ -4,8 +4,80 @@
 %%Cannot use requirementscope as we have to inject additional text into the label
 \newcounter{counterTC}
 \newcommand{\testfor}[1]{\addtocounter{counterTC}{10}\item[TC\arabic{counterTC}\label{TC\arabic{counterTC}}\\\begin{footnotesize}\textit{(tests \specref{#1})}\end{footnotesize}]}
+\newcommand{\test}{\addtocounter{counterTC}{10}\item[TC\arabic{counterTC}\label{TC\arabic{counterTC}}]}
 \newenvironment{tests}{\begin{enumerate}[font = \normalfont, style = multiline, labelindent = 0em, labelwidth = 5em, labelsep* = 1em, leftmargin = !]}{\end{enumerate}}
 
+\section{Core application testcases}
+
 \begin{tests}
-\testfor{FS100}{This is an example test}
+    \testfor{FS100}{Verify that a successfully recorded \gls{session} yields a \gls{videostream} in accordance with \specref{D40} and \specref{D30}.}
+    \testfor{FS110}{Verify that the application launches an available \gls{module} if configured to do so.}
+    \testfor{FS110}{Verify that the application does not launch an available \gls{module} if configured to not do so.}
+    \testfor{FS120}{Verify that the application configures a system \gls{module} in accordance with global configuration.}
+    \testfor{FS130}{Verify that the application detects an on-demand \gls{module} becoming available.}
+    \testfor{FS140}{Verify that the application accumulates all recorded data during a successfully recorded \gls{session} in a format in accordance with \specref{D10}, \specref{D20}, \specref{D30} and \specref{D40}. The recorded event data therein falls subject to the format constraints imposed by 6.2 Events - TODO Link.}%TODO Requires label for events section in data chapter
+    \testfor{FS150}{Verify that the application functions with arbitrary combinations of enabled \glspl{module}.}
+    \testfor{FS160}{Verify that the application tracks changes to the context in which events occur and notifies \glspl{module} of those changes.}
+\end{tests}
+
+\section{Per-module testcases}
+
+\subsection{System module testcases}
+
+\subsubsection{Window-management module testcases}
+
+\begin{tests}
+    \testfor{FS180}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D70} when the \gls{user} focuses a window.}
+    \testfor{FS180}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D80} when the \gls{user} moves a window.}
+    \testfor{FS180}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D90} when the \gls{user} resizes a window.}
+    \testfor{FS180}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D100} when the \gls{user} minimizes a window.}
+    \testfor{FS180}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D100} when the \gls{user} maximizes a window.}
+    \testfor{FS180}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D100} when the \gls{user} restores a window.}
+\end{tests}
+
+\subsubsection{Mouse module testcases}
+
+\begin{tests}
+    \testfor{FS190}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D110} when the \gls{user} presses the left mouse button.}
+    \testfor{FS190}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D110} when the \gls{user} presses the middle mouse button.}
+    \testfor{FS190}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D110} when the \gls{user} presses the right mouse button.}
+    \testfor{FS190}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D110} when the \gls{user} releases the left mouse button.}
+    \testfor{FS190}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D110} when the \gls{user} releases the middle mouse button.}
+    \testfor{FS190}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D110} when the \gls{user} releases the right mouse button.}
+    \testfor{FS190}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D110} when the \gls{user} double presses the left mouse button.}
+    \testfor{FS190}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D110} when the \gls{user} double presses the middle mouse button.}
+    \testfor{FS190}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D110} when the \gls{user} double presses the right mouse button.}
+    \testfor{FS190}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D120} when the \gls{user} uses the scroll wheel.}
+    \testfor{FS190}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D130} when the \gls{user} moves the mouse.}
+\end{tests}
+
+\subsubsection{Keyboard module testcases}
+
+\begin{tests}
+    \testfor{FS200}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D140} when the \gls{user} presses a key.}
+    \testfor{FS200}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D140} when the \gls{user} releases a key.}
+    \testfor{FS200}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D140} when the \gls{user} presses a key while simultaneously pressing one or more modifier keys.}
+\end{tests}
+
+\subsubsection{Clipboard module testcases}
+
+\begin{tests}
+    \testfor{FS210}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D150} when the \gls{user} copies text to the clipboard.}
+    \testfor{FS210}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D150} when the \gls{user} pastes text from the clipboard.}
+\end{tests}
+
+\subsection{On-demand module testcases}
+
+\subsubsection{Browser module testcases}
+
+\begin{tests}
+    \testfor{FS220}{Verify that the application generates an event in accordance with \specref{D50} 
+    and \specref{D160} when the \gls{user} opens a new tab.}
+    \testfor{FS220}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D160} when the \gls{user} switches to a tab.}
+    \testfor{FS220}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D160} when the \gls{user} closes a tab.}
+    \testfor{FS220}{Verify that the application generates an event in accordance with \specref{D50},\specref{D160} and \specref{D170} when the \gls{user} navigates to a web page.}
+    \testfor{FS220}{Verify that the application generates an event in accordance with \specref{D50},\specref{D160} and \specref{D180} when the \gls{user} enters text into a form or input textbox.}
+    \testfor{FS220}{Verify that the application generates an event in accordance with \specref{D50},\specref{D160} and \specref{D200} when the \gls{user} hovers over an element.}
+    \testfor{FS220}{Verify that the application generates an event in accordance with \specref{D50},\specref{D160} and \specref{D210} when the \gls{user} selects text.}
+    \testfor{FS220}{Verify that the application generates an event in accordance with \specref{D50},\specref{D160} and TODO when the \gls{user} downloads a file.}%%TODO What data do we record for a download event?
 \end{tests}
