@@ -1,2 +1,11 @@
 \chapter{Global Testcases}
 \label{ch:tests}
+
+%%Cannot use requirementscope as we have to inject additional text into the label
+\newcounter{counterTC}
+\newcommand{\testfor}[1]{\addtocounter{counterTC}{10}\item[TC\arabic{counterTC}\label{TC\arabic{counterTC}}\\\begin{footnotesize}\textit{(tests \specref{#1})}\end{footnotesize}]}
+\newenvironment{tests}{\begin{enumerate}[font = \normalfont, style = multiline, labelindent = 0em, labelwidth = 5em, labelsep* = 1em, leftmargin = !]}{\end{enumerate}}
+
+\begin{tests}
+\testfor{FS100}{This is an example test}
+\end{tests}
