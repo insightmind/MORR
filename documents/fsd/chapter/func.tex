@@ -1,110 +1,109 @@
 \chapter{Functional Specifications}
 \label{ch:func}
 
-\newcounter{specid}
-\newenvironment{specifications}{\newcommand*\spec{\addtocounter{specid}{10}\item[FS\thespecid]}\begin{itemize}}{\end{itemize}}
+\requirementscope{FS}{fspec}
 
 This chapter is meant to organize and describe the specifications that dictate the way the application functions for different actors.
 
 \section{High-level specification}
 
 %% glossary candidates: session, user, event, input-event, recording, converter, administrator, computer, videostream, module
-\begin{specifications}
+\begin{itemize}
     %% TODO: Link to data section
-    \spec{Recording \glspl{session}\\The application needs to record and save timed \glspl{event}. All \glspl{event} need to be associated with the \gls{session} they were recorded in. A \gls{session} needs to be identifiable.}
-    \spec{Event types\\The application needs to be able to handle the recording of different \gls{event} types. These are more closely described in section \ref{ch:data}.}
-    \spec{Event processing\\The application needs to be able to process \glspl{event} it records. This includes filtering \glspl{event} by criteria configured before or during runtime. It also includes matching \glspl{event} from different \glspl{module} (i.e. a mouse click invokes an action in the browser).}
-    \spec{Configurability\\An administrator needs to have the ability to configure the following behavior:
+    \fspec{Recording \glspl{session}\\The application needs to record and save timed \glspl{event}. All \glspl{event} need to be associated with the \gls{session} they were recorded in. A \gls{session} needs to be identifiable.}
+    \fspec{Event types\\The application needs to be able to handle the recording of different \gls{event} types. These are more closely described in section \ref{ch:data}.}
+    \fspec{Event processing\\The application needs to be able to process \glspl{event} it records. This includes filtering \glspl{event} by criteria configured before or during runtime. It also includes matching \glspl{event} from different \glspl{module} (i.e. a mouse click invokes an action in the browser).}
+    \fspec{Configurability\\An administrator needs to have the ability to configure the following behavior:
     \begin{itemize}
         \item Active \glspl{module}\\Select the \glspl{module} the application is allowed to use
         \item Framerate and video resolution\\The framerate and resolution of the recorded videostream should be configurable to allow the prioritization of either resource efficiency (storage and system load) or quality
         \item Audio\\The recording of audio needs to be toggleable
     \end{itemize}}
-    \spec{\Gls{user} controllability\\A \gls{user} needs to be able to start and stop the recording of a \gls{session}. A stopped recording needs to be saved automatically.}
-    \spec{\Gls{user} awareness\\A \gls{user} should be made aware of an ongoing recording by an on-screen indicator during the recording.}
-    \spec{\Gls{user} instruction\\When a \gls{session} is started, an information dialog should appear, advising the \gls{user} not to enter any personal or confidential business information.}
-    \spec{\Gls{user} reviewability\\A \gls{user} should be able to view recordings of past \glspl{session}. An administrator should be able to edit or delete recordings of past \glspl{session}.}
-    \spec{Data provision\\A data scientist needs to be able to extract the recorded data. If the data is stored in a non-standardized format, the application needs to either provide functionality for converting the data into a standardized format or ship with source code that would allow for such a converter to be written.}
-\end{specifications}
+    \fspec{\Gls{user} controllability\\A \gls{user} needs to be able to start and stop the recording of a \gls{session}. A stopped recording needs to be saved automatically.}
+    \fspec{\Gls{user} awareness\\A \gls{user} should be made aware of an ongoing recording by an on-screen indicator during the recording.}
+    \fspec{\Gls{user} instruction\\When a \gls{session} is started, an information dialog should appear, advising the \gls{user} not to enter any personal or confidential business information.}
+    \fspec{\Gls{user} reviewability\\A \gls{user} should be able to view recordings of past \glspl{session}. An administrator should be able to edit or delete recordings of past \glspl{session}.}
+    \fspec{Data provision\\A data scientist needs to be able to extract the recorded data. If the data is stored in a non-standardized format, the application needs to either provide functionality for converting the data into a standardized format or ship with source code that would allow for such a converter to be written.}
+\end{itemize}
 
 \section{Core application specification}
 The core application has to cover the following responsibilities:
-\begin{specifications}
-    \spec{Videostream recording\\Each \gls{session} recording contains a \gls{videostream} containing the video-output of the computer in use. The \gls{videostream} forms the basis for every recording.}
-    \spec{System \gls{module} invocation\\The application core is responsible for launching system \glspl{module} based on availability and global configuration.}
-    \spec{System \gls{module} configuration\\The application core is responsible for configuring system \glspl{module} based on global configuration.}
-    \spec{On-demand \gls{module} detection\\The application core is responsible for listening for incoming connections from on-demand \glspl{module} which are realized as extensions to third party software, such as browser-extensions.}
-    \spec{Data consolidation\\The data received from different \glspl{module} needs to be stored in the same container.}
-    \spec{Combinability of \glspl{module}\\The application core needs to be able to function with arbitrary combinations of enabled \glspl{module}.}
-    \spec{Context management\\The application core needs to track the context in which \glspl{event} occur and notify \glspl{module} of changes to it.}
-\end{specifications}
+\begin{itemize}
+    \fspec{Videostream recording\\Each \gls{session} recording contains a \gls{videostream} containing the video-output of the computer in use. The \gls{videostream} forms the basis for every recording.}
+    \fspec{System \gls{module} invocation\\The application core is responsible for launching system \glspl{module} based on availability and global configuration.}
+    \fspec{System \gls{module} configuration\\The application core is responsible for configuring system \glspl{module} based on global configuration.}
+    \fspec{On-demand \gls{module} detection\\The application core is responsible for listening for incoming connections from on-demand \glspl{module} which are realized as extensions to third party software, such as browser-extensions.}
+    \fspec{Data consolidation\\The data received from different \glspl{module} needs to be stored in the same container.}
+    \fspec{Combinability of \glspl{module}\\The application core needs to be able to function with arbitrary combinations of enabled \glspl{module}.}
+    \fspec{Context management\\The application core needs to track the context in which \glspl{event} occur and notify \glspl{module} of changes to it.}
+\end{itemize}
 
 \section{Module types}
 
-\begin{specifications}
-    \spec{\label{fs:module_types}The application needs to provide three different types of \glspl{module}:
+\begin{itemize}
+    \fspec{The application needs to provide three different types of \glspl{module}:
     \begin{itemize}
         \item Collecting \glspl{module}\\\Glspl{module} which accept no input from other \glspl{module} and generate one or more \glspl{event} as output.
         \item Transforming \glspl{module}\\\Glspl{module} which accept one or more \glspl{event} as input from other \glspl{module} and generate one or more \glspl{event} as output.
         \item Discarding \glspl{module}\\\Glspl{module} which accept one or more \glspl{event} as input from other \glspl{module} and output no \glspl{event}.
     \end{itemize}}
-\end{specifications}
+\end{itemize}
 
 \section{Per-module specification}
 
 This section discusses the default \glspl{module} which will be available and ship with the application at release in order to fulfill the mandatory requirements.
 
 \subsection{System modules}
-System \glspl{module} are \glspl{module} which communicate with the operating system. They are invoked as soon as a \gls{session} is started and only terminate at the end of a \gls{session}. All system \glspl{module} are collecting \glspl{module} as specified in \ref{fs:module_types}.
+System \glspl{module} are \glspl{module} which communicate with the operating system. They are invoked as soon as a \gls{session} is started and only terminate at the end of a \gls{session}. All system \glspl{module} are collecting \glspl{module} as specified in \specref{FS170}.
 
 \subsubsection{Window-management module}
 
-\begin{specifications}
-    \spec{The application should record the following interactions with other application's windows:
+\begin{itemize}
+    \fspec{The application should record the following interactions with other application's windows:
     \begin{itemize}
         \item Focusing a window
         \item Moving a window
         \item Resizing a window
         \item Minimizing/Maximizing a window
     \end{itemize}}
-\end{specifications}
+\end{itemize}
 
 \subsubsection{Mouse module}
 
-\begin{specifications}
-    \spec{The application should record the following interactions with the \gls{device}'s mouse:
+\begin{itemize}
+    \fspec{The application should record the following interactions with the \gls{device}'s mouse:
     \begin{itemize}
         \item Pressing and releasing the left mouse button
         \item Pressing and releasing the right mouse button
         \item Using the scroll wheel
         \item Moving the mouse
     \end{itemize}}
-\end{specifications}
+\end{itemize}
 
 \subsubsection{Keyboard module}
 
-\begin{specifications}
-    \spec{The application should record the following interactions with the \gls{device}'s keyboard:
+\begin{itemize}
+    \fspec{The application should record the following interactions with the \gls{device}'s keyboard:
     \begin{itemize}
         \item Pressing and releasing a key
     \end{itemize}}
-\end{specifications}
+\end{itemize}
 
 \subsubsection{Clipboard module}
 
-\begin{specifications}
-    \spec{The application should record the following interactions with the \gls{device}'s clipboard:
+\begin{itemize}
+    \fspec{The application should record the following interactions with the \gls{device}'s clipboard:
     \begin{itemize}
         \item Copying to and pasting from the clipboard
     \end{itemize}}
-\end{specifications}
+\end{itemize}
 
 \subsection{On-demand modules}
-On-demand \glspl{module} are \glspl{module} which are dynamically run or stopped based on the software they are tracking. These \glspl{module} need to register with the application core at runtime. All on-demand \glspl{module} are collecting \glspl{module} as specified in \ref{fs:module_types}.
+On-demand \glspl{module} are \glspl{module} which are dynamically run or stopped based on the software they are tracking. These \glspl{module} need to register with the application core at runtime. All on-demand \glspl{module} are collecting \glspl{module} as specified in \specref{FS170}.
 \subsubsection{Browser module}
 
-\begin{specifications}
-    \spec{The application should record the following interactions with the browser:
+\begin{itemize}
+    \fspec{The application should record the following interactions with the browser:
     \begin{itemize}
         \item Opening a new tab
         \item Switching to a tab
@@ -114,4 +113,4 @@ On-demand \glspl{module} are \glspl{module} which are dynamically run or stopped
         \item Hovering over an element %potentially not supported by the extention API
         \item Downloading a file %e. g. data exports as mentioned in the website overview
     \end{itemize}}
-\end{specifications}
+\end{itemize}
