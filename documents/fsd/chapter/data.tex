@@ -3,24 +3,24 @@
 
 \requirementscope{D}{dspec}
 
-The application's main purpose is all about collecting data. This data is supposed to help to find patterns in research activity using a personal computer. Therefore there is a great range of distinctive data sets that are interesting to collect.
+The application's main purpose is all about collecting data. This data is supposed to help to find patterns in research activity using a personal computer. Therefore there is a great range of distinctive datasets that are interesting to collect.
 
 \section{Sessions}
 \begin{itemize}
-\dspec{All sessions are stored locally in a file-based format and may be uploaded to remote storage. }
+\dspec{All \glspl{session} are stored locally in a file-based format and may be uploaded to remote storage. }
 
 \dspec{Each session needs to include the following data:
 	\begin{itemize}
-	\item Unique session id
+	\item Unique \gls{session} identifier
 	\item Timestamp of start and stop
-	\item Video-output stream
-	\item Events in chronological order
+	\item \Gls{videostream}
+	\item \Glspl{event} in chronological order
 	\end{itemize}
 }
 
-\dspec{Each session is contained in a mpeg-4 video container}
+\dspec{Each \gls{session} is contained in a mpeg-4 video container}
 
-\dspec{The video-output stream can vary but must include following data:
+\dspec{The \gls{videostream} can vary but must include following data:
 	\begin{itemize}
 	\item Framerate
 	\item Resolution
@@ -32,45 +32,45 @@ The application's main purpose is all about collecting data. This data is suppos
 
 \section{Events}
 
-Each dataset in a session is described by an event, which has been recognized and issued by a collecting module. Each event includes multiple properties, which define and describe the event.
+Each dataset in a \gls{session} is described by an \gls{event}, which has been recognized and issued by a collecting \gls{module}. Each \gls{event} includes multiple properties, which define and describe the \gls{event}.
 
 \begin{itemize}
-\dspec{An event must always include the following data:
+\dspec{An \gls{event} must always include the following data:
 	\begin{itemize}
 	\item Timestamp of the occurrence
-	\item Identifier of the module the event was issued by
-	\item Type which identifies the events general action, e.g. a "MouseClick"
+	\item Identifier of the \gls{module} the \gls{event} was issued by
+	\item Type which identifies the \glspl{event} general action, e.g. a "MouseClick"
 	\end{itemize}
 }
 \end{itemize}
 
-\subsection{Window Management Events}
+\subsection{Window Management \Glspl{event}}
 
-A window-management event is issued by the window-management module.
+A window-management \gls{event} is issued by the window-management \gls{module}.
 
 \begin{itemize}
-\dspec{A generic Window-Management event must include the following data:
+\dspec{A generic Window-Management \gls{event} must include the following data:
 	\begin{itemize}
 	\item The title of the interacted window
 	\item The name of the process associated with the window
 	\end{itemize}
 }
 
-\dspec{A Window-Focus event should only include the general data. }
+\dspec{A Window-Focus \gls{event} should only include the general data. }
 
-\dspec{A Window-Movement event should include following additional data:
+\dspec{A Window-Movement \gls{event} should include following additional data:
 	\begin{itemize}
 	\item Old and new location
 	\end{itemize}
 }
 	
-\dspec{A Window-Resizing event should include following additional data:
+\dspec{A Window-Resizing \gls{event} should include following additional data:
 	\begin{itemize}
 	\item Old and new window size
 	\end{itemize}
 }
 	
-\dspec{A Window-Maximizing/Minimizing event should include following additional data:
+\dspec{A Window-Maximizing/Minimizing \gls{event} should include following additional data:
 	\begin{itemize}
 	\item The new state of the window:
 		\begin{itemize}
@@ -82,12 +82,12 @@ A window-management event is issued by the window-management module.
 }
 \end{itemize}
 
-\subsection{Mouse Interaction Events}
+\subsection{Mouse Interaction \Glspl{event}}
 
-A mouse-interaction event is issued by the mouse module.
+A mouse-interaction \gls{event} is issued by the mouse \gls{module}.
 
 \begin{itemize}
-\dspec{A Mouse-Click-Interaction event should include the following data:
+\dspec{A Mouse-Click-Interaction \gls{event} should include the following data:
 	\begin{itemize}
 	\item Clicked button:
 		\begin{itemize}
@@ -100,26 +100,26 @@ A mouse-interaction event is issued by the mouse module.
 	\end{itemize}
 }
 
-\dspec{A Mouse-Scroll-Interaction event should include the following data:
+\dspec{A Mouse-Scroll-Interaction \gls{event} should include the following data:
 	\begin{itemize}
 	\item Scroll amount
 	\item The HWND of the view that was scrolled
 	\end{itemize}
 }
 
-\dspec{A Mouse-Movement-Interaction event should include the following data:
+\dspec{A Mouse-Movement-Interaction \gls{event} should include the following data:
 	\begin{itemize}
 	\item Movement vector
 	\end{itemize}
 }
 \end{itemize}
 
-\subsection{Keyboard Interaction Events}
+\subsection{Keyboard Interaction \Glspl{event}}
 
-A keyboard-interaction event is issued by the keyboard module.
+A keyboard-interaction \gls{event} is issued by the keyboard \gls{module}.
 
 \begin{itemize}
-\dspec{A Keyboard-Interaction event must include the following data:
+\dspec{A Keyboard-Interaction \gls{event} must include the following data:
 	\begin{itemize}
 	\item Pressed key
 	\item All of the modifier keys that are pressed:
@@ -134,12 +134,12 @@ A keyboard-interaction event is issued by the keyboard module.
 }
 \end{itemize}
 
-\subsection{Clipboard Events}
+\subsection{Clipboard \Glspl{event}}
 
-A clipboard event is issued by the clipboard module.
+A clipboard \gls{event} is issued by the clipboard \gls{module}.
 
 \begin{itemize}
-\dspec{A Clipboard-Interaction event must include the following data:
+\dspec{A Clipboard-Interaction \gls{event} must include the following data:
 	\begin{itemize}
 	\item Contained clipboard text
 	\item Interaction type:
@@ -151,44 +151,44 @@ A clipboard event is issued by the clipboard module.
 }
 \end{itemize}
 
-\subsection{Browser Events}
+\subsection{\Gls{browser} \Glspl{event}}
 
-A browser event is issued by the browser module.
+A \gls{browser} \gls{event} is issued by the \gls{browser} \gls{module}.
 
 \begin{itemize}
-\dspec{A generic browser event must include the following data:
+\dspec{A generic \gls{browser} \gls{event} must include the following data:
 	\begin{itemize}
 	\item URL of the interacted website
 	\end{itemize}
 }
 
-\dspec{A Navigation event must include the following additional data:
+\dspec{A Navigation \gls{event} must include the following additional data:
 	\begin{itemize}
 	\item URL of the opened website
 	\end{itemize}
 }
 	
-\dspec{A Text-Input event must include the following additional data:
+\dspec{A Text-Input \gls{event} must include the following additional data:
 	\begin{itemize}
 	\item Text which has been inputted by the user
 	\item Textbox or form
 	\end{itemize}
 }
 	
-\dspec{A Button-Click Browser event must include the following additional data:
+\dspec{A Button-Click \gls{event} must include the following additional data:
 	\begin{itemize}
 	\item Button item title
 	\item URL of the linked webpage
 	\end{itemize}
 }
 	
-\dspec{A Hover event must include the following additional data:
+\dspec{A Hover \gls{event} must include the following additional data:
 	\begin{itemize}
 	\item View which has been hovered
 	\end{itemize}
 }
 	
-\dspec{A Text-Selection event must include the following additional data:
+\dspec{A Text-Selection \gls{event} must include the following additional data:
 	\begin{itemize}
 	\item Selected Text
 	\end{itemize}
