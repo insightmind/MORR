@@ -24,6 +24,19 @@ In this project, the basic pipeline is an insufficient model, as the initial inp
   \caption{An extended pipeline model}
   \label{fig:sm_extpipe}
 \end{figure}
+
+\subsection{Module types}
+\label{sec:module-types}
+
+\begin{itemize}
+    \item{The application needs to provide three different types of \glspl{module}:
+    \begin{itemize}
+        \item Collecting \glspl{module}\label{collecting-module}\\\Glspl{module} which accept no input from other \glspl{module} and generate one or more \glspl{event} as output.
+        \item Transforming \glspl{module}\label{transforming-module}\\\Glspl{module} which accept one or more \glspl{event} as input from other \glspl{module} and generate one or more \glspl{event} as output.
+        \item Discarding \glspl{module}\label{discarding-module}\\\Glspl{module} which accept one or more \glspl{event} as input from other \glspl{module} and output no \glspl{event}.
+    \end{itemize}}
+\end{itemize}
+
 %\section{Object models}
 %%we might not want to specify object models yet
 
