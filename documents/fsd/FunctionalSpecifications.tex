@@ -7,8 +7,10 @@
 \usepackage{csquotes}
 \usepackage{authblk}
 \usepackage{enumitem}
+\usepackage{graphicx} %%provides the  \includegraphics macro
+\usepackage{float} %%provides the H directive to force position of figures (\begin{figure}[H])
 \usepackage[numberedsection,nonumberlist,toc,section=chapter]{glossaries}     % provides glossary commands
-
+\usepackage{scrhack} %%make above float package compatible with komascript
 \hypersetup{ % `texdoc hyperref` for options
 	pdftitle={Functional Specifications},
 	bookmarks=true,
