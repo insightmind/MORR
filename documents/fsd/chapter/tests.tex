@@ -10,9 +10,6 @@
 \section{Mandatory criteria test cases}
 
 \begin{tests}
-    \testfor{MC20}{Verify that the \gls{user} is able to start a recording \gls{session}.}\\
-    \testfor{MC20}{Verify that the \gls{user} is able to stop a recording \gls{session}.}\\
-    \testfor{MC30}{Verify that the application shows a start notification before the start of a recording \gls{session}.}
     \testfor{MC50}{Verify that the confirmation dialogue is shown to the \gls{user} after the recording \gls{session} has been stopped.}
     \testfor{MC50}{Verify that the recorded data is saved if the \gls{user} confirms the saving of the recording.}
     \testfor{MC50}{Verify that the recorded data is not saved if the \gls{user} does not confirm the saving of the recording.}
@@ -25,23 +22,23 @@
     \testfor{FS10}{Verify that the recorded timed \glspl{event} are saved after the recording \gls{session} is stopped.}
     \testfor{FS10}{Verify that a recorded \gls{event} is associated with the \gls{session} it was recorded in.}
     \testfor{FS10}{Verify that the \gls{session} has a unique identification number.}\\
-    \testfor{FS30}{Verify that the recorded \glspl{event} can be filtered before the recording \gls{session} is started.}
+    \testfor{FS30}{Verify that the filtering criteria for \glspl{event} can be configured before runtime.}\\
+    \testfor{FS30}{Verify that the filtering criteria for \glspl{event} can be configured during runtime.}\\
     \testfor{FS30}{Verify that the recorded \glspl{event} can be filtered during the recording \gls{session}.}\\
     \testfor{FS30}{Verify that the application can match different types of \glspl{event}.}\\
     \testfor{FS40}{Verify that the \gls{admin} can select the modules the application is allowed to use in the current recording \gls{session}.}
     \testfor{FS40}{Verify that the \gls{admin} can configure the framerate of the recorded \gls{videostream}.}
     \testfor{FS40}{Verify that the \gls{admin} can configure the resolution of the recorded \gls{videostream}.}
-    \testfor{FS40}{Verify that the recording of audio is toggleable.}\\
+    \testfor{FS40}{Verify that the \gls{admin} can toggle the recording of audio.}\\
     \testfor{FS50}{Verify that a \gls{user} can start the recording \gls{session}.}\\
     \testfor{FS50}{Verify that a \gls{user} can stop the recording \gls{session}.}\\
     \testfor{FS60}{Verify that the application has an on-screen indicator of the recording of the \gls{session}.}
-    \testfor{FS70}{Verify that an information dialogue appears, advising the \gls{user} not to enter any personal or confidential business information, when the recording \gls{session} is started.}
+    \testfor{FS70}{Verify that an information dialog appears, advising the \gls{user} not to enter any personal or confidential business information, when the recording \gls{session} is started.}
     \testfor{FS80}{Verify that the recordings of past \glspl{session} can be viewed.}\\
     \testfor{FS80}{Verify that the \gls{admin} can edit the recording of past \glspl{session}.}\\
     \testfor{FS80}{Verify that the \gls{admin} can delete the recording of past \glspl{session}.}\\
     \testfor{FS90}{Verify that the recorded data can be extracted.}\\
-    \testfor{FS90}{Verify that data in non-standardized format can be converted into a standardized format by an application functionality.} 
-    \testfor{FS90}{Verify that data in non-standardized format can be converted into a standardized format using an additional piece of code.}
+    \testfor{FS90}{Verify that data in non-standardized format can be converted into a standardized format by an application functionality or through an additional piece of code.}
 \end{tests}
 
 \section{Core application test cases}
