@@ -10,6 +10,9 @@
 \section{Mandatory criteria test cases}
 
 \begin{tests}
+    \testfor{MC20}{Verify that the \gls{user} is able to start a recording \gls{session}.}\\
+    \testfor{MC20}{Verify that the \gls{user} is able to stop a recording \gls{session}.}\\
+    \testfor{MC30}{Verify that the application shows a start notification before the start of a recording \gls{session}.}
     \testfor{MC50}{Verify that the confirmation dialogue is shown to the \gls{user} after the recording \gls{session} has been stopped.}
     \testfor{MC50}{Verify that the recorded data is saved if the \gls{user} confirms the saving of the recording.}
     \testfor{MC50}{Verify that the recorded data is not saved if the \gls{user} does not confirm the saving of the recording.}
@@ -52,6 +55,14 @@
     \testfor{FS140}{Verify that the application accumulates all recorded data during a successfully recorded \gls{session} in a format in accordance with \specref{D10}, \specref{D20}, \specref{D30} and \specref{D40}. The recorded event data therein falls subject to the format constraints imposed by 6.2 Events - TODO Link.}%TODO Requires label for events section in data chapter
     \testfor{FS150}{Verify that the application functions with arbitrary combinations of enabled \glspl{module}.}
     \testfor{FS160}{Verify that the application tracks changes to the context in which events occur and notifies \glspl{module} of those changes.}
+\end{tests}
+
+\section{Module type test cases}
+
+\begin{tests}
+    \testfor{FS170}{Verify that the application provides collecting modules.}\\
+    \testfor{FS170}{Verify that the application provides transforming modules.}\\
+    \testfor{FS170}{Verify that the application provides discarding modules.}
 \end{tests}
 
 \section{Per-module test cases}
