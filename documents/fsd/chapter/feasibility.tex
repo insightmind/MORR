@@ -2,8 +2,29 @@
 \label{ch:feasibility}
 
 \section{Alternatives}
+\label{Alternatives}
+An alternative approach to this project is a manual collection of the data. This, however, results in significantly higher costs and time investment.
+
 \section{Technical Feasibility}
+\label{Technical Feasibility}
+The functional specification of this application can be broadly implemented by the Microsoft .NET Core infrastructure. It provides an extensive variety of libraries, which provide us with tools for \gls{event} logging, video-metadata embedding and inter-module communication.\\
+The user interface framework for this project is WPF. It is feasible enough because our application does not require extensive user interfaces.\\
+Lastly, Google Chrome and Mozilla Firefox provide us with an application interface which can be used to detect \glspl{event} and interactions with the \gls{browser} as described in chapter \ref{ch:data}.
+
 \section{Personnel Feasibility}
-\section{Risks}
+\label{Personnel Feasibility}
+The personnel for this project matches the requirements. The team consists out of five computer science students currently pursuing a bachelor of science degree and three supervisors. As a requirement for the "Praxis der Softwareentwicklung" module is the successful completion of the "Softwaretechnik 1" module and all orientation examinations. These modules provide fundamental to intermediate knowledge about a software project process and execution.\\
+The time investment for each student is approximately 270 hours. Each team member is equally involved in the implementation of this project.\\
+The project will be executed using the waterfall model.
+
 \section{Economical Feasibility}
+\label{Economical Feasibility}
+As this project is part of a mandatory module for the bachelor's degree in computer science, the students are not receiving compensation.\\
+Therefore there are no concerns about the economic feasibility of this project.
+
 \section{Legal Feasibility}
+\label{Legal Feasibility}
+This project relies heavily on the collection of data from \glspl{user}. With the introduction of the DSGVO by the European Union in 2018 an increased attention must be taken to address these legal regulations.\\
+The application itself always makes sure the \gls{user} can see that a \gls{session} is currently running, as described in the functional and non-functional specifications in chapter \ref{ch:func}. The \gls{user} is also directly asked whether he wants to start or stop a \gls{session}.
+It must be made sure that the \gls{user} knows why and how his data is collected on his system and that he should be able to delete his data on request.
+
