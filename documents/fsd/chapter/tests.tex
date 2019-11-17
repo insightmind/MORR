@@ -1,4 +1,4 @@
-\chapter{Global Testcases}
+\chapter{Global test cases}
 \label{ch:tests}
 
 %%Cannot use requirementscope as we have to inject additional text into the label
@@ -7,7 +7,41 @@
 \newcommand{\test}{\addtocounter{counterTC}{10}\item[TC\arabic{counterTC}\label{TC\arabic{counterTC}}]}
 \newenvironment{tests}{\begin{enumerate}[font = \normalfont, style = multiline, labelindent = 0em, labelwidth = 5em, labelsep* = 1em, leftmargin = !]}{\end{enumerate}}
 
-\section{Core application testcases}
+\section{Mandatory criteria test cases}
+
+\begin{tests}
+	\testfor{MC50}{Verify that the confirmation dialogue is showed to the \gls{user} after the recording \gls{session} is stopped.}
+	\testfor{MC50}{Verify that the recorded data is saved if the \gls{user} confirms the saving of the recording.}
+	\testfor{MC50}{Verify that the recorded data is not saved 
+if the \gls{user} does not confirm the saving of the recording.}
+\end{tests}
+
+\section{High-level test cases}
+
+\begin{tests}
+	\tesffor{FS10}{Verify that the timed \glspl{event} are recorded during the recording \gls{session}.} 
+	\testfor{FS10}{Verify that the recorded timed \glspl{event} are saved after the recording \gls{session} is stopped.}
+	\testfor{FS10}{Verify that a recorded \gls{event} is associated with the \gls{session} it was recorded in.}
+    \testfor{FS10}{Verify that the \gls{session} has a unique identification number.}
+    \testfor{FS30}{Verify that the recorded \glspl{event} can be filtered before the recording \gls{session} is started.}
+    \testfor{FS30}{Verify that the recorded \glspl{event} can be filtered during the recording \gls{session}.} 
+    \testfor{FS40}{Verify that the \gls{admin} can select the modules the application is allowed to use in the current recording \gls{session}.}
+    \testfor{FS40}{Verify that the \gls{admin} can configure the framerate of the recorded \gls{videostream}.}
+    \testfor{FS40}{Verify that the \gls{admin} can configure the resolution of the recorded \gls{videostream}.}
+    \testfor{FS40}{Verify that the recoding of audio is toggleable.}
+    \testfor{FS50}{Verify that a \gls{user} can start the recording \gls{session}.}
+    \testfor{FS50}{Verify that a \gls{user} can stop the recording \gls{session}.}
+    \testfor{FS60}{Verify that the application has an on-screen indicator of the recording of the \gls{session}.}
+    \testfor{FS70}{Verify that an information dialogue appears, advising the \gls{user} not to enter any personal or confidential business information, when the recording \gls{session} is started.}
+    \testfor{FS80}{Verify that the recordings of past \glspl{session} can be viewed.}
+    \testfor{FS80}{Verify that the \gls{admin} can edit the recording of past \glspl{session}.}
+    \testfor{FS80}{Verify that the \gls{admin} can delete the recording of past \glspl{session}.}
+    \testfor{FS90}{Verify that the recorded data can be extracted.}
+    \testfor{FS90}{Verify that data in non-standardized format can be converted into a standardized format by an application functionality.} 
+    \testfor{FS90}{Verify that data in non-standardized format can be converted into a standardized format using an additional piece of code.}
+\end{tests}
+
+\section{Core application test cases}
 
 \begin{tests}
     \testfor{FS100}{Verify that a successfully recorded \gls{session} yields a \gls{videostream} in accordance with \specref{D40} and \specref{D30}.}
@@ -20,11 +54,11 @@
     \testfor{FS160}{Verify that the application tracks changes to the context in which events occur and notifies \glspl{module} of those changes.}
 \end{tests}
 
-\section{Per-module testcases}
+\section{Per-module test cases}
 
-\subsection{System module testcases}
+\subsection{System module test cases}
 
-\subsubsection{Window-management module testcases}
+\subsubsection{Window-management module test cases}
 
 \begin{tests}
     \testfor{FS180}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D70} when the \gls{user} focuses a window.}
@@ -51,7 +85,7 @@
     \testfor{FS190}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D130} when the \gls{user} moves the mouse.}
 \end{tests}
 
-\subsubsection{Keyboard module testcases}
+\subsubsection{Keyboard module test cases}
 
 \begin{tests}
     \testfor{FS200}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D140} when the \gls{user} presses a key.}
@@ -59,16 +93,16 @@
     \testfor{FS200}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D140} when the \gls{user} presses a key while simultaneously pressing one or more modifier keys.}
 \end{tests}
 
-\subsubsection{Clipboard module testcases}
+\subsubsection{Clipboard module test cases}
 
 \begin{tests}
     \testfor{FS210}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D150} when the \gls{user} copies text to the clipboard.}
     \testfor{FS210}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D150} when the \gls{user} pastes text from the clipboard.}
 \end{tests}
 
-\subsection{On-demand module testcases}
+\subsection{On-demand module test cases}
 
-\subsubsection{Browser module testcases}
+\subsubsection{Browser module test cases}
 
 \begin{tests}
     \testfor{FS220}{Verify that the application generates an event in accordance with \specref{D50} 
