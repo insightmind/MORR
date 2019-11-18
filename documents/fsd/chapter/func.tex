@@ -4,7 +4,7 @@
 \newcounter{counterFS}
 \newcommand{\internalspec}[5]
 {
-    \item[FS\arabic{counterFS}\label{FS\arabic{counterFS}}]
+    \item[FS\arabic{counterFS}\phantomsection\label{FS\arabic{counterFS}}]
     \begin{itemize}[noitemsep]
         \item[]{\textbf{#1}} %title
         \item[]{Actor: #2}
@@ -17,8 +17,12 @@
 \newcommand{\fsubspec}[5]{\stepcounter{counterFS}\internalspec{#1}{#2}{#3}{#4}{#5}}
 
 %%commonly used post-conditions
-\newcommand{\sessionactive}{A \gls{session} is active.}
+\newcommand{\sessionactive}{A \gls{session} is currently being recorded.}
+\newcommand{\sessioninactive}{No \gls{session} is currently being recorded.}
+\newcommand{\sessionsavail}{One or more sessions have been recorded and not deleted.}
 \newcommand{\applaunched}{The application is running.}
+\newcommand{\configvalid}{The configuration file is valid.}
+\newcommand{\configinvalid}{The configuration file is invalid.}
 This chapter is meant to organize and describe the specifications that dictate the way the application functions for different actors.
 
 %\begin{itemize}
@@ -31,23 +35,27 @@ This chapter is meant to organize and describe the specifications that dictate t
 \section{High-level specification}
 
 \begin{itemize}
-    \fspec{Identifiable \glspl{session}}{\Gls{user}}{The application is running.}{When the user starts a recording-\gls{session} by pressing the specified button, a unique session-ID gets created.}{The application holds a session-ID which all \gls{event} recorded during the current \gls{session} will get associated with.}
-    \fspec{Event timings}{\Gls{user}}{A \gls{session} is active.}{When the user triggers an event specified in chapter \ref{ch:data}, this \gls{event} will get associated with the time of its occurrence.}{The \gls{event} is associated with a timestamp.}
-    \fspec{Event types}{\Gls{user}}{\sessionactive}{When the user triggers an event specified in chapter \ref{ch:data}, this \gls{event} will get associated with its respective type.}{The event is associated with an \gls{event}-type.}
-    \fspec{Event processing}{\Gls{user}}{A \gls{session} is active.}{When the user triggers an event specified in chapter \ref{ch:data}, this event will get processed and filtered according the configured criteria}{The event is stored or not stored in compliance with the configuration.}
-    \fspec{Configurability}{\Gls{admin}}{There is no active session being recorded.}{An \gls{admin} opens the configuration file and adds/modifies/removes rules affecting the following behavior:
+    \fspec{Identifiable \glspl{session}}{\Gls{user}}{\applaunched{} \configvalid{}}{When the user starts a \gls{session}-recording by pressing the ``Start Recording''-button, a unique session-ID gets created.}{The core application holds a session-ID which all \glspl{event} recorded during the current \gls{session} will get associated with.}
+    \fspec{Event timings}{\Gls{user}}{\sessionactive}{When the user triggers an event specified in chapter \ref{ch:data}, the respective \gls{module} (see \ref{sec:modules}) generates a data-structure (see \ref{sec:events}) associated with the event and add the timestamp to it.}{The data structure associated with the event contains a timestamp describing its time of occurence.}
+    \fspec{Event types}{\Gls{user}}{\sessionactive}{When the user triggers an event specified in chapter \ref{ch:data}, the respective module (see \ref{sec:modules}) generates a data-structure (see \ref{sec:events}) associated with the event and add the event-type to it.}{The data structure associated with the event contains a field describing its \gls{event}-type.}
+    \fspec{Event processing}{\Gls{user}}{\sessionactive}{When the user triggers an event specified in chapter \ref{ch:data}, the data structure according to this event is processed and filtered by \glspl{module} (see \ref{sec:modules}). If the configuration does not specify to discard the event, the event data structure is sent to the core application by the respective module.}{The event data structure is either held by the core application for serialization or deleted based on a configured rule.}
+    \fspec{Configurability}{\Gls{admin}}{\sessioninactive}{An \gls{admin} opens the configuration file and adds/modifies/removes rules affecting the following behavior:
         \begin{itemize}
         \item Active \glspl{module}\\Select the \glspl{module} the application is allowed to use
         \item Framerate and video resolution\\The framerate and resolution of the recorded videostream should be configurable to allow the prioritization of either resource efficiency (storage and system load) or quality
         \item Audio\\The recording of audio needs to be toggleable
     \end{itemize}
-    }{The application directory contains an updated configuration file containing the changes made by the \gls{admin}.}% This file will get parsed the next time a \gls{session} is started by the \gls{user}.}
-    \fspec{\Gls{user} controllability (start)}{\Gls{user}}{\applaunched{} No session is active. The configuration file is valid.}{The \gls{user} clicks on the button labeled ``Start Recording''. The application will parse the configuration file and start a new \gls{session}.}{\sessionactive}
-        \fspec{\Gls{user} controllability (stop)}{\Gls{user}}{\sessionactive}{The \gls{user} clicks on the button labeled ``Stop Recording''. The application will stop the current \gls{session}.}{No session is active and the save-dialogue is shown to the \gls{user}, providing the options to store or discard the recorded session.}
-    \fspec{\Gls{user} awareness}{}{\sessionactive}{-}{The application draws a yellow border along the screen edges until the \gls{session} is stopped.}
-    \fspec{\Gls{user} instruction}{}{}{}{When a \gls{session} is started, an information dialog should appear, advising the \gls{user} not to enter any personal or confidential business information.}
-    \fspec{\Gls{user} reviewability}{}{}{}{A \gls{user} should be able to view recordings of past \glspl{session}. An administrator should be able to edit or delete recordings of past \glspl{session}.}
-    \fspec{Data provision}{}{}{}{A data scientist needs to be able to extract the recorded data. If the data is stored in a non-standardized format, the application needs to either provide functionality for converting the data into a standardized format or ship with source code that would allow for such a converter to be written.}
+    }{Restarting the application and starting a new \gls{session}-recording uses the configuration as specified in the changed configuration file.}
+    \fspec{Error-checking}{\Gls{user}}{\applaunched{} \configinvalid}{The \gls{user} clicks on the button labeled ``Start Recording''. The application will detect syntactic errors in the configuration file and display an error-message.}{An error-dialogue is shown, informing that the current configuration is invalid. The \gls{session}-recording has not been started.}
+    \fspec{\Gls{user} controllability (start)}{\Gls{user}}{\applaunched{} \sessioninactive{} \configvalid}{The \gls{user} clicks on the button labeled ``Start Recording''. The application will parse the configuration file and start a new \gls{session}-recording.}{\sessionactive}
+     \fspec{\Gls{user} controllability (stop)}{\Gls{user}}{\sessionactive}{The \gls{user} clicks on the button labeled ``Stop Recording''. The application will stop the current \gls{session}-recording.}{\sessioninactive{} The save-dialogue is shown to the \gls{user}, providing the options to store or discard the recorded session.}
+    \fspec{Save-Options}{\Gls{user}}{A \gls{session}-recordings has been stopped and the save-dialogue is displayed.}{The user either chooses the ``Save recording'' or the ``Discard recording'' option shown by the dialogue.}{If the user chose the ``Save recording'' option, the recording is stored on the \gls{device}. If the user chose the ``Discard recording'' option, the recording is deleted.} %%TODO: specify either relative path where recording will be stored, or add this as choice to the configuration file
+    \fspec{\Gls{user} awareness}{\Gls{user}}{\applaunched{} \sessioninactive{} \configvalid}{The \gls{user} clicks on the button labeled ``Start Recording''. The application will start showing a yellow border along the screen edges.}{A yellow border is being drawn along the screen edges.}
+    \fspec{\Gls{user} instruction}{\Gls{user}}{\applaunched{} \sessioninactive{} \configvalid}{The \gls{user} clicks on the button labeled ``Start Recording''. The application opens an information dialogue.}{A dialogue is being displayed, advising the \gls{user} not to enter any personal or confidential business information.}
+    \fspec{\Gls{user} reviewability}{\Gls{user}}{\sessionsavail}{A \gls{user} clicks on the ``Open recordings folder'' button. The application opens a new window, displaying the files in which this \gls{user}'s past recordings have been stored. A recording is considered to belong to the current \gls{user} if it has been created on the Windows-Account which is currently logged in.}{A window is being shown to the user, displaying the files in which his past recordings have been stored.} %%TODO: describe what the user can then do with these files (open with windows media player?)
+%%removed the editing-requirement, since have not yet discussed if we could (easily) implement a method to edit the videos without loss of metadata. Also, file deletion is not something we actively need to provide/implement as it's a given on the windows operating system
+    \fspec{Event-Data extraction}{\Gls{scientist}}{\sessionsavail}{A \gls{scientist} starts the supplied command-line-tool and supplies the paths of one or multiple recordings as well as an output path as parameters. The tool will start extracting the stored event-data from the recording.}{The event-data has been extracted from the specified recordings and stored in CSV-format (comma separated values) at the location specified as output path. The recordings specified as input files have not been altered.}
+%%API-provision doesn't seem to fit in the actor-precondition-postcondition scheme, maybe define it in an extra section. Is this even a functional spec?
 \end{itemize}
 
 \section{Core application specification}
@@ -63,7 +71,7 @@ The core application has to cover the following responsibilities:
 \end{itemize}
 
 \section{Per-module specification}
-
+\label{sec:modules}
 This section discusses the default \glspl{module} which will be available and ship with the application at release in order to fulfill the mandatory requirements.
 
 \subsection{System modules}
