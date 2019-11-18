@@ -20,17 +20,25 @@ The application's main purpose is all about collecting data. This data is suppos
 
 \dspec{Each \gls{session} is contained in a mpeg-4 video container}
 
-\dspec{The \gls{videostream} can vary but must include following data:
+\dspec{The \gls{videostream} can vary but must include the following:
+
+	Metadata:
 	\begin{itemize}
 	\item Framerate
 	\item Resolution
 	\item Bitrate
+	\end{itemize}
+
+	Data:
+	\begin{itemize}
+	\item Video
 	\item (optional) Audio
 	\end{itemize}
 }
 \end{itemize}
 
 \section{Events}
+\label{sec:events}
 
 Each dataset in a \gls{session} is described by an \gls{event}, which has been recognized and issued by a collecting \gls{module}. Each \gls{event} includes multiple properties, which define and describe the \gls{event}.
 
@@ -184,13 +192,20 @@ A \gls{browser} \gls{event} is issued by the \gls{browser} \gls{module}.
 	
 \dspec{A Hover \gls{event} must include the following additional data:
 	\begin{itemize}
-	\item View which has been hovered
+	\item Element which has been hovered
 	\end{itemize}
 }
 	
 \dspec{A Text-Selection \gls{event} must include the following additional data:
 	\begin{itemize}
 	\item Selected Text
+	\end{itemize}
+}
+
+\dspec{A File-Download \gls{event} must include the following additional data:
+	\begin{itemize}
+		\item URL of the file that was downloaded
+		\item MIME type of the file that was downloaded
 	\end{itemize}
 }
 \end{itemize}
