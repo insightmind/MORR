@@ -3,11 +3,45 @@
 
 \requirementscope{NF}{nfspec}
 
+All non-functional requirements are oriented towards a \gls{device} using a Intel Core i5 8250U or better with at least 4GB of memory.
+
 \begin{itemize}
-    \nfspec{Performance\\Running the application and recording a \gls{session} should have no notable impact on a customary \gls{device}'s performance.}
-    \nfspec{Accuracy\\The recorded data accurately represents the \gls{user}'s activity.} %should to does
-    \nfspec{Usability\\The \gls{user} is able to correctly operate the application by themselves after a 5-minute-long introduction.}
-    \nfspec{Extensibility\\The application can easily be maintained and extended.}
-    \nfspec{Reliability\\The probability of a failure during a 60-minute \gls{session} is under 2\%. A failure is an unintended termination of a recording \gls{session} with a possible loss of recorded data. This does not apply should the application be run in an unsupported environment or configuration (see chapter \ref{ch:environment}).}%% 2% are completely made up without any analysis, adjust if necessary
-    \nfspec{Nonintrusiveness\\The application should not interfere with the \gls{user}'s adopted workflow.}
+\nfspec{CPU Performance\\
+    The CPU utilization by the application on the \gls{user}'s \gls{device} should not exceed 25\% while running a \gls{session}.
+}
+
+\nfspec{Memory Usage\\
+    The memory usage by the application on the \gls{user}'s \gls{device} should not exceed 250MB while running a \gls{session}.
+}
+
+\nfspec{Postprocessing\\
+	After the \gls{user} has stopped a \gls{session}, the postprocessing and saving of the \gls{session} should take no longer than 2 minutes. 
+}
+
+\nfspec{Unambiquity of sessions\\ 
+	After running 100 \glspl{session} the identifier of each session must be unique.
+}
+
+\nfspec{Unambiquity of events\\ 
+	After running a \gls{session} for 10 minutes with continues usage by the \gls{user} each identifier of an event must be unique.
+}
+
+\nfspec{Usability\\
+	After a 5-minute introduction the \gls{user} does not commit more than 1 mistake on a whole day.
+}
+
+\nfspec{Internet Availability\\
+	The user can record a \gls{session} and save sessions locally without being connected to the internet.
+}
+
+\nfspec{Modularity\\
+	The usage of \glspl{module}, defined in chapter \ref{ch:sysmodels}, in the application is interchangeable and exchangeable using the configuration file.
+}
+
+\nfspec{Reliability\\
+	The probability of a failure during a 60-minute \gls{session} is under 2\%.\\
+	A failure is an unintended termination of a recording \gls{session} with a possible loss of recorded data.\\
+	This does not apply should the application be run in an unsupported environment or configuration (see chapter \ref{ch:environment}).
+}
+
 \end{itemize}
