@@ -3,7 +3,7 @@
 
 \requirementscope{NF}{nfspec}
 
-All non-functional requirements are oriented towards a \gls{device} using a Intel Core i5 8250U or better with at least 4GB of memory.
+All non-functional requirements are oriented towards a \gls{device} using a Intel Core i5 8250U or better with at least 4GB of memory and a screen resolution of 1080p or smaller.
 
 \begin{itemize}
 \nfspec{CPU Performance\\
@@ -14,16 +14,17 @@ All non-functional requirements are oriented towards a \gls{device} using a Inte
     The memory usage by the application on the \gls{user}'s \gls{device} should not exceed 250MB while running a \gls{session}.
 }
 
+\nfspec{Interaction Performance\\
+	The features described in \specref{FS50} should not exceed a response time of 5 seconds.
+}
+
 \nfspec{Postprocessing\\
-	After the \gls{user} has stopped a \gls{session}, the postprocessing and saving of the \gls{session} should take no longer than 2 minutes. 
+	After the \gls{user} has stopped a \gls{session},\\
+	the postprocessing and saving of the \gls{session} should take no longer than 2 minutes. 
 }
 
-\nfspec{Unambiquity of sessions\\ 
+\nfspec{Unambiquity of session identifiers\\ 
 	After running 100 \glspl{session} the identifier of each session must be unique.
-}
-
-\nfspec{Unambiquity of events\\ 
-	After running a \gls{session} for 10 minutes with continues usage by the \gls{user} each identifier of an event must be unique.
 }
 
 \nfspec{Usability\\
@@ -35,13 +36,16 @@ All non-functional requirements are oriented towards a \gls{device} using a Inte
 }
 
 \nfspec{Modularity\\
-	The usage of \glspl{module}, defined in chapter \ref{ch:sysmodels}, in the application is interchangeable and exchangeable using the configuration file.
+	\Glspl{module}, defined in chapter \ref{ch:sysmodels}, are interchangeable and exchangeable.\\
+	The application therefore should support running at least 10 \glspl{module} per \gls{session}.
 }
+
+% This is only for a better layout structure in the pdf document.
+\newpage
 
 \nfspec{Reliability\\
 	The probability of a failure during a 60-minute \gls{session} is under 2\%.\\
 	A failure is an unintended termination of a recording \gls{session} with a possible loss of recorded data.\\
 	This does not apply should the application be run in an unsupported environment or configuration (see chapter \ref{ch:environment}).
 }
-
 \end{itemize}
