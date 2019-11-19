@@ -33,7 +33,7 @@ This chapter is meant to organize and describe the specifications that dictate t
 %\end{itemize}
 
 \section{High-level specification}
-
+The user interface components mentioned in this section are specified in \ref{sec:uispec}.
 \begin{itemize}
     \fspec{Identifiable \glspl{session}}{\Gls{user}}{\applaunched{} \configvalid{}}{When the user starts a \gls{session}-recording by pressing the ``Start Recording''-button, a unique session-ID gets created.}{The core application holds a session-ID which all \glspl{event} recorded during the current \gls{session} will get associated with.}
     \fspec{Event timings}{\Gls{user}}{\sessionactive}{When the user triggers an event specified in chapter \ref{ch:data}, the respective \gls{module} (see \ref{sec:modules}) generates a data-structure (see \ref{sec:events}) associated with the event and add the timestamp to it.}{The data structure associated with the event contains a timestamp describing its time of occurence.}
@@ -44,30 +44,45 @@ This chapter is meant to organize and describe the specifications that dictate t
         \item Active \glspl{module}\\Select the \glspl{module} the application is allowed to use
         \item Framerate and video resolution\\The framerate and resolution of the recorded videostream should be configurable to allow the prioritization of either resource efficiency (storage and system load) or quality
         \item Audio\\The recording of audio needs to be toggleable
+        \item Path\\The system path where the recordings of the current \gls{user} will be stored
     \end{itemize}
-    }{Restarting the application and starting a new \gls{session}-recording uses the configuration as specified in the changed configuration file.}
-    \fspec{Error-checking}{\Gls{user}}{\applaunched{} \configinvalid}{The \gls{user} clicks on the button labeled ``Start Recording''. The application will detect syntactic errors in the configuration file and display an error-message.}{An error-dialogue is shown, informing that the current configuration is invalid. The \gls{session}-recording has not been started.}
-    \fspec{\Gls{user} controllability (start)}{\Gls{user}}{\applaunched{} \sessioninactive{} \configvalid}{The \gls{user} clicks on the button labeled ``Start Recording''. The application will parse the configuration file and start a new \gls{session}-recording.}{\sessionactive}
-     \fspec{\Gls{user} controllability (stop)}{\Gls{user}}{\sessionactive}{The \gls{user} clicks on the button labeled ``Stop Recording''. The application will stop the current \gls{session}-recording.}{\sessioninactive{} The save-dialogue is shown to the \gls{user}, providing the options to store or discard the recorded session.}
-    \fspec{Save-Options}{\Gls{user}}{A \gls{session}-recordings has been stopped and the save-dialogue is displayed.}{The user either chooses the ``Save recording'' or the ``Discard recording'' option shown by the dialogue.}{If the user chose the ``Save recording'' option, the recording is stored on the \gls{device}. If the user chose the ``Discard recording'' option, the recording is deleted.} %%TODO: specify either relative path where recording will be stored, or add this as choice to the configuration file
-    \fspec{\Gls{user} awareness}{\Gls{user}}{\applaunched{} \sessioninactive{} \configvalid}{The \gls{user} clicks on the button labeled ``Start Recording''. The application will start showing a yellow border along the screen edges.}{A yellow border is being drawn along the screen edges.}
+    }{The application will use the configuration as specified in the changed configuration file the next time it is launched.}
+    \fspec{Error-checking}{\Gls{user}}{\configinvalid}{The \Gls{user} starts the application. The core application checks the configuration file and detects syntactic errors, therefore the application interrupts the startup procedure.}{The application has not regularly started and is therefore not ready for recording.} %%TODO: link UI
+    \fspec{\Gls{user} controllability (start)}{\Gls{user}}{\applaunched{} \sessioninactive{}}{The \gls{user} clicks on the button labeled ``Start Recording''. The application starts a new \gls{session}-recording.}{\sessionactive} %%TODO: link UI
+    \fspec{\Gls{user} controllability (stop)}{\Gls{user}}{\sessionactive}{The \gls{user} clicks on the button labeled ``Stop Recording''. The application will stop the current \gls{session}-recording.}{\sessioninactive{} The save-dialogue is shown to the \gls{user}, providing the options to store or discard the recorded session.} %%TODO: link UI
+    \fspec{\Gls{user} controllability (quit)}{\Gls{user}}{\applaunched{} \sessioninactive}{The user chooses the ``Quit'' option. The application terminates.}{The application is no longer running.}
+    \fspec{Quit while recording}{\Gls{user}}{\applaunched{} \sessionactive}{The user chooses the ``Quit'' option while a session is being recorded. The application opens the save-dialogue.}{The save-dialogue is shown to the \gls{user}. The application terminates as soon as the \gls{user}'s-choice has been processed.}
+    \fspec{Save-Options}{\Gls{user}}{A \gls{session}-recordings has been stopped and the save-dialogue is displayed.}{The user either chooses whether to save or discard the recorded session.}{If the user chose to save the recording, the recording is stored at the location specified in the configuration file. If the user chose the discard-option, the recording is deleted.}
     \fspec{\Gls{user} instruction}{\Gls{user}}{\applaunched{} \sessioninactive{} \configvalid}{The \gls{user} clicks on the button labeled ``Start Recording''. The application opens an information dialogue.}{A dialogue is being displayed, advising the \gls{user} not to enter any personal or confidential business information.}
-    \fspec{\Gls{user} reviewability}{\Gls{user}}{\sessionsavail}{A \gls{user} clicks on the ``Open recordings folder'' button. The application opens a new window, displaying the files in which this \gls{user}'s past recordings have been stored. A recording is considered to belong to the current \gls{user} if it has been created on the Windows-Account which is currently logged in.}{A window is being shown to the user, displaying the files in which his past recordings have been stored.} %%TODO: describe what the user can then do with these files (open with windows media player?)
-%%removed the editing-requirement, since have not yet discussed if we could (easily) implement a method to edit the videos without loss of metadata. Also, file deletion is not something we actively need to provide/implement as it's a given on the windows operating system
-    \fspec{Event-Data extraction}{\Gls{scientist}}{\sessionsavail}{A \gls{scientist} starts the supplied command-line-tool and supplies the paths of one or multiple recordings as well as an output path as parameters. The tool will start extracting the stored event-data from the recording.}{The event-data has been extracted from the specified recordings and stored in CSV-format (comma separated values) at the location specified as output path. The recordings specified as input files have not been altered.}
-%%API-provision doesn't seem to fit in the actor-precondition-postcondition scheme, maybe define it in an extra section. Is this even a functional spec?
+    \fspec{\Gls{user} reviewability}{\Gls{user}}{\sessionsavail}{A \gls{user} clicks on the ``Open recordings folder'' button. The application opens a new window, displaying the files in which this \gls{user}'s past recordings have been stored. A recording is considered to belong to the current \gls{user} if it has been created on the Windows-Account which is currently logged in.}{A window is being shown to the user, displaying the files in which his past recordings have been stored. The \gls{user} can view the videostream contained in these files by opening them with a compatible video-player, e. g. Windows Media Player.}
 \end{itemize}
 
 \section{Core application specification}
 The core application has to cover the following responsibilities:
 \begin{itemize}
-    \fspec{Videostream recording}{}{\sessionactive}{}{Each \gls{session} recording contains a \gls{videostream} containing the video-output of the computer in use. The \gls{videostream} forms the basis for every recording.}
+    \fspec[200]{Videostream recording}{}{\sessionactive}{}{Each \gls{session} recording contains a \gls{videostream} containing the video-output of the computer in use. The \gls{videostream} forms the basis for every recording.}
     \fspec{\hyperref[sec:system-modules]{System module} invocation}{}{}{}{The application core is responsible for launching \hyperref[sec:system-modules]{system modules} based on availability and global configuration.}
     \fspec{\hyperref[sec:system-modules]{System module} configuration}{}{}{}{The application core is responsible for configuring \hyperref[sec:system-modules]{system modules} based on global configuration.}
     \fspec{\hyperref[sec:on-demand-modules]{On-demand module} detection}{}{\sessionactive}{}{The application core is responsible for listening for incoming connections from \hyperref[sec:on-demand-modules]{on-demand modules} which are realized as extensions to third party software, such as browser-extensions.}
     \fspec{Data consolidation}{}{\sessionactive}{}{The data received from different \glspl{module} needs to be stored in the same container.}
     \fspec{Combinability of \glspl{module}}{}{}{}{The application core needs to be able to function with arbitrary combinations of enabled \glspl{module}.}
     \fspec{Context management}{}{\sessionactive}{}{The application core needs to track the context in which \glspl{event} occur and notify \glspl{module} of changes to it.}
+\end{itemize}
+
+\section{User interface specification}
+\label{sec:uispec}
+\begin{itemize}
+    \fspec[300]{\Gls{user} awareness}{\Gls{user}}{\applaunched{} \sessioninactive{} \configvalid}{The \gls{user} clicks on the button labeled ``Start Recording''. The application will start showing a yellow border along the screen edges.}{A yellow border is being drawn along the screen edges as long as the recording is active.}
+    \fspec{Error-checking}{\Gls{user}}{\applaunched{} \configinvalid}{The \gls{user} clicks on the button labeled ``Start Recording''. The application will detect syntactic errors in the configuration file and display an error-message.}{An error-dialogue is shown, informing that the current configuration is invalid. When the user clicks the ``OK'' button shown in this dialogue, the application will terminate.}
+    \fspec{Save-Dialogue}{\Gls{user}}{\sessionactive}{The user stops the recording by pressing the ``Stop Recording'' button. The application opens a new dialogue.}{A dialogue window is shown to the \gls{user}, providing the options ``Save recording'' and ``Discard recording''.}
+    \fspec{Event-Data extraction}{\Gls{scientist}}{\sessionsavail}{A \gls{scientist} starts the supplied command-line-tool and supplies the paths of one or multiple recordings as well as an output path as parameters. The tool will start extracting the stored event-data from the recording.}{The event-data has been extracted from the specified recordings and stored in CSV-format (comma separated values) at the location specified as output path. The recordings specified as input files have not been altered.}
+    \fspec{Tray-Icon}{\Gls{user}}{\configvalid}{The user starts the application. An icon is added to the windows-system-tray, indicating that the software has been launched successfully.}{An additional icon is shown in the windows-system-tray.}
+    \fspec{Tray-Menu}{\Gls{user}}{\applaunched}{The user clicks on the tray-icon. A small menu appears, providing following options:
+    \begin{itemize}
+    \item ``Start recording'' or ``Stop recording'' (based on whether a session is already being recorded)
+    \item ``Open recordings directory''
+    \item ``Quit''
+    \end{itemize}}{A small menu is shown above the tray icon, providing above options.}
 \end{itemize}
 
 \section{Per-module specification}
@@ -82,7 +97,7 @@ System modules are \glspl{module} which communicate with the operating system. T
 \subsubsection{Window-management module}
 
 \begin{itemize}
-    \fspec{}{}{\sessionactive}{}{The application should record the following interactions with other application's windows:
+    \fspec[400]{}{}{\sessionactive}{}{The application should record the following interactions with other application's windows:
     \begin{itemize}
         \item Focusing a window
         \item Moving a window
