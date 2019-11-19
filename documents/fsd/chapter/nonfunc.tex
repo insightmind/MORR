@@ -3,45 +3,34 @@
 
 \requirementscope{NF}{nfspec}
 
-All non-functional requirements are oriented towards a \gls{device} using a Intel Core i5 8250U or better with at least 4GB of memory and a screen resolution of 1080p or smaller.
-
 \begin{itemize}
 \nfspec{CPU Performance\\
-    The CPU utilization by the application on the \gls{user}'s \gls{device} should not exceed 25\% while running a \gls{session}.
+    The CPU utilization by the application on an \gls{user} \gls{device} with an Intel Core i5 8250U or better and a screen resolution of 1080p or smaller should not exceed 25\% while running a \gls{session}.
 }
 
 \nfspec{Memory Usage\\
     The memory usage by the application on the \gls{user}'s \gls{device} should not exceed 250MB while running a \gls{session}.
 }
 
-\nfspec{Interaction Performance\\
-	The features described in \specref{FS50} should not exceed a response time of 5 seconds.
+\nfspec{Start Response Performance\\
+	The delay between the \gls{user} starting a session via hitting the button and the actual session start should not exceed 1 second.
 }
 
-\nfspec{Postprocessing\\
-	After the \gls{user} has stopped a \gls{session},\\
-	the postprocessing and saving of the \gls{session} should take no longer than 2 minutes. 
-}
-
-\nfspec{Unambiquity of session identifiers\\ 
-	After running 100 \glspl{session} the identifier of each session must be unique.
+\nfspec{Saving Response Performance\\
+	After the \gls{user} has stopped a \gls{session}, the saving process of the \gls{session} file should take no more longer than 1 minute.
 }
 
 \nfspec{Usability\\
-	After a 5-minute introduction the \gls{user} does not commit more than 1 mistake on a whole day.
+	After a 5-minute introduction the \gls{user} does not commit more than 1 mistake on an 8-hour working day.
 }
 
-\nfspec{Internet Availability\\
+\nfspec{Offline Recordings\\
 	The user can record a \gls{session} and save sessions locally without being connected to the internet.
 }
 
 \nfspec{Modularity\\
-	\Glspl{module}, defined in chapter \ref{ch:sysmodels}, are interchangeable and exchangeable.\\
-	The application therefore should support running at least 10 \glspl{module} per \gls{session}.
+	The application should support running at least all five \glspl{module}, defined in chapter \ref{ch:func}, per \gls{session}.
 }
-
-% This is only for a better layout structure in the pdf document.
-\newpage
 
 \nfspec{Reliability\\
 	The probability of a failure during a 60-minute \gls{session} is under 2\%.\\
