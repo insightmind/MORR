@@ -88,53 +88,53 @@ The core application has to cover the following responsibilities:
 
 \section{Per-module specification}
 \label{sec:modules}
-This section discusses the default \glspl{module} which will be available and ship with the application at release in order to fulfill the mandatory requirements.
+This section discusses the default \glspl{module} which will be available and ship with the application at release in order to fulfill the mandatory requirements. The data associated with each event type mentioned is discussed in chapter \ref{ch:data}.
 
 \subsection{System modules}
 \label{sec:system-modules}
 
-System modules are \glspl{module} which communicate with the operating system. They are invoked as soon as a \gls{session} is started and only terminate at the end of a \gls{session}. All system \glspl{module} are \hyperref[collecting-module]{collecting modules} as specified in \ref{sec:module-types}.
+System modules are \glspl{module} which communicate with the operating system. They are invoked as soon as a \gls{session}-recording is started and only terminate at the end of a recording. All system \glspl{module} are \hyperref[collecting-module]{collecting modules} as specified in \ref{sec:module-types}.
 
 \subsubsection{Window-management module}
 
 \begin{itemize}
-    \fspec[400]{}{}{\sessionactive}{}{The application should record the following interactions with other application's windows:
+    \fspec[400]{Window management events}{\Gls{user}}{\sessionactive}{When the \gls{user} performs one of the following window interactions, a specialized window \gls{event} gets created by this \gls{module} and sent to the pipeline.}{The pipeline received a filled-in window \gls{event}.}
     \begin{itemize}
-        \item Focusing a window
-        \item Moving a window
-        \item Resizing a window
-        \item Minimizing/Maximizing a window
-    \end{itemize}}
+    \fsubspec{Focusing a window}{\Gls{user}}{\sessionactive}{The \gls{user} focuses a window. The module creates a focus-window \gls{event} and sends it to the pipeline.}{The pipeline received a filled-in focus-window \gls{event}.}
+    \fsubspec{Moving a window}{\Gls{user}}{\sessionactive}{The \gls{user} moves a window. The module creates a move-window \gls{event} and sends it to the pipeline.}{The pipeline received a filled-in move-window \gls{event}.}
+    \fsubspec{Resizing a window}{\Gls{user}}{\sessionactive}{The \gls{user} modifies the size of a window. The module creates a resize-window \gls{event} and sends it to the pipeline.}{The pipeline received a filled-in resize-window \gls{event}.}
+    \fsubspec{Minimizing/Maximizing a window}{\Gls{user}}{\sessionactive}{The \gls{user} minimizes or maximizes a window. The module creates a minimize-window/maximize-window \gls{event} and sends it to the pipeline.}{The pipeline received a filled-in minimize-window/maximize-window \gls{event}.}
+    \end{itemize}
 \end{itemize}
 
 \subsubsection{Mouse module}
 
 \begin{itemize}
-    \fspec{}{}{\sessionactive}{}{The application should record the following interactions with the \gls{device}'s mouse:
+    \fspec{Mouse interaction events}{\Gls{user}}{\sessionactive}{When the \gls{user} performs one of the following mouse inputs, a specialized mouse \gls{event} gets created by this \gls{module} and sent to the pipeline.}{The pipeline received a filled-in mouse \gls{event}.}
     \begin{itemize}
-        \item Pressing and releasing the left mouse button
-        \item Pressing and releasing the right mouse button
-        \item Using the scroll wheel
-        \item Moving the mouse
-    \end{itemize}}
+    \fsubspec{Mouse Click}{\Gls{user}}{\sessionactive}{The \gls{user} presses/releases the left/right/middle mouse button. The module creates a press/release left/right/middle mouse-button \gls{event} and sends it to the pipeline.}{The pipeline received a filled-in press/release left/right/middle mouse-button \gls{event}.}
+    \fsubspec{Scroll Wheel}{\Gls{user}}{\sessionactive}{The \gls{user} scrolls the mouse-wheel. The module creates a scroll mouse-wheel \gls{event} and sends it to the pipeline.}{The pipeline received a filled-in scroll mouse-wheel \gls{event}.}
+    \fsubspec{Mouse Movement}{\Gls{user}}{\sessionactive}{The \gls{user} moves the mouse. The module creates a mouse-movement \gls{event} and sends it to the pipeline.}{The pipeline received a filled-in mouse-movement \gls{event}.}
+    \end{itemize}
 \end{itemize}
 
 \subsubsection{Keyboard module}
 
 \begin{itemize}
-    \fspec{}{}{\sessionactive}{}{The application should record the following interactions with the \gls{device}'s keyboard:
+    \fspec{Keyboard interaction events}{\Gls{user}}{\sessionactive}{When the \gls{user} performs one of the following keyboard inputs, a specialized keyboard \gls{event} gets created by this \gls{module} and sent to the pipeline.}{The pipeline received a filled-in keyboard \gls{event}.}
     \begin{itemize}
-        \item Pressing and releasing a key
-    \end{itemize}}
+    \fsubspec{Releasing/Pressing a key}{\Gls{user}}{\sessionactive}{The \gls{user} presses/releases a key. The module creates a press/release keyboard-key \gls{event} and sends it to the pipeline.}{The pipeline received a filled-in press/release keyboard-key \gls{event}.}
+    \end{itemize}
 \end{itemize}
 
 \subsubsection{Clipboard module}
 
 \begin{itemize}
-    \fspec{}{}{\sessionactive}{}{The application should record the following interactions with the \gls{device}'s clipboard:
+    \fspec{Clipboard events}{\Gls{user}}{\sessionactive}{When the \gls{user} performs one of the following clipboard-interactions, a specialized clipboard \gls{event} gets created by this \gls{module} and sent to the pipeline.}{The pipeline received a filled-in clipboard \gls{event}.}
     \begin{itemize}
-        \item Copying to and pasting from the clipboard
-    \end{itemize}}
+    \fsubspec{Copying to the clipboard}{\Gls{user}}{\sessionactive}{The \gls{user} copies data to the clipboard. The module creates a clipboard-copy \gls{event} and sends it to the pipeline.}{The pipeline received a filled-in clipboard-copy \gls{event}.}
+    \fsubspec{Pasting from the clipboard}{\Gls{user}}{\sessionactive}{The \gls{user} pastes data from the clipboard. The module creates a clipboard-paste \gls{event} and sends it to the pipeline.}{The pipeline received a filled-in clipboard-paste \gls{event}.}
+    \end{itemize}
 \end{itemize}
 
 \subsection{On-demand modules}
@@ -144,15 +144,15 @@ On-demand modules are \glspl{module} which are dynamically run or stopped based 
 \subsubsection{Browser module}
 
 \begin{itemize}
-    \fspec{}{}{\sessionactive}{}{The application should record the following interactions with the browser:
+    \fspec{Browser events}{\Gls{user}}{\sessionactive}{When the \gls{user} performs one of the following browser-interactions, a specialized browser \gls{event} gets created by this \gls{module} and sent to the pipeline.}{The pipeline received a filled-in browser \gls{event}.}
     \begin{itemize}
-        \item Opening a new tab
-        \item Switching to a tab
-        \item Closing a tab
-        \item Navigating to a web page
-        \item Entering text into a form or input textbox
-        \item Selecting text
-        \item Hovering over an element %potentially not supported by the extention API
-        \item Downloading a file %e. g. data exports as mentioned in the website overview
-    \end{itemize}}
+    \fsubspec{Opening a new tab}{\Gls{user}}{\sessionactive}{The \gls{user} opens a new tab in the \gls{browser}. The module creates an open-tab \gls{event} and sends it to the pipeline.}{The pipeline received a filled-in open-tab \gls{event}.}
+    \fsubspec{Switching to a tab}{\Gls{user}}{\sessionactive}{The \gls{user} switches to a tab in the \gls{browser}. The module creates a switch-tab \gls{event} and sends it to the pipeline.}{The pipeline received a filled-in switch-tab \gls{event}.}
+    \fsubspec{Closing a tab}{\Gls{user}}{\sessionactive}{The \gls{user} closes a tab in the \gls{browser}. The module creates a close-tab \gls{event} and sends it to the pipeline.}{The pipeline received a filled-in close-tab \gls{event}.}
+    \fsubspec{Navigation}{\Gls{user}}{\sessionactive}{The \gls{user} navigates to an URL. The module creates a navigation \gls{event} and sends it to the pipeline.}{The pipeline received a filled-in navigation \gls{event}.}
+    \fsubspec{Text-Input}{\Gls{user}}{\sessionactive}{The \gls{user} inputs text into a form or textbox. The module creates a text-input \gls{event} and sends it to the pipeline.}{The pipeline received a filled-in text-input \gls{event}.}
+    \fsubspec{Text-Selection}{\Gls{user}}{\sessionactive}{The \gls{user} selects text on a website. The module creates a text-selection \gls{event} and sends it to the pipeline.}{The pipeline received a filled-in text-selection \gls{event}.}
+    \fsubspec{Hovering}{\Gls{user}}{\sessionactive}{The \gls{user} hovers the mouse-pointer over a web-element. The module creates a hover \gls{event} and sends it to the pipeline.}{The pipeline received a filled-in hover \gls{event}.}
+    \fsubspec{File download}{\Gls{user}}{\sessionactive}{The \gls{user} downloads a file. The module creates a download \gls{event} and sends it to the pipeline.}{The pipeline received a filled-in download \gls{event}.}
+    \end{itemize}
 \end{itemize}
