@@ -1,7 +1,13 @@
 \chapter{Application Data}
 \label{ch:data}
 
-\requirementscope{D}{dspec}
+\newcounter{counterD}
+\newcommand{\internaldspec}[1]
+{
+    \item[D\arabic{counterD}\phantomsection\label{D\arabic{counterD}}]{#1}
+}
+\newcommand{\dspec}[2][]{\ifthenelse{\equal{#1}{}}{\setcounter{counterD}{\intcalcAdd{\value{counterD}}{\intcalcSub{10}{\intcalcMod{\value{counterD}}{10}}}}}{\setcounter{counterD}{#1}}\internaldspec{#2}}
+\newcommand{\dsubspec}[1]{\stepcounter{counterD}\internaldspec{#1}}
 
 The application's main purpose is all about collecting data. This data is supposed to help to find patterns in research activity using a personal computer. Therefore there is a great range of distinctive datasets that are interesting to collect.
 
@@ -32,7 +38,19 @@ The application's main purpose is all about collecting data. This data is suppos
 	Data:
 	\begin{itemize}
 	\item Video
-	\item (optional) Audio
+	\item Audio (if enabled)
+	\end{itemize}
+}
+\end{itemize}
+
+\section{Context}
+\label{sec:context}
+
+\begin{itemize}
+\dspec{The content of the context depends on the application in use but is structured as follows:
+	\begin{itemize}
+		\item A unique identifier for the application currently focused by the \gls{user}
+		\item Application-specific metadata (e.g. the URL of the current tab for the browser or the title of the current document for Excel)
 	\end{itemize}
 }
 \end{itemize}
@@ -64,21 +82,21 @@ A window-management \gls{event} is issued by the window-management \gls{module}.
 	\end{itemize}
 }
 
-\dspec{A Window-Focus \gls{event} should only include the general data. }
+\dsubspec{A Window-Focus \gls{event} should only include the general data. }
 
-\dspec{A Window-Movement \gls{event} should include following additional data:
+\dsubspec{A Window-Movement \gls{event} should include following additional data:
 	\begin{itemize}
 	\item Old and new location
 	\end{itemize}
 }
 	
-\dspec{A Window-Resizing \gls{event} should include following additional data:
+\dsubspec{A Window-Resizing \gls{event} should include following additional data:
 	\begin{itemize}
 	\item Old and new window size
 	\end{itemize}
 }
 	
-\dspec{A Window-Maximizing/Minimizing \gls{event} should include following additional data:
+\dsubspec{A Window-Maximizing/Minimizing/Restoring \gls{event} should include following additional data:
 	\begin{itemize}
 	\item The new state of the window:
 		\begin{itemize}
@@ -108,14 +126,14 @@ A mouse-interaction \gls{event} is issued by the mouse \gls{module}.
 	\end{itemize}
 }
 
-\dspec{A Mouse-Scroll-Interaction \gls{event} should include the following data:
+\dsubspec{A Mouse-Scroll-Interaction \gls{event} should include the following data:
 	\begin{itemize}
 	\item Scroll amount
 	\item The HWND of the view that was scrolled
 	\end{itemize}
 }
 
-\dspec{A Mouse-Movement-Interaction \gls{event} should include the following data:
+\dsubspec{A Mouse-Movement-Interaction \gls{event} should include the following data:
 	\begin{itemize}
 	\item Movement vector
 	\end{itemize}
@@ -134,7 +152,6 @@ A keyboard-interaction \gls{event} is issued by the keyboard \gls{module}.
 		\begin{itemize}
 		\item Ctrl
 		\item Alt
-		\item Alt-Gr
 		\item Shift
 		\item Windows
 		\end{itemize}
@@ -170,39 +187,58 @@ A \gls{browser} \gls{event} is issued by the \gls{browser} \gls{module}.
 	\end{itemize}
 }
 
-\dspec{A Navigation \gls{event} must include the following additional data:
+\dsubspec{An Open-tab \gls{event} must include the following additional data:
+	\begin{itemize}
+		\item The unique identifier of the tab that was opened
+	\end{itemize}
+}
+
+\dsubspec{A Switch-tab \gls{event} must include the following additional data:
+	\begin{itemize}
+		\item The unique identifier of the tab that the \gls{user} switched from
+		\item The unique identifier of the tab that the \gls{user} switched Textbox
+	\end{itemize}
+}
+
+\dsubspec{A Close-tab \gls{event} must include the following additional data:
+	\begin{itemize}
+		\item The unique identifier of the tab that was closed
+	\end{itemize}
+}
+
+\dsubspec{A Navigation \gls{event} must include the following additional data:
 	\begin{itemize}
 	\item URL of the opened website
 	\end{itemize}
 }
 	
-\dspec{A Text-Input \gls{event} must include the following additional data:
+\dsubspec{A Text-Input \gls{event} must include the following additional data:
 	\begin{itemize}
 	\item Text which has been inputted by the user
 	\item Textbox or form
 	\end{itemize}
 }
 	
-\dspec{A Button-Click \gls{event} must include the following additional data:
+\dsubspec{A Button-Click \gls{event} must include the following additional data:
 	\begin{itemize}
 	\item Button item title
 	\item URL of the linked webpage
 	\end{itemize}
 }
 	
-\dspec{A Hover \gls{event} must include the following additional data:
+\dsubspec{A Hover \gls{event} must include the following additional data:
 	\begin{itemize}
 	\item Element which has been hovered
 	\end{itemize}
 }
 	
-\dspec{A Text-Selection \gls{event} must include the following additional data:
+\dsubspec{A Text-Selection \gls{event} must include the following additional data:
 	\begin{itemize}
 	\item Selected Text
 	\end{itemize}
 }
 
-\dspec{A File-Download \gls{event} must include the following additional data:
+\dsubspec{A File-Download \gls{event} must include the following additional data:
 	\begin{itemize}
 		\item URL of the file that was downloaded
 		\item MIME type of the file that was downloaded
