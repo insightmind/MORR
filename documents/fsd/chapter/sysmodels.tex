@@ -28,13 +28,12 @@ In this project, the basic pipeline is an insufficient model, as the initial inp
 \subsection{Module types}
 \label{sec:module-types}
 
+
+The application needs to provide three different types of \glspl{module}:
 \begin{itemize}
-    \item{The application needs to provide three different types of \glspl{module}:
-    \begin{itemize}
         \item Collecting \glspl{module}\label{collecting-module}\\\Glspl{module} which accept no input from other \glspl{module} and generate one or more \glspl{event} as output.
         \item Transforming \glspl{module}\label{transforming-module}\\\Glspl{module} which accept one or more \glspl{event} as input from other \glspl{module} and generate one or more \glspl{event} as output.
         \item Discarding \glspl{module}\label{discarding-module}\\\Glspl{module} which accept one or more \glspl{event} as input from other \glspl{module} and output no \glspl{event}.
-    \end{itemize}}
 \end{itemize}
 
 %\section{Object models}
@@ -55,19 +54,31 @@ The following figure shows an example of how the application could deal with a \
 \label{sec:sm_userinterface}
 The \gls{user}-interface is intentionally minimal as the \glspl{user} should not be disrupted during their usual work-routine. The following figures show drafts and therefore do not represent the final product.
 
-\begin{figure}[h!]
-  \includegraphics[width=1.00\textwidth]{resources/ui_recordindicator.jpg}
+\begin{figure}[H]
+  \includegraphics[width=1.00\textwidth]{resources/ui_recording.png}
   \centering
-  \caption{A running \gls{session} is indicated by a yellow border.}
+  \caption{A running \gls{session} recording is indicated by a yellow border.}
   \label{fig:sm_ui_recordindicator}
 \end{figure}
-\begin{figure}[h!]
-  \includegraphics[width=0.90\textwidth]{resources/ui_tray_cropped.png}
+\begin{figure}[H]
+  \includegraphics[width=0.5\textwidth, trim={50cm 0 0 25cm},clip]{resources/ui_inactive_tray.png}
   \centering
-  \caption{The start/stop recording features may be quickly accessed by clicking on the tray-icon (represented by the red dot).}
+  \caption{The start/stop recording features may be quickly accessed by clicking on the tray icon (represented by the red dot).}
   \label{fig:sm_ui_trayicon}
+\end{figure}
+\begin{figure}[H]
+  \includegraphics[width=0.8\textwidth, trim={20cm 10cm 20cm 10cm}, clip]{resources/ui_privacy_warning.png}
+  \centering
+  \caption{The privacy warning appears when a recording is started.}
+  \label{fig:sm_ui_privacy}
+\end{figure}
+\begin{figure}[H]
+  \includegraphics[width=0.8\textwidth, trim={20cm 10cm 20cm 10cm}, clip]{resources/ui_save_dialogue.png}
+  \centering
+  \caption{The save dialogue appears when a recording is stopped.}
+  \label{fig:sm_ui_privacy}
 \end{figure}
 
 \subsection{Data extraction}
 \label{sec:sm_extraction}
-The \glspl{scientist} will be able to extract \gls{event}-information from the videocontainer by utilizing an API (application programming interface) which will be supplied together with the application. Additionally, the application will be bundled with a commandline-tool which allows for extraction of the \gls{event}-data into the common CSV-format (comma-separated values).
+The \glspl{scientist} will be able to extract \gls{event}-information from the videocontainer by utilizing an API (application programming interface) which will be supplied together with the application. Additionally, the application will be bundled with a commandline-tool which allows for extraction of the \gls{event}-data into the common CSV-format (comma-separated values). See also \ref{sec:uispec}.
