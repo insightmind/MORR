@@ -26,6 +26,7 @@
 This chapter is meant to organize and describe the specifications that dictate the way the application functions for different actors.
 
 \section{High-level specification}
+\label{sec:func_highlevel}
 The user interface components mentioned in this section are specified in \ref{sec:uispec}.
 \begin{itemize}
     \fspec{Identifiable \glspl{session}}{\Gls{user}}{\applaunched{} \configvalid{}}{When the user starts a \gls{session}-recording by pressing the ``Start Recording''-button, a unique session-ID gets created.}{The recording-managing component holds a session-ID which all \glspl{event} recorded during the current \gls{session} will get associated with.}
@@ -50,6 +51,7 @@ The user interface components mentioned in this section are specified in \ref{se
 \end{itemize}
 
 \section{Core application specification}
+\label{sec:func_core}
 The core application has to cover the following responsibilities:
 \begin{itemize}
     \fspec[200]{Videostream recording}{\Gls{user}}{\sessionactive}{While a session is being recorded, the video-recording-managing component constantly captures the \gls{device}'s primary screen's content into a videostream which the recording-managing component then serializes. The \gls{videostream} forms the basis for every recording.}{The \gls{session} recording contains a \gls{videostream} containing the \gls{device}'s primary screen's content.}

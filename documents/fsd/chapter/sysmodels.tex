@@ -17,7 +17,7 @@ The traditional pipeline architecture refers to a process being split up into se
 
 \subsection{The extended pipeline}
 \label{sec:sm_extpipe}
-In this project, the basic pipeline is an insufficient model, as the initial input data will have to be gathered at several, mostly independent places. The \gls{browser} module (see \specref{FS440}) will only capture \gls{browser} \glspl{event}, the window management \gls{module} (see \specref{FS400}) cannot also provide the keyboard input etc. In order to solidify all the collected \glspl{event}, the extended pipeline allows for a single processing step to accept input from multiple sources by utilizing the transforming modules as mentioned in \ref{transforming-module}. The result is a tree-structure where the \gls{event}-data strictly flows from the leafs towards the root, the root being the core application (see \specref{FS200}).
+In this project, the basic pipeline is an insufficient model, as the initial input data will have to be gathered at several, mostly independent places. The \gls{browser} module (see \specref{FS440} to \specref{FS449}) will only capture \gls{browser} \glspl{event}, the window management \gls{module} (see \specref{FS400} to \specref{FS404}) cannot also provide the keyboard input etc. In order to solidify all the collected \glspl{event}, the extended pipeline allows for a single processing step to accept input from multiple sources by utilizing the transforming modules as mentioned in \ref{transforming-module}. The result is a tree-structure where the \gls{event}-data strictly flows from the leafs towards the root, the root being the core application (see \ref{sec:func_core}).
 \begin{figure}[h!]
   \includegraphics[width=1.00\textwidth]{resources/extendedpipeline.png}
   \centering
@@ -81,4 +81,4 @@ The \gls{user}-interface is intentionally minimal as the \glspl{user} should not
 
 \subsection{Data extraction}
 \label{sec:sm_extraction}
-The \glspl{scientist} will be able to extract \gls{event}-information from the videocontainer by utilizing an API (application programming interface) which will be supplied together with the application. Additionally, the application will be bundled with a commandline-tool which allows for extraction of the \gls{event}-data into the common CSV-format (comma-separated values). See also \ref{sec:uispec}.
+The \glspl{scientist} will be able to extract \gls{event}-information from the videocontainer by utilizing an API (application programming interface) which will be supplied together with the application. Additionally, the application will be bundled with a commandline-tool which allows for extraction of the \gls{event}-data into the common CSV-format (comma-separated values). See also \specref{FS330}.
