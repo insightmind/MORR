@@ -17,7 +17,7 @@ The traditional pipeline architecture refers to a process being split up into se
 
 \subsection{The extended pipeline}
 \label{sec:sm_extpipe}
-In this project, the basic pipeline is an insufficient model, as the initial input data will have to be gathered at several, mostly independent places. The \gls{browser} module (see \specref{FS210}) will only capture \gls{browser} \glspl{event}, the window management \gls{module} (see \specref{FS170}) cannot also provide the keyboard input etc. In order to solidify all the collected \glspl{event}, the extended pipeline allows for a single processing step to accept input from multiple sources by utilizing the transforming modules as mentioned in \ref{transforming-module}. The result is a tree-structure where the \gls{event}-data strictly flows from the leafs towards the root, the root being the application core (see \specref{FS140}).
+In this project, the basic pipeline is an insufficient model, as the initial input data will have to be gathered at several, mostly independent places. The \gls{browser} module (see \specref{FS440}) will only capture \gls{browser} \glspl{event}, the window management \gls{module} (see \specref{FS400}) cannot also provide the keyboard input etc. In order to solidify all the collected \glspl{event}, the extended pipeline allows for a single processing step to accept input from multiple sources by utilizing the transforming modules as mentioned in \ref{transforming-module}. The result is a tree-structure where the \gls{event}-data strictly flows from the leafs towards the root, the root being the core application (see \specref{FS200}).
 \begin{figure}[h!]
   \includegraphics[width=1.00\textwidth]{resources/extendedpipeline.png}
   \centering
@@ -76,7 +76,7 @@ The \gls{user}-interface is intentionally minimal as the \glspl{user} should not
   \includegraphics[width=0.8\textwidth, trim={20cm 10cm 20cm 10cm}, clip]{resources/ui_save_dialogue.png}
   \centering
   \caption{The save dialogue appears when a recording is stopped.}
-  \label{fig:sm_ui_privacy}
+  \label{fig:sm_ui_saving}
 \end{figure}
 
 \subsection{Data extraction}
