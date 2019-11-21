@@ -17,8 +17,8 @@ The application's main purpose is all about collecting data. This data is suppos
 
 \dspec{A session recording needs to contain a unique identifier}
 \dsubspec{A session recording needs to contain a timestamp of beginning and end of the recording}
-\dsubspec{A session recording needs to contain a \gls{videostream}}
 \dsubspec{A session recording needs to contain the \glspl{event} in chronological order}
+\dsubspec{A session recording needs to contain a \gls{videostream}}
 
 \dspec{Each \gls{session} recording is contained in a mpeg-4 video container}
 
@@ -176,33 +176,21 @@ A \gls{browser} \gls{event} is issued by the \gls{browser} \gls{module}.
 \dspec{A generic \gls{browser} \gls{event} must include the following data:
 	\begin{itemize}
 	\item URL of the interacted website
+	\item The unique identifier of the tab that the \gls{event} occured in
 	\end{itemize}
 }
 
-\dsubspec{An Open-tab \gls{event} must include the following additional data:
-	\begin{itemize}
-		\item The unique identifier of the tab that was opened
-	\end{itemize}
-}
+\dsubspec{An Open-tab \gls{event} includes only the generic event data.}
 
 \dsubspec{A Switch-tab \gls{event} must include the following additional data:
 	\begin{itemize}
-		\item The unique identifier of the tab that the \gls{user} switched from
-		\item The unique identifier of the tab that the \gls{user} switched Textbox
+		\item The unique identifier of the tab that the \gls{user} switched to
 	\end{itemize}
 }
 
-\dsubspec{A Close-tab \gls{event} must include the following additional data:
-	\begin{itemize}
-		\item The unique identifier of the tab that was closed
-	\end{itemize}
-}
+\dsubspec{A Close-tab \gls{event} must include only the generic event data.}
 
-\dsubspec{A Navigation \gls{event} must include the following additional data:
-	\begin{itemize}
-	\item URL of the opened website
-	\end{itemize}
-}
+\dsubspec{A Navigation \gls{event} must include only the generic event data.}
 	
 \dsubspec{A Text-Input \gls{event} must include the following additional data:
 	\begin{itemize}
@@ -214,7 +202,7 @@ A \gls{browser} \gls{event} is issued by the \gls{browser} \gls{module}.
 \dsubspec{A Button-Click \gls{event} must include the following additional data:
 	\begin{itemize}
 	\item Button item title
-	\item URL of the linked webpage
+	\item URL that the button is linked to, if applicable
 	\end{itemize}
 }
 	
