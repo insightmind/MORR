@@ -11,20 +11,16 @@
 
 The application's main purpose is all about collecting data. This data is supposed to help to find patterns in research activity using a personal computer. Therefore there is a great range of distinctive datasets that are interesting to collect.
 
-\section{Sessions}
+\section{Session recordings}
 \begin{itemize}
-\dspec{All \glspl{session} are stored locally in a file-based format and may be uploaded to remote storage. }
+\dspec{All \glspl{session} recordings are stored locally in a file-based format and may be uploaded to remote storage. }
 
-\dspec{Each session needs to include the following data:
-	\begin{itemize}
-	\item Unique \gls{session} identifier
-	\item Timestamp of start and stop
-	\item \Gls{videostream}
-	\item \Glspl{event} in chronological order
-	\end{itemize}
-}
+\dspec{A session recording needs to contain a unique identifier}
+\dsubspec{A session recording needs to contain a timestamp of beginning and end of the recording}
+\dsubspec{A session recording needs to contain a \gls{videostream}}
+\dsubspec{A session recording needs to contain the \glspl{event} in chronological order}
 
-\dspec{Each \gls{session} is contained in a mpeg-4 video container}
+\dspec{Each \gls{session} recording is contained in a mpeg-4 video container}
 
 \dspec{The \gls{videostream} can vary but must include the following:
 
@@ -47,7 +43,7 @@ The application's main purpose is all about collecting data. This data is suppos
 \label{sec:context}
 
 \begin{itemize}
-\dspec{The content of the context depends on the application in use but is structured as follows:
+\dspec[200]{The content of the context depends on the application in use but is structured as follows:
 	\begin{itemize}
 		\item A unique identifier for the application currently focused by the \gls{user}
 		\item Application-specific metadata (e.g. the URL of the current tab for the browser or the title of the current document for Excel)
@@ -61,13 +57,9 @@ The application's main purpose is all about collecting data. This data is suppos
 Each dataset in a \gls{session} is described by an \gls{event}, which has been recognized and issued by a collecting \gls{module}. Each \gls{event} includes multiple properties, which define and describe the \gls{event}.
 
 \begin{itemize}
-\dspec{An \gls{event} must always include the following data:
-	\begin{itemize}
-	\item Timestamp of the occurrence
-	\item Identifier of the \gls{module} the \gls{event} was issued by
-	\item Type which identifies the \glspl{event} general action, e.g. a "MouseClick"
-	\end{itemize}
-}
+\dspec[300]{An \gls{event} must include the timestamp of its occurrence}
+\dsubspec{An \gls{event} must include the identifier of the \gls{module} it was issued by}
+\dsubspec{An \gls{event} must include the type which identifies its general action, e.g. "MouseClick"}
 \end{itemize}
 
 \subsection{Window Management \Glspl{event}}
