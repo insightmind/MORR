@@ -139,6 +139,60 @@
         \item The application starts a recording and shows a recording indicator.
     \end{itemize}}
     
+    \test{\fmt{FS70}{FS90}{FS340}{FS350}}{User controllability (stop)}{The application is running. The configuration file is valid. A session is currently being recorded.}
+    {\begin{enumerate}
+        \item The \gls{user} opens the tray menu by clicking on the application icon in the system tray to open the tray menu.
+        \item The \gls{user} clicks on the "Stop Recording" entry.
+    \end{enumerate}}
+    {\begin{itemize}
+        \item The recording is stopped.
+        \item The application shows a save dialogue.
+    \end{itemize}}
+
+    \test{\fmt{FS100}{FS340}{FS350}}{User controllability (quit)}{The application is running. No session is currently being recorded.}
+    {\begin{enumerate}
+        \item The \gls{user} opens the tray menu by clicking on the application icon in the system tray to open the tray menu.
+        \item The \gls{user} clicks on the "Quit" entry.
+    \end{enumerate}}
+    {\begin{itemize}
+        \item The application is no longer running.
+    \end{itemize}}
+
+    \test{\fmt{FS90}{FS110}{FS340}{FS350}}{Quit while recording}{The application is running. A session is currently being recorded.}
+    {\begin{enumerate}
+        \item The \gls{user} opens the tray menu by clicking on the application icon in the system tray to open the tray menu.
+        \item The \gls{user} clicks on the "Quit" entry.
+    \end{enumerate}}
+    {\begin{itemize}
+        \item The application shows a save dialogue.
+    \end{itemize}}
+
+    \test{\fmt{FS120}{FS250}}{Save dialogue - Discard}{The application is currently showing the save dialogue.}
+    {\begin{enumerate}
+        \item The \gls{user} clicks on the "Discard" button.
+    \end{enumerate}}
+    {\begin{itemize}
+        \item The application is no longer running.
+        \item The recording has not been saved.
+    \end{itemize}}
+
+    \test{\fmt{FS120}{FS250}}{Save dialogue - Save}{The application is currently showing the save dialogue.}
+    {\begin{enumerate}
+        \item The \gls{user} clicks on the "Save" button.
+    \end{enumerate}}
+    {\begin{itemize}
+        \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored in the "\textbackslash documents\textbackslash recordings" folder inside the user directory of the user currently logged in.
+        \item The application is no longer running.
+    \end{itemize}}
+
+    \test{\fmt{FS130}}{Recordings folder}{The application is running.}
+    {\begin{enumerate}
+        \item The \gls{user} opens the tray menu by clicking on the application icon in the system tray to open the tray menu.
+        \item The \gls{user} clicks on the "Open recordings folder" entry.
+    \end{enumerate}}
+    {\begin{itemize}
+        \item The folder containing the \gls{user}'s recordings is opened in the Windows File Explorer.
+    \end{itemize}}
 \end{tests}
 
 \section{Core application test cases}
