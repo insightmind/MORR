@@ -27,7 +27,7 @@ This chapter is meant to organize and describe the specifications that dictate t
 
 \section{High-level specification}
 \label{sec:func_highlevel}
-The user-interface components mentioned in this section are specified in \ref{sec:uispec}.
+The user interface components mentioned in this section are specified in \ref{sec:uispec}.
 \begin{itemize}
     \fspec{Identifiable \glspl{session}}{\Gls{user}}{\applaunched{} \configvalid{}}{When the \gls{user} starts a \gls{session}-recording by pressing the ``Start Recording''-button, a unique session-ID gets created.}{The recording-managing component holds a session-ID which all \glspl{event} recorded during the current \gls{session} will get associated with.}
     \fspec{Event timings}{\Gls{user}}{\sessionactive}{When the \gls{user} triggers an \gls{event} specified in chapter \ref{ch:data}, the respective \gls{module} (see \ref{sec:modules}) generates a data-structure (as defined in \ref{sec:events}) associated with the \gls{event} and adds the timestamp to it.}{The data structure associated with the \gls{event} is sent to the data-managing component and contains a timestamp describing its time of occurence.}
