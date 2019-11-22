@@ -48,7 +48,7 @@
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
-		\item The recording contains a move-window event, that contains the title of application A, along with the timestamp at which the user moved the window, the identifier of the window-management module and the "window:move" type of the event.
+		\item The recording contains a move-window event, that contains the title of application A, old and new location of the window along with the timestamp at which the user moved the window, the identifier of the window-management module and the "window:move" type of the event.
 	\end{itemize}}
 	
 	\test{\fmt{FS70}{FS54}{FS20}{FS30}{FS250}{FS403}}{Window resize event}{The application is running. The configuration file is valid.}
@@ -59,42 +59,69 @@
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
-		\item The recording contains a resize-window event, that contains the title of application A, along with the timestamp at which the user resized the window, the identifier of the window-management module and the "window:resize" type of the event.
+		\item The recording contains a resize-window event, that contains the title of application A, old and new size of the window along with the timestamp at which the user resized the window, the identifier of the window-management module and the "window:resize" type of the event.
 	\end{itemize}}
 	
-	\test{\fmt{FS70}{FS54}{FS20}{FS30}{FS250}{FS404}}{Window maximize event}{The application is running. The configuration file is valid.}
+	\test{\fmt{FS70}{FS54}{FS20}{FS30}{FS250}{FS404}}{Window maximize/minimize/restore event}{The application is running. The configuration file is valid.}
 	{\begin{enumerate}
 		\item The user starts a new session recording.
-		\item The user maximizes a window from an application A.
+		\item The user maximizes/minimizes/restores a window from an application A.
 		\item The user stops the recording.
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
-		\item The recording contains a maximize-window event, that contains the title of application A, along with the timestamp at which the user maximized the window, the identifier of the window-management module and the "window:maximize" type of the event.
+		\item The recording contains a maximize-window/minimize-window/restore-window event, that contains the title of application A, the new state of the window - "maximized"/"minimized"/"restored" along with the timestamp at which the user maximized/minimized/restored the window, the identifier of the window-management module and the "window:maximize"/"window:minimize"/"window:restore" type of the event.
 	\end{itemize}}
-	
-	\test{\fmt{FS70}{FS54}{FS20}{FS30}{FS250}{FS404}}{Window minimize event}{The application is running. The configuration file is valid.}
-	{\begin{enumerate}
-		\item The user starts a new session recording.
-		\item The user minimizes a window from an application A.
-		\item The user stops the recording.
-	\end{enumerate}}
-	{\begin{itemize}
-		\item A recording has been created and stored at the path specified by the configuration.
-		\item The recording contains a minimize-window event, that contains the title of application A, along with the timestamp at which the user minimized the window, the identifier of the window-management module and the "window:minimize" type of the event.
-	\end{itemize}}
-	
-	\test{\fmt{FS70}{FS54}{FS20}{FS30}{FS250}{FS404}}{Window restore event}{The application is running. The configuration file is valid.}
-	{\begin{enumerate}
-		\item The user starts a new session recording.
-		\item The user restores a window from an application A.
-		\item The user stops the recording.
-	\end{enumerate}}
-	{\begin{itemize}
-		\item A recording has been created and stored at the path specified by the configuration.
-		\item The recording contains a restore-window event, that contains the title of application A, along with the timestamp at which the user restored the window, the identifier of the window-management module and the "window:restore" type of the event.
-	\end{itemize}}	
 \end{tests}
 
+\subsubsection{Mouse module test cases}
 
-
+\begin{tests}
+	\test{\fmt{FS20}{FS30}{FS54}{FS70}{FS250}{FS411}}{Mouse click event}{The application is running. The configuration file is valid.}
+	{\begin{enumerate}
+		\item The user starts a new session recording.
+		\item The user presses the left/right/middle mouse button in application A.
+		\item The user releases the left/right/middle mouse button in application A.
+		\item The user stops the recording.
+	\end{enumerate}}
+	{\begin{itemize}
+		\item A recording has been created and stored at the path specified by the configuration.
+		\item The recording contains a click-mouse event, that contains type of the clicked button - left/right/middle, type of the click - single, HWND associated with A that was clicked, along with the timestamp at which the user clicked the mouse button, the identifier of the mouse-interaction module and the "mouse:left-click"/"mouse:right-click"/"mouse:middle-click" type of the event.
+	\end{itemize}}
+	
+	\test{\fmt}{FS20}{FS30}{FS54}{FS70}{FS250}{FS411}}{Mouse double click event}{The application is running. The configuration file is valid.}
+	{\begin{enumerate}
+		\item The user starts a new session recording.
+		\item The user presses the left mouse button.
+		\item The user releases the left mouse button.
+		\item The user presses the left mouse button.
+		\item The user releases the left mouse button.
+		\item The user stops the recording.
+	\end{enumerate}}
+	{\begin{itemize}
+		\item A recording has been created and stored at the path specified by the configuration.
+		\item The recording contains a double-click-mouse event, that contains type of the clicked button - left, type of the click - double, HWND associated with A that was clicked, along with the timestamp at which the user double clicked the mouse button, the identifier of the mouse-interaction module and the "mouse:left-double-click" type of the event.
+	\end{itemize}}
+	
+	\test{\fmt{FS20}{FS30}{FS54}{FS70}{FS250}{FS412}}{Mouse scroll event}{The application is running. The configuration file is valid.}
+	{\begin{enumerate}
+		\item The user starts a new session recording.
+		\item The user uses scroll wheel in an application A.
+		\item The user stops the recording.
+	\end{enumerate}}
+	{\begin{itemize}
+		\item A recording has been created and stored at the path specified by the configuration.
+		\item The recording contains a scroll-mouse event, that contains scroll amount, HWND associated with A that was scrolled, along with the timestamp at which the user used the scroll wheel, the identifier of the mouse-interaction module and the "mouse:scroll" type of the event.
+	\end{itemize}}
+	
+	\test{\fmt{FS20}{FS30}{FS54}{FS70}{FS250}{FS413}}{Mouse move event}{The application is running. The configuration file is valid.}
+	{\begin{enumerate}
+		\item The user starts a new session recording.
+		\item The user moves mouse over an application A.
+		\item The user stops the recording.
+	\end{enumerate}}
+	{\begin{itemize}
+		\item A recording has been created and stored at the path specified by the configuration.
+		\item The recording contains a move-mouse event, that contains movement vector along with the timestamp at which the user moved the mouse, the identifier of the mouse-interaction module and the "mouse:move" type of the event.
+	\end{itemize}}
+\end{tests}
