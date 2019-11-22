@@ -141,6 +141,133 @@
     
 \end{tests}
 
+\section{Core application test cases}
+
+\begin{tests}
+    \test{\fmt{FS70}{FS90}{FS200}{FS250}}{Videostream recording}{The application is running. The configuration file is valid.}
+    {\begin{enumerate}
+        \item The \gls{user} starts a recording.
+        \item The \gls{user} stops a recording.
+    \end{enumerate}}
+    {\begin{itemize}
+        \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
+        \item The recording contains a videostream. The videostream contains the \gls{device}'s primary screen's content.
+    \end{itemize}}
+
+    \test{\fmt{FS70}{FS90}{FS210}{FS220}{FS250}}{System module management}{The application is running. The configuration file is valid. The configuration specifies that the mouse module should be activated.}
+    {\begin{enumerate}
+        \item The \gls{user} starts a recording.
+        \item The \gls{user} clicks the left mouse button.
+        \item The \gls{user} stops the recording.
+    \end{enumerate}}
+    {\begin{itemize}
+        \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
+        \item The recording contains an \gls{event} of type "mouse:left-click" corresponding to the user interaction.
+    \end{itemize}}
+
+    \test{\fmt{FS70}{FS90}{FS230}{FS240}{FS250}}{On-demand module management}{The application is running. The configuration file is valid. The configuration specifies that the browser module should be activated.}
+    {\begin{enumerate}
+        \item The \gls{user} starts a recording.
+        \item The \gls{user} opens the browser.
+        \item The \gls{user} navigates to the civic.genome.wustl.edu webpage.
+        \item The \gls{user} stops the recording.
+    \end{enumerate}}
+    {\begin{itemize}
+        \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
+        \item The recording contains an \gls{event} of type "browser:navigate" corresponding to the user interaction.
+    \end{itemize}}
+
+    \test{\fmt{FS70}{FS90}{FS250}}{Data serialization}{The application is running. The configuration file is valid. The configuration specifies that both the mouse module and the keyboard module should be activated.}
+    {\begin{enumerate}
+        \item The \gls{user} starts a recording.
+        \item The \gls{user} clicks the left mouse button.
+        \item The \gls{user} presses the "a"-key.
+        \item The \gls{user} stops the recording.
+    \end{enumerate}}
+    {\begin{itemize}
+        \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
+        \item The recording contains both the "mouse:left-click" and the "keyboard:press-key" events.
+    \end{itemize}}
+
+    \test{\fmt{FS70}{FS90}{FS250}{FS260}}{Combinability of modules}{The application is running. The configuration file is valid. The configuration specifies that both the mouse module and the keyboard module should be activated. It also specifies another module, that merges a "mouse:left-click" and a "keyboard:press-key" event into a "other:ctrl-click" event.}
+    {\begin{enumerate}
+        \item The \gls{user} starts a recording.
+        \item The \gls{user} presses and holds the "CTRL"-key.
+        \item The \gls{user} then clicks the left mouse button.
+        \item The \gls{user} stops the recording.
+    \end{enumerate}}
+    {\begin{itemize}
+        \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
+        \item The recording contains a "other:ctrl-click" event.
+    \end{itemize}}
+
+    \test{\fmt{FS70}{FS90}{FS250}{FS260}}{Context management}{The application is running. The configuration file is valid. The configuration specifies that the browser module should be activated. It also specifies that the browser module may only be active when the \gls{user} uses the browser.}
+    {\begin{enumerate}
+        \item The \gls{user} starts a recording.
+        \item The \gls{user} starts navigating to the civic.genome.wustl.edu webpage.
+        \item The \gls{user} then immediately switches to another application.
+        \item The \gls{user} stops the recording.
+    \end{enumerate}}
+    {\begin{itemize}
+        \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
+        \item The recording contains a "browser:navigation" event but does not contain any event connected to the network request the browser made while the \gls{user} did not have the browser focused.
+    \end{itemize}}
+\end{tests}
+
+\section{User interface test cases}
+
+\begin{tests}
+    \test{\fmt{FS70}{FS80}{FS300}{FS340}{FS350}}{Recording indicator}{The application is not running. The configuration file is valid.}
+    {\begin{enumerate}
+        \item The \gls{user} starts a recording.
+        \item The \gls{user} dismisses the information dialogue.
+    \end{enumerate}}
+    {\begin{itemize}
+        \item The application shows a recording indicator.
+    \end{itemize}}
+
+    \test{\fmt{FS310}}{Error dialogue}{The application is not running. The configuration file is invalid.}
+    {\begin{enumerate}
+        \item The \gls{user} starts the application.
+    \end{enumerate}}
+    {\begin{itemize}
+        \item The application shows an error dialogue.
+    \end{itemize}}
+
+    \test{\fmt{FS70}{FS90}{FS120}{FS320}{FS340}{FS350}}{Save dialogue}{The application is running. The configuration file is valid.}
+    {\begin{enumerate}
+        \item The \gls{user} starts a recording.
+        \item The \gls{user} stops the recording.
+    \end{enumerate}}
+    {\begin{itemize}
+        \item The application shows a save dialogue.
+    \end{itemize}}
+
+    \test{\fmt{FS330}}{Event-Data extraction}{One or more recordings have been created and stored at the path X.}
+    {\begin{enumerate}
+        \item The \gls{scientist} starts the command-line tool with the path X of the recordings and another path Y to extract the data to.
+    \end{enumerate}}
+    {\begin{itemize}
+        \item The event data contained in the recordings at path X is extracted in CSV-format to path Y.
+    \end{itemize}}
+
+    \test{\fmt{FS340}}{Tray-Icon}{The application is not running. The configuration file is valid.}
+    {\begin{enumerate}
+        \item The \gls{user} starts the application.
+    \end{enumerate}}
+    {\begin{itemize}
+        \item The application icon is added to the system tray.
+    \end{itemize}}
+
+    \test{\fmt{FS340}{FS350}}{Tray-Menu}{The application is running.}
+    {\begin{enumerate}
+        \item The \gls{user} clicks the tray-icon.
+    \end{enumerate}}
+    {\begin{itemize}
+        \item The tray-menu is shown.
+    \end{itemize}}
+\end{tests}
+
 \section{Per-module test cases}
 
 \subsection{System module test cases}
