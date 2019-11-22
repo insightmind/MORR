@@ -10,13 +10,13 @@
 \newcommand{\consumenextarg}[1]{, \specref{#1}\@ifnextchar\bgroup{\consumenextarg}{)}}
 \makeatother
 
-\newcommand{\test}[5]{\addtocounter{counterTC}{10}
-\item[TC\arabic{counterTC}\phantomsection\label{TC\arabic{counterTC}}\\\begin{footnotesize}\textit{#1}\end{footnotesize}]
+\newcommand{\test}[6][]{\ifthenelse{\equal{#1}{}}{\addtocounter{counterTC}{10}}{\setcounter{counterTC}{#1}}
+\item[TC\arabic{counterTC}\phantomsection\label{TC\arabic{counterTC}}\\\begin{footnotesize}\textit{#2}\end{footnotesize}]
     \begin{itemize}[noitemsep]
-        \item[]{\textbf{#2}} %title
-        \item[]{Precondition: #3}
-        \item[]{Test steps: #4}
-        \item[]{Expected result: #5}
+        \item[]{\textbf{#3}} %title
+        \item[]{Precondition: #4}
+        \item[]{Test steps: #5}
+        \item[]{Expected result: #6}
     \end{itemize}
 }
 
@@ -183,9 +183,8 @@
 \end{tests}
 
 \section{Core application test cases}
-\setcounter{counterTC}{190}
 \begin{tests}
-    \test{\fmt{FS70}{FS90}{FS200}{FS250}}{Video stream recording}{The application is running. The configuration file is valid.}
+    \test[200]{\fmt{FS70}{FS90}{FS200}{FS250}}{Video stream recording}{The application is running. The configuration file is valid.}
     {\begin{enumerate}
         \item The \gls{user} starts a recording.
         \item The \gls{user} stops a recording.
@@ -258,8 +257,7 @@
 \section{User interface test cases}
 
 \begin{tests}
-\setcounter{counterTC}{290}
-    \test{\fmt{FS330}}{Event-Data extraction}{One or more recordings have been created and stored at the path "\%userprofile\%\textbackslash documents\textbackslash recordings\textbackslash sample.mp4".}
+    \test[300]{\fmt{FS330}}{Event-Data extraction}{One or more recordings have been created and stored at the path "\%userprofile\%\textbackslash documents\textbackslash recordings\textbackslash sample.mp4".}
     {\begin{enumerate}
         \item The \gls{scientist} starts the command-line tool with the path "\%userprofile\%\textbackslash documents\textbackslash recordings\textbackslash" of the recordings and another path "\%userprofile\%\textbackslash documents\textbackslash recordings\textbackslash extracted\textbackslash" to extract the data to.
     \end{enumerate}}
