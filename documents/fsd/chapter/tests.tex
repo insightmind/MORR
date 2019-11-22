@@ -21,10 +21,6 @@
 }
 
 \newenvironment{tests}{\begin{itemize}[font = \normalfont, style = multiline, labelwidth = 60pt, leftmargin = !]}{\end{itemize}}
-    
-\begin{tests}
-    \test{\fmt{FS10}{FS20}{FS30}}{title text}{precondition text}{test steps text}{expected result text}
-\end{tests}
 
 \section{Per-module test cases}
 
@@ -33,7 +29,7 @@
 \subsubsection{Window-management module test cases}
 
 \begin{tests}
-	\test{\fmt}{Window focus event}{The application is running. The configuration file is valid.}
+	\test{\fmt{FS70}{FS54}{FS20}{FS30}{FS250}{FS401}}{Window focus event}{The application is running. The configuration file is valid.}
 	{\begin{enumerate}
 		\item The user starts a new session recording.
 		\item The user focuses a window from an application A.
@@ -41,10 +37,10 @@
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
-		\item The recording contains a focus-window event, that contains the title of application A, along with the timestamp at which the user focused the window, the identifier of the window-management module and the "focus_window" type of the event.
+		\item The recording contains a focus-window event, that contains the title of application A, along with the timestamp at which the user focused the window, the identifier of the window-management module and the "window:focus" type of the event.
 	\end{itemize}}
 	
-	\test{\fmt}{Window move event}{The application is running. The configuration file is valid.}
+	\test{\fmt{FS70}{FS54}{FS20}{FS30}{FS250}{FS402}}{Window move event}{The application is running. The configuration file is valid.}
 	{\begin{enumerate}
 		\item The user starts a new session recording.
 		\item The user moves a window from an application A.
@@ -52,10 +48,10 @@
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
-		\item The recording contains a move-window event, that contains the title of application A, along with the timestamp at which the user moved the window, the identifier of the window-management module and the "move_window" type of the event.
+		\item The recording contains a move-window event, that contains the title of application A, along with the timestamp at which the user moved the window, the identifier of the window-management module and the "window:move" type of the event.
 	\end{itemize}}
 	
-	\test{\fmt}{Window resize event}{The application is running. The configuration file is valid.}
+	\test{\fmt{FS70}{FS54}{FS20}{FS30}{FS250}{FS403}}{Window resize event}{The application is running. The configuration file is valid.}
 	{\begin{enumerate}
 		\item The user starts a new session recording.
 		\item The user resizes a window from an application A.
@@ -63,10 +59,10 @@
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
-		\item The recording contains a resize-window event, that contains the title of application A, along with the timestamp at which the user resized the window, the identifier of the window-management module and the "resize_window" type of the event.
+		\item The recording contains a resize-window event, that contains the title of application A, along with the timestamp at which the user resized the window, the identifier of the window-management module and the "window:resize" type of the event.
 	\end{itemize}}
 	
-	\test{\fmt}{Window maximize event}{The application is running. The configuration file is valid.}
+	\test{\fmt{FS70}{FS54}{FS20}{FS30}{FS250}{FS404}}{Window maximize event}{The application is running. The configuration file is valid.}
 	{\begin{enumerate}
 		\item The user starts a new session recording.
 		\item The user maximizes a window from an application A.
@@ -74,10 +70,10 @@
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
-		\item The recording contains a maximize-window event, that contains the title of application A, along with the timestamp at which the user maximized the window, the identifier of the window-management module and the "maximize_window" type of the event.
+		\item The recording contains a maximize-window event, that contains the title of application A, along with the timestamp at which the user maximized the window, the identifier of the window-management module and the "window:maximize" type of the event.
 	\end{itemize}}
 	
-	\test{\fmt}{Window minimize event}{The application is running. The configuration file is valid.}
+	\test{\fmt{FS70}{FS54}{FS20}{FS30}{FS250}{FS404}}{Window minimize event}{The application is running. The configuration file is valid.}
 	{\begin{enumerate}
 		\item The user starts a new session recording.
 		\item The user minimizes a window from an application A.
@@ -85,10 +81,10 @@
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
-		\item The recording contains a minimize-window event, that contains the title of application A, along with the timestamp at which the user minimized the window, the identifier of the window-management module and the "minimize_window" type of the event.
+		\item The recording contains a minimize-window event, that contains the title of application A, along with the timestamp at which the user minimized the window, the identifier of the window-management module and the "window:minimize" type of the event.
 	\end{itemize}}
 	
-	\test{\fmt}{Window restore event}{The application is running. The configuration file is valid.}
+	\test{\fmt{FS70}{FS54}{FS20}{FS30}{FS250}{FS404}}{Window restore event}{The application is running. The configuration file is valid.}
 	{\begin{enumerate}
 		\item The user starts a new session recording.
 		\item The user restores a window from an application A.
@@ -96,7 +92,7 @@
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
-		\item The recording contains a restore-window event, that contains the title of application A, along with the timestamp at which the user restored the window, the identifier of the window-management module and the "restore_window" type of the event.
+		\item The recording contains a restore-window event, that contains the title of application A, along with the timestamp at which the user restored the window, the identifier of the window-management module and the "window:restore" type of the event.
 	\end{itemize}}	
 \end{tests}
 
