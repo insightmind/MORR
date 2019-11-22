@@ -2,27 +2,27 @@
 \label{ch:data}
 
 \newcounter{counterD}
-\newcommand{\internaldspec}[1]
+\newcommand{\internaldspec}[2]
 {
-    \item[D\arabic{counterD}\phantomsection\label{D\arabic{counterD}}]{#1}
+    \item[D\arabic{counterD}\phantomsection\label{D\arabic{counterD}}]{\textbf{#1}: #2}
 }
-\newcommand{\dspec}[2][]{\ifthenelse{\equal{#1}{}}{\setcounter{counterD}{\intcalcAdd{\value{counterD}}{\intcalcSub{10}{\intcalcMod{\value{counterD}}{10}}}}}{\setcounter{counterD}{#1}}\internaldspec{#2}}
-\newcommand{\dsubspec}[1]{\stepcounter{counterD}\internaldspec{#1}}
+\newcommand{\dspec}[3][]{\ifthenelse{\equal{#1}{}}{\setcounter{counterD}{\intcalcAdd{\value{counterD}}{\intcalcSub{10}{\intcalcMod{\value{counterD}}{10}}}}}{\setcounter{counterD}{#1}}\internaldspec{#2}{#3}}
+\newcommand{\dsubspec}[2]{\stepcounter{counterD}\internaldspec{#1}{#2}}
 
 The application's main purpose is all about collecting data. This data is supposed to help to find patterns in research activity using a personal computer. Therefore there is a great range of distinctive datasets that are interesting to collect.
 
 \section{Session recordings}
 \begin{itemize}
-\dspec{All \gls{session} recordings are stored locally in a file-based format and may be uploaded to remote storage. }
+\dspec{File format}{All \gls{session} recordings are stored locally in a file-based format and may be uploaded to remote storage. }
 
-\dspec{A session recording needs to contain a unique identifier}
-\dsubspec{A session recording needs to contain a timestamp of beginning and end of the recording}
-\dsubspec{A session recording needs to contain the \glspl{event} in chronological order}
-\dsubspec{A session recording needs to contain a \gls{videostream}}
+\dspec{Unique identifier}{A session recording needs to contain a unique identifier}
+\dsubspec{Timestamp}{A session recording needs to contain a timestamp of beginning and end of the recording}
+\dsubspec{Event data}{A session recording needs to contain the \glspl{event} in chronological order}
+\dsubspec{Videostream}{A session recording needs to contain a \gls{videostream}}
 
-\dspec{Each \gls{session} recording is contained in a mpeg-4 video container}
+\dspec{MPEG-Container}{Each \gls{session} recording is contained in a mpeg-4 video container}
 
-\dspec{The \gls{videostream} can vary but must include the following:
+\dspec{Videostream format}{May vary but must include the following:
 
 	Metadata:
 	\begin{itemize}
@@ -43,7 +43,7 @@ The application's main purpose is all about collecting data. This data is suppos
 \label{sec:context}
 
 \begin{itemize}
-\dspec[200]{The content of the context depends on the application in use but is structured as follows:
+\dspec[200]{Context}{Depends on the application in use but is structured as follows:
 	\begin{itemize}
 		\item A unique identifier for the application currently focused by the \gls{user}
 		\item Application-specific metadata (e.g. the URL of the current tab for the browser or the title of the current document for Excel)
@@ -57,9 +57,9 @@ The application's main purpose is all about collecting data. This data is suppos
 Each dataset in a \gls{session} is described by an \gls{event}, which has been recognized and issued by a collecting \gls{module}. Each \gls{event} includes multiple properties, which define and describe the \gls{event}.
 
 \begin{itemize}
-\dspec[300]{An \gls{event} must include the timestamp of its occurrence}
-\dsubspec{An \gls{event} must include the identifier of the \gls{module} it was issued by}
-\dsubspec{An \gls{event} must include the type which identifies its general action, e.g. "MouseClick"}
+\dspec[300]{\Glspl{event}}{An \gls{event} must include the timestamp of its occurrence}
+\dsubspec{\Gls{event} identifier}{An \gls{event} must include the identifier of the \gls{module} it was issued by}
+\dsubspec{\Gls{event} type}{An \gls{event} must include the type which identifies its general action, e.g. "MouseClick"}
 \end{itemize}
 
 \subsection{Window Management \Glspl{event}}
@@ -67,28 +67,28 @@ Each dataset in a \gls{session} is described by an \gls{event}, which has been r
 A window-management \gls{event} is issued by the window-management \gls{module}.
 
 \begin{itemize}
-\dspec{A generic Window-Management \gls{event} must include the following data:
+\dspec{Generic window management \gls{event}}{Includes the following data:
 	\begin{itemize}
 	\item The title of the interacted window
 	\item The name of the process associated with the window
 	\end{itemize}
 }
 
-\dsubspec{A Window-Focus \gls{event} should only include the general data. }
+\dsubspec{Window focus \gls{event}}{Includes only the generic data.}
 
-\dsubspec{A Window-Movement \gls{event} should include following additional data:
+\dsubspec{Window movement \gls{event}}{Includes the following additional data:
 	\begin{itemize}
 	\item Old and new location
 	\end{itemize}
 }
 	
-\dsubspec{A Window-Resizing \gls{event} should include following additional data:
+\dsubspec{Window resizing \gls{event}}{Includes the following additional data:
 	\begin{itemize}
 	\item Old and new window size
 	\end{itemize}
 }
 	
-\dsubspec{A Window-Maximizing/Minimizing/Restoring \gls{event} should include following additional data:
+\dsubspec{Window maximizing/minimizing/restoring \gls{event}}{Includes the following additional data:
 	\begin{itemize}
 	\item The new state of the window:
 		\begin{itemize}
@@ -105,7 +105,7 @@ A window-management \gls{event} is issued by the window-management \gls{module}.
 A mouse-interaction \gls{event} is issued by the mouse \gls{module}.
 
 \begin{itemize}
-\dspec{A Mouse-Click-Interaction \gls{event} should include the following data:
+\dspec{Mouse click interaction \gls{event}}{Includes the following data:
 	\begin{itemize}
 	\item Clicked button:
 		\begin{itemize}
@@ -118,14 +118,14 @@ A mouse-interaction \gls{event} is issued by the mouse \gls{module}.
 	\end{itemize}
 }
 
-\dsubspec{A Mouse-Scroll-Interaction \gls{event} should include the following data:
+\dsubspec{Mouse scroll interaction \gls{event}}{Includes the following data:
 	\begin{itemize}
 	\item Scroll amount
 	\item The HWND of the view that was scrolled
 	\end{itemize}
 }
 
-\dsubspec{A Mouse-Movement-Interaction \gls{event} should include the following data:
+\dsubspec{Mouse movement interaction \gls{event}}{Includes the following data:
 	\begin{itemize}
 	\item Movement vector
 	\end{itemize}
@@ -137,7 +137,7 @@ A mouse-interaction \gls{event} is issued by the mouse \gls{module}.
 A keyboard-interaction \gls{event} is issued by the keyboard \gls{module}.
 
 \begin{itemize}
-\dspec{A Keyboard-Interaction \gls{event} must include the following data:
+\dspec{Keyboard interaction \gls{event}}{Includes the following data:
 	\begin{itemize}
 	\item Pressed key
 	\item All of the modifier keys that are pressed:
@@ -156,7 +156,7 @@ A keyboard-interaction \gls{event} is issued by the keyboard \gls{module}.
 A clipboard \gls{event} is issued by the clipboard \gls{module}.
 
 \begin{itemize}
-\dspec{A Clipboard-Interaction \gls{event} must include the following data:
+\dspec{Clipboard interaction \gls{event}}{Includes the following data:
 	\begin{itemize}
 	\item Contained clipboard text
 	\item Interaction type:
@@ -173,52 +173,52 @@ A clipboard \gls{event} is issued by the clipboard \gls{module}.
 A \gls{browser} \gls{event} is issued by the \gls{browser} \gls{module}.
 
 \begin{itemize}
-\dspec{A generic \gls{browser} \gls{event} must include the following data:
+\dspec{Generic \gls{browser} \gls{event}}{Includes the following data:
 	\begin{itemize}
 	\item URL of the interacted website
 	\item The unique identifier of the tab that the \gls{event} occured in
 	\end{itemize}
 }
 
-\dsubspec{An Open-tab \gls{event} includes only the generic event data.}
+\dsubspec{Open tab \gls{event}}{Includes only the generic event data.}
 
-\dsubspec{A Switch-tab \gls{event} must include the following additional data:
+\dsubspec{Switch tab \gls{event}}{Includes the following additional data:
 	\begin{itemize}
 		\item The unique identifier of the tab that the \gls{user} switched to
 	\end{itemize}
 }
 
-\dsubspec{A Close-tab \gls{event} must include only the generic event data.}
+\dsubspec{Close tab \gls{event}}{Includes only the generic event data.}
 
-\dsubspec{A Navigation \gls{event} must include only the generic event data.}
+\dsubspec{Navigation \gls{event}}{Includes only the generic event data.}
 	
-\dsubspec{A Text-Input \gls{event} must include the following additional data:
+\dsubspec{Text input \gls{event}}{Includes the following additional data:
 	\begin{itemize}
 	\item Text which has been inputted by the user
 	\item Textbox or form
 	\end{itemize}
 }
 	
-\dsubspec{A Button-Click \gls{event} must include the following additional data:
+\dsubspec{Button click \gls{event}}{Includes the following additional data:
 	\begin{itemize}
 	\item Button item title
 	\item URL that the button is linked to, if applicable
 	\end{itemize}
 }
 	
-\dsubspec{A Hover \gls{event} must include the following additional data:
+\dsubspec{Hover \gls{event}}{Includes the following additional data:
 	\begin{itemize}
 	\item Element which has been hovered
 	\end{itemize}
 }
 	
-\dsubspec{A Text-Selection \gls{event} must include the following additional data:
+\dsubspec{Text selection \gls{event}}{Includes the following additional data:
 	\begin{itemize}
 	\item Selected Text
 	\end{itemize}
 }
 
-\dsubspec{A File-Download \gls{event} must include the following additional data:
+\dsubspec{File download \gls{event}}{Includes the following additional data:
 	\begin{itemize}
 		\item URL of the file that was downloaded
 		\item MIME type of the file that was downloaded
