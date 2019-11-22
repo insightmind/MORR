@@ -25,50 +25,6 @@
 \begin{tests}
     \test{\fmt{FS10}{FS20}{FS30}}{title text}{precondition text}{test steps text}{expected result text}
 \end{tests}
-    
-%%Leaving this as a reference
-\newcommand{\testfor}[2]{\addtocounter{counterTC}{10}\item[TC\arabic{counterTC}\label{TC\arabic{counterTC}}\\\begin{footnotesize}\textit{(tests \specref{#1})}\end{footnotesize}]{#2}}
-\section{High-level test cases}
-
-\begin{tests}
-    \testfor{FS10}{Verify that the timed \glspl{event} are recorded during the recording \gls{session}.}\\
-    \testfor{FS10}{Verify that the recorded timed \glspl{event} are saved after the recording \gls{session} is stopped.}
-    \testfor{FS10}{Verify that a recorded \gls{event} is associated with the \gls{session} it was recorded in.}
-    \testfor{FS10}{Verify that the \gls{session} has a unique identification number.}\\
-    \testfor{FS30}{Verify that the filtering criteria for \glspl{event} can be configured before runtime.}\\
-    \testfor{FS30}{Verify that the filtering criteria for \glspl{event} can be configured during runtime.}\\
-    \testfor{FS30}{Verify that the recorded \glspl{event} can be filtered during the recording \gls{session}.}\\
-    \testfor{FS30}{Verify that the application can match different types of \glspl{event}.}\\
-    \testfor{FS40}{Verify that the \gls{admin} can select the modules the application is allowed to use in the current recording \gls{session}.}
-    \testfor{FS40}{Verify that the \gls{admin} can configure the framerate of the recorded \gls{videostream}.}
-    \testfor{FS40}{Verify that the \gls{admin} can configure the resolution of the recorded \gls{videostream}.}
-    \testfor{FS40}{Verify that the \gls{admin} can toggle the recording of audio.}\\
-    \testfor{FS50}{Verify that a \gls{user} can start the recording \gls{session}.}\\
-    \testfor{FS50}{Verify that a \gls{user} can stop the recording \gls{session}.}\\
-    \testfor{FS50}{Verify that a confirmation dialog is shown to the \gls{user} after the recording \gls{session} has been ended.}
-    \testfor{FS50}{Verify that the recorded data is saved if the \gls{user} confirms the saving of the recording.}
-    \testfor{FS50}{Verify that the recorded data is not saved if the \gls{user} does not confirm the saving of the recording.}
-    \testfor{FS60}{Verify that the application has an on-screen indicator during the recording of a \gls{session}.}
-    \testfor{FS70}{Verify that an information dialog appears, advising the \gls{user} not to enter any personal or confidential business information, when the recording \gls{session} is started.}
-    \testfor{FS80}{Verify that the recordings of past \glspl{session} can be viewed.}\\
-    \testfor{FS80}{Verify that the \gls{admin} can edit the recording of past \glspl{session}.}\\
-    \testfor{FS80}{Verify that the \gls{admin} can delete the recording of past \glspl{session}.}\\
-    \testfor{FS90}{Verify that the recorded data can be extracted.}\\
-    \testfor{FS90}{Verify that data in non-standardized format can be converted into a standardized format by an application functionality or through an additional piece of code.}
-\end{tests}
-
-\section{Core application test cases}
-
-\begin{tests}
-    \testfor{FS100}{Verify that a successfully recorded \gls{session} yields a \gls{videostream} in accordance with \specref{D40} and \specref{D30}.}
-    \testfor{FS110}{Verify that the application launches an available \gls{module} if configured to do so.}
-    \testfor{FS110}{Verify that the application does not launch an available \gls{module} if configured to not do so.}
-    \testfor{FS120}{Verify that the application configures a system \gls{module} in accordance with global configuration.}
-    \testfor{FS130}{Verify that the application detects an on-demand \gls{module} becoming available.}
-    \testfor{FS140}{Verify that the application accumulates all recorded data during a successfully recorded \gls{session} in a format in accordance with \specref{D10}, \specref{D20}, \specref{D30} and \specref{D40}. The recorded event data therein falls subject to the format constraints imposed by \ref{sec:events}.}
-    \testfor{FS150}{Verify that the application functions with arbitrary combinations of enabled \glspl{module}.}
-    \testfor{FS160}{Verify that the application tracks changes to the context in which events occur and notifies \glspl{module} of those changes.}
-\end{tests}
 
 \section{Per-module test cases}
 
@@ -77,54 +33,72 @@
 \subsubsection{Window-management module test cases}
 
 \begin{tests}
-    \testfor{FS170}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D70} when the \gls{user} focuses a window.}
-    \testfor{FS170}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D80} when the \gls{user} moves a window.}
-    \testfor{FS170}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D90} when the \gls{user} resizes a window.}
-    \testfor{FS170}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D100} when the \gls{user} minimizes a window.}
-    \testfor{FS170}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D100} when the \gls{user} maximizes a window.}
-    \testfor{FS170}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D100} when the \gls{user} restores a window.}
+	\test{\fmt}{Window focus event}{The application is running. The configuration file is valid.}
+	{\begin{enumerate}
+		\item The user starts a new session recording.
+		\item The user focuses a window from an application A.
+		\item The user stops the recording.
+	\end{enumerate}}
+	{\begin{itemize}
+		\item A recording has been created and stored at the path specified by the configuration.
+		\item The recording contains a focus-window event, that contains the title of application A, along with the timestamp at which the user focused the window, the identifier of the window-management module and the "focus_window" type of the event.
+	\end{itemize}}
+	
+	\test{\fmt}{Window move event}{The application is running. The configuration file is valid.}
+	{\begin{enumerate}
+		\item The user starts a new session recording.
+		\item The user moves a window from an application A.
+		\item The user stops the recording.
+	\end{enumerate}}
+	{\begin{itemize}
+		\item A recording has been created and stored at the path specified by the configuration.
+		\item The recording contains a move-window event, that contains the title of application A, along with the timestamp at which the user moved the window, the identifier of the window-management module and the "move_window" type of the event.
+	\end{itemize}}
+	
+	\test{\fmt}{Window resize event}{The application is running. The configuration file is valid.}
+	{\begin{enumerate}
+		\item The user starts a new session recording.
+		\item The user resizes a window from an application A.
+		\item The user stops the recording.
+	\end{enumerate}}
+	{\begin{itemize}
+		\item A recording has been created and stored at the path specified by the configuration.
+		\item The recording contains a resize-window event, that contains the title of application A, along with the timestamp at which the user resized the window, the identifier of the window-management module and the "resize_window" type of the event.
+	\end{itemize}}
+	
+	\test{\fmt}{Window maximize event}{The application is running. The configuration file is valid.}
+	{\begin{enumerate}
+		\item The user starts a new session recording.
+		\item The user maximizes a window from an application A.
+		\item The user stops the recording.
+	\end{enumerate}}
+	{\begin{itemize}
+		\item A recording has been created and stored at the path specified by the configuration.
+		\item The recording contains a maximize-window event, that contains the title of application A, along with the timestamp at which the user maximized the window, the identifier of the window-management module and the "maximize_window" type of the event.
+	\end{itemize}}
+	
+	\test{\fmt}{Window minimize event}{The application is running. The configuration file is valid.}
+	{\begin{enumerate}
+		\item The user starts a new session recording.
+		\item The user minimizes a window from an application A.
+		\item The user stops the recording.
+	\end{enumerate}}
+	{\begin{itemize}
+		\item A recording has been created and stored at the path specified by the configuration.
+		\item The recording contains a minimize-window event, that contains the title of application A, along with the timestamp at which the user minimized the window, the identifier of the window-management module and the "minimize_window" type of the event.
+	\end{itemize}}
+	
+	\test{\fmt}{Window restore event}{The application is running. The configuration file is valid.}
+	{\begin{enumerate}
+		\item The user starts a new session recording.
+		\item The user restores a window from an application A.
+		\item The user stops the recording.
+	\end{enumerate}}
+	{\begin{itemize}
+		\item A recording has been created and stored at the path specified by the configuration.
+		\item The recording contains a restore-window event, that contains the title of application A, along with the timestamp at which the user restored the window, the identifier of the window-management module and the "restore_window" type of the event.
+	\end{itemize}}	
 \end{tests}
 
-\subsubsection{Mouse module test cases}
 
-\begin{tests}
-    \testfor{FS180}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D110} when the \gls{user} presses and releases the left mouse button.}
-    \testfor{FS180}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D110} when the \gls{user} presses and releases the middle mouse button.}
-    \testfor{FS180}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D110} when the \gls{user} presses and releases the right mouse button.}
-    \testfor{FS180}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D110} when the \gls{user} double presses and releases the left mouse button.}
-    \testfor{FS180}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D110} when the \gls{user} double presses and releases the middle mouse button.}
-    \testfor{FS180}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D110} when the \gls{user} double presses and releases the right mouse button.}
-    \testfor{FS180}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D120} when the \gls{user} uses the scroll wheel.}
-    \testfor{FS180}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D130} when the \gls{user} moves the mouse.}
-\end{tests}
 
-\subsubsection{Keyboard module test cases}
-
-\begin{tests}
-    \testfor{FS190}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D140} when the \gls{user} presses a key.}
-    \testfor{FS190}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D140} when the \gls{user} releases a key.}
-    \testfor{FS190}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D140} when the \gls{user} presses a key while simultaneously pressing one or more modifier keys.}
-\end{tests}
-
-\subsubsection{Clipboard module test cases}
-
-\begin{tests}
-    \testfor{FS200}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D150} when the \gls{user} copies text to the clipboard.}
-    \testfor{FS200}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D150} when the \gls{user} pastes text from the clipboard.}
-\end{tests}
-
-\subsection{On-demand module test cases}
-
-\subsubsection{Browser module test cases}
-
-\begin{tests}
-    \testfor{FS210}{Verify that the application generates an event in accordance with \specref{D50} 
-    and \specref{D160} when the \gls{user} opens a new tab.}
-    \testfor{FS210}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D160} when the \gls{user} switches to a tab.}
-    \testfor{FS210}{Verify that the application generates an event in accordance with \specref{D50} and \specref{D160} when the \gls{user} closes a tab.}
-    \testfor{FS210}{Verify that the application generates an event in accordance with \specref{D50},\specref{D160} and \specref{D170} when the \gls{user} navigates to a web page.}
-    \testfor{FS210}{Verify that the application generates an event in accordance with \specref{D50},\specref{D160} and \specref{D180} when the \gls{user} enters text into a form or input textbox.}
-    \testfor{FS210}{Verify that the application generates an event in accordance with \specref{D50},\specref{D160} and \specref{D200} when the \gls{user} hovers over an element.}
-    \testfor{FS210}{Verify that the application generates an event in accordance with \specref{D50},\specref{D160} and \specref{D210} when the \gls{user} selects text.}
-    \testfor{FS210}{Verify that the application generates an event in accordance with \specref{D50},\specref{D160} and \specref{D220} when the \gls{user} downloads a file.}
-\end{tests}
