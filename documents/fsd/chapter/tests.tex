@@ -245,3 +245,35 @@
 		\item The recording contains a move-mouse event, that contains movement vector along with the timestamp at which the user moved the mouse, the identifier of the mouse-interaction module and the "mouse:move" type of the event.
 	\end{itemize}}
 \end{tests}
+
+\subsubsection{Keyboard module test cases}
+
+\begin{tests}
+	\test{\fmt{FS20}{FS30}{FS54}{FS70}{FS250}{FS421}}{Keyboard event}{The application is running. The configuration file is valid.}
+	{\begin{enumerate}
+		\item The user starts a new session recording.
+		\item The user presses a key in an application A.
+		\item The user releases a key in an application A.
+		\item The user stops the recording.
+	\end{enumerate}}
+	{\begin{itemize}
+		\item A recording has been created and stored at the path specified by the configuration.
+		\item The recording contains press-key-keyboard event and release-key-keyboard event. Each event contains name of the pressed/released key, names of all modifier keys that are pressed/released along with the timestamp at which the user pressed/released a key, the identifier of the keyboard-interaction module and the "keyboard:press-key"/"keyboard:release-key" type of the event.
+	\end{itemize}}
+\end{tests}
+
+\subsection{Clipboard module test cases}
+
+\begin{tests}
+	\test{\fmt{FS20}{FS30}{FS54}{FS70}{FS250}{FS340}}{Clipboard event}{The application is running. The configuration file is valid.}
+	{\begin{enumerate}
+		\item The user starts a new session recording.
+		\item The user copies text from an application A.
+		\item The user pastes text in an application B.
+		\item The user stops the recording.
+	\end{enumerate}}
+	{\begin{itemize}
+		\item A recording has been created and stored at the path specified by the configuration.
+		\item The recording contains copy-clipboard event and paste-clipboard event. Each event contains clipboard text associated with application A/B, type of the clipboard interaction - copy/paste, along with the timestamp at which the user copied/pasted the text, the identifier of the clipboard-interaction module and the "clipboard:copy"/"clipboard:paste" type of the event.
+	\end{itemize}}
+\end{tests}
