@@ -119,7 +119,7 @@
         \item The \gls{user} starts the application.
     \end{enumerate}}
     {\begin{itemize}
-        \item The application detects the errors in the configuration and shows an error dialogue.
+        \item The application detects the errors in the configuration and shows an error dialog.
     \end{itemize}}
 
     \test{\fmt{FS70}{FS80}{FS340}{FS350}}{User controllability (start)}{The application is running. The configuration file is valid.}
@@ -128,12 +128,12 @@
         \item The \gls{user} clicks on the "Start Recording" entry.
     \end{enumerate}}
     {\begin{itemize}
-        \item The application shows an information dialogue.
+        \item The application shows an information dialog.
     \end{itemize}}
     
-     \test{\fmt{FS70}{FS80}{FS300}}{Information dialogue}{The application is currently showing the information dialogue at the start of a recording.}
+     \test{\fmt{FS70}{FS80}{FS300}}{Information dialog}{The application is currently showing the information dialog at the start of a recording.}
     {\begin{enumerate}
-        \item The \gls{user} dismisses the information dialogue.
+        \item The \gls{user} dismisses the information dialog.
     \end{enumerate}}
     {\begin{itemize}
         \item The application starts a recording and shows a recording indicator.
@@ -146,7 +146,7 @@
     \end{enumerate}}
     {\begin{itemize}
         \item The recording is stopped.
-        \item The application shows a save dialogue.
+        \item The application shows a save dialog.
     \end{itemize}}
 
     \test{\fmt{FS100}{FS340}{FS350}}{User controllability (quit)}{The application is running. No \gls{session} is currently being recorded.}
@@ -164,38 +164,38 @@
         \item The \gls{user} clicks on the "Quit" entry.
     \end{enumerate}}
     {\begin{itemize}
-        \item The application shows a save dialogue.
+        \item The application shows a save dialog.
     \end{itemize}}
 
-    \test{\fmt{FS120}{FS250}}{Save dialogue - Quit and save}{The application is currently showing the save dialogue and the \gls{user} has clicked on the "Quit" entry in the tray menu.}
+    \test{\fmt{FS120}{FS250}}{Save dialog - Quit and save}{The application is currently showing the save dialog and the \gls{user} has clicked on the "Quit" entry in the tray menu.}
     {\begin{enumerate}
-        \item The \gls{user} clicks on the "Save" button.
+        \item The \gls{user} clicks on the button labeled "Save".
     \end{enumerate}}
     {\begin{itemize}
         \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
         \item The application is no longer running.
     \end{itemize}}
 
-    \test{\fmt{FS120}{FS250}}{Save dialogue - Quit and discard}{The application is currently showing the save dialogue and the \gls{user} has clicked on the "Quit" entry in the tray menu.}
+    \test{\fmt{FS120}{FS250}}{Save dialog - Quit and discard}{The application is currently showing the save dialog and the \gls{user} has clicked on the "Quit" entry in the tray menu.}
     {\begin{enumerate}
-        \item The \gls{user} clicks on the "Discard" button.
+        \item The \gls{user} clicks on the button labeled "Discard".
     \end{enumerate}}
     {\begin{itemize}
         \item The application is no longer running.
         \item The recording has not been saved.
     \end{itemize}}
         
-    \test{\fmt{FS120}{FS250}}{Save dialogue - Save}{The application is currently showing the save dialogue.}
+    \test{\fmt{FS120}{FS250}}{Save dialog - Save}{The application is currently showing the save dialog.}
     {\begin{enumerate}
-        \item The \gls{user} clicks on the "Save" button.
+        \item The \gls{user} clicks on the button labeled "Save".
     \end{enumerate}}
     {\begin{itemize}
         \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
     \end{itemize}}
 
-    \test{\fmt{FS120}{FS250}}{Save dialogue - Discard}{The application is currently showing the save dialogue.}
+    \test{\fmt{FS120}{FS250}}{Save dialog - Discard}{The application is currently showing the save dialog.}
     {\begin{enumerate}
-        \item The \gls{user} clicks on the "Discard" button.
+        \item The \gls{user} clicks on the button labeled "Discard".
     \end{enumerate}}
     {\begin{itemize}
         \item The application is no longer running.
@@ -214,7 +214,7 @@
 \section{Core application test cases}
 
 \begin{tests}
-    \test{\fmt{FS70}{FS90}{FS200}{FS250}}{Videostream recording}{The application is running. The configuration file is valid.}
+    \test{\fmt{FS70}{FS90}{FS200}{FS250}}{Video stream recording}{The application is running. The configuration file is valid.}
     {\begin{enumerate}
         \item The \gls{user} starts a recording.
         \item The \gls{user} stops a recording.
@@ -290,27 +290,27 @@
     \test{\fmt{FS70}{FS80}{FS300}{FS340}{FS350}}{Recording indicator}{The application is not running. The configuration file is valid.}
     {\begin{enumerate}
         \item The \gls{user} starts a recording.
-        \item The \gls{user} accepts the information dialogue.
+        \item The \gls{user} accepts the information dialog.
     \end{enumerate}}
     {\begin{itemize}
         \item The application shows a recording indicator.
     \end{itemize}}
 
-    \test{\fmt{FS310}}{Error dialogue}{The application is not running. The configuration file is invalid.}
+    \test{\fmt{FS310}}{Error dialog}{The application is not running. The configuration file is invalid.}
     {\begin{enumerate}
         \item The \gls{user} starts the application.
     \end{enumerate}}
     {\begin{itemize}
-        \item The application shows an error dialogue.
+        \item The application shows an error dialog.
     \end{itemize}}
 
-    \test{\fmt{FS70}{FS90}{FS120}{FS320}{FS340}{FS350}}{Save dialogue}{The application is running. The configuration file is valid.}
+    \test{\fmt{FS70}{FS90}{FS120}{FS320}{FS340}{FS350}}{Save dialog}{The application is running. The configuration file is valid.}
     {\begin{enumerate}
         \item The \gls{user} starts a recording.
         \item The \gls{user} stops the recording.
     \end{enumerate}}
     {\begin{itemize}
-        \item The application shows a save dialogue.
+        \item The application shows a save dialog.
     \end{itemize}}
 
     \test{\fmt{FS330}}{Event-Data extraction}{One or more recordings have been created and stored at the path X.}
