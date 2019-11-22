@@ -1,0 +1,228 @@
+\chapter{Application Data}
+\label{ch:data}
+
+\newcounter{counterD}
+\newcommand{\internaldspec}[2]
+{
+    \item[D\arabic{counterD}\phantomsection\label{D\arabic{counterD}}]{\textbf{#1}: #2}
+}
+\newcommand{\dspec}[3][]{\ifthenelse{\equal{#1}{}}{\setcounter{counterD}{\intcalcAdd{\value{counterD}}{\intcalcSub{10}{\intcalcMod{\value{counterD}}{10}}}}}{\setcounter{counterD}{#1}}\internaldspec{#2}{#3}}
+\newcommand{\dsubspec}[2]{\stepcounter{counterD}\internaldspec{#1}{#2}}
+
+The application's main purpose is all about collecting data. This data is supposed to help to find patterns in research activity using a personal computer. Therefore there is a great range of distinctive datasets that are interesting to collect.
+
+\section{Session recordings}
+\label{sec:session_recordings}
+\begin{itemize}
+\dspec{File format}{All \gls{session} recordings are stored locally in a file-based format and may be uploaded to remote storage. }
+
+\dspec{Unique identifier}{A \gls{session} recording needs to contain a unique identifier}
+\dsubspec{Timestamp}{A \gls{session} recording needs to contain a timestamp of beginning and end of the recording}
+\dsubspec{Event data}{A \gls{session} recording needs to contain the \glspl{event} in chronological order}
+\dsubspec{\Gls{videostream}}{A \gls{session} recording needs to contain a \gls{videostream}}
+
+\dspec{MPEG-Container}{Each \gls{session} recording is contained in a mpeg-4 video container}
+
+\dspec{\Gls{videostream} format}{May vary but must include the following:
+
+	Metadata:
+	\begin{itemize}
+	\item Framerate
+	\item Resolution
+	\item Bitrate
+	\end{itemize}
+
+	Data:
+	\begin{itemize}
+	\item Video
+	\item Audio (if enabled)
+	\end{itemize}
+}
+\end{itemize}
+
+\section{Context}
+\label{sec:context}
+
+\begin{itemize}
+\dspec[200]{Context}{Depends on the application in use but is structured as follows:
+	\begin{itemize}
+		\item A unique identifier for the application currently focused by the \gls{user}
+		\item Application-specific metadata (e.g. the URL of the current tab for the \gls{browser} or the title of the current document for Excel)
+	\end{itemize}
+}
+\end{itemize}
+
+\section{Events}
+\label{sec:events}
+
+Each dataset in a \gls{session} is described by an \gls{event}, which has been recognized and issued by a collecting \gls{module}. Each \gls{event} includes multiple properties, which define and describe the \gls{event}.
+
+\begin{itemize}
+\dspec[300]{\Glspl{event}}{An \gls{event} must include the timestamp of its occurrence}
+\dsubspec{\Gls{event} identifier}{An \gls{event} must include the identifier of the \gls{module} it was issued by}
+\dsubspec{\Gls{event} type}{An \gls{event} must include the type which identifies its general action, e.g. "MouseClick"}
+\end{itemize}
+
+\subsection{Window Management \Glspl{event}}
+
+A window-management \gls{event} is issued by the window-management \gls{module}.
+
+\begin{itemize}
+\dspec{Generic window management \gls{event}}{Includes the following data:
+	\begin{itemize}
+	\item The title of the interacted window
+	\item The name of the process associated with the window
+	\end{itemize}
+}
+
+\dsubspec{Window focus \gls{event}}{Includes only the generic data.}
+
+\dsubspec{Window movement \gls{event}}{Includes the following additional data:
+	\begin{itemize}
+	\item Old and new location
+	\end{itemize}
+}
+	
+\dsubspec{Window resizing \gls{event}}{Includes the following additional data:
+	\begin{itemize}
+	\item Old and new window size
+	\end{itemize}
+}
+	
+\dsubspec{Window maximizing/minimizing/restoring \gls{event}}{Includes the following additional data:
+	\begin{itemize}
+	\item The new state of the window:
+		\begin{itemize}
+		\item Maximized
+		\item Restored
+		\item Minimized
+		\end{itemize}
+	\end{itemize}
+}
+\end{itemize}
+
+\subsection{Mouse Interaction \Glspl{event}}
+
+A mouse-interaction \gls{event} is issued by the mouse \gls{module}.
+
+\begin{itemize}
+\dspec{Mouse click interaction \gls{event}}{Includes the following data:
+	\begin{itemize}
+	\item Clicked button:
+		\begin{itemize}
+		\item Right-Mouse-Button
+		\item Scroll-Wheel-Button
+		\item Left-Mouse-Button
+		\end{itemize}
+	\item Type which identifies if the click is a single or double click
+	\item The HWND of the view that was clicked
+	\end{itemize}
+}
+
+\dsubspec{Mouse scroll interaction \gls{event}}{Includes the following data:
+	\begin{itemize}
+	\item Scroll amount
+	\item The HWND of the view that was scrolled
+	\end{itemize}
+}
+
+\dsubspec{Mouse movement interaction \gls{event}}{Includes the following data:
+	\begin{itemize}
+	\item Movement vector
+	\end{itemize}
+}
+\end{itemize}
+
+\subsection{Keyboard Interaction \Glspl{event}}
+
+A keyboard-interaction \gls{event} is issued by the keyboard \gls{module}.
+
+\begin{itemize}
+\dspec{Keyboard interaction \gls{event}}{Includes the following data:
+	\begin{itemize}
+	\item Pressed key
+	\item All of the modifier keys that are pressed:
+		\begin{itemize}
+		\item Ctrl
+		\item Alt
+		\item Shift
+		\item Windows
+		\end{itemize}
+	\end{itemize}
+}
+\end{itemize}
+
+\subsection{Clipboard \Glspl{event}}
+
+A clipboard \gls{event} is issued by the clipboard \gls{module}.
+
+\begin{itemize}
+\dspec{Clipboard interaction \gls{event}}{Includes the following data:
+	\begin{itemize}
+	\item Contained clipboard text
+	\item Interaction type:
+		\begin{itemize}
+		\item Copy
+		\item Paste
+		\end{itemize}
+	\end{itemize}
+}
+\end{itemize}
+
+\subsection{\Gls{browser} \Glspl{event}}
+
+A \gls{browser} \gls{event} is issued by the \gls{browser} \gls{module}.
+
+\begin{itemize}
+\dspec{Generic \gls{browser} \gls{event}}{Includes the following data:
+	\begin{itemize}
+	\item URL of the interacted website
+	\item The unique identifier of the tab that the \gls{event} occured in
+	\end{itemize}
+}
+
+\dsubspec{Open tab \gls{event}}{Includes only the generic event data.}
+
+\dsubspec{Switch tab \gls{event}}{Includes the following additional data:
+	\begin{itemize}
+		\item The unique identifier of the tab that the \gls{user} switched to
+	\end{itemize}
+}
+
+\dsubspec{Close tab \gls{event}}{Includes only the generic event data.}
+
+\dsubspec{Navigation \gls{event}}{Includes only the generic event data.}
+	
+\dsubspec{Text input \gls{event}}{Includes the following additional data:
+	\begin{itemize}
+	\item Text which has been inputted by the user
+	\item Textbox or form
+	\end{itemize}
+}
+	
+\dsubspec{Button click \gls{event}}{Includes the following additional data:
+	\begin{itemize}
+	\item Button item title
+	\item URL that the button is linked to, if applicable
+	\end{itemize}
+}
+	
+\dsubspec{Hover \gls{event}}{Includes the following additional data:
+	\begin{itemize}
+	\item Element which has been hovered
+	\end{itemize}
+}
+	
+\dsubspec{Text selection \gls{event}}{Includes the following additional data:
+	\begin{itemize}
+	\item Selected Text
+	\end{itemize}
+}
+
+\dsubspec{File download \gls{event}}{Includes the following additional data:
+	\begin{itemize}
+		\item URL of the file that was downloaded
+		\item MIME type of the file that was downloaded
+	\end{itemize}
+}
+\end{itemize}

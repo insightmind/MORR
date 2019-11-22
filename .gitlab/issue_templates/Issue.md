@@ -1,17 +1,17 @@
-# Kurzgefasst
+# Short Summary
 
-(Kurze zusammenfassende Beschreibung des Issues)
+(Short Summary about the issue)
 
-# Erläuterung
+# Explanation
 
-(Genauere Erläuterung des Issues)
+(Detailed Explanation of the issue)
 
-# Relevante Links oder Dokumente
+# Relevant links or documents
 
-(Zusätzliche Information über das Issue durch externe Links oder Dokumenten)
+(Additional information about the issue, e.g. through links or document references)
 
-# Notizen
+# Notes
 
-(Zusätzliche Notizen über das Issue)
+(Additional notes)
 
-Nicht vergessen das Issue einem Milestone zuzuweisen!
+Do not forget to associate a milestone to this issue!

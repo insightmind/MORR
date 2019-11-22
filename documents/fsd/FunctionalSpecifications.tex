@@ -1,0 +1,56 @@
+\documentclass[parskip=full, 12pt, oneside]{scrbook}
+
+\usepackage[utf8]{inputenc} % use utf8 file encoding for TeX sources
+\usepackage[T1]{fontenc} % avoid garbled Unicode text in pdf
+\usepackage[english]{babel} % english hyphenation, quotes, etc
+\usepackage[hidelinks]{hyperref} % detailed hyperlink/pdf configuration
+\usepackage{csquotes}
+\usepackage{authblk}
+\usepackage{enumitem}
+\usepackage{graphicx} %%provides the  \includegraphics macro
+\usepackage{float} %%provides the H directive to force position of figures (\begin{figure}[H])
+\usepackage[numberedsection,nonumberlist,toc,section=chapter]{glossaries}     % provides glossary commands
+\usepackage{scrhack} %%make above float package compatible with komascript
+\usepackage{ifthenx}
+\usepackage{intcalc}
+\hypersetup{ % `texdoc hyperref` for options
+	pdftitle={Functional Specifications},
+	bookmarks=true,
+}
+
+\makenoidxglossaries
+
+% Configure Title Page Layout
+\subject{Karlsruhe Institute of Technology}
+\author{
+	\textit{Irma Suppes, Karl Rubel, } \\ 
+	\textit{Mingyi Li, Niklas Bülow, Sönke Jendral }
+}
+\title{MORR \\ (Medical Online Research Recorder)}
+\subtitle{PSE-Project \\ Functional Specification Document}
+\publishers{Supervisors: \\ \textit{Paula Breitling, Dr. Till Riedel, Tobias Röddiger}}
+
+\include{chapter/glossary}
+
+\begin{document}
+
+\newcommand{\requirementscope}[2]{\newcounter{counter#1}\expandafter\newcommand\csname #2\endcsname[2]{\addtocounter{counter#1}{10}\item[#1\arabic{counter#1}\phantomsection\label{#1\arabic{counter#1}}]{\textbf{##1}\\##2}}}
+\newcommand{\specref}[1]{\hyperref[#1]{#1}}
+
+\maketitle
+
+\include{chapter/versionhistory}% History of document versions
+\tableofcontents
+\include{chapter/introduction}	% Introduction
+\include{chapter/goals}			% Definition of Goals
+\include{chapter/scope}			% Application Scope
+\include{chapter/environment}	% Project Environment
+\include{chapter/func}			% Functional Specifications
+\include{chapter/data}			% Application Data
+\include{chapter/nonfunc}		% Non-functional Specifications
+\include{chapter/tests}			% Global Testcases	
+\include{chapter/scenarios}     % Scenarios
+\include{chapter/sysmodels}		% System Models
+\include{chapter/feasibility} 	% Feasibility Study
+\printnoidxglossaries
+\end{document}
