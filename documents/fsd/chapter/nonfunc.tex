@@ -4,35 +4,35 @@
 \requirementscope{NF}{nfspec}
 
 \begin{itemize}
-\nfspec{CPU Performance\\
-    The CPU utilization by the application on an \gls{user} \gls{device} with an Intel Core i5 8250U or better and a screen resolution of 1080p or smaller should not exceed 25\% while recording a \gls{session}.
+\nfspec{CPU Performance}{
+    The CPU utilization by the application on a \gls{user}'s \gls{device} with an Intel Core i5 8250U or better and a screen resolution of 1080p or smaller should not exceed 25\% while recording a \gls{session}.
 }
 
-\nfspec{Memory Usage\\
+\nfspec{Memory Usage}{
     The memory usage by the application on the \gls{user}'s \gls{device} should not exceed 400MB while running a \gls{session}.
 }
 
-\nfspec{Start Response Performance\\
+\nfspec{Start Response Performance}{
 	The delay between the \gls{user} starting a session via hitting the button and the actual session start should not exceed 1 second.
 }
 
-\nfspec{Saving Response Performance\\
+\nfspec{Saving Response Performance}{
 	After the \gls{user} has stopped a \gls{session}, the saving process of the \gls{session} file should take no more longer than 1 minute.
 }
 
-\nfspec{Usability\\
+\nfspec{Usability}{
 	After a 5-minute introduction the \gls{user} does not commit more than 1 mistake on an 8-hour working day.
 }
 
-\nfspec{Offline Recordings\\
+\nfspec{Offline Recordings}{
 	The user can record a \gls{session} and save sessions locally without being connected to the internet.
 }
 
-\nfspec{Modularity\\
+\nfspec{Modularity}{
 	The application should support running at least all five \glspl{module}, defined in chapter \ref{ch:func}, per \gls{session}.
 }
 
-\nfspec{Reliability\\
+\nfspec{Reliability}{
 	The probability of a failure during a 60-minute \gls{session} is under 2\%.\\
 	A failure is an unintended termination of a recording \gls{session} with a possible loss of recorded data.\\
 	This does not apply should the application be run in an unsupported environment or configuration (see chapter \ref{ch:environment}).
