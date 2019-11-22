@@ -3,10 +3,31 @@
 
 %%Cannot use requirementscope as we have to inject additional text into the label
 \newcounter{counterTC}
-\newcommand{\testfor}[2]{\addtocounter{counterTC}{10}\item[TC\arabic{counterTC}\label{TC\arabic{counterTC}}\\\begin{footnotesize}\textit{(tests \specref{#1})}\end{footnotesize}]{#2}}
-\newcommand{\test}{\addtocounter{counterTC}{10}\item[TC\arabic{counterTC}\label{TC\arabic{counterTC}}]}
-\newenvironment{tests}{\begin{itemize}[font = \normalfont, style = multiline, labelwidth = 60pt, leftmargin = !]}{\end{itemize}}
 
+\makeatletter
+\newcommand{\fmt}[1]{(tests \specref{#1}\checknextarg}
+\newcommand{\checknextarg}{\@ifnextchar\bgroup{\consumenextarg}{)}}
+\newcommand{\consumenextarg}[1]{, \specref{#1}\@ifnextchar\bgroup{\consumenextarg}{)}}
+\makeatother
+
+\newcommand{\test}[5]{\addtocounter{counterTC}{10}
+\item[TC\arabic{counterTC}\phantomsection\label{TC\arabic{counterTC}}\\\begin{footnotesize}\textit{#1}\end{footnotesize}]
+    \begin{itemize}[noitemsep]
+        \item[]{\textbf{#2}} %title
+        \item[]{Precondition: #3}
+        \item[]{Test steps: #4}
+        \item[]{Expected result: #5}
+    \end{itemize}
+}
+
+\newenvironment{tests}{\begin{itemize}[font = \normalfont, style = multiline, labelwidth = 60pt, leftmargin = !]}{\end{itemize}}
+    
+\begin{tests}
+    \test{\fmt{FS10}{FS20}{FS30}}{title text}{precondition text}{test steps text}{expected result text}
+\end{tests}
+    
+%%Leaving this as a reference
+\newcommand{\testfor}[2]{\addtocounter{counterTC}{10}\item[TC\arabic{counterTC}\label{TC\arabic{counterTC}}\\\begin{footnotesize}\textit{(tests \specref{#1})}\end{footnotesize}]{#2}}
 \section{High-level test cases}
 
 \begin{tests}
