@@ -95,7 +95,7 @@
         \item The videostream contained in the recording follows \specref{D40}, where the framerate is 60hz, the bitrate is 4096kpbs (or lower) and the resolution is 1920x1080 pixels.
     \end{itemize}}
 
-    \test{\fmt{FS51}{FS250}{FS54}{FS70}{FS90}{FS340}{FS350}}{Configuring audio recording}{The application is running. The configuration file is valid. The configuration specifies to record video.}
+    \test{\fmt{FS51}{FS250}{FS54}{FS70}{FS90}{FS340}{FS350}}{Configuring audio recording}{The application is running. The configuration file is valid. The configuration specifies to record audio.}
     {\begin{enumerate}
         \item The \gls{user} starts a recording.
         \item The \gls{user} stops the recording.
@@ -105,7 +105,7 @@
         \item The videostream contains the optional audiostream.
     \end{itemize}}
 
-    \test{\fmt{FS54}{FS250}{FS70}{FS90}{FS340}{FS350}}{Configuring audio recording}{The application is running. The configuration file is valid. The configuration specifies to store the recording at path "\%userprofile\%\textbackslash documents\textbackslash recordings".}
+    \test{\fmt{FS54}{FS250}{FS70}{FS90}{FS340}{FS350}}{Configuring file path}{The application is running. The configuration file is valid. The configuration specifies to store the recording at path "\%userprofile\%\textbackslash documents\textbackslash recordings".}
     {\begin{enumerate}
         \item The \gls{user} starts a recording.
         \item The \gls{user} stops the recording.
@@ -533,7 +533,7 @@
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
-		\item The recording contains button-click-browser event, that contains URL of Google Search Engine Results Pagese, the unique identifier of the tab, where the button-click event occured in, title of the button item, URL of the website that the button is linked to, if applicable) along with the timestamp at which the user clicked a button on Google Search Engine Results Pages, the identifier of the browser module and the "browser:button-click" type of the event.
+		\item The recording contains button-click-browser event, that contains URL of Google Search Engine Results Pagese, the unique identifier of the tab, where the button-click event occured in, title of the button item, URL of the website that the button is linked to (if applicable) along with the timestamp at which the user clicked a button on Google Search Engine Results Pages, the identifier of the browser module and the "browser:button-click" type of the event.
 	\end{itemize}}
 	
 	
