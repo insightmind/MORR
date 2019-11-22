@@ -10,13 +10,13 @@
 \newcommand{\consumenextarg}[1]{, \specref{#1}\@ifnextchar\bgroup{\consumenextarg}{)}}
 \makeatother
 
-\newcommand{\test}[5]{\addtocounter{counterTC}{10}
-\item[TC\arabic{counterTC}\phantomsection\label{TC\arabic{counterTC}}\\\begin{footnotesize}\textit{#1}\end{footnotesize}]
+\newcommand{\test}[6][]{\ifthenelse{\equal{#1}{}}{\addtocounter{counterTC}{10}}{\setcounter{counterTC}{#1}}
+\item[TC\arabic{counterTC}\phantomsection\label{TC\arabic{counterTC}}\\\begin{footnotesize}\textit{#2}\end{footnotesize}]
     \begin{itemize}[noitemsep]
-        \item[]{\textbf{#2}} %title
-        \item[]{Precondition: #3}
-        \item[]{Test steps: #4}
-        \item[]{Expected result: #5}
+        \item[]{\textbf{#3}} %title
+        \item[]{Precondition: #4}
+        \item[]{Test steps: #5}
+        \item[]{Expected result: #6}
     \end{itemize}
 }
 
@@ -29,23 +29,11 @@
     {The \gls{user} repeats the following 256 times:
     \begin{enumerate}
         \item The \gls{user} starts a recording.
-        \item The \gls{user} stops the recording.
+        \item The \gls{user} completes the recording process.
     \end{enumerate}}
     {\begin{itemize}
         \item 256 recordings have been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
         \item Each recording contains a different \gls{session} identifier (as specified in \specref{D20}).
-    \end{itemize}}
-
-    \test{\fmt{FS20}{FS54}{FS70}{FS250}{FS90}{FS340}{FS350}}{Event timings}{The application is running. The configuration file is valid.}
-    {\begin{enumerate}
-        \item The \gls{user} starts a recording.
-        \item The \gls{user} performs an action that generates an \gls{event} at time X.
-        \item The \gls{user} performs another action that generates an \gls{event} at time Y.
-        \item The \gls{user} stops the recording.
-    \end{enumerate}}
-    {\begin{itemize}
-        \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
-        \item The recording contains both events in accordance with \specref{D300}, \specref{D301} and \specref{D302}. The timestamp of the first \gls{event} must refer to time X, the timestamp of the second \gls{event} must refer to time Y.
     \end{itemize}}
 
     \test{\fmt{FS40}{FS54}{FS70}{FS250}{FS90}{FS51}{FS340}{FS350}}{Event discarding}{The application is running. The configuration file is valid. The configuration specifies to discard events of type "mouse:click".}
@@ -53,20 +41,20 @@
         \item The \gls{user} starts a recording.
         \item The \gls{user} creates an \gls{event} of type "mouse:left-click" by clicking the left mouse button.
         \item The \gls{user} creates an \gls{event} of type "keyboard:press-key" by pressing the 'a' key.
-        \item The \gls{user} stops the recording.
+        \item The \gls{user} completes the recording process.
     \end{enumerate}}
     {\begin{itemize}
         \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
         \item The recording contains only the "keyboard:press-key" \gls{event} in accordance with \specref{D300}, \specref{D301}, \specref{D302} and \specref{D330}.
     \end{itemize}}
-
+\newpage
     \test{\fmt{FS40}{FS51}{FS54}{FS70}{FS90}{FS250}{FS340}{FS350}{FS411}{FS421}}{Event transforming}{The application is running. The configuration file is valid. The configuration specifies to active a \ref{transforming-module} that transforms \glspl{event} of type "mouse:left-click" and "keyboard:press-key" into an \glspl{event} of type "other:ctrl-leftclick".}
     {\begin{enumerate}
         \item The \gls{user} starts a recording.
         \item The \gls{user} creates an \gls{event} of type "keyboard:press-key" by pressing the 'CTRL' key without releasing it.
         \item The \gls{user} creates an \gls{event} of type "mouse:left-click" by clicking the left mouse button.
         \item The \gls{user} creates an \gls{event} of type "keyboard:release-key" by releasing the 'CTRL' key.
-        \item The \gls{user} stops the recording.
+        \item The \gls{user} completes the recording process.
     \end{enumerate}}
     {\begin{itemize}
         \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
@@ -78,17 +66,17 @@
         \item The \gls{user} starts a recording.
         \item The \gls{user} presses the left mouse button which yields an \gls{event} by the mouse module.
         \item The \gls{user} presses the 'a' key which would yield an \gls{event} by the keyboard module.
-        \item The \gls{user} stops the recording.
+        \item The \gls{user} completes the recording process.
     \end{enumerate}}
     {\begin{itemize}
         \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
         \item The recording only contains the \gls{event} "mouse:left-click" \gls{event} in accordance with \specref{D300}, \specref{D301} and \specref{D302}. It does not contain the \gls{event} that would have been generated by the keyboard module.
     \end{itemize}}
-
+\newpage
     \test{\fmt{FS51}{FS54}{FS70}{FS90}{FS250}{FS340}{FS350}}{Configuring video recording}{The application is running. The configuration file is valid. The configuration specifies to record video with a framerate of 60hz, a bitrate of 4096kbps and a resolution of 1920x1080 pixels.}
     {\begin{enumerate}
         \item The \gls{user} starts a recording.
-        \item The \gls{user} stops the recording.
+        \item The \gls{user} completes the recording process.
     \end{enumerate}}
     {\begin{itemize}
         \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
@@ -98,7 +86,7 @@
     \test{\fmt{FS51}{FS54}{FS70}{FS90}{FS250}{FS340}{FS350}}{Configuring audio recording}{The application is running. The configuration file is valid. The configuration specifies to record audio.}
     {\begin{enumerate}
         \item The \gls{user} starts a recording.
-        \item The \gls{user} stops the recording.
+        \item The \gls{user} completes the recording process.
     \end{enumerate}}
     {\begin{itemize}
         \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
@@ -108,18 +96,18 @@
     \test{\fmt{FS54}{FS70}{FS90}{FS250}{FS340}{FS350}}{Configuring file path}{The application is running. The configuration file is valid. The configuration specifies to store the recording at path "\%userprofile\%\textbackslash documents\textbackslash recordings".}
     {\begin{enumerate}
         \item The \gls{user} starts a recording.
-        \item The \gls{user} stops the recording.
+        \item The \gls{user} completes the recording process.
     \end{enumerate}}
     {\begin{itemize}
         \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored in the "\textbackslash documents\textbackslash recordings" folder inside the \gls{user} directory of the \gls{user} currently logged in.
     \end{itemize}}
-
+\newpage
     \test{\fmt{FS60}{FS310}}{Error detection}{The default-configuration file got invalidated by appending a bracket ' \{ ' to the end of the file.}
     {\begin{enumerate}
         \item The \gls{user} starts the application.
     \end{enumerate}}
     {\begin{itemize}
-        \item The application detects the errors in the configuration and shows an error dialog.
+        \item The application detects the errors in the configuration and displays an error dialog.
     \end{itemize}}
 
     \test{\fmt{FS70}{FS80}{FS340}{FS350}}{User controllability (start)}{The application is running. The configuration file is valid.}
@@ -128,15 +116,15 @@
         \item The \gls{user} clicks on the "Start Recording" entry.
     \end{enumerate}}
     {\begin{itemize}
-        \item The application shows an information dialog.
+        \item The application displays an information dialog.
     \end{itemize}}
     
-     \test{\fmt{FS70}{FS80}{FS300}}{Information dialog}{The application is currently showing the information dialog at the start of a recording.}
+     \test{\fmt{FS70}{FS80}{FS300}}{Information dialog}{The application is currently displaying the information dialog at the start of a recording.}
     {\begin{enumerate}
         \item The \gls{user} dismisses the information dialog.
     \end{enumerate}}
     {\begin{itemize}
-        \item The application starts a recording and shows a recording indicator.
+        \item The application starts a recording and displays a recording indicator.
     \end{itemize}}
     
     \test{\fmt{FS70}{FS90}{FS340}{FS350}}{User controllability (stop)}{The application is running. The configuration file is valid. A \gls{session} is currently being recorded.}
@@ -146,9 +134,9 @@
     \end{enumerate}}
     {\begin{itemize}
         \item The recording is stopped.
-        \item The application shows a save dialog.
+        \item The application displays a save dialog.
     \end{itemize}}
-
+\newpage
     \test{\fmt{FS100}{FS340}{FS350}}{User controllability (quit)}{The application is running. No \gls{session} is currently being recorded.}
     {\begin{enumerate}
         \item The \gls{user} opens the tray menu by clicking on the application icon in the system tray to open the tray menu.
@@ -162,30 +150,13 @@
     {\begin{enumerate}
         \item The \gls{user} opens the tray menu by clicking on the application icon in the system tray to open the tray menu.
         \item The \gls{user} clicks on the "Quit" entry.
+        \item The \gls{user} chooses any option in the save dialog.
     \end{enumerate}}
     {\begin{itemize}
-        \item The application shows a save dialog.
-    \end{itemize}}
-
-    \test{\fmt{FS120}{FS250}}{Save dialog - Quit and save}{The application is currently showing the save dialog and the \gls{user} has clicked on the "Quit" entry in the tray menu.}
-    {\begin{enumerate}
-        \item The \gls{user} clicks on the button labeled "Save".
-    \end{enumerate}}
-    {\begin{itemize}
-        \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
-        \item The application is no longer running.
-    \end{itemize}}
-
-    \test{\fmt{FS120}{FS250}}{Save dialog - Quit and discard}{The application is currently showing the save dialog and the \gls{user} has clicked on the "Quit" entry in the tray menu.}
-    {\begin{enumerate}
-        \item The \gls{user} clicks on the button labeled "Discard".
-    \end{enumerate}}
-    {\begin{itemize}
-        \item The application is no longer running.
-        \item The recording has not been saved.
+        \item The application terminates immediately if the \gls{user} decided to discard the recording or terminates after the recording has been saved if the \gls{user} decided to save the recording.
     \end{itemize}}
         
-    \test{\fmt{FS120}{FS250}}{Save dialog - Save}{The application is currently showing the save dialog.}
+    \test{\fmt{FS120}{FS250}}{Save dialog - Save}{The application is currently displaying the save dialog.}
     {\begin{enumerate}
         \item The \gls{user} clicks on the button labeled "Save".
     \end{enumerate}}
@@ -193,14 +164,14 @@
         \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
     \end{itemize}}
 
-    \test{\fmt{FS120}{FS250}}{Save dialog - Discard}{The application is currently showing the save dialog.}
+    \test{\fmt{FS120}{FS250}}{Save dialog - Discard}{The application is currently displaying the save dialog.}
     {\begin{enumerate}
         \item The \gls{user} clicks on the button labeled "Discard".
     \end{enumerate}}
     {\begin{itemize}
         \item The application is no longer running.
     \end{itemize}}
-
+\newpage
     \test{\fmt{FS130}}{Recordings folder}{The application is running.}
     {\begin{enumerate}
         \item The \gls{user} opens the tray menu by clicking on the application icon in the system tray to open the tray menu.
@@ -212,9 +183,8 @@
 \end{tests}
 
 \section{Core application test cases}
-
 \begin{tests}
-    \test{\fmt{FS70}{FS90}{FS200}{FS250}}{Video stream recording}{The application is running. The configuration file is valid.}
+    \test[200]{\fmt{FS70}{FS90}{FS200}{FS250}}{Video stream recording}{The application is running. The configuration file is valid.}
     {\begin{enumerate}
         \item The \gls{user} starts a recording.
         \item The \gls{user} stops a recording.
@@ -228,19 +198,19 @@
     {\begin{enumerate}
         \item The \gls{user} starts a recording.
         \item The \gls{user} clicks the left mouse button.
-        \item The \gls{user} stops the recording.
+        \item The \gls{user} completes the recording process.
     \end{enumerate}}
     {\begin{itemize}
         \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
         \item The recording contains an \gls{event} of type "mouse:left-click" corresponding to the \gls{user} interaction.
     \end{itemize}}
-
+\newpage
     \test{\fmt{FS70}{FS90}{FS230}{FS240}{FS250}}{On-demand module management}{The application is running. The configuration file is valid. The configuration specifies that the \gls{browser} module should be activated.}
     {\begin{enumerate}
         \item The \gls{user} starts a recording.
         \item The \gls{user} opens the \gls{browser}.
         \item The \gls{user} navigates to the civic.genome.wustl.edu webpage.
-        \item The \gls{user} stops the recording.
+        \item The \gls{user} completes the recording process.
     \end{enumerate}}
     {\begin{itemize}
         \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
@@ -252,19 +222,19 @@
         \item The \gls{user} starts a recording.
         \item The \gls{user} clicks the left mouse button.
         \item The \gls{user} presses the "a"-key.
-        \item The \gls{user} stops the recording.
+        \item The \gls{user} completes the recording process.
     \end{enumerate}}
     {\begin{itemize}
         \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
         \item The recording contains both the "mouse:left-click" and the "keyboard:press-key" events.
     \end{itemize}}
-
+\newpage
     \test{\fmt{FS70}{FS90}{FS250}{FS260}}{Combinability of modules}{The application is running. The configuration file is valid. The configuration specifies that both the mouse module and the keyboard module should be activated. It also specifies another module, that merges a "mouse:left-click" and a "keyboard:press-key" \gls{event} into a "other:ctrl-click" event.}
     {\begin{enumerate}
         \item The \gls{user} starts a recording.
         \item The \gls{user} presses and holds the "CTRL"-key.
         \item The \gls{user} then clicks the left mouse button.
-        \item The \gls{user} stops the recording.
+        \item The \gls{user} completes the recording process.
     \end{enumerate}}
     {\begin{itemize}
         \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
@@ -276,7 +246,7 @@
         \item The \gls{user} starts a recording.
         \item The \gls{user} starts navigating to the civic.genome.wustl.edu webpage.
         \item The \gls{user} then immediately switches to another application.
-        \item The \gls{user} stops the recording.
+        \item The \gls{user} completes the recording process.
     \end{enumerate}}
     {\begin{itemize}
         \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
@@ -284,41 +254,16 @@
     \end{itemize}}
 \end{tests}
 
+\newpage
 \section{User interface test cases}
 
 \begin{tests}
-    \test{\fmt{FS70}{FS80}{FS300}{FS340}{FS350}}{Recording indicator}{The application is not running. The configuration file is valid.}
+    \test[300]{\fmt{FS330}}{Event-Data extraction}{One or more recordings have been created and stored at the path "\%userprofile\%\textbackslash documents\textbackslash recordings\textbackslash sample.mp4".}
     {\begin{enumerate}
-        \item The \gls{user} starts a recording.
-        \item The \gls{user} accepts the information dialog.
+        \item The \gls{scientist} starts the command-line tool with the path "\%userprofile\%\textbackslash documents\textbackslash recordings\textbackslash" of the recordings and another path "\%userprofile\%\textbackslash documents\textbackslash recordings\textbackslash extracted\textbackslash" to extract the data to.
     \end{enumerate}}
     {\begin{itemize}
-        \item The application shows a recording indicator.
-    \end{itemize}}
-
-    \test{\fmt{FS310}}{Error dialog}{The application is not running. The configuration file is invalid.}
-    {\begin{enumerate}
-        \item The \gls{user} starts the application.
-    \end{enumerate}}
-    {\begin{itemize}
-        \item The application shows an error dialog.
-    \end{itemize}}
-
-    \test{\fmt{FS70}{FS90}{FS120}{FS320}{FS340}{FS350}}{Save dialog}{The application is running. The configuration file is valid.}
-    {\begin{enumerate}
-        \item The \gls{user} starts a recording.
-        \item The \gls{user} stops the recording.
-    \end{enumerate}}
-    {\begin{itemize}
-        \item The application shows a save dialog.
-    \end{itemize}}
-
-    \test{\fmt{FS330}}{Event-Data extraction}{One or more recordings have been created and stored at the path X.}
-    {\begin{enumerate}
-        \item The \gls{scientist} starts the command-line tool with the path X of the recordings and another path Y to extract the data to.
-    \end{enumerate}}
-    {\begin{itemize}
-        \item The \gls{event} data contained in the recordings at path X is extracted in CSV-format to path Y.
+        \item The \gls{event} data contained in the recordings at path "\%userprofile\%\textbackslash documents\textbackslash recordings\textbackslash" is extracted in CSV-format to path "\%userprofile\%\textbackslash documents\textbackslash recordings\textbackslash extracted\textbackslash".
     \end{itemize}}
 
     \test{\fmt{FS340}}{Tray-Icon}{The application is not running. The configuration file is valid.}
@@ -334,10 +279,11 @@
         \item The \gls{user} clicks the tray-icon.
     \end{enumerate}}
     {\begin{itemize}
-        \item The tray-menu is shown.
+        \item The tray-menu is displayed.
     \end{itemize}}
 \end{tests}
 
+\newpage
 \section{Per-module test cases}
 
 \subsection{System module test cases}
@@ -345,11 +291,11 @@
 \subsubsection{Window-management module test cases}
 
 \begin{tests}
-	\test{\fmt{FS20}{FS30}{FS54}{FS70}{FS250}{FS401}}{Window focus event}{The application is running. The configuration file is valid.}
+	\test[400]{\fmt{FS20}{FS30}{FS54}{FS70}{FS250}{FS401}}{Window focus event}{The application is running. The configuration file is valid.}
 	{\begin{enumerate}
 		\item The \gls{user} starts a new \gls{session} recording.
 		\item The \gls{user} focuses a "Windows Explorer" window.
-		\item The \gls{user} stops the recording.
+		\item The \gls{user} completes the recording process.
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
@@ -360,18 +306,18 @@
 	{\begin{enumerate}
 		\item The \gls{user} starts a new \gls{session} recording.
 		\item The \gls{user} moves a "Windows Explorer" window.
-		\item The \gls{user} stops the recording.
+		\item The \gls{user} completes the recording process.
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
 		\item The recording contains a move-window \gls{event},  that contains the title of the "Windows Explorer" window, old and new location of the window along with the timestamp at which the \gls{user} moved the window, the identifier of the window-management module and the "window:move" type of the event.
 	\end{itemize}}
-	
+\newpage	
 	\test{\fmt{FS20}{FS30}{FS54}{FS70}{FS250}{FS403}}{Window resize event}{The application is running. The configuration file is valid.}
 	{\begin{enumerate}
 		\item The \gls{user} starts a new \gls{session} recording.
 		\item The \gls{user} resizes a "Windows Explorer" window.
-		\item The \gls{user} stops the recording.
+		\item The \gls{user} completes the recording process.
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
@@ -382,7 +328,7 @@
 	{\begin{enumerate}
 		\item The \gls{user} starts a new \gls{session} recording.
 		\item The \gls{user} maximizes/minimizes/restores a "Windows Explorer" window.
-		\item The \gls{user} stops the recording.
+		\item The \gls{user} completes the recording process.
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
@@ -390,6 +336,7 @@
 	\end{itemize}}
 \end{tests}
 
+\newpage
 \subsubsection{Mouse module test cases}
 
 \begin{tests}
@@ -398,7 +345,7 @@
 		\item The \gls{user} starts a new \gls{session} recording.
 		\item The \gls{user} presses the left/right/middle mouse button in "Windows Explorer".
 		\item The \gls{user} releases the left/right/middle mouse button in "Windows Explorer".
-		\item The \gls{user} stops the recording.
+		\item The \gls{user} completes the recording process.
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
@@ -409,18 +356,19 @@
 	{\begin{enumerate}
 		\item The \gls{user} starts a new \gls{session} recording.
 		\item The \gls{user} performs double-clicks the left mouse button.
-		\item The \gls{user} stops the recording.
+		\item The \gls{user} completes the recording process.
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
 		\item The recording contains a double-click-mouse \gls{event},  that contains the type of the clicked button - left, type of the click - double, HWND associated with the "Windows Explorer" window that was clicked, along with the timestamp at which the \gls{user} double clicked the mouse button, the identifier of the mouse-interaction module and the "mouse:left-double-click" type of the event.
 	\end{itemize}}
-	
+
+\newpage
 	\test{\fmt{FS20}{FS30}{FS54}{FS70}{FS250}{FS412}}{Mouse scroll event}{The application is running. The configuration file is valid.}
 	{\begin{enumerate}
 		\item The \gls{user} starts a new \gls{session} recording.
 		\item The \gls{user} scrolls the mouse wheel in "Windows Explorer".
-		\item The \gls{user} stops the recording.
+		\item The \gls{user} completes the recording process.
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
@@ -431,7 +379,7 @@
 	{\begin{enumerate}
 		\item The \gls{user} starts a new \gls{session} recording.
 		\item The \gls{user} moves the mouse.
-		\item The \gls{user} stops the recording.
+		\item The \gls{user} completes the recording process.
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
@@ -439,6 +387,7 @@
 	\end{itemize}}
 \end{tests}
 
+\newpage
 \subsubsection{Keyboard module test cases}
 
 \begin{tests}
@@ -447,7 +396,7 @@
 		\item The \gls{user} starts a new \gls{session} recording.
 		\item The \gls{user} presses a key while a "Windows Explorer" window is focused.
 		\item The \gls{user} releases a key while a "Windows Explorer" window is focused.
-		\item The \gls{user} stops the recording.
+		\item The \gls{user} completes the recording process.
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
@@ -462,7 +411,7 @@
 	{\begin{enumerate}
 		\item The \gls{user} starts a new \gls{session} recording.
 		\item The \gls{user} copies text from a "Microsoft Excel" window.
-		\item The \gls{user} stops the recording.
+		\item The \gls{user} completes the recording process.
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
@@ -473,7 +422,7 @@
 	{\begin{enumerate}
 		\item The \gls{user} starts a new \gls{session} recording.
 		\item The \gls{user} pastes text in the "Mozilla Firefox/Google Chrome" address bar.
-		\item The \gls{user} stops the recording.
+		\item The \gls{user} completes the recording process.
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
@@ -489,18 +438,18 @@
 	{\begin{enumerate}
 		\item The \gls{user} starts a new \gls{session} recording.
 		\item The \gls{user} opens a new tab in "Mozilla Firefox/Google Chrome".
-		\item The \gls{user} stops the recording.
+		\item The \gls{user} completes the recording process.
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
 		\item The recording contains the open-tab-browser \gls{event},  that contains the URL of the interacted website and the unique identifier of the new tab along with the timestamp at which the \gls{user} opened a new tab in "Mozilla Firefox/Google Chrome", the identifier of the \gls{browser} module and the "browser:open-tab" type of the event.
 	\end{itemize}}
-	
+\newpage
 	\test{\fmt{FS20}{FS30}{FS54}{FS70}{FS250}{FS442}}{Browser switch to tab event}{The application is running. The configuration file is valid.}
 	{\begin{enumerate}
 		\item The \gls{user} starts a new \gls{session} recording.
 		\item The \gls{user} switches to a tab in "Mozilla Firefox/Google Chrome".
-		\item The \gls{user} stops the recording.
+		\item The \gls{user} completes the recording process.
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
@@ -511,18 +460,18 @@
 	{\begin{enumerate}
 		\item The \gls{user} starts a new \gls{session} recording.
 		\item The \gls{user} closes a tab "Mozilla Firefox/Google Chrome".
-		\item The \gls{user} stops the recording.
+		\item The \gls{user} completes the recording process.
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
 		\item The recording contains the close-tab-browser \gls{event},  that contains the URL of the interacted website and the unique identifier of the tab along with the timestamp at which the \gls{user} closed a tab in "Mozilla Firefox/Google Chrome", the identifier of the \gls{browser} module and the "browser:close-tab" type of the event.
 	\end{itemize}}
-	
+\newpage	
 	\test{\fmt{FS20}{FS30}{FS54}{FS70}{FS250}{FS444}}{Browser navigation event}{The application is running. The configuration file is valid.}
 	{\begin{enumerate}
 		\item The \gls{user} starts a new \gls{session} recording.
 		\item The \gls{user} navigates to a URL on the google.com search results page.
-		\item The \gls{user} stops the recording.
+		\item The \gls{user} completes the recording process.
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
@@ -533,19 +482,19 @@
 	{\begin{enumerate}
 		\item The \gls{user} starts a new \gls{session} recording.
 		\item The \gls{user} inputs text into a search box on the google.com page.
-		\item The \gls{user} stops the recording.
+		\item The \gls{user} completes the recording process.
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
 		\item The recording contains the text-input-browser \gls{event},  that contains the URL of the google.com page, the unique identifier of the tab, which the text-input \gls{event} occured in, the text which has been input by the \gls{user}, information about search box, where text has been input, along with the timestamp at which the \gls{user} input the text, the identifier of the \gls{browser} module and the "browser:text-input" type of the event.
 	\end{itemize}}
 	
-	
+\newpage
 	\test{\fmt{FS20}{FS30}{FS54}{FS70}{FS250}{FS446}}{Browser button click event}{The application is running. The configuration file is valid.}
 	{\begin{enumerate}
 		\item The \gls{user} starts a new \gls{session} recording.
 		\item The \gls{user} clicks a button on the google.com page.
-		\item The \gls{user} stops the recording.
+		\item The \gls{user} completes the recording process.
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
@@ -557,19 +506,19 @@
 	{\begin{enumerate}
 		\item The \gls{user} starts a new \gls{session} recording.
 		\item The \gls{user} hovers the mouse-pointer over a web-element on the google.com page.
-		\item The \gls{user} stops the recording.
+		\item The \gls{user} completes the recording process.
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
 		\item The recording contains the hover-browser \gls{event},  that contains the URL of the google.com page, the unique identifier of the tab, which the hover \gls{event} occured in, the information about the element which has been hovered along with the timestamp at which the \gls{user} hovered the web-element, the identifier of the \gls{browser} module and the "browser:hover" type of the event.
 	\end{itemize}}
 	
-	
+\newpage
 	\test{\fmt{FS20}{FS30}{FS54}{FS70}{FS250}{FS448}}{Browser text selection event}{The application is running. The configuration file is valid.}
 	{\begin{enumerate}
 		\item The \gls{user} starts a new \gls{session} recording.
 		\item The \gls{user} selects text on the google.com page.
-		\item The \gls{user} stops the recording.
+		\item The \gls{user} completes the recording process.
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
@@ -581,7 +530,7 @@
 	{\begin{enumerate}
 		\item The \gls{user} starts a new \gls{session} recording.
 		\item The \gls{user} downloads a file from the google.com page.
-		\item The \gls{user} stops the recording.
+		\item The \gls{user} completes the recording process.
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
