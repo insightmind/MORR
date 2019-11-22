@@ -1,42 +1,42 @@
-﻿# Evaluationsapp zur Erfassung von Rechercheaktivitäten
+# Application for aquisition of research activities
 (PSE Team 2)
 
-## Allgemeines
+## General
 
-Teamkommunikation findet über Slack statt.
+Team Communication via Slack
 
-## Phasenorganisation
+## Phases
 
-### 1. Pflichtenheft
+### 1. Functional Specification
 
-Phasenleitung: Irma Suppes (ullpq@student.kit.edu)
+Leadership: Irma Suppes (ullpq@student.kit.edu)
 
-Deadline: 22.November 2019
+Deadline: 22. November 2019
 
-### 2. Entwurf
+### 2. Softwaredesign
 
-Phasenleitung: Mingyi Li (ucpcg@student.kit.edu)
+Leadership: Mingyi Li (ucpcg@student.kit.edu)
 
-Deadline: 13.Dezember 2019
+Deadline: 13. December 2019
 
-### 3. Implementierung
+### 3. Implementation
 
-Deadline: 14. Februar 2020
+Deadline: 14. February 2020
 
 #### 3.1 Phase 1
-Phasenleitung: Niklas Bülow (urpdf@student.kit.edu)
+Leadership: Niklas Bülow (urpdf@student.kit.edu)
 
 #### 3.2 Phase 2
-Phasenleitung: Karl Rubel (udwvh@student.kit.edu)
+Leadership: Karl Rubel (udwvh@student.kit.edu)
 
-### 4. Qualitätsicherung
+### 4. Quality Assurance
 
-Phasenleitung: Sönke Jendral (uynfo@student.kit.edu)
+Leadership: Sönke Jendral (uynfo@student.kit.edu)
 
-Deadline: 6. März 2020
+Deadline: 6. March 2020
 
-### 5. Abnahme
+### 5. Acceptance
 
-Interne Abnahme: 9. - 13. März 2020
+Internal Acceptance: 9. - 13. March 2020
 
-Abschlusspräsentation: 16. - 20. März 2020
+Final presentation: 16. - 20. March 2020
