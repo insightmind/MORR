@@ -22,6 +22,126 @@
 
 \newenvironment{tests}{\begin{itemize}[font = \normalfont, style = multiline, labelwidth = 60pt, leftmargin = !]}{\end{itemize}}
 
+\section{High-level test cases}
+
+\begin{tests}
+    \test{\fmt{FS10}{FS250}{FS54}{FS70}{FS90}{FS340}{FS350}}{Identifiable sessions}{The application is running. The configuration file is valid.}
+    {The \gls{user} repeats the following 256 times:
+    \begin{enumerate}
+        \item The \gls{user} starts a recording
+        \item The \gls{user} stops the recording
+    \end{enumerate}}
+    {\begin{itemize}
+        \item 256 recordings have been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration
+        \item Each recording contains a different session identifier (as specified in \specref{D20})
+    \end{itemize}}
+
+    \test{\fmt{FS20}{FS250}{FS54}{FS70}{FS90}{FS340}{FS350}}{Event timings}{The application is running. The configuration file is valid.}
+    {\begin{enumerate}
+        \item The \gls{user} starts a recording
+        \item The \gls{user} performs an action that generates an \gls{event} at time X
+        \item The \gls{user} performs another action that generates an \gls{event} at time Y
+        \item The \gls{user} stops the recording
+    \end{enumerate}}
+    {\begin{itemize}
+        \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration
+        \item The recording contains both events in accordance with \specref{D300}, \specref{D301} and \specref{D302}. The timestamp of the first event must refer to time X, the timestamp of the second event must refer to time Y
+    \end{itemize}}
+
+    \test{\fmt{FS30}{FS250}{FS54}{FS70}{FS90}{FS340}{FS350}}{Event types}{The application is running. The configuration file is valid.}
+    {\begin{enumerate}
+        \item The \gls{user} starts a recording
+        \item The \gls{user} performs an action that generates an \gls{event} of type X
+        \item The \gls{user} performs another action that generates an \gls{event} of type Y
+        \item The \gls{user} stops the recording
+    \end{enumerate}}
+    {\begin{itemize}
+        \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration
+        \item The recording contains both events in accordance with \specref{D300}, \specref{D301} and \specref{D302}. The type of the first event must refer to X, the type of the second event must refer Y
+    \end{itemize}}
+
+    \test{\fmt{FS40}{FS250}{FS54}{FS70}{FS90}{FS51}{FS340}{FS350}}{Event discarding}{The application is running. The configuration file is valid. The configuration specifies to discard events of type X.}
+    {\begin{enumerate}
+        \item The \gls{user} starts a recording
+        \item The \gls{user} performs an action that generates an \gls{event} of type X
+        \item The \gls{user} performs another action that generates an \gls{event} of type Y
+        \item The \gls{user} stops the recording
+    \end{enumerate}}
+    {\begin{itemize}
+        \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration
+        \item The recording contains only the second event in accordance with \specref{D300}, \specref{D301} and \specref{D302}
+    \end{itemize}}
+
+    \test{\fmt{FS40}{FS250}{FS54}{FS70}{FS90}{FS51}{FS340}{FS350}}{Event transforming}{The application is running. The configuration file is valid. The configuration specifies to active a \ref{transforming-module} that transforms \glspl{event} of type X and Y into an \glspl{event} of type Z}
+    {\begin{enumerate}
+        \item The \gls{user} starts a recording
+        \item The \gls{user} performs an action that generates an \gls{event} of type X
+        \item The \gls{user} performs another action that generates an \gls{event} of type Y
+        \item The \gls{user} stops the recording
+    \end{enumerate}}
+    {\begin{itemize}
+        \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration
+        \item The recording contains both the first and second event in accordance with \specref{D300}, \specref{D301} and \specref{D302}. It additionally contains a third event of type Z that was created by transforming the first two \glspl{event}
+    \end{itemize}}
+
+    \test{\fmt{FS51}{FS250}{FS54}{FS70}{FS90}{FS340}{FS350}}{Configuring active modules}{The application is running. The configuration file is valid. The configuration specifies to load module A and to not load module B}
+    {\begin{enumerate}
+        \item The \gls{user} starts a recording
+        \item The \gls{user} performs an action that would yield an \gls{event} by module A
+        \item The \gls{user} performs an action that would yield an \gls{event} by module B
+        \item The \gls{user} stops the recording
+    \end{enumerate}}
+    {\begin{itemize}
+        \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration
+        \item The recording only contains the \gls{event} generated by module A in accordance with \specref{D300}, \specref{D301} and \specref{D302}. It does not contain the \gls{event} that would have been generated by module B
+    \end{itemize}}
+
+    \test{\fmt{FS51}{FS250}{FS54}{FS70}{FS90}{FS340}{FS350}}{Configuring video recording}{The application is running. The configuration file is valid. The configuration specifies to record video with a framerate X, a bitrate Y and a resolution Z}
+    {\begin{enumerate}
+        \item The \gls{user} starts a recording
+        \item The \gls{user} stops the recording
+    \end{enumerate}}
+    {\begin{itemize}
+        \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration
+        \item The videostream contained in the recording follows \specref{D40}, where the framerate is X, the bitrate is Y and the resolution is Z
+    \end{itemize}}
+
+    \test{\fmt{FS51}{FS250}{FS54}{FS70}{FS90}{FS340}{FS350}}{Configuring audio recording}{The application is running. The configuration file is valid. The configuration specifies to record video}
+    {\begin{enumerate}
+        \item The \gls{user} starts a recording
+        \item The \gls{user} stops the recording
+    \end{enumerate}}
+    {\begin{itemize}
+        \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration
+        \item The videostream contains the optional audiostream
+    \end{itemize}}
+
+    \test{\fmt{FS54}{FS250}{FS70}{FS90}{FS340}{FS350}}{Configuring audio recording}{The application is running. The configuration file is valid. The configuration specifies to store the recording at path X}
+    {\begin{enumerate}
+        \item The \gls{user} starts a recording
+        \item The \gls{user} stops the recording
+    \end{enumerate}}
+    {\begin{itemize}
+        \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path X
+    \end{itemize}}
+
+    \test{\fmt{FS60}{FS310}}{Error detection}{The configuration file is invalid.}
+    {\begin{enumerate}
+        \item The \gls{user} starts the application
+    \end{enumerate}}
+    {\begin{itemize}
+        \item The application detects the errors in the configuration and displays an error dialogue
+    \end{itemize}}
+
+    \test{\fmt{FS70}{FS80}{FS300}{FS340}{FS350}}{User controllability (start)}{The application is running. The configuration file is valid.}
+    {\begin{enumerate}
+        \item The \gls{user} starts a recording
+    \end{enumerate}}
+    {\begin{itemize}
+        \item The application shows an information dialogue. When the \gls{user} dismisses the information dialogue, the application starts a recording and shows a recording indicator
+    \end{itemize}}
+\end{tests}
+
 \section{Per-module test cases}
 
 \subsection{System module test cases}
