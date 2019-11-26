@@ -3,7 +3,7 @@
     <BaseIntermediateOutputPath>$(SolutionDir)build\temp\$(Configuration)\$(Platform)</BaseIntermediateOutputPath>
   </PropertyGroup>
 
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk"/>
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
@@ -13,4 +13,8 @@
   </PropertyGroup>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Interfaces\Interfaces.csproj" />
+  </ItemGroup>
 </Project>

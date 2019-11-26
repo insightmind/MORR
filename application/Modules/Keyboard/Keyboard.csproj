@@ -16,5 +16,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\MORR\MORR.csproj" />
+    <ProjectReference Include="..\..\Shared\Interfaces\Interfaces.csproj" />
   </ItemGroup>
 </Project>
