@@ -1,0 +1,16 @@
+﻿<Project>
+  <PropertyGroup>
+    <BaseIntermediateOutputPath>$(SolutionDir)build\temp\$(Configuration)\$(Platform)</BaseIntermediateOutputPath>
+  </PropertyGroup>
+
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk"/>
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <RootNamespace>MORR.Core</RootNamespace>
+    <Platforms>x64</Platforms>
+    <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)</OutDir>
+  </PropertyGroup>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+</Project>
