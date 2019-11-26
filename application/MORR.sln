@@ -6,12 +6,24 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{83D88243-1F52-42EB-8A53-DE19B8BD1E6E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebBrowser", "Modules\WebBrowser\WebBrowser.csproj", "{7F052550-FC9C-4DE1-A5CC-80F5D79E2300}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6519D962-A6DC-4054-98E0-DC73F5F949F3} = {6519D962-A6DC-4054-98E0-DC73F5F949F3}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mouse", "Modules\Mouse\Mouse.csproj", "{F7032F7C-180F-468A-AF89-A9158737E2BC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6519D962-A6DC-4054-98E0-DC73F5F949F3} = {6519D962-A6DC-4054-98E0-DC73F5F949F3}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Keyboard", "Modules\Keyboard\Keyboard.csproj", "{84031356-14DC-4DE3-B196-AFA174D8707D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6519D962-A6DC-4054-98E0-DC73F5F949F3} = {6519D962-A6DC-4054-98E0-DC73F5F949F3}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clipboard", "Modules\Clipboard\Clipboard.csproj", "{90E160BA-1D19-4DDB-906F-A29975D69F82}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6519D962-A6DC-4054-98E0-DC73F5F949F3} = {6519D962-A6DC-4054-98E0-DC73F5F949F3}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WindowManagement", "Modules\WindowManagement\WindowManagement.csproj", "{FC895DA7-3C09-4839-B098-6C4F427622C5}"
 EndProject
@@ -23,7 +35,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UI", "Core\UI\UI.csproj", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MORR", "Core\MORR\MORR.csproj", "{37E969A0-04B8-444C-9767-45065A2B231A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interfaces", "Shared\Interfaces\Interfaces.csproj", "{6519D962-A6DC-4054-98E0-DC73F5F949F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Interfaces", "Shared\Interfaces\Interfaces.csproj", "{6519D962-A6DC-4054-98E0-DC73F5F949F3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{328D6815-8419-4C18-AEE8-A22D9C26F912}"
 EndProject

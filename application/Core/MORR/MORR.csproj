@@ -1,6 +1,6 @@
 ﻿<Project>
   <PropertyGroup>
-    <BaseIntermediateOutputPath>$(SolutionDir)build\temp\$(Configuration)\$(Platform)</BaseIntermediateOutputPath>
+    <BaseIntermediateOutputPath>$(SolutionDir)build\temp\$(Configuration)\$(Platform)\MORR</BaseIntermediateOutputPath>
   </PropertyGroup>
 
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />

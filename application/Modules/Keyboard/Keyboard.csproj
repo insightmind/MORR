@@ -1,6 +1,6 @@
 ﻿<Project>
   <PropertyGroup>
-    <BaseIntermediateOutputPath>$(SolutionDir)build\temp\$(Configuration)\$(Platform)</BaseIntermediateOutputPath>
+    <BaseIntermediateOutputPath>$(SolutionDir)build\temp\$(Configuration)\$(Platform)\Keyboard</BaseIntermediateOutputPath>
   </PropertyGroup>
 
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
@@ -9,13 +9,12 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <RootNamespace>MORR.Modules.Keyboard</RootNamespace>
     <Platforms>x64</Platforms>
-    <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\Modules</OutDir>
+    <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)</OutDir>
   </PropertyGroup>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\MORR\MORR.csproj" />
-    <ProjectReference Include="..\..\Shared\Interfaces\Interfaces.csproj" />
   </ItemGroup>
 </Project>

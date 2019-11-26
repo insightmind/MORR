@@ -1,6 +1,6 @@
 ﻿<Project>
   <PropertyGroup>
-    <BaseIntermediateOutputPath>$(SolutionDir)build\temp\$(Configuration)\$(Platform)</BaseIntermediateOutputPath>
+    <BaseIntermediateOutputPath>$(SolutionDir)build\temp\$(Configuration)\$(Platform)\UI</BaseIntermediateOutputPath>
   </PropertyGroup>
 
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk.WindowsDesktop" />
@@ -11,7 +11,6 @@
     <UseWPF>true</UseWPF>
     <RootNamespace>Morr.Core.UI</RootNamespace>
     <Platforms>x64</Platforms>
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)</OutDir>
   </PropertyGroup>
 
