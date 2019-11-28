@@ -3,7 +3,7 @@
 namespace MORR.Core.UI
 {
     /// <summary>
-    /// Interaction logic for App.xaml
+    /// Auto-generated WPF application class
     /// </summary>
     public partial class App : Application
     {

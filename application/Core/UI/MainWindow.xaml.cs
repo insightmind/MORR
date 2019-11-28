@@ -3,7 +3,7 @@
 namespace MORR.Core.UI
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Auto-generated WPF main window class
     /// </summary>
     public partial class MainWindow : Window
     {
