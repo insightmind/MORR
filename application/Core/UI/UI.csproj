@@ -12,6 +12,7 @@
     <RootNamespace>Morr.Core.UI</RootNamespace>
     <Platforms>x64</Platforms>
     <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)</OutDir>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk.WindowsDesktop" />

@@ -11,6 +11,7 @@
     <RootNamespace>Morr.Core.CMD</RootNamespace>
     <Platforms>x64</Platforms>
     <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)</OutDir>
+    <Nullable>enable</Nullable>
     <!--<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <PublishTrimmed>true</PublishTrimmed>
     <PublishSingleFile>true</PublishSingleFile>
