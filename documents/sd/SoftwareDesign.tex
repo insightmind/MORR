@@ -1,0 +1,46 @@
+\documentclass[parskip=full, 12pt, oneside]{scrbook}
+
+\usepackage[utf8]{inputenc} % use utf8 file encoding for TeX sources
+\usepackage[T1]{fontenc} % avoid garbled Unicode text in pdf
+\usepackage[english]{babel} % english hyphenation, quotes, etc
+\usepackage[hidelinks]{hyperref} % detailed hyperlink/pdf configuration
+\usepackage{csquotes}
+\usepackage{authblk}
+\usepackage{enumitem}
+\usepackage{graphicx} %%provides the  \includegraphics macro
+\usepackage{float} %%provides the H directive to force position of figures (\begin{figure}[H])
+\usepackage[numberedsection,nonumberlist,toc,section=chapter]{glossaries}     % provides glossary commands
+\usepackage{scrhack} %%make above float package compatible with komascript
+\usepackage{ifthenx}
+\usepackage{intcalc}
+\hypersetup{ % `texdoc hyperref` for options
+	pdftitle={Functional Specifications},
+	bookmarks=true,
+}
+
+\makenoidxglossaries
+
+% Configure Title Page Layout
+\subject{Karlsruhe Institute of Technology}
+\author{
+	\textit{Irma Suppes, Karl Rubel, } \\ 
+	\textit{Mingyi Li, Niklas Bülow, Sönke Jendral }
+}
+\title{MORR \\ (Medical Online Research Recorder)}
+\subtitle{PSE-Project \\ Software design}
+\publishers{Supervisors: \\ \textit{Paula Breitling, Dr. Till Riedel, Tobias Röddiger}}
+
+\include{chapter/glossary}
+
+\begin{document}
+
+
+\maketitle
+
+\include{chapter/versionhistory}% History of document versions
+\tableofcontents
+\include{chapter/introduction}  % Introduction
+\include{chapter/structure}     % Structure
+\include{chapter/class}         % Class design and description
+\printnoidxglossaries
+\end{document}

@@ -16,6 +16,7 @@
 *.sln.docstates
 
 documents/fsd/FunctionalSpecifications.pdf
+documents/sd/SoftwareDesign.pdf
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
