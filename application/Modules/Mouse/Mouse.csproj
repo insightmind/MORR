@@ -9,7 +9,8 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <RootNamespace>MORR.Modules.Mouse</RootNamespace>
     <Platforms>x64</Platforms>
-    <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)</OutDir>
+    <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\Modules</OutDir>
+    <AssemblyName>Mouse.MORR.Module</AssemblyName>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
@@ -21,7 +22,8 @@
 
   <ItemGroup>
     <Reference Include="PresentationCore">
-      <HintPath>C:\Program Files\dotnet\packs\Microsoft.WindowsDesktop.App.Ref\3.0.0\ref\netcoreapp3.0\PresentationCore.dll</HintPath>
+      <!-- Manually set this to be the actual assembly instead of the reference assembly to make MEF work -->
+      <HintPath>C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\3.0.0\PresentationCore.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>
