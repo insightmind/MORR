@@ -18,4 +18,10 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Core\MORR\MORR.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="PresentationCore">
+      <HintPath>C:\Program Files\dotnet\packs\Microsoft.WindowsDesktop.App.Ref\3.0.0\ref\netcoreapp3.0\PresentationCore.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>
