@@ -1,12 +1,11 @@
 ﻿using System.Numerics;
-using MORR.Shared;
 
 namespace MORR.Modules.Mouse.Events
 {
     /// <summary>
     ///     A mouse move user interaction
     /// </summary>
-    public class MouseMoveEvent : Event
+    public class MouseMoveEvent : MouseEvent
     {
         /// <summary>
         ///     The movement of the mouse

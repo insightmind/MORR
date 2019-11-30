@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Windows.Input;
-using MORR.Shared;
 
 namespace MORR.Modules.Mouse.Events
 {
     /// <summary>
     ///     A mouse click user interaction
     /// </summary>
-    public class MouseClickEvent : Event
+    public class MouseClickEvent : MouseEvent
     {
         /// <summary>
         ///     The button that was clicked
