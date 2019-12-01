@@ -18,4 +18,10 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Core\MORR\MORR.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="WindowsBase">
+      <HintPath>C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\3.0.0\WindowsBase.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>
