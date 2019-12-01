@@ -8,7 +8,7 @@ namespace MORR.Modules.Mouse.Events
     public class WindowStateChangedEvent: WindowEvent
     {
         /// <summary>
-        /// The new State of the window
+        /// The new state of the window
         /// </summary>
         public WindowState State;
     }
