@@ -19,7 +19,7 @@ namespace MORR.Modules.Clipboard.Events
         /// <summary>
         ///     The interaction type
         /// </summary>
-        public InteractionType IAType { get; set;}
+        public InteractionType Interaction { get; set;}
 
         /// <summary>
         ///     The text in the clipboard
