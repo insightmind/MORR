@@ -39,6 +39,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Interfaces", "Shared\Interf
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{328D6815-8419-4C18-AEE8-A22D9C26F912}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BrowserExtension", "BrowserExtension", "{FFA2938F-0D93-4041-91E4-E95FB9BD795E}"
+EndProject
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "BrowserExtension", "BrowserExtension\BrowserExtension.njsproj", "{DDD1BD72-DD4D-4E85-B750-8B0A2BDB8F0F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -81,6 +85,9 @@ Global
 		{6519D962-A6DC-4054-98E0-DC73F5F949F3}.Debug|x64.Build.0 = Debug|x64
 		{6519D962-A6DC-4054-98E0-DC73F5F949F3}.Release|x64.ActiveCfg = Release|x64
 		{6519D962-A6DC-4054-98E0-DC73F5F949F3}.Release|x64.Build.0 = Release|x64
+		{DDD1BD72-DD4D-4E85-B750-8B0A2BDB8F0F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DDD1BD72-DD4D-4E85-B750-8B0A2BDB8F0F}.Release|x64.ActiveCfg = Release|Any CPU
+		{DDD1BD72-DD4D-4E85-B750-8B0A2BDB8F0F}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -95,6 +102,7 @@ Global
 		{454778BC-5326-428C-B2DC-D63054E44B51} = {FF3B36E1-CBBF-4538-9541-4451DB32DE5D}
 		{37E969A0-04B8-444C-9767-45065A2B231A} = {FF3B36E1-CBBF-4538-9541-4451DB32DE5D}
 		{6519D962-A6DC-4054-98E0-DC73F5F949F3} = {328D6815-8419-4C18-AEE8-A22D9C26F912}
+		{DDD1BD72-DD4D-4E85-B750-8B0A2BDB8F0F} = {FFA2938F-0D93-4041-91E4-E95FB9BD795E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7518534B-C5FA-474A-9AA7-58EA6C80D9A8}
