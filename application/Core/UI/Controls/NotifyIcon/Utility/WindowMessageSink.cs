@@ -22,14 +22,18 @@ namespace Morr.Core.UI.Controls.NotifyIcon.Utility
 
         private readonly uint taskbarWindowMessageId;
 
+        private NativeMethods.WindowProcedureHandler internalWindowMessageHandler;
+
         public WindowMessageSink()
         {
             var className = $"sink@{Guid.NewGuid()}";
 
+            internalWindowMessageHandler = OnWindowMessageInternal;
+
             NativeMethods.WindowClass windowClass;
 
             windowClass.style = 0;
-            windowClass.lpfnWndProc = OnWindowMessageInternal;
+            windowClass.lpfnWndProc = internalWindowMessageHandler;
             windowClass.cbClsExtra = 0;
             windowClass.cbWndExtra = 0;
             windowClass.hInstance = IntPtr.Zero;
@@ -108,6 +112,7 @@ namespace Morr.Core.UI.Controls.NotifyIcon.Utility
             isDisposed = true;
 
             NativeMethods.DestroyWindow(WindowHandle);
+            internalWindowMessageHandler = null;
         }
 
         #endregion

@@ -15,7 +15,7 @@ namespace MORR.Core.UI.Controls.NotifyIcon
     /// <summary>
     ///     Manages a tray icon
     /// </summary>
-    public class NotifyIcon : DependencyObject, IDisposable
+    public class NotifyIcon : Control, IDisposable
     {
         private static readonly WindowMessageSink MessageSink = new WindowMessageSink();
         private NativeMethods.NotifyIconData iconData;
@@ -100,6 +100,7 @@ namespace MORR.Core.UI.Controls.NotifyIcon
 
                     if (ContextMenu != null && MessageSink != null)
                     {
+                        ContextMenu.DataContext = DataContext;
                         ContextMenu.Placement = PlacementMode.AbsolutePoint;
                         ContextMenu.HorizontalOffset = cursorPosition.X;
                         ContextMenu.VerticalOffset = cursorPosition.Y;
