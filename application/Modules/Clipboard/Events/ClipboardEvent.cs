@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MORR.Shared;
+﻿using MORR.Shared;
 
 namespace MORR.Modules.Clipboard.Events
 {
