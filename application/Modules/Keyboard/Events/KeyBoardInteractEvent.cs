@@ -1,4 +1,6 @@
-﻿namespace MORR.Modules.Keyboard.Events
+﻿using System.Windows.Input;
+
+namespace MORR.Modules.Keyboard.Events
 {
     /// <summary>
     ///     A keyboard user interaction
@@ -8,6 +10,6 @@
         /// <summary>
         ///     The key pressed
         /// </summary>
-        public System.Windows.Input.Key PressedKey { get; set; }
+        public Key PressedKey { get; set; }
     }
 }
