@@ -1,9 +1,3 @@
-import IApplicationInterface from './IApplicationInterface'
-import PostHTTPInterface from './PostHTTPInterface'
-import WebSocketInterface from './WebSocketInterface'
-
-export {
-    IApplicationInterface,
-    PostHTTPInterface,
-    WebSocketInterface
-}
+export { default as IApplicationInterface } from './IApplicationInterface'
+export { default as PostHTTPInterface } from './PostHTTPInterface'
+export { default as WebSocketInterface } from './WebSocketInterface'
