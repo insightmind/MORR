@@ -13,7 +13,7 @@ namespace MORR.Modules.Clipboard.Events
         /// </summary>
         public enum InteractionType
         {
-            CLEAR, COPY, CUT, PASTE
+            Clear, Copy, Cut, Paste
         };
 
         /// <summary>
