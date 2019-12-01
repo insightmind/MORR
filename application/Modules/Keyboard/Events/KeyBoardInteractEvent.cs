@@ -8,7 +8,7 @@ namespace MORR.Modules.Keyboard.Events
     public class KeyBoardInteractEvent : KeyboardEvent
     {
         /// <summary>
-        ///     The key pressed
+        ///     The key that was pressed
         /// </summary>
         public Key PressedKey { get; set; }
     }
