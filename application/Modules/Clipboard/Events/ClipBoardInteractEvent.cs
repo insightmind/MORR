@@ -24,6 +24,6 @@ namespace MORR.Modules.Clipboard.Events
         /// <summary>
         ///     The text in the clipboard
         /// </summary>
-        public String text { get; set; }
+        public string Text { get; set; }
     }
 }
