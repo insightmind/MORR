@@ -10,6 +10,6 @@ namespace MORR.Modules.Mouse.Events
         /// <summary>
         /// The new State of the window
         /// </summary>
-        public WindowState NewState;
+        public WindowState State;
     }
 }
