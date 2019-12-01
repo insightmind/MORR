@@ -1,7 +1,7 @@
 ﻿namespace MORR.Modules.Mouse.Events
 {
     /// <summary>
-    ///     A window foucs user interaction
+    ///     A window focus user interaction
     /// </summary>
     public class WindowFocusEvent : WindowEvent
     {
