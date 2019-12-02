@@ -17,7 +17,7 @@ namespace MORR.Modules.WebBrowser.Events
         /// <summary>
         /// The URL of the website that the button is linked to
         /// </summary>
-        public string URL { get; set; }
+        public Uri URL { get; set; }
 
     }
 }

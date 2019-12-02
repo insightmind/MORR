@@ -16,7 +16,7 @@ namespace MORR.Modules.WebBrowser.Events
         /// <summary>
         ///     The URL of the website where the web browser event occured in
         /// </summary>
-        public string CurrentURL { get; set; }
+        public Uri CurrentURL { get; set; }
     }
 
 }

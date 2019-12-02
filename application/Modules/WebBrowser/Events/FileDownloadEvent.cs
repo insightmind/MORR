@@ -12,7 +12,7 @@ namespace MORR.Modules.WebBrowser.Events
         /// <summary>
         /// The URL of the file that was downloaded
         /// </summary>
-        public string FileURL { get; set; }
+        public Uri FileURL { get; set; }
 
         /// <summary>
         /// MIME type of the file that was downloaded
