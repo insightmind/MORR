@@ -4,7 +4,7 @@
     ///     Provides read-write access to a queue of events as concrete type <typeparamref name="T" />
     /// </summary>
     /// <typeparam name="T">The concrete type of the event</typeparam>
-    public interface ITypedEventQueue<T> : IReadOnlyTypedEventQueue<T> where T : Event
+    public interface IReadWriteEventQueue<T> : IReadOnlyEventQueue<T> where T : Event
     {
         /// <summary>
         ///     Asynchronously enqueues a new event
