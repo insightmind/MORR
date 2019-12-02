@@ -1,12 +1,21 @@
 \chapter{Classes}
 \label{ch:class}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Notes about this chapter%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Each name space correspondes to a section
+% Each class in a name space correspondes to a subsection to that section.
+% Each class has some of the followings: class diagram, description, declaration, constructor, fields and Methods.
+% At the start of class diagram, description, declaration, constructor, fields and Methods,
+% a corresponding commad \cls----- will be called to start a new paragraph with the name of the paragraph.
+% the content of the corresponding paragraph will be descibed either isn text(in Description) or with a itemize (e.g. fields).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Notes about this chapter%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newcommand{\cls}[1]{\paragraph{\textbf{#1}}}
-\newcommand{\clsdsp}{\subparagraph{\textbf{Description:\\}}}
-\newcommand{\clsdcl}{\subparagraph{\textbf{Declaration:\\}}}
-\newcommand{\clscon}{\subparagraph{\textbf{Constructor:\\}}}
-\newcommand{\clsfield}{\subparagraph{\textbf{Fields:\\}}}
-\newcommand{\clsmethod}{\subparagraph{\textbf{Methods:\\}}}
+
+\newcommand{\clsDiagram}{\paragraph{\textbf{Class Diagram}}}
+\newcommand{\clsdsp}{\paragraph{\textbf{Description:\\}}}
+\newcommand{\clsdcl}{\paragraph{\textbf{Declaration:\\}}}
+\newcommand{\clscon}{\paragraph{\textbf{Constructor:\\}}}
+\newcommand{\clsfield}{\paragraph{\textbf{Fields:\\}}}
+\newcommand{\clsmethod}{\paragraph{\textbf{Methods:\\}}}
 
 
 \section{Core}
