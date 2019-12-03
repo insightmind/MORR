@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npx tsc --noEmit && npx parcel build ./src/background.ts ./src/ContentScript/DOMEventRecorder.ts --no-source-maps -d dist",
-    "dbuild": "npx tsc --noEmit && npx parcel build ./src/background.ts ./src/ContentScript/DOMEventRecorder.ts --no-source-maps --no-minify -d debug --detailed-report 10",
+    "build": "npx tsc --noEmit && npx parcel build ./src/background.ts ./src/Listeners/DOM/ContentScript/DOMEventRecorder.ts --no-source-maps -d dist",
+    "dbuild": "npx tsc --noEmit && npx parcel build ./src/background.ts ./src/Listeners/DOM/ContentScript/DOMEventRecorder.ts --no-source-maps --no-minify -d debug --detailed-report 10",
     "clean": "rm -rf dist/ debug/"
   },
   "author": "Karl Rubel",

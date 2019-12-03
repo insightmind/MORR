@@ -70,13 +70,22 @@ class BackgroundScript {
     /**
      * Request config of the MORR application
      */
-    private requestConfig = () => {
+    private requestConfig = (response? : string) => {
         throw new Error("Method not implemented.");
     }
     /**
      * Retry setting up a connection to the main application
      */
     private retryConnection = () => {
+        throw new Error("Method not implemented.");
+    }
+
+    /**
+     * Parses configuration string and applies the configuration by setting the respective values in the web storage.
+     * @param configuration The configuration string (JSON)
+     * @returns true if configuration was valid, false otherwise
+     */
+    private parseAndApplyConfiguration(configuration : string) : boolean {
         throw new Error("Method not implemented.");
     }
 }

@@ -1,6 +1,6 @@
-import { IListener, EventType } from '../Shared/SharedDeclarations'
-import { BrowserEvent } from '../Shared/SharedDeclarations'
-import { NavigationEvent, SwitchTabEvent, OpenTabEvent, CloseTabEvent } from '../Shared/BrowserEvents'
+import { IListener, EventType } from '../../Shared/SharedDeclarations'
+import { BrowserEvent } from '../../Shared/SharedDeclarations'
+import { NavigationEvent, SwitchTabEvent, OpenTabEvent, CloseTabEvent } from './TabEvents'
 
 /**
  * Listener for tab-related events.

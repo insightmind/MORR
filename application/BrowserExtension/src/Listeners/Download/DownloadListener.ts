@@ -1,6 +1,6 @@
-import { IListener, EventType } from '../Shared/SharedDeclarations'
-import { BrowserEvent } from '../Shared/SharedDeclarations'
-import { DownloadEvent } from '../Shared/BrowserEvents';
+import { IListener, EventType } from '../../Shared/SharedDeclarations'
+import { BrowserEvent } from '../../Shared/SharedDeclarations'
+import { DownloadEvent } from './DownloadEvents';
 
 /**
  * Listener for downloads.

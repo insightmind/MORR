@@ -1,5 +1,5 @@
-import { IListener, EventType } from '../Shared/SharedDeclarations'
-import { BrowserEvent } from '../Shared/SharedDeclarations'
+import { IListener, EventType } from '../../Shared/SharedDeclarations'
+import { BrowserEvent } from '../../Shared/SharedDeclarations'
 
 /**
  * Listener responsible to gather all releveant events happening in the website context.
@@ -24,7 +24,7 @@ export default class DOMListener implements IListener {
     private injectEventRecorder = (details? : chrome.webNavigation.WebNavigationFramedCallbackDetails) => {
         return new Promise((resolve, reject) => {
             if (!details || details.frameId === 0) {
-                chrome.tabs.executeScript({ file: 'ContentScript/DOMEventRecorder.js' }, () => {
+                chrome.tabs.executeScript({ file: 'Listeners/DOM/ContentScript/DOMEventRecorder.js' }, () => {
                     if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
                     else resolve();
                 });

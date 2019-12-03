@@ -1,5 +1,6 @@
-import { DOMEventTypes, BrowserEvent } from '../Shared/SharedDeclarations'
-import { TextInputEvent, ButtonClickEvent, HoverEvent, TextSelectionEvent, DownloadEvent } from '../Shared/BrowserEvents';
+import { BrowserEvent } from '../../../Shared/SharedDeclarations'
+import { DOMEventTypes } from '../DOMEvents'
+import { TextInputEvent, ButtonClickEvent, HoverEvent, TextSelectionEvent } from '../DOMEvents';
 
 /**
  * Recorder injected into the website to capture DOM events.
@@ -61,14 +62,6 @@ class DOMEventRecorder {
 	 * @returns text selection event 
 	 */
 	private createTextSelectionEvent(ev : any) : TextSelectionEvent {
-		throw new Error("Method not implemented.");
-	}
-	/**
-	 * Creates download event
-	 * @param ev The event which occured on the website
-	 * @returns download event 
-	 */
-	private createDownloadEvent(ev : any) : DownloadEvent {
 		throw new Error("Method not implemented.");
 	}
 }

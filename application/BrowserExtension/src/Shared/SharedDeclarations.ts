@@ -1,22 +1,4 @@
 /**
- * DOM Event types. Required for content script.
- */
-export enum DOMEventTypes {
-    CLICK = 'click',
-	CHANGE = 'change', //change event usually happens when the element loses focus again (e. g. when the user switches to the next input field in a form)
-	DBLCLICK = 'dblclick',
-	//KEYDOWN = 'keydown',
-	//MOUSEENTER = 'mouseenter',
-	MOUSEUP = 'mouseup', //for text selection events
-	MOUSEDOWN = 'mousedown',
-	SELECT = 'select', //user selects a dropdown entry or similar
-	SUBMIT = 'submit',
-	SEARCH = 'search',
-	//INPUT = 'input', //fires for every single character input into a field
-	FOCUS = 'focus',
-}
-
-/**
  * Browser Event types
  */
 export enum EventType {
