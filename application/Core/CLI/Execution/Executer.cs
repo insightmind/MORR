@@ -1,6 +1,6 @@
-﻿using Morr.Core.CMD.CLI;
+﻿using Morr.Core.CLI.CLI;
 
-namespace Morr.Core.CMD.Execution
+namespace Morr.Core.CLI.Execution
 {
     /// <summary>
     /// The Executor handles, as its name suggests, the execution of a CMD command.

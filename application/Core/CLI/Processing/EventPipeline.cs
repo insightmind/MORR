@@ -1,4 +1,4 @@
-﻿namespace Morr.Core.CMD.Processing
+﻿namespace Morr.Core.CLI.Processing
 {
     /// <summary>
     /// The EventPipeline builds up and manages the data flow of events through a variety of modules

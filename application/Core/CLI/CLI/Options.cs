@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-namespace Morr.Core.CMD.CLI
+namespace Morr.Core.CLI.CLI
 {
     /// <summary>
     /// Defines the argument options/input of the command line interface.

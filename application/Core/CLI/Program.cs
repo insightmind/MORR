@@ -1,9 +1,9 @@
 ﻿using System;
 using CommandLine;
-using Morr.Core.CMD.CLI;
-using Morr.Core.CMD.Execution;
+using Morr.Core.CLI.CLI;
+using Morr.Core.CLI.Execution;
 
-namespace MORR.Core.CMD
+namespace MORR.Core.CLI
 {
     /// <summary>
     /// Command line tool entry point

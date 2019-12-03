@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Morr.Core.CMD.CLI
+namespace Morr.Core.CLI.CLI
 {
     /// <summary>
     /// Encapsulates the command line output behaviour and functionality of the CMD tool.
