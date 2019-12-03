@@ -1,4 +1,6 @@
-﻿using Morr.Core.CLI.CLI;
+﻿using MORR.Core;
+using Morr.Core.CLI.CLI;
+using MORR.Core.Data.Transcoding;
 
 namespace Morr.Core.CLI.Execution
 {
@@ -9,6 +11,16 @@ namespace Morr.Core.CLI.Execution
     /// </summary>
     internal class Executor
     {
+        /// <summary>
+        /// Loads the pipeline modules and allows execution.
+        /// </summary>
+        private readonly Bootstrapper bootstrapper;
+
+        /// <summary>
+        /// Decodes the given file depending its file specification.
+        /// </summary>
+        private IDecoder decoder;
+
         /// <summary>
         /// Executes the CMD tools functionality based on the given options.
         /// </summary>
