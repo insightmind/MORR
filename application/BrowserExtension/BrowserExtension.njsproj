@@ -42,7 +42,10 @@
     <Folder Include="src\" />
     <Folder Include="src\ApplicationInterface\" />
     <Folder Include="src\Listeners\" />
-    <Folder Include="src\ContentScript\" />
+    <Folder Include="src\Listeners\DOM\" />
+    <Folder Include="src\Listeners\DOM\ContentScript\" />
+    <Folder Include="src\Listeners\Download\" />
+    <Folder Include="src\Listeners\Tab\" />
     <Folder Include="src\Shared\" />
   </ItemGroup>
   <ItemGroup>
@@ -51,10 +54,14 @@
     <TypeScriptCompile Include="src\ApplicationInterface\PostHTTPInterface.ts" />
     <TypeScriptCompile Include="src\ApplicationInterface\WebSocketInterface.ts" />
     <TypeScriptCompile Include="src\background.ts" />
-    <TypeScriptCompile Include="src\ContentScript\DOMEventRecorder.ts" />
-    <TypeScriptCompile Include="src\Listeners\DOMListener.ts" />
+    <TypeScriptCompile Include="src\Listeners\DOM\ContentScript\DOMEventRecorder.ts" />
+    <TypeScriptCompile Include="src\Listeners\DOM\DOMEvents.ts" />
+    <TypeScriptCompile Include="src\Listeners\DOM\DOMListener.ts" />
+    <TypeScriptCompile Include="src\Listeners\Download\DownloadEvents.ts" />
+    <TypeScriptCompile Include="src\Listeners\Download\DownloadListener.ts" />
     <TypeScriptCompile Include="src\Listeners\index.ts" />
-    <TypeScriptCompile Include="src\Listeners\TabListener.ts" />
+    <TypeScriptCompile Include="src\Listeners\Tab\TabEvents.ts" />
+    <TypeScriptCompile Include="src\Listeners\Tab\TabListener.ts" />
     <TypeScriptCompile Include="src\Shared\SharedDeclarations.ts" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
