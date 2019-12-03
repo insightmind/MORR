@@ -1,6 +1,6 @@
 ﻿using MORR.Core.Data.Sample.Video;
 
-namespace MORR.Core.Data.Transcoding.Video
+namespace MORR.Core.Data.Transcoding.Video.EventHandlers
 {
     /// <summary>
     ///     Handles the <see cref="IEncoder.VideoSampleRequested" /> event

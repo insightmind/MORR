@@ -1,6 +1,6 @@
 ﻿using MORR.Core.Data.Sample.Metadata;
 
-namespace MORR.Core.Data.Transcoding.Metadata
+namespace MORR.Core.Data.Transcoding.Metadata.EventHandlers
 {
     /// <summary>
     ///     Handles the <see cref="IEncoder.MetadataSampleRequested" /> event

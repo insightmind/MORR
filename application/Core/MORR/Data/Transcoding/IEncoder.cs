@@ -1,6 +1,6 @@
-﻿using MORR.Core.Data.Transcoding.Audio;
-using MORR.Core.Data.Transcoding.Metadata;
-using MORR.Core.Data.Transcoding.Video;
+﻿using MORR.Core.Data.Transcoding.Audio.EventHandlers;
+using MORR.Core.Data.Transcoding.Metadata.EventHandlers;
+using MORR.Core.Data.Transcoding.Video.EventHandlers;
 
 namespace MORR.Core.Data.Transcoding
 {

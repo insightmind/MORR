@@ -1,6 +1,6 @@
 ﻿using MORR.Core.Data.Sample.Audio;
 
-namespace MORR.Core.Data.Transcoding.Audio
+namespace MORR.Core.Data.Transcoding.Audio.EventHandlers
 {
     /// <summary>
     ///     Handles the <see cref="IDecoder.AudioSampleDecoded" /> event
