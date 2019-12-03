@@ -4,26 +4,21 @@
 % Each namespace correspondes to a section
 % Each project in a namespace correspondes to a subsection in its namespaces' section.
 % Each class, abstract class or interface in the project corresponds to a subsubsection in its project's subsection.
-% Each class, abstract class or interface has some of the followings: class diagram, description, declaration, constructor, fields and Methods.
-% Each of the class diagram, description, declaration, constructor, fields and Methods corresponds to a paragraph in its class' subsubsection.
+% Each class, abstract class or interface has some of the followings: class diagram, description, declaration, constructor, attributes and Methods.
 %
 % namespace------section
 %     |            |
 %  project-----subsection
 %     ||           |
 %   class-------subsubsection
-%     |            |
-%   methods----paragraph
 %
 %  IMPORTANT: the structure above should corresponds to the directory structure chapter. \autoref{ch:dirstructure}
 %
 % At the start of each namespace \section{namespace name} should be called to start a new section
 % At the start of each project \subsection{project name} should be called to start a new subsection
-% At the start of each class, abstract class or interface, a corresponding command \cls----- will be called to start a new subsubsection
+% At the start of each class, abstract class or interface, a corresponding environment \begin{class},... will be called to start a new subsubsection
 % At the start of class diagram, description, declaration, constructor, fields and Methods,
-% a corresponding commad \cls----- will be called to start a new paragraph.
-% the content of the corresponding paragraph will be descibed either in text(in Description) or with a itemize (e.g. fields)
-% and the content of a declaration, fields and method signature should use \texttt{}.
+% a corresponding commad \cls----- or environment \begin{methods}... will be called to start a new paragraph.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Notes about this chapter%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -31,14 +26,62 @@
 \newenvironment{absclass}[1]{\subsubsection{{\textbf{Abstract Class: #1}}}}{\newpage}
 \newenvironment{interface}[1]{\subsubsection{{\textbf{Interface: #1}}}}{\newpage}
 
-\newcommand{\clsdiagram}{\paragraph{\textbf{Class diagram:\\}}}
-\newcommand{\clsdsp}{\paragraph{\textbf{Description:\\}}}
-\newcommand{\clsdcl}{\paragraph{\textbf{Declaration:\\}}}
-\newcommand{\clscon}{\paragraph{\textbf{Constructor:\\}}}
-\newcommand{\clsfield}{\paragraph{\textbf{Fields:\\}}}
-\newcommand{\clsmethod}{\paragraph{\textbf{Methods:\\}}}
+%include a class diagram
+%para1: the directory of the diagram
+\newcommand{\clsdiagram}[1]{\textbf{Class diagram:} \newline 
+\begin{center}
+    \includegraphics{#1}
+\end{center}}
 
-\newcommand{\dsp}[1]{Description: #1}   %escription of a constructor, a method, a field, a parameter, a return value and so on.
+% The declaration of a class, abstrat class or interface.
+% para1: declaration in text
+\newcommand{\clsdcl}[1]{\textbf{Declaration:} \newline \texttt{#1}} %para1: description 
+
+% The description of a class, abstrat class or interface.
+% para1: description in text
+\newcommand{\clsdsp}[1]{\textbf{Description:} \newline #1}
+
+% Constructors itemize with citem(constructor item)
+\newenvironment{constructors}{\textbf{Constructors:}  \begin{itemize}
+}{\end{itemize}}
+% citem
+% para1: declaration para2: description
+\newcommand{\citem}[2]{\item \texttt{#1} \\ Description: #2}
+
+% Attributes itemize with aitem(attribute item)
+\newenvironment{attributes}{\textbf{Attributes:}  \begin{itemize}
+}{\end{itemize}}
+% aitem
+% para1: declaration para2: description
+\newcommand{\aitem}[2]{\item \texttt{#1} \\ Description: #2}
+
+% Methods itemize with mitem(method item)
+\newenvironment{methods}{\textbf{Methods:}  \begin{itemize}
+}{\end{itemize}}
+% mitem
+% para1: declaration para2: description
+\newcommand{\mitem}[2]{\item \texttt{#1} \\ Description: #2}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% EXAMPLE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{DummyNamespace}
+\subsection{DummyProject}
+\begin{absclass}{Dummy} 
+    \clsdiagram{resources/class/DummyNamespace/DummyProject/dummy.png}
+
+    \clsdcl{public abstract class Dummy}
+
+    \clsdsp{This is a dummy class}
+
+    \begin{attributes}
+        \aitem{private String data}{The data of the dummy}
+    \end{attributes}
+
+    \begin{methods}
+        \aitem{public void reproduce()}{reproduce a new dummy}
+    \end{methods}
+\end{absclass}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% EXAMPLE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \section{Core}
 
 \section{Modules}
