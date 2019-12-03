@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MORR.Shared
+namespace MORR.Shared // TODO Move to correct namespace
 {
     /// <summary>
     ///     The base type of every user interaction event

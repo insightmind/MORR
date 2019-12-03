@@ -16,6 +16,6 @@
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Shared\Interfaces\Interfaces.csproj" />
+    <ProjectReference Include="..\..\Common\Shared\Shared.csproj" />
   </ItemGroup>
 </Project>

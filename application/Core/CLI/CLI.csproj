@@ -1,6 +1,6 @@
 ﻿<Project>
   <PropertyGroup>
-    <BaseIntermediateOutputPath>$(SolutionDir)build\temp\$(Configuration)\$(Platform)\CMD</BaseIntermediateOutputPath>
+    <BaseIntermediateOutputPath>$(SolutionDir)build\temp\$(Configuration)\$(Platform)\CLI</BaseIntermediateOutputPath>
   </PropertyGroup>
 
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
@@ -8,7 +8,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
-    <RootNamespace>Morr.Core.CMD</RootNamespace>
+    <RootNamespace>Morr.Core.CLI</RootNamespace>
     <Platforms>x64</Platforms>
     <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)</OutDir>
     <Nullable>enable</Nullable>
@@ -20,6 +20,10 @@
   </PropertyGroup>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+
+  <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.6.0" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MORR\MORR.csproj" />

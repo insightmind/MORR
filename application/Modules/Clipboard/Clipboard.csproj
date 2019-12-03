@@ -9,7 +9,8 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <RootNamespace>MORR.Modules.Clipboard</RootNamespace>
     <Platforms>x64</Platforms>
-    <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)</OutDir>
+    <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\Modules</OutDir>
+    <AssemblyName>Clipboard.MORR.Module</AssemblyName>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
