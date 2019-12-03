@@ -28,7 +28,9 @@ export default class WebSocketInterface implements IApplicationInterface {
             throw new Error("Method not implemented.");
         };
     }
-
+    establishConnection(onSuccess: (response?: string | undefined) => void, onFail: (response?: string | undefined) => void): void {
+        throw new Error("Method not implemented.");
+    }
     requestConfig(onSuccess: (response?: string | undefined) => void, onFail: (response?: string | undefined) => void): void {
         throw new Error("Method not implemented.");
     }

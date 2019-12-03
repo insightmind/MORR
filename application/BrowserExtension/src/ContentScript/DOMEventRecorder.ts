@@ -1,5 +1,3 @@
-'use strict';
-
 import { DOMEventTypes, BrowserEvent } from '../Shared/SharedDeclarations'
 import { TextInputEvent, ButtonClickEvent, HoverEvent, TextSelectionEvent, DownloadEvent } from '../Shared/BrowserEvents';
 

@@ -5,8 +5,14 @@ import * as MORR from './SharedDeclarations'
  * Open tab event
  */
 export class OpenTabEvent extends MORR.BrowserEvent {
-    constructor(tabID : number, windowID: number, url? : string) {
-        super(MORR.EventType.OpenTab, tabID, windowID, url);
+    /**
+     * Creates an instance of open tab event.
+     * @param tabID the ID of the newly created tab
+     * @param windowID the ID of the window the tab was created in
+     * @param url empty, as the new tab was just created
+     */
+    constructor(tabID : number, windowID: number) {
+        super(MORR.EventType.OpenTab, tabID, windowID, "");
     }
 }
 
@@ -14,7 +20,13 @@ export class OpenTabEvent extends MORR.BrowserEvent {
  * Close tab event
  */
 export class CloseTabEvent extends MORR.BrowserEvent {
-    constructor(tabID : number, windowID: number, url? : string) {
+    /**
+     * Creates an instance of close tab event.
+     * @param tabID The ID of the closed tab
+     * @param windowID The ID of the window the tab was associated to
+     * @param url The URL opened in the tab as it was closed
+     */
+    constructor(tabID : number, windowID: number, url : string) {
         super(MORR.EventType.CloseTab, tabID, windowID, url);
     }
 }
@@ -24,7 +36,14 @@ export class CloseTabEvent extends MORR.BrowserEvent {
  */
 export class SwitchTabEvent extends MORR.BrowserEvent {
     private _newTabID : number;
-    constructor(tabID : number, windowID: number, newTabID : number, url? : string) {
+    /**
+     * Creates an instance of switch tab event.
+     * @param tabID The ID of the previous tab
+     * @param windowID The ID of the window the active tab changed inside of
+     * @param newTabID The ID of the newly focused tab
+     * @param url the URL opened in the newly focused tab
+     */
+    constructor(tabID : number, windowID: number, newTabID : number, url : string) {
         super(MORR.EventType.SwitchTab, tabID, windowID, url);
         this._newTabID = newTabID;
     }
@@ -47,7 +66,13 @@ export class SwitchTabEvent extends MORR.BrowserEvent {
  * Navigation event
  */
 export class NavigationEvent extends MORR.BrowserEvent {
-    constructor(tabID : number, windowID: number, url? : string) {
+    /**
+     * Creates an instance of navigation event.
+     * @param tabID The ID of the tab in which the navigation occured
+     * @param windowID The ID of the window the tab with tabID belongs to
+     * @param url The URL that was navigated to
+     */
+    constructor(tabID : number, windowID: number, url : string) {
         super(MORR.EventType.Navigation, tabID, windowID, url);
     }
 }
@@ -58,7 +83,15 @@ export class NavigationEvent extends MORR.BrowserEvent {
 export class TextInputEvent extends MORR.BrowserEvent {
     private _text : string;
     private _target: string;
-    constructor(tabID : number, windowID: number, text : string, target : string, url? : string) {
+    /**
+     * Creates an instance of text input event.
+     * @param tabID The ID of the tab in which the event occured in
+     * @param windowID The ID of the window the tab with tabID belongs to
+     * @param text The input text
+     * @param target A string description of the input target
+     * @param url The URL of the opened webpage
+     */
+    constructor(tabID : number, windowID: number, text : string, target : string, url : string) {
         super(MORR.EventType.TextInput, tabID, windowID, url);
         this._text = text;
         this._target = target;
@@ -97,7 +130,15 @@ export class TextInputEvent extends MORR.BrowserEvent {
 export class ButtonClickEvent extends MORR.BrowserEvent {
     private _buttonTitle : string;
     private _buttonHref? : string;
-    constructor(tabID : number, windowID: number, buttonTitle : string, buttonHref? : string, url? : string) {
+    /**
+     * Creates an instance of button click event.
+     * @param tabID The ID of the tab in which the event occured in
+     * @param windowID The ID of the window the tab with tabID belongs to
+     * @param buttonTitle The title of the clicked button or similar element
+     * @param url The URL of the opened webpage
+     * @param [buttonHref] The href of the clicked element, if applicable
+     */
+    constructor(tabID : number, windowID: number, buttonTitle : string, url : string, buttonHref? : string,) {
         super(MORR.EventType.ButtonClick, tabID, windowID, url);
         this._buttonTitle = buttonTitle;
         this._buttonHref = buttonHref;
@@ -135,7 +176,14 @@ export class ButtonClickEvent extends MORR.BrowserEvent {
  */
 export class HoverEvent extends MORR.BrowserEvent {
     private _target : string;
-    constructor(tabID : number, windowID: number, target : string, url? : string) {
+    /**
+     * Creates an instance of hover event.
+     * @param tabID The ID of the tab in which the event occured in
+     * @param windowID The ID of the window the tab with tabID belongs to
+     * @param target The hovered element.
+     * @param url The URL of the opened webpage
+     */
+    constructor(tabID : number, windowID: number, target : string, url : string) {
         super(MORR.EventType.Hover, tabID, windowID, url);
         this._target = target;
     }
@@ -158,7 +206,14 @@ export class HoverEvent extends MORR.BrowserEvent {
  */
 export class TextSelectionEvent extends MORR.BrowserEvent {
     private _textSelection : string;
-    constructor(tabID : number, windowID: number, textSelection : string, url? : string) {
+    /**
+     * Creates an instance of text selection event.
+     * @param tabID The ID of the tab in which the event occured in
+     * @param windowID The ID of the window the tab with tabID belongs to
+     * @param textSelection The selected text
+     * @param url The URL of the opened webpage
+     */
+    constructor(tabID : number, windowID: number, textSelection : string, url : string) {
         super(MORR.EventType.TextSelection, tabID, windowID, url);
         this._textSelection = textSelection;
     }
@@ -181,23 +236,32 @@ export class TextSelectionEvent extends MORR.BrowserEvent {
  */
 export class DownloadEvent extends MORR.BrowserEvent {
     private _mimeType : string;
-    private _fileURL : string;
-    constructor(tabID : number, windowID : number, mimeType : string, fileURL : string, url? : string) {
+    private _fileURL : URL;
+    /**
+     * Creates an instance of download event.
+     * @param tabID The ID of the tab in which the event occured in
+     * @param windowID The ID of the window the tab with tabID belongs to
+     * @param mimeType A string describing the MIME type of the downloaded file.
+     * @param fileURL The URL of the downloaded file
+     * @param url The URL of the opened webpage
+     * @throws {TypeError} if fileURL is not a valid URL
+     */
+    constructor(tabID : number, windowID : number, mimeType : string, fileURL : string, url : string) {
         super(MORR.EventType.Download, tabID, windowID, url);
         this._mimeType = mimeType;
-        this._fileURL = fileURL;
+        this._fileURL = new URL(fileURL);
     }
 
     /**
      * Gets file url
      */
-    public get fileURL() : string {
+    public get fileURL() : URL {
         return this._fileURL;
     }
     /**
      * Sets file url
      */
-    public set fileURL(fileURL : string) {
+    public set fileURL(fileURL : URL) {
         this._fileURL = fileURL;
     }
     /**

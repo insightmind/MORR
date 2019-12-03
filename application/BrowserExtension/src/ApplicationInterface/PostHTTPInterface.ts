@@ -11,6 +11,9 @@ export default class PostHTTPInterface implements IApplicationInterface {
     constructor(url: string) {
         this.listenerURL = url;
     }
+    establishConnection(onSuccess: (response?: string | undefined) => void, onFail: (response?: string | undefined) => void): void {
+        throw new Error("Method not implemented.");
+    }
     public requestConfig(onSuccess : (response? : string) => void, onFail : (response? : string) => void) : void {
         throw new Error("Method not implemented.");
     }

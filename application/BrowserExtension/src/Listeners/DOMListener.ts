@@ -52,15 +52,8 @@ export default class DOMListener implements IListener {
             if (fromTab.windowId)
                 windowID = fromTab.windowId;
         }
-        let event = new BrowserEvent(EventType.Generic, tabID, windowID);
-        //console.log("DOMListener received: " + request);
-        let evt = JSON.parse(request);
-        event.type = evt.type;
-        event.url = evt.url;
-        /*
-         * console.log("Parsed Event: ");
-         * console.log(evt);
-        */
+        let parsedEvent = JSON.parse(request);
+        let event = new BrowserEvent(parsedEvent.type, tabID, windowID, parsedEvent.url);
         return event;
     }
 }

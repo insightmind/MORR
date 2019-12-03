@@ -73,19 +73,21 @@ export class BrowserEvent implements IEvent{
 	private _type : EventType;
 	private _windowID : number;
 	private _tabID : number;
-	private _url? : string;
+	private _url : URL;
 	/**
 	 * Creates an instance of browser event.
 	 * @param type The Eventtype
 	 * @param tabID the tabID
 	 * @param windowID the windowID
 	 * @param [url] the url of the website opened in tab tabID
+	 * @throws {TypeError}, if url string is not a valid URL
 	 */
-	constructor(type : EventType, tabID : number, windowID: number, url? : string) {
+	constructor(type : EventType, tabID : number, windowID: number, url : string) {
 		this._type = type;
 		this._timeStamp = new Date();
 		this._tabID = tabID;
 		this._windowID = windowID;
+		this._url = new URL(url);
 	}
 	/**
 	 * Serializes browser event
@@ -122,13 +124,10 @@ export class BrowserEvent implements IEvent{
 	public set tabID(tabID : number) {
 		this._tabID = tabID;
 	}
-	public get url() : string {
-		if (this._url)
-			return this._url;
-		else
-			return "";
+	public get url() : URL {
+		return this._url;
 	}
-	public set url(url : string) {
+	public set url(url : URL) {
 		this._url = url;
 	}
 }

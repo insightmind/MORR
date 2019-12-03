@@ -27,7 +27,7 @@ class BackgroundScript {
         this.listeners.push(new Listeners.DOMListener((event : BrowserEvent) => { this.callback(event);}));
         //etc.
         this.appInterface = new WebSocketInterface(BackgroundScript.receiverURI);
-        this.requestConfig();
+        this.appInterface.establishConnection(this.requestConfig, this.retryConnection);
     }
     /**
      * Start all listeners
@@ -71,6 +71,12 @@ class BackgroundScript {
      * Request config of the MORR application
      */
     private requestConfig = () => {
+        throw new Error("Method not implemented.");
+    }
+    /**
+     * Retry setting up a connection to the main application
+     */
+    private retryConnection = () => {
         throw new Error("Method not implemented.");
     }
 }
