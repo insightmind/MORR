@@ -1,0 +1,1 @@
+{"version":3,"sources":["ContentScript/DOMEventRecorder.ts"],"names":[],"mappings":";AAAA","file":"DOMEventRecorder.js","sourceRoot":"..\\src","sourcesContent":["'use strict';\r\n\r\n"]}
