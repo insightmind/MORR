@@ -37,7 +37,7 @@
                                                  VerticalAlignment="Center">
                                             <Rectangle x:Name="Icon" Style="{StaticResource Application.Icon.Active}" />
                                         </Viewbox>
-                                        <ContentPresenter Grid.Row="1" Margin="5"/>
+                                        <ContentPresenter Grid.Row="1" Margin="5" />
                                     </Grid>
                                 </AdornerDecorator>
                             </Border>

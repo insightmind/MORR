@@ -1,14 +1,31 @@
 ﻿<Application x:Class="MORR.Core.UI.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:Bootstrap="clr-namespace:MORR.Core.UI"
+             xmlns:Icon="clr-namespace:MORR.Core.UI.Controls.NotifyIcon"
+             xmlns:ViewModel="clr-namespace:MORR.Core.UI.ViewModels"
              ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Styles/DialogStyle.xaml" />
                 <ResourceDictionary>
-                    <Bootstrap:Bootstrapper x:Key="Bootstrapper" />
+                    <Icon:NotifyIcon x:Key="Icon" Command="{Binding ToggleRecordingCommand}">
+                        <Icon:NotifyIcon.DataContext>
+                            <ViewModel:ApplicationViewModel />
+                        </Icon:NotifyIcon.DataContext>
+                        <Icon:NotifyIcon.IconSource>
+                            <BitmapImage UriSource="Assets/Icon/Icon.ico" />
+                        </Icon:NotifyIcon.IconSource>
+                        <Icon:NotifyIcon.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Toggle recording"
+                                          Command="{Binding ToggleRecordingCommand}" />
+                                <MenuItem Header="Open recordings directory"
+                                          Command="{Binding OpenRecordingsDirectoryCommand}" />
+                                <MenuItem Header="Exit" Command="{Binding ExitCommand}" />
+                            </ContextMenu>
+                        </Icon:NotifyIcon.ContextMenu>
+                    </Icon:NotifyIcon>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

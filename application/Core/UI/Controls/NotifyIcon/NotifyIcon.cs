@@ -167,7 +167,7 @@ namespace MORR.Core.UI.Controls.NotifyIcon
             DependencyProperty.Register(nameof(CommandParameter), typeof(object), typeof(NotifyIcon),
                                         new PropertyMetadata(null));
 
-        public static readonly DependencyProperty ContextMenuProperty =
+        public new static readonly DependencyProperty ContextMenuProperty =
             DependencyProperty.Register(nameof(ContextMenu), typeof(ContextMenu), typeof(NotifyIcon),
                                         new PropertyMetadata(null));
 
@@ -218,7 +218,7 @@ namespace MORR.Core.UI.Controls.NotifyIcon
         /// <summary>
         ///     The context menu to show on right click
         /// </summary>
-        public ContextMenu ContextMenu
+        public new ContextMenu ContextMenu
         {
             get => (ContextMenu) GetValue(ContextMenuProperty);
             set => SetValue(ContextMenuProperty, value);

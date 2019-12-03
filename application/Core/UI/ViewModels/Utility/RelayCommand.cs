@@ -27,7 +27,7 @@ namespace MORR.Core.UI.ViewModels.Utility
 
         public void Execute(object parameter)
         {
-            execute(parameter);
+            execute?.Invoke(parameter);
         }
     }
 }

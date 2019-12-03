@@ -16,14 +16,14 @@
             The MORR application records screen, keyboard, mouse, clipboard and browser data.
             <LineBreak />
             The stored data may be personally identifiable.
-            <LineBreak/>
+            <LineBreak />
             Remember not to enter any personal information.
         </TextBlock>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" SharedSizeGroup="Button"/>
+                <ColumnDefinition Width="Auto" SharedSizeGroup="Button" />
                 <ColumnDefinition Width="15" />
-                <ColumnDefinition Width="Auto" SharedSizeGroup="Button"/>
+                <ColumnDefinition Width="Auto" SharedSizeGroup="Button" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0" IsDefault="True" Content="I understand" Width="200" Click="OnAccept"
                     Style="{StaticResource Dialog.ButtonStyle}" />
