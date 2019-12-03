@@ -1,44 +1,32 @@
-export enum DOMEventTypes {
-    CLICK = 'click',
-	CHANGE = 'change', //change event usually happens when the element loses focus again (e. g. when the user switches to the next input field in a form)
-	DBLCLICK = 'dblclick',
-	//KEYDOWN = 'keydown',
-	//MOUSEENTER = 'mouseenter',
-	MOUSEUP = 'mouseup', //for text selection events
-	MOUSEDOWN = 'mousedown',
-	SELECT = 'select', //user selects a dropdown entry or similar
-	SUBMIT = 'submit',
-	SEARCH = 'search',
-	//INPUT = 'input', //fires for every single character input into a field
-	FOCUS = 'focus',
-}
-
+/**
+ * Browser Event types
+ */
 export enum EventType {
+	//Defined events
 	Navigation = "Navigation",
 	OpenTab = "OpenTab",
 	CloseTab = "CloseTab",
 	SwitchTab = "SwitchTab",
-
-	//DOM events
-	CLICK = 'click',
-	CHANGE = 'change', //change event usually happens when the element loses focus again (e. g. when the user switches to the next input field in a form)
-	DBLCLICK = 'dblclick',
-	//KEYDOWN = 'keydown',
-	//MOUSEENTER = 'mouseenter',
-	MOUSEUP = 'mouseup', //for text selection events
-	MOUSEDOWN = 'mousedown',
-	SELECT = 'select', //user selects a dropdown entry or similar
-	SUBMIT = 'submit',
-	SEARCH = 'search',
-	//INPUT = 'input', //fires for every single character input into a field
-	FOCUS = 'focus',
-
+	TextInput = "TextInput",
+	ButtonClick = "ButtonClick",
+	Hover = "Hover",
+	TextSelection = "TextSelection",
+	Download = "Download",
 	Generic = "Generic",
 }
 
+/**
+ * The listener interface.
+ */
 export interface IListener {
-    start() : void;
-    stop() : void;
+    /**
+	 * Start listening for events.
+	 */
+	start() : void;
+    /**
+	 * Stop listening for events.
+	 */
+	stop() : void;
 }
 
 /**
@@ -48,24 +36,47 @@ export interface IListenerConstructor {
     new(callback: (event: BrowserEvent) => void): IListener;
 }
 
+/**
+ * IEvent interface mirroring the interface in the MORR application
+ */
 export interface IEvent {
 	timeStamp : Date;
 	issuingModule : number;
 	type : EventType;
+	serialize() : string;
 }
 
+/**
+ * A generic Browser event. All specific browser events inherit from this
+ */
 export class BrowserEvent implements IEvent{
 	private _timeStamp : Date;
 	private _issuingModule : number = 0;
 	private _type : EventType;
 	private _windowID : number;
 	private _tabID : number;
-	private _url? : string;
-	constructor(type : EventType, tabID : number, windowID: number) {
+	private _url : URL;
+	/**
+	 * Creates an instance of browser event.
+	 * @param type The Eventtype
+	 * @param tabID the tabID
+	 * @param windowID the windowID
+	 * @param [url] the url of the website opened in tab tabID
+	 * @throws {TypeError}, if url string is not a valid URL
+	 */
+	constructor(type : EventType, tabID : number, windowID: number, url : string) {
 		this._type = type;
 		this._timeStamp = new Date();
 		this._tabID = tabID;
 		this._windowID = windowID;
+		this._url = new URL(url);
+	}
+	/**
+	 * Serializes browser event
+	 * @returns a JSON string representing the event
+	 */
+	serialize(): string {
+		return JSON.stringify(this);
 	}
 
 	/*
@@ -95,13 +106,10 @@ export class BrowserEvent implements IEvent{
 	public set tabID(tabID : number) {
 		this._tabID = tabID;
 	}
-	public get url() : string {
-		if (this._url)
-			return this._url;
-		else
-			return "";
+	public get url() : URL {
+		return this._url;
 	}
-	public set url(url : string) {
+	public set url(url : URL) {
 		this._url = url;
 	}
 }
