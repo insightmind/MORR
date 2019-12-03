@@ -1,4 +1,7 @@
 ﻿using System;
+using CommandLine;
+using Morr.Core.CMD.CLI;
+using Morr.Core.CMD.Execution;
 
 namespace MORR.Core.CMD
 {
@@ -9,7 +12,8 @@ namespace MORR.Core.CMD
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Parser.Default.ParseArguments<Options>(args)
+                  .WithParsed<Options>(new Executor().Execute);
         }
     }
 }

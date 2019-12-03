@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Morr.Core.CMD.CommandLine;
+﻿using Morr.Core.CMD.CLI;
 
 namespace Morr.Core.CMD.Execution
 {
-    public class Executor
+    internal class Executor
     {
-        public static void Execute(Options options)
+        internal void Execute(Options options)
         {
-
+            // TODO: Implement this
         }
     }
 }
