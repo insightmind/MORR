@@ -41,26 +41,26 @@
 % para1: description in text
 \newcommand{\clsdsp}[1]{\textbf{Description:} \newline #1}
 
-% Constructors itemize with citem(constructor item)
+% Constructors itemize with \constructor (constructor item)
 \newenvironment{constructors}{\textbf{Constructors:}  \begin{itemize}
 }{\end{itemize}}
-% citem
+% constructor
 % para1: declaration para2: description
-\newcommand{\citem}[2]{\item \texttt{#1} \\ Description: #2}
+\newcommand{\constructor}[2]{\item \texttt{#1} \\ Description: #2}
 
-% Attributes itemize with aitem(attribute item)
+% Attributes itemize with attribute(attribute item)
 \newenvironment{attributes}{\textbf{Attributes:}  \begin{itemize}
 }{\end{itemize}}
-% aitem
+% attribute
 % para1: declaration para2: description
-\newcommand{\aitem}[2]{\item \texttt{#1} \\ Description: #2}
+\newcommand{\attribute}[2]{\item \texttt{#1} \\ Description: #2}
 
-% Methods itemize with mitem(method item)
+% Methods itemize with method(method item)
 \newenvironment{methods}{\textbf{Methods:}  \begin{itemize}
 }{\end{itemize}}
-% mitem
+% method
 % para1: declaration para2: description
-\newcommand{\mitem}[2]{\item \texttt{#1} \\ Description: #2}
+\newcommand{\method}[2]{\item \texttt{#1} \\ Description: #2}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% EXAMPLE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{DummyNamespace}
@@ -73,11 +73,11 @@
     \clsdsp{This is a dummy class}
 
     \begin{attributes}
-        \aitem{private String data}{The data of the dummy}
+        \attribute{private String data}{The data of the dummy}
     \end{attributes}
 
     \begin{methods}
-        \aitem{public void reproduce()}{reproduce a new dummy}
+        \method{public void reproduce()}{reproduce a new dummy}
     \end{methods}
 \end{absclass}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% EXAMPLE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
