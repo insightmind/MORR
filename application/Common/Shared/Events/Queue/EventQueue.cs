@@ -6,7 +6,7 @@ namespace MORR.Shared.Events.Queue
     ///     Provides a single-writer-multiple-reader queue for <see cref="Event" /> types
     /// </summary>
     /// <typeparam name="T">The type of the event</typeparam>
-    public abstract class EventQueue<T> : IReadWriteEventQueue<T> where T : Event
+    public abstract class EventQueue<T> : IReadOnlyEventQueue<T> where T : Event
     {
         /// <summary>
         ///     Asynchronously gets all events as concrete type <typeparamref name="T" />
@@ -18,6 +18,6 @@ namespace MORR.Shared.Events.Queue
         ///     Asynchronously enqueues a new event
         /// </summary>
         /// <param name="event">The event to enqueue</param>
-        public abstract void Enqueue(T @event);
+        protected abstract void Enqueue(T @event);
     }
 }
