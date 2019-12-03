@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MORR.Shared
+namespace MORR.Shared.Modules
 {
     /// <summary>
     ///     A module
