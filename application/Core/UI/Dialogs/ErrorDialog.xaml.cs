@@ -7,9 +7,13 @@ namespace Morr.Core.UI.Dialogs
     /// </summary>
     public partial class ErrorDialog : Window
     {
-        public ErrorDialog()
+        public ErrorDialog(string errorMessage)
         {
+            ErrorMessage = errorMessage;
             InitializeComponent();
+            DataContext = this;
         }
+
+        public string ErrorMessage { get; }
     }
 }

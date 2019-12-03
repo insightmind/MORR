@@ -21,7 +21,7 @@ namespace MORR.Core.UI.ViewModels
             if (!configurationSuccessful)
             {
                 // Invalid configuration
-                new ErrorDialog().ShowDialog();
+                new ErrorDialog("The configuration could not be loaded. \nPlease check the configuration file or contact an administrator.").ShowDialog();
                 Exit();
             }
         }

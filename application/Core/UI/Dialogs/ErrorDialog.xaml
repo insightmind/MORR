@@ -12,11 +12,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0">
-            The specified configuration file could not be loaded.
-            <LineBreak />
-            Please check the configuration or contact an administrator.
-        </TextBlock>
+        <TextBlock Grid.Row="0" Text="{Binding ErrorMessage}" />
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
