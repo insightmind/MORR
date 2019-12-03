@@ -12,7 +12,7 @@ namespace Morr.Core.CLI.Execution
     internal class Executor
     {
         /// <summary>
-        /// Loads the pipeline modules and allows execution.
+        /// Is used to load the pipeline modules.
         /// </summary>
         private readonly Bootstrapper bootstrapper;
 
