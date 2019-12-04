@@ -12,6 +12,7 @@ namespace MORR.Core.Modules
     public class ModuleManager
     {
         [ImportMany]
+        public IEnumerable<IConfigurableWith<IModuleConfiguration>> Configurable { get; private set; }
 
         /// <summary>
         /// All Collecting Modules which are offered as assemblies through MEF.
