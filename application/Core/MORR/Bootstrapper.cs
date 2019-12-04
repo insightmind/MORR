@@ -1,6 +1,4 @@
-﻿using MORR.Core.Modules;
-
-namespace MORR.Core
+﻿namespace MORR.Core
 {
     /// <summary>
     ///     Bootstraps the application
