@@ -1,6 +1,6 @@
-﻿using MORR.Core;
-using Morr.Core.CLI.CLI;
+﻿using Morr.Core.CLI.CLI;
 using MORR.Core.Data.Transcoding;
+using MORR.Core.Modules;
 
 namespace Morr.Core.CLI.Execution
 {
@@ -14,7 +14,7 @@ namespace Morr.Core.CLI.Execution
         /// <summary>
         /// Is used to load the pipeline modules.
         /// </summary>
-        private readonly Bootstrapper bootstrapper;
+        private readonly ModuleManager moduleManager;
 
         /// <summary>
         /// Decodes the given file depending its file specification.

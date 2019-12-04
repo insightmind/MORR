@@ -1,16 +1,17 @@
-﻿using System.Collections.Generic;
+﻿
+using System;
 
 namespace MORR.Shared.Configuration
 {
     /// <summary>
-    ///     A self-contained unit of configuration
+    /// IModuleConfiguration represents a single configuration unit for a module
     /// </summary>
-    public interface IConfiguration
+    public interface IModuleConfiguration
     {
         /// <summary>
-        /// A list of loaded configuration for modules.
+        /// The identifier of the associated module.
         /// </summary>
-        IEnumerable<IModuleConfiguration> ModuleConfigurations { get; set; }
+        Guid ModuleIdentifierGuid { get; set; }
 
         /// <summary>
         ///     Parses the configuration from the provided value
