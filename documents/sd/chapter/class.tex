@@ -21,6 +21,7 @@
 % a corresponding commad \cls----- or environment \begin{methods}... will be called to start a new paragraph.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Notes about this chapter%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\dsp}{\textbf{Description: }}
 
 \newenvironment{class}[1]{\subsubsection{{\textbf{Class: #1}}}}{\newpage}
 \newenvironment{absclass}[1]{\subsubsection{{\textbf{Abstract Class: #1}}}}{\newpage}
@@ -39,28 +40,41 @@
 
 % The description of a class, abstrat class or interface.
 % para1: description in text
-\newcommand{\clsdsp}[1]{\textbf{Description:} \newline #1}
+\newcommand{\clsdsp}[1]{\textbf{\dsp} \newline #1}
 
-% Constructors itemize with \constructor (constructor item)
-\newenvironment{constructors}{\textbf{Constructors:}  \begin{itemize}
-}{\end{itemize}}
+% Constructors enumeration with \constructor (constructor item)
+\newenvironment{constructors}{\textbf{Constructors:}  \begin{enumerate}
+}{\end{enumerate}}
 % constructor
 % para1: declaration para2: description
-\newcommand{\constructor}[2]{\item \texttt{#1} \\ Description: #2}
+\newenvironment{constructor}[2]{\item \texttt{#1} \\ \dsp #2 \\}{}
 
-% Attributes itemize with attribute(attribute item)
-\newenvironment{attributes}{\textbf{Attributes:}  \begin{itemize}
-}{\end{itemize}}
+% Attributes enumeration with attribute(attribute item)
+\newenvironment{attributes}{\textbf{Attributes:}  \begin{enumerate}
+}{\end{enumerate}}
 % attribute
 % para1: declaration para2: description
-\newcommand{\attribute}[2]{\item \texttt{#1} \\ Description: #2}
+\newcommand{\attribute}[2]{\item \texttt{#1} \\ \dsp #2}
 
-% Methods itemize with method(method item)
-\newenvironment{methods}{\textbf{Methods:}  \begin{itemize}
-}{\end{itemize}}
+% Methods enumeration with method(method item)
+\newenvironment{methods}{\textbf{Methods:}  \begin{enumerate}
+}{\end{enumerate}}
 % method
 % para1: declaration para2: description
-\newcommand{\method}[2]{\item \texttt{#1} \\ Description: #2}
+\newenvironment{method}[2]{\item \texttt{#1} \\ \dsp #2 \\}{}
+
+% Parameters enumeration with \para (parameter item)
+\newenvironment{parameters}{\textbf{Parameters:}  \begin{enumerate}
+}{\end{enumerate}}
+% parameter
+% para1: declaration para2: description
+\newcommand{\para}[2]{\item \texttt{#1} \\ \dsp #2}
+
+% return value
+% para1: declaration para2: description
+\newcommand{\return}[2]{\textbf{Return values:} \begin{itemize} \item \texttt{#1} \\ Description: #2 \end{itemize}}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% EXAMPLE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{DummyNamespace}
@@ -74,10 +88,40 @@
 
     \begin{attributes}
         \attribute{private String data}{The data of the dummy}
+        \attribute{public Integer age}{The age of the dummy}
     \end{attributes}
 
+    \begin{constructors}
+        \begin{constructor}{public Dummy(Integer m)}{Initialize a dummy with a integer}
+            \begin{parameters}
+                \para{Integer m}{A integer m}
+            \end{parameters}
+        \end{constructor}
+
+        \begin{constructor}{public Dummy(Integer m, List t)}{Initialize a dummy with a integer and a list}
+            \begin{parameters}
+                \para{Integer m}{A integer m}
+                \para{List t}{A list t}
+            \end{parameters}
+        \end{constructor}
+    \end{constructors}
+
+
     \begin{methods}
-        \method{public void reproduce()}{reproduce a new dummy}
+        \begin{method}{public void reproduce(Double x, String y)}{Reproduce}
+            \begin{parameters}
+               \para{Double x}{A double x}
+                \para{String y}{A string y}
+            \end{parameters}
+        \end{method}
+        \begin{method}{protected Float eat(Integer a, Integer b, Vektor2 c)}{Eat}
+            \return{Float}{A floating number}
+            \begin{parameters}
+                \para{Integer a}{Integer a}
+                \para{Integer b}{Integer b}
+                \para{Vektor2 c}{A vektor c}
+            \end{parameters}
+        \end{method}
     \end{methods}
 \end{absclass}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% EXAMPLE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
