@@ -1,1 +1,78 @@
 \section{BrowserExtension}
+\begin{class}{BackGroundScript}
+\clsdcl{class BackGroundScript}
+
+\clsdsp{The BackGroundScript class serves as the main class of the browser extension. It is responsible for creating and starting/stopping the ListenerManager and the CommunicationStrategy.}
+
+\begin{constructors}
+\begin{constructor}{public BackGroundScript()}{Initialize the BackGroundScript and thus the browser extension. After this function is completed, the browser extension is ready and awaits a signal from the MORR application.}
+\end{constructor}
+\end{constructors}
+\begin{methods}
+\begin{method}{public start() : void}{Start all components necessary for a session recording. To be called when a recording starts.}
+\end{method}
+\begin{method}{public stop() : void}{Stop all components which should only be active during a session recording. To be called when a recording stops.}
+\end{method}
+\begin{method}{public callback(BrowserEvent event) : void}{Callback to be handed over to all components which create events during a recording. The BackGroundScript class is responsible to forward these events to the ICommunicationStrategy for transmission to the MORR application.}
+\begin{parameters}
+\para{event : BrowserEvent}{The event to be forwarded to the MORR application.}
+\end{parameters}
+\end{method}
+\end{methods}
+\end{class}
+\newpage
+\begin{class}{ListenerManager}
+\clsdcl{class ListenerManager}
+
+\clsdsp{The ListenerManager is responsible to create all IListeners and keep references to them. The ListenerManager provides methods to start/stop all attached listeners.}
+
+\begin{constructors}
+\begin{constructor}{public ListenerManager(string configurationString)}{Initialize the ListenerManager and therefore all configured listeners.}
+\begin{parameters}
+\para{string configurationString}{A valid JSON string containing optional configuration. The configuration determines whether specific event types shall be recorded or not.}
+\end{parameters}
+\end{constructor}
+\end{constructors}
+\begin{methods}
+\begin{method}{public startAll() : void}{Start all listeners. To be called when a recording starts.}
+\end{method}
+\begin{method}{public stopAll() : void}{Stop all listeners. To be called when a recording stops.}
+\end{method}
+\end{methods}
+\end{class}
+
+\begin{interface}{ICommunicationStrategy}
+
+\clsdcl{interface ICommunicationStrategy}
+
+\clsdsp{A conrete implementation of ICommunicationStrategy provides means to communicate with the MORR application. This includes sending the generated BrowserEvents from the browser extension to the MORR application where they will be processed.}
+
+\begin{methods}
+\begin{method}{establishConnection(onSuccess : (response? : string) => void, onFail : (response? : string) => void) : void}{Asynchronously try to establish a connection to the MORR application.}
+\begin{parameters}
+\para{onSuccess : (response? : string) => void}{Callback. To be called when a connection has been established. Additional information may be passed as string by providing a value for response.}
+\para{onFail : (response? : string) => void}{Callback. To be called when a connection could not be successfully established. Additional information may be passed as string by providing a value for response.}
+\end{parameters}
+\end{method}
+\begin{method}{requestConfig(onSuccess : (response? : string) => void, onFail : (response? : string) => void) : void}{Request a configuration string from the MORR application.}
+\begin{parameters}
+\para{onSuccess : (response? : string) => void}{Callback. To be called when the MORR application positively replied to the request. In this case the configuration JSON string should be passed as the response parameter.}
+\para{onFail : (response? : string) => void}{Callback. To be called when the configuration could not be successfully requested and received. Additional information may be passed as string by providing a value for response.}
+\end{parameters}
+\end{method}
+\begin{method}{waitForStart(onStart : (response? : string) => void, onFail : (response? : string) => void) : void}{Await a start signal from the MORR application.}
+\begin{parameters}
+\para{onStart : (response? : string) => void}{Callback. To be called when a start signal was received. Additional information may be passed as string by providing a value for response.}
+\para{onFail : (response? : string) => void}{Callback. To be called when an unexpected response was received or the connection terminated. Additional information may be passed as string by providing a value for response.}
+\end{parameters}
+\end{method}
+\begin{method}{sendData(data : string, onSuccess : (response? : string) => void, onFail : (response? : string) => void) : void}{Send event data to the MORR application.}
+\begin{parameters}
+\para{data : string}{The serialized event data to send.}
+\para{onSuccess : (response? : string) => void}{Callback. To be called when the data was sent successfully. Additional information may be passed as string by providing a value for response.}
+\para{onFail : (response? : string) => void}{Callback. To be called when the data could not successfully be sent. Additional information may be passed as string by providing a value for response.}
+\end{parameters}
+\end{method}
+\end{methods}
+\end{interface}
+\newpage
