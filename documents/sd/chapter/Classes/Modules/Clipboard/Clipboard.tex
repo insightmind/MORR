@@ -16,8 +16,8 @@
     \clsdsp{A generic clipboard event which all specific ClipboardEvents inherit from.}
 \end{absclass}
 
-\begin{class}{} 
-    \clsdiagram{resources/Classes/Modules/Clipboard/Events/ClipBoardInteractEvent.png}
+\begin{class}{ClipBoardInteractEvent} 
+    \clsdiagram[scale=0.9]{resources/Classes/Modules/Clipboard/Events/ClipBoardInteractEvent.png}
 
     \clsdcl{public class ClipBoardInteractEvent : ClipboardEvent}
 
@@ -28,3 +28,18 @@
         \attribute{public InteractionType Interaction}{The interaction type}
     \end{attributes}
 \end{class}
+
+\begin{enum}{InteractionType}
+    \clsdiagram[scale=0.9]{resources/Classes/Modules/Clipboard/Events/InteractionType.png}
+
+    \clsdcl{public enum InteractionType}
+
+    \clsdsp{An Enum to specify the four interaction type with a clip board: clear, copy, cut and paste.}
+
+    \begin{elements}
+        \element{Clear}{Clear the content from the clipboard}
+        \element{Copy}{Copy content into the clipboard}
+        \element{Cut}{Cut content into the clipboard}
+        \element{Paste}{Paste from the clipboard}
+    \end{elements}
+\end{enum}
