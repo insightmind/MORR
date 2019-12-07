@@ -11,7 +11,10 @@ In this chapter, all packages and their purpose are introduced.
 
 The MORR package is the master package containing the whole application. It does not contain any classes directly as it only serves as a container for all packages required in the design.
 
+\newpage
 \section{MORR.CORE}
+
+The \textbf{CORE} package contains the central initializing logic to be called when the program is started and coordinates state-changes while the application is running.
 
 Contained classes:
 \begin{itemize}
@@ -21,7 +24,10 @@ Contained classes:
 \item ModuleManager
 \end{itemize}
 
+\newpage
 \section{MORR.CLI}
+
+The \textbf{CLI} package contains all logic exclusively needed for the command line interface which allows for the extraction of event data from saved recordings.
 
 Contained classes:
 \begin{itemize}
@@ -31,7 +37,10 @@ Contained classes:
 \item Options
 \end{itemize}
 
+\newpage
 \section{MORR.SHARED}
+
+The \textbf{SHARED} package provides interfaces and classes which have to be known and shared across multiple packages, such as the concept of an event or a module.
 
 Contained interfaces:
 \begin{itemize}
@@ -51,7 +60,10 @@ Contained classes:
 \item Exception
 \end{itemize}
 
+\newpage
 \section{MORR.TRANSCODING}
+
+The \textbf{TRANSCODING} package is responsible for serialization and deserialization of recorded video-, audio- and event-data. 
 
 Contained interfaces:
 \begin{itemize}
@@ -79,8 +91,15 @@ Contained classes:
 \item AudioCaptureException
 \end{itemize}
 
+\newpage
 \section{MORR.MODULES}
-\subsection*{WINDOWMANAGEMENT}
+
+The\textbf{MODULES} package serves as a container for all module-subpackages.
+
+\subsection*{MORR.MODULES.WINDOWMANAGEMENT}
+
+The \textbf{WINDOWMANAGEMENT} package is responsible for providing the classes and concepts necessary for recording the window related user-interactions.
+
 Contained classes:
 \begin{itemize}
 \item WindowManagementModule
@@ -90,14 +109,23 @@ Contained classes:
 \item WindowSateChangedEvent
 \item WindowResizingEvent
 \end{itemize}
-\subsection*{KEYBOARD}
+\newpage
+\subsection*{MORR.MODULES.KEYBOARD}
+
+The \textbf{KEYBOARD} package is responsible for providing the classes and concepts necessary for recording the keyboard related user-inputs.
+
 Contained classes:
 \begin{itemize}
 \item \textit{abstract} KeyboardEvent
 \item KeyboardModule
 \item KeyboardInteractEvent
 \end{itemize}
-\subsection*{WEBBROWSER}
+
+\newpage
+\subsection*{MORR.MODULES.WEBBROWSER}
+
+The \textbf{WEBBROWSER} package is responsible for providing the classes and concepts necessary for recording the webbrowser related user-interactions.
+
 Contained classes:
 \begin{itemize}
 \item WebBrowserModule
@@ -112,7 +140,12 @@ Contained classes:
 \item FileDownloadEvent
 \item ButtonClickEvent
 \end{itemize}
-\subsection*{CLIPBOARD}
+
+\newpage
+\subsection*{MORR.MODULES.CLIPBOARD}
+
+The \textbf{CLIPBOARD} package is responsible for providing the classes and concepts necessary for recording the clipboard related user-interactions.
+
 Contained classes:
 \begin{itemize}
 \item ClipboardModule
@@ -124,7 +157,12 @@ Contained enums:
 \begin{itemize}
 \item InteractionType
 \end{itemize}
-\subsection*{MOUSE}
+
+\newpage
+\subsection*{MORR.MODULES.MOUSE}
+
+The \textbf{MOUSE} package is responsible for providing the classes and concepts necessary for recording the mouse related user-inputs.
+
 Contained classes:
 \begin{itemize}
 \item MouseModule
