@@ -1,0 +1,54 @@
+\subsection*{MORR.Shared.Events}
+
+\begin{absclass}{Event}
+    \clsdcl{public abstract class Event}
+
+    \clsdsp{Provides attributes shared between every user interaction event.}
+
+    \begin{attributes}
+        \attribute{public DateTime Timestamp \{ get; set; \}}{The timestamp at which the event occured.}
+        \attribute{public Guid IssuingModule \{ get; set; \}}{The identifier of the module that issued the event.}
+    \end{attributes}
+
+    \begin{methods}
+        \begin{method}{public string Serialize()}{Serializes the event to a string.}
+            \return{string}{The serialized event.}
+        \end{method}
+        \begin{method}{public void Deserialize(string serialized)}{Deserializes the event from a string.}
+            \begin{parameters}
+                \para{string serialized}{A string containing the serialized event.}
+            \end{parameters}
+        \end{method}
+    \end{methods}
+\end{absclass}
+
+\subsection*{MORR.Shared.Events.Queue}
+
+\begin{interface}{IReadOnlyEventQueue<T>}
+    \clsdcl{public interface IReadOnlyEventQueue<out T> where T : Event}
+
+    \clsdsp{Provides read-only access to a queue of events as concrete type T.}
+
+    \begin{methods}
+        \begin{method}{IAsyncEnumerable<T> GetEvents()}{Asynchronously gets all event as their concrete type T.}
+            \return{IAsyncEnumerable<T>}{A stream of events of type T.}
+        \end{method}
+    \end{methods}
+\end{interface}
+
+\begin{absclass}{EventQueue<T>}
+    \clsdcl{public abstract class EventQueue<T> : IReadOnlyEventQueue<T> where T : Event}
+
+    \clsdsp{Provides a single-writer-multiple-reader queue for Event types}
+
+    \begin{methods}
+        \begin{method}{public abstract IAsyncEnumerable<T> GetEvents()}{Asynchronously gets all events as concrete type T.}
+            \return{IAsyncEnumerable<T>}{A stream of events of type T.}
+        \end{method}
+        \begin{method}{protected abstract void Enqueue(T @event)}{Asynchronosuly enqueues a new event of type T.}
+            \begin{parameters}
+                \para{T @event}{The event to enqueue.}
+            \end{parameters}
+        \end{method}
+    \end{methods}
+\end{absclass}
