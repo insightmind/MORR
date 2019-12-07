@@ -26,12 +26,20 @@
 \newenvironment{class}[1]{\subsubsection{{\textbf{Class: #1}}}}{\newpage}
 \newenvironment{absclass}[1]{\subsubsection{{\textbf{Abstract Class: #1}}}}{\newpage}
 \newenvironment{interface}[1]{\subsubsection{{\textbf{Interface: #1}}}}{\newpage}
+\newenvironment{enum}[1]{\subsubsection{{\textbf{Enumeration: #1}}}}{\newpage}
+ 
+% Enum elements enumeration
+\newenvironment{elements}{\textbf{Elements:}  \begin{enumerate}
+}{\end{enumerate}}
+% elements
+% para1: declaration para2: description
+\newcommand{\element}[2]{\item \texttt{#1} \\ \dsp #2}
 
 %include a class diagram
 %para1: the directory of the diagram
-\newcommand{\clsdiagram}[1]{\textbf{Class diagram:} \newline 
+\newcommand{\clsdiagram}[2][]{\textbf{Class diagram:} \newline
 \begin{center}
-    \includegraphics{#1}
+    \includegraphics[#1]{#2}
 \end{center}}
 
 % The declaration of a class, abstrat class or interface.

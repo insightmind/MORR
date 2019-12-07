@@ -14,7 +14,7 @@ namespace Morr.Core.CLI.Execution
         /// <summary>
         /// Is used to load the pipeline modules.
         /// </summary>
-        private readonly Bootstrapper bootstrapper;
+        private readonly ModuleManager moduleManager;
 
         /// <summary>
         /// Decodes the given file depending its file specification.
