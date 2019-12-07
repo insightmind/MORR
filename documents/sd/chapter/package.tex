@@ -1,2 +1,141 @@
 \chapter{Packages}
 \label{ch:package}
+
+In this chapter, all packages and their purpose are introduced.
+
+\section{MORR}
+
+\begin{center}
+    \includegraphics[width=1.0\textwidth]{resources/Packages/AllPackages.png}
+\end{center}
+
+The MORR package is the master package containing the whole application. It does not contain any classes directly as it only serves as a container for all packages required in the design.
+
+\section{MORR.CORE}
+
+Contained classes:
+\begin{itemize}
+\item MORR 
+\item Bootstrapper
+\item ConfigurationManager
+\item ModuleManager
+\end{itemize}
+
+\section{MORR.CLI}
+
+Contained classes:
+\begin{itemize}
+\item Program
+\item Executor
+\item OutputFormatter
+\item Options
+\end{itemize}
+
+\section{MORR.SHARED}
+
+Contained interfaces:
+\begin{itemize}
+\item IConfiguration
+\item IModule
+\item ITransformingModule
+\item ICollectingModule
+\item IReceivingModule
+\end{itemize}
+
+Contained classes:
+\begin{itemize}
+\item \textit{abstract} EventQueue<T>
+\item InvalidConfigurationException
+\item IReadOnlyEventQueue<T>
+\item \textit{abstract} Event
+\item Exception
+\end{itemize}
+
+\section{MORR.TRANSCODING}
+
+Contained interfaces:
+\begin{itemize}
+\item IVideoCapture
+\item IAudioCapture
+\item IDecoder
+\item IEncoder
+\end{itemize}
+
+Contained classes:
+\begin{itemize}
+\item \textit{abstract} AudioSample
+\item \textit{abstract} VideoSample
+\item \textit{abstract} MetadataSample
+\item DecodingException
+\item EncodingException
+\item CaptureException
+\item MetadataDecodingException
+\item AudioDecodingException
+\item VideoDecodingException
+\item MetadataEncodingException
+\item AudioEncodingException
+\item VideoEncodingException
+\item VideoCaptureException
+\item AudioCaptureException
+\end{itemize}
+
+\section{MORR.MODULES}
+\subsection*{WINDOWMANAGEMENT}
+Contained classes:
+\begin{itemize}
+\item WindowManagementModule
+\item \textit{abstract} WindowEvent
+\item WindowMovementEvent
+\item WindowFocusEvent
+\item WindowSateChangedEvent
+\item WindowResizingEvent
+\end{itemize}
+\subsection*{KEYBOARD}
+Contained classes:
+\begin{itemize}
+\item \textit{abstract} KeyboardEvent
+\item KeyboardModule
+\item KeyboardInteractEvent
+\end{itemize}
+\subsection*{WEBBROWSER}
+Contained classes:
+\begin{itemize}
+\item WebBrowserModule
+\item \textit{abstract} WebBrowserEvent
+\item TextSelectionEvent
+\item TextInputEvent
+\item SwitchTabEvent
+\item OpenTabEvent
+\item CloseTabEvent
+\item NavigationEvent
+\item HoverEvent
+\item FileDownloadEvent
+\item ButtonClickEvent
+\end{itemize}
+\subsection*{CLIPBOARD}
+Contained classes:
+\begin{itemize}
+\item ClipboardModule
+\item \textit{abstract} ClipboardEvent
+\item ClipBoardInteractEvent
+\end{itemize}
+
+Contained enums:
+\begin{itemize}
+\item InteractionType
+\end{itemize}
+\subsection*{MOUSE}
+Contained classes:
+\begin{itemize}
+\item MouseModule
+\item \textit{abstract} MouseEvent
+\item MouseScrollEvent
+\item MouseClickEvent
+\item MouseMoveEvent
+\end{itemize}
+
+Contained enums:
+\begin{itemize}
+\item MouseButton
+\item MouseButtonState
+\end{itemize}
