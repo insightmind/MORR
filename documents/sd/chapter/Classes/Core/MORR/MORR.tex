@@ -1,6 +1,6 @@
 \subsection{MORR}
 
-\subsubsection{Core}
+\subsection*{MORR.Core.Recording}
 
 \begin{class}{RecordingManager}
     \clsdcl{public class RecordingManager}
@@ -25,6 +25,8 @@
     \end{methods}
 \end{class}
 
+\subsection*{MORR.Core.Recording.Exceptions}
+
 \begin{class}{RecordingException}
     \clsdcl{public class RecordingException : Exception}
 
@@ -43,6 +45,8 @@
     \clsdsp{An exception thrown if a recording is stopped while no recording is currently running.}
 \end{class}
 
+\subsection*{MORR.Core}
+
 \begin{class}{Bootstrapper}
     \clsdcl{public class Bootstrapper}
 
@@ -56,6 +60,8 @@
         \end{method}
      \end{methods}
 \end{class}
+
+\subsection*{MORR.Core.Configuration}
 
 \begin{class}{ConfigurationManager}
     \clsdcl{public class ConfigurationManager}
@@ -76,8 +82,17 @@
             \end{exceptions}
         \end{method}
     \end{methods}
-    
 \end{class}
+
+\subsection*{MORR.Core.Configuration.Exceptions}
+
+\begin{class}{InvalidConfigurationException}
+    \clsdcl{public class InvalidConfigurationException : Exception}
+
+    \clsdsp{An exception thrown if the configuration is invalid.}
+\end{class}
+
+\subsection*{MORR.Core.ModuleManagement}
 
 \begin{class}{ModuleManager}
     \clsdcl{public class ModuleManager}
