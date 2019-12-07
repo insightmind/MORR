@@ -1,4 +1,4 @@
-\subsubsection{Capture}
+\subsection*{MORR.Core.Data.Capture}
 
 \begin{class}{CaptureException}
     \clsdcl{public class CaptureException : Exception}
@@ -6,11 +6,15 @@
     \clsdsp{A generic capture exception that all specialized capture exceptions derive from.}
 \end{class}
 
+\subsection*{MORR.Core.Data.Capture.Video.Exceptions}
+
 \begin{class}{VideoCaptureException}
     \clsdcl{public class VideoCaptureException : CaptureException}
 
     \clsdsp{An exception thrown if video sample capturing fails.}
 \end{class}
+
+\subsection*{MORR.Core.Data.Capture.Video}
 
 \begin{interface}{IVideoCapture}
     \clsdcl{public interface IVideoCapture}
@@ -24,6 +28,8 @@
     \end{methods}
 \end{interface}
 
+\subsection*{MORR.Core.Data.Capture.Video.WinAPI}
+
 \begin{interface}{DesktopCapture}
     \clsdcl{public class DesktopCapture : IVideoCapture}
 
@@ -35,6 +41,8 @@
         \end{method}
     \end{methods}   
 \end{interface}
+
+\subsection*{MORR.Core.Data.Capture.Video.WinAPI.Utility}
 
 \begin{class}{CaptureHelper}
     \clsdcl{internal static class CaptureHelper}
