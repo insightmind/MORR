@@ -3,8 +3,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Notes about this chapter%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Each namespace correspondes to a section
 % Each project in a namespace correspondes to a subsection in its namespaces' section.
-% Each class, abstract class or interface in the project corresponds to a subsubsection in its project's subsection.
-% Each class, abstract class or interface has some of the followings: class diagram, description, declaration, constructor, attributes and Methods.
+% Each class, abstract class, enumeration or interface in the project corresponds to a subsubsection in its project's subsection.
+% Each class, abstract class, enumeration or interface has some of the followings: class diagram, description, declaration, constructor, attributes and Methods.
 %
 % namespace------section
 %     |            |
@@ -16,11 +16,14 @@
 %
 % At the start of each namespace \section{namespace name} should be called to start a new section
 % At the start of each project \subsection{project name} should be called to start a new subsection
-% At the start of each class, abstract class or interface, a corresponding environment \begin{class},... will be called to start a new subsubsection
+% At the start of each class, abstract class, enumeration or interface, a corresponding environment \begin{class},... will be called to start a new subsubsection
 % At the start of class diagram, description, declaration, constructor, fields and Methods,
 % a corresponding commad \cls----- or environment \begin{methods}... will be called to start a new paragraph.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Notes about this chapter%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%T he description
+% para1: the description in text
 \newcommand{\dsp}{\textbf{Description: }}
 
 \newenvironment{class}[1]{\subsubsection{{\textbf{Class: #1}}}}{\newpage}
@@ -31,12 +34,13 @@
 % Enum elements enumeration
 \newenvironment{elements}{\textbf{Elements:}  \begin{enumerate}
 }{\end{enumerate}}
-% elements
+% Eeum element
 % para1: declaration para2: description
 \newcommand{\element}[2]{\item \texttt{#1} \\ \dsp #2}
 
 %include a class diagram
-%para1: the directory of the diagram
+% optional para1: the optional argument of \includegraphics
+% para2: the directory of the diagram
 \newcommand{\clsdiagram}[2][]{\textbf{Class diagram:} \newline
 \begin{center}
     \includegraphics[#1]{#2}

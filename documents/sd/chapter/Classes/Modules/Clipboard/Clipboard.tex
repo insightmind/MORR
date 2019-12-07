@@ -1,1 +1,47 @@
-\subsection{Clipboard}
+    \subsection{Clipboard}
+
+\begin{class}{ClipboardModule} 
+    \clsdiagram{resources/Classes/Modules/Clipboard/ClipboardModule.png}
+
+    \clsdcl{public class ClipboardModule : ICollectingModule}
+
+    \clsdsp{The ClipboardModule is responsible for recording all clipboard related user interactions.}
+\end{class}
+
+\subsection*{Events}
+
+\begin{absclass}{ClipboardEvent} 
+    \clsdiagram{resources/Classes/Modules/Clipboard/Events/ClipboardEvent.png}
+
+    \clsdcl{public abstract class ClipboardEvent : Event}
+
+    \clsdsp{A generic clipboard event which all specific ClipboardEvents inherit from.}
+\end{absclass}
+
+\begin{class}{ClipboardInteractEvent} 
+    \clsdiagram[scale=0.9]{resources/Classes/Modules/Clipboard/Events/ClipboardInteractEvent.png}
+
+    \clsdcl{public class ClipboardInteractEvent : ClipboardEvent}
+
+    \clsdsp{A clipboard user interaction.}
+
+    \begin{attributes}
+        \attribute{public string Text}{The text in the clipboard.}
+        \attribute{public InteractionType Interaction}{The interaction type.}
+    \end{attributes}
+\end{class}
+
+\begin{enum}{InteractionType}
+    \clsdiagram[scale=0.9]{resources/Classes/Modules/Clipboard/Events/InteractionType.png}
+
+    \clsdcl{public enum InteractionType}
+
+    \clsdsp{An Enumeration to specify the four interaction type with a clipboard: clear, copy, cut and paste.}
+
+    \begin{elements}
+        \element{Clear}{Clear the content from the clipboard.}
+        \element{Copy}{Copy content into the clipboard.}
+        \element{Cut}{Cut content into the clipboard.}
+        \element{Paste}{Paste from the clipboard.}
+    \end{elements}
+\end{enum}

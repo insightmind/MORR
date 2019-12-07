@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace MORR.Modules.Clipboard.Events
+﻿namespace MORR.Modules.Clipboard.Events
 {
     /// <summary>
     ///     A clipboard user interaction
     /// </summary>
-    public class ClipBoardInteractEvent : ClipboardEvent
+    public class ClipboardInteractEvent : ClipboardEvent
     {
         /// <summary>
         ///     An Enum to specify the four interaction type with a clip board:

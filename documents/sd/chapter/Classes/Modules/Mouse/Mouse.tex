@@ -1,1 +1,58 @@
 \subsection{Mouse}
+
+\begin{class}{MouseModule} 
+    \clsdiagram{resources/Classes/Modules/Mouse/MouseModule.png}
+
+    \clsdcl{public class MouseModule : ICollectingModule}
+
+    \clsdsp{The MouseModule is responsible for recording all mouse related user interactions.}
+\end{class}
+
+\subsection*{Events}
+
+\begin{absclass}{MouseEvent} 
+    \clsdiagram{resources/Classes/Modules/Mouse/Events/MouseEvent.png}
+
+    \clsdcl{public abstract class MouseEvent: Event}
+
+    \clsdsp{A generic mouse event which all specific MouseEvents inherit from.}
+\end{absclass}
+
+\begin{class}{MouseClickEvent} 
+    \clsdiagram{resources/Classes/Modules/Mouse/Events/MouseClickEvent.png}
+
+    \clsdcl{public class MouseClickEvent : MouseEvent}
+
+    \clsdsp{ A mouse click user interaction.}
+
+    \begin{attributes}
+        \attribute{public System.Windows.Input.MouseButton Button}{The button that was clicked.}
+        \attribute{public System.Windows.Input.MouseButtonState State}{The state of the button that was clicked.}
+        \attribute{public System.IntPtr HWnd}{The handle of the window in which the mouse click occurred.}
+    \end{attributes}
+\end{class}
+
+\begin{class}{MouseMoveEvent} 
+    \clsdiagram{resources/Classes/Modules/Mouse/Events/MouseMoveEvent.png}
+
+    \clsdcl{public class MouseMoveEvent : MouseEvent}
+
+    \clsdsp{A mouse move user interaction.}
+
+    \begin{attributes}
+        \attribute{public System.Numerics.Vector2 Movement}{The movement of the mouse.}
+    \end{attributes}
+\end{class}
+
+\begin{class}{MouseScrollEvent} 
+    \clsdiagram{resources/Classes/Modules/Mouse/Events/MouseScrollEvent.png}
+
+    \clsdcl{public class MouseScrollEvent : MouseEvent}
+
+    \clsdsp{A mouse scroll user interaction.}
+
+    \begin{attributes}
+        \attribute{public short ScrollAmount}{The amount of the wheel being scrolled.}
+        \attribute{public System.IntPtr HWnd}{The handle of the window in which the mouse scroll occurred.}
+    \end{attributes}
+\end{class}

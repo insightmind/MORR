@@ -5,7 +5,7 @@ namespace MORR.Modules.Keyboard.Events
     /// <summary>
     ///     A keyboard user interaction
     /// </summary>
-    public class KeyBoardInteractEvent : KeyboardEvent
+    public class KeyboardInteractEvent : KeyboardEvent
     {
         /// <summary>
         ///     The key that was pressed

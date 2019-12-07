@@ -1,1 +1,30 @@
 \subsection{Keyboard}
+\begin{class}{KeyboardModule} 
+    \clsdiagram{resources/Classes/Modules/Keyboard/KeyboardModule.png}
+
+    \clsdcl{public class KeyboardModule : ICollectingModule}
+
+    \clsdsp{The KeyboardModule is responsible for recording all keyboard related user interactions.}
+\end{class}
+
+\subsection*{Events}
+
+\begin{absclass}{KeyboardEvent} 
+    \clsdiagram{resources/Classes/Modules/Keyboard/Events/KeyboardEvent.png}
+
+    \clsdcl{public abstract class KeyboardEvent : Event}
+
+    \clsdsp{A generic keyboard event which all specific KeyboardEvents inherit from.}
+\end{absclass}
+
+\begin{class}{KeyboardInteractEvent} 
+    \clsdiagram{resources/Classes/Modules/Keyboard/Events/KeyboardInteractEvent.png}
+
+    \clsdcl{public class KeyboardInteractEvent : KeyboardEvent}
+
+    \clsdsp{A keyboard user interaction.}
+
+    \begin{attributes}
+        \attribute{public Key System.Windows.Input.PressedKey}{The key that was pressed.}
+    \end{attributes}
+\end{class}
