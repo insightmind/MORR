@@ -1,0 +1,231 @@
+\subsection{Listeners}
+%%Tab%%
+\begin{class}{TabListener}
+
+\clsdcl{class TabListener implements IListener}
+
+\clsdsp{Listener responsible for recording events connected to the tab-API.}
+
+\begin{constructors}
+\begin{constructor}{constructor(callback: (event: BrowserEvent) => void)}{Create a new TabListener.}
+\begin{parameters}
+\para{callback : function(Shared.BrowserEvent) : void}{The function to invoke on created events.}
+\end{parameters}
+\end{constructor}
+\end{constructors}
+\begin{methods}
+\begin{method}{public start() : void}{Start the listener. While the listener is running, it will create events and invoke the callback function on them.}
+\end{method}
+\begin{method}{public stop() : void}{Start the listener. While the listener is running, it will create events and invoke the callback function on them.}
+\end{method}
+\end{methods}
+\end{class}
+
+\begin{class}{OpenTabEvent}
+
+\clsdcl{class OpenTabEvent extends BrowserEvent}
+
+\clsdsp{An OpenTabEvent occurs when a new tab created. This does include the creation of a new browser window, which automatically creates at least one tab.}
+
+\begin{constructors}
+\begin{constructor}{constructor(tabID : number, windowID: number)}{Create a new OpenTabEvent.}
+\begin{parameters}
+\para{tabID : number}{The ID of the newly created tab.}
+\para{windowID : number}{The ID of the window the tab with tabID belongs to.}
+\end{parameters}
+\end{constructor}
+\end{constructors}
+\end{class}
+
+\begin{class}{CloseTabEvent}
+
+\clsdcl{class CloseTabEvent extends BrowserEvent}
+
+\clsdsp{A CloseTabEvent occurs when a tab is closed. This does include the closing of a browser window, where all attached tabs are automatically closed.}
+
+\begin{constructors}
+\begin{constructor}{constructor(tabID : number, windowID: number, url : string)}{Create a new CloseTabEvent.}
+\begin{parameters}
+\para{tabID : number}{The ID of the closed tab.}
+\para{windowID : number}{The ID of the window the tab with tabID belongs to.}
+\para{url : string}{The URL of the webpage which was opened in the now closed tab.}
+\end{parameters}
+\end{constructor}
+\end{constructors}
+\end{class}
+
+\begin{class}{SwitchTabEvent}
+
+\clsdcl{class SwitchTabEvent extends BrowserEvent}
+
+\clsdsp{A SwitchTabEvent occurs when the user switches between two existing tabs.}
+
+\begin{constructors}
+\begin{constructor}{constructor(tabID : number, windowID: number, newTabID : number, url : string)}{Create a new SwitchTabEvent.}
+\begin{parameters}
+\para{tabID : number}{The ID of the previously focused tab.}
+\para{windowID : number}{The ID of the window the tab with tabID belongs to.}
+\para{newTabID}{The ID of the newly focused tab.}
+\para{url : string}{The URL opened in the newly focused tab.}
+\end{parameters}
+\end{constructor}
+\end{constructors}
+\end{class}
+
+\begin{class}{NavigationEvent}
+
+\clsdcl{class NavigationEvent extends BrowserEvent}
+
+\clsdsp{A NavigationEvent occurs when the browser navigates to an URL. This also includes navigation/redirection without explicit user input.}
+
+\begin{constructors}
+\begin{constructor}{constructor(tabID : number, windowID: number, url : string)}{Create a new NavigationEvent.}
+\begin{parameters}
+\para{tabID : number}{The ID of the tab in which the navigation occured in.}
+\para{windowID : number}{The ID of the window the tab with tabID belongs to.}
+\para{url : string}{The URL that was navigated to.}
+\end{parameters}
+\end{constructor}
+\end{constructors}
+\end{class}
+%%End Tab%%
+
+%%DOM%%
+\begin{class}{DOMListener}
+
+\clsdcl{class DOMListener implements IListener}
+
+\clsdsp{The DOMListener is responsible for recording events which occur in the context of websites. To do so, the DOMListener needs to inject a ContentScript into opened websites and collect the events sent by the ContentScript through the browser message API.}
+
+\begin{constructors}
+\begin{constructor}{constructor(callback: (event: BrowserEvent) => void)}{Create a new DOMListener.}
+\begin{parameters}
+\para{callback : function(Shared.BrowserEvent) => void}{The function to invoke on created events.}
+\end{parameters}
+\end{constructor}
+\end{constructors}
+\begin{methods}
+\begin{method}{public start() : void}{Start the listener. While the listener is running, it will create events and invoke the callback function on them.}
+\end{method}
+\begin{method}{public stop() : void}{Start the listener. While the listener is running, it will create events and invoke the callback function on them.}
+\end{method}
+\end{methods}
+\end{class}
+
+\begin{class}{TextSelectionEvent}
+
+\clsdcl{class TextSelectionEvent extends BrowserEvent}
+
+\clsdsp{A TextSelectionEvent occurs when the user selects text on a website. This event should not be triggered while the text selection is still pending, i. e. when the user has started selecting text, but not yet released the mouse button.}
+
+\begin{constructors}
+\begin{constructor}{constructor(tabID : number, windowID: number, textSelection : string, url : string)}{Create a new TextSelectionEvent.}
+\begin{parameters}
+\para{tabID : number}{The ID of the tab in which the event occured in.}
+\para{windowID : number}{The ID of the window the tab with tabID belongs to.}
+\para{url : string}{The URL of the open webpage.}
+\para{textSelection : string}{The selected text.}
+\end{parameters}
+\end{constructor}
+\end{constructors}
+\end{class}
+
+\begin{class}{TextInputEvent}
+
+\clsdcl{class TextInputEvent extends BrowserEvent}
+
+\clsdsp{A TextInputEvent occurs when the user inputs text into a DOM element, e. g. a textbox.}
+
+\begin{constructors}
+\begin{constructor}{constructor(tabID : number, windowID: number, text : string, target : string, url : string)}{Create a new TextInputEvent.}
+\begin{parameters}
+\para{tabID : number}{The ID of the tab in which the event occured in.}
+\para{windowID : number}{The ID of the window the tab with tabID belongs to.}
+\para{text : string}{The input text.}
+\para{target}{String describing the target element which received the input, i. e. a textbox.}
+\para{url : string}{The URL of the open webpage.}
+\end{parameters}
+\end{constructor}
+\end{constructors}
+\end{class}
+
+\begin{class}{ButtonClickEvent}
+
+\clsdcl{class ButtonClickEvent extends BrowserEvent}
+
+\clsdsp{A ButtonClickEvent occurs when the user clicks on a button element on a website.}
+
+\begin{constructors}
+\begin{constructor}{constructor(tabID : number, windowID: number, buttonTitle : string, url : string, buttonHref? : string)}{Create a new ButtonClickEvent.}
+\begin{parameters}
+\para{tabID : number}{The ID of the tab in which the event occured in.}
+\para{windowID : number}{The ID of the window the tab with tabID belongs to.}
+\para{buttonTitle : string}{The title/label of the button which was clicked.}
+\para{url : string}{The URL of the open webpage.}
+\para{buttonHref : string}{Optional. The URL which the clicked button links to.}
+\end{parameters}
+\end{constructor}
+\end{constructors}
+\end{class}
+
+\begin{class}{HoverEvent}
+
+\clsdcl{class HoverEvent extends BrowserEvent}
+
+\clsdsp{A HoverEvent occurs when the user hovers the mouse over an element on a website.}
+
+\begin{constructors}
+\begin{constructor}{constructor(tabID : number, windowID: number, target : string, url : string)}{Create a new HoverEvent.}
+\begin{parameters}
+\para{tabID : number}{The ID of the tab in which the event occured in.}
+\para{windowID : number}{The ID of the window the tab with tabID belongs to.}
+\para{target : string}{String describing the element which was hovered.}
+\para{url : string}{The URL of the open webpage.}
+\end{parameters}
+\end{constructor}
+\end{constructors}
+\end{class}
+%%End DOM%%
+
+%%Download%%
+\begin{class}{DownloadListener}
+
+\clsdcl{class DownloadListener implements IListener}
+
+\clsdsp{The DownloadListener is responsible for recording events connected to the download browser-API.}
+
+\begin{constructors}
+\begin{constructor}{constructor(callback: (event: BrowserEvent) => void)}{Create a new DownloadListener.}
+\begin{parameters}
+\para{callback : function(Shared.BrowserEvent) => void}{The function to invoke on created events.}
+\end{parameters}
+\end{constructor}
+\end{constructors}
+\begin{methods}
+\begin{method}{public start() : void}{Start the listener. While the listener is running, it will create events and invoke the callback function on them.}
+\end{method}
+\begin{method}{public stop() : void}{Start the listener. While the listener is running, it will create events and invoke the callback function on them.}
+\end{method}
+\end{methods}
+\end{class}
+
+\begin{class}{DownloadEvent}
+
+\clsdcl{class DownloadEvent extends BrowserEvent}
+
+\clsdsp{A DownloadEvent occurs when the user starts downloading a file.}
+
+\begin{constructors}
+\begin{constructor}{constructor(tabID : number, windowID : number, mimeType : string, fileURL : string, url : string)}{Create a new DownloadEvent.}
+\begin{parameters}
+\para{tabID : number}{The ID of the tab in which the event occured in.}
+\para{windowID : number}{The ID of the window the tab with tabID belongs to.}
+\para{mimeType : string}{The MIME type of the downloaded file.}
+\para{fileURL : string}{The URL of the downloaded file.}
+\para{url : string}{The URL of the opened webpage.}
+\end{parameters}
+\end{constructor}
+\end{constructors}
+\end{class}
+
+%%End Download%%
