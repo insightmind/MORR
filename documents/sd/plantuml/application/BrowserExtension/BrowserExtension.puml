@@ -1,0 +1,167 @@
+@startuml
+skinparam linetype ortho
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+'skinparam backgroundColor transparent
+'skinparam classBackgroundColor transparent
+'skinparam style strictuml
+'skinparam groupInheritance 2'
+left to right direction
+namespace Shared #A1AAA1 {
+
+	enum EventType {
+		Navigation,
+		OpenTab,
+		CloseTab,
+		SwitchTab,
+		TextInput,
+		ButtonClick,
+		Hover,
+		TextSelection,
+		Download
+	}
+
+	interface IListener {
+		+ IListener(callback : (BrowserEvent) => void)
+		+ start() : void
+		+ stop() : void
+	}
+
+	interface IEvent {
+		+ timeStamp : Date
+		+ issuingModule : number
+		+ type : EventType
+		+ serialize() : string
+	}
+	IEvent ..> EventType
+
+	
+	IEvent <|.. BrowserEvent
+	class BrowserEvent {
+        + BrowserEvent(type : EventType, tabID : number, windowID: number, url : string)
+		+ timeStamp : Date
+		+ issuingModule : number
+		+ type : EventType
+		+ serialize()
+		+ tabID : number
+		+ url : URL
+        + windowID : number
+	}
+
+}
+namespace Background #D1D1DD {
+	class BackgroundScript {
+		+ start() : void
+		+ stop() : void
+		+ callback(event : Shared.BrowserEvent) : void
+	}
+
+    class ListenerManager {
+        + ListenerManager(callback : (Shared.BrowserEvent) => void, configurationString : string)
+        + startAll()
+        + stopAll()
+    }
+
+	interface ICommunicationStrategy {
+        + establishConnection(onSuccess : (response? : string) => void, onFail : (response? : string) => void) : void
+		+ requestConfig(onSuccess : (response? : string) : void, onFail : (response? : string) : void) : void
+		+ waitForStart(onSuccess : (response? : string) : void, onFail : (response? : string) : void) : void
+		+ sendData(data : string) : void
+	}
+	class PostHTTPInterface implements ICommunicationStrategy {
+		+ PostHTTPInterface(uri : string)
+        + establishConnection(onSuccess : (response? : string) => void, onFail : (response? : string) => void) : void
+		+ requestConfig(onSuccess : (response? : string) : void, onFail : (response? : string) : void) : void
+		+ waitForStart(onSuccess : (response? : string) : void, onFail : (response? : string) : void) : void
+		+ sendData(data : string) : void
+	}
+
+	BackgroundScript "1" *-- "1" ListenerManager
+	ListenerManager "1" *-- "0..*" Shared.IListener
+	BackgroundScript "1" *-- "1" ICommunicationStrategy
+
+}
+namespace Listeners #AAAAA1{
+	namespace TabListener #DDDDD1 {
+		class TabListener implements Shared.IListener {
+			+ TabListener(callback : (Shared.BrowserEvent) => void)
+			+ start()
+			+ stop()
+		}
+		class OpenTabEvent extends Shared.BrowserEvent {
+			+ OpenTabEvent(tabID : number, windowID : number, url : string)
+		}
+		class CloseTabEvent extends Shared.BrowserEvent {
+			+ CloseTabEvent(tabID : number, windowID : number, url : string)
+		}
+		class SwitchTabEvent extends Shared.BrowserEvent {
+			+ newTab : number
+			+ SwitchTabEvent(tabID : number, windowID : number, newTabID : number, url : string)
+		}
+		class NavigationEvent extends Shared.BrowserEvent {
+			+ NavigationEvent(tabID : number, windowID : number, url : string)
+		}
+	}
+	namespace DOMListener #DDDDD1{
+		class DOMEventListener implements Shared.IListener {
+			+ DOMEventListener(callback : (Shared.BrowserEvent) => void)
+			+ start()
+			+ stop()
+		}
+        DOMEventListener ..> Listeners.DOMEventType
+		class TextInputEvent extends Shared.BrowserEvent {
+			+ text : string
+			+ target : string
+			+ TextInputEvent(tabID : number, windowID : number, text : string, target : string, url : string)
+		}
+		class ButtonClickEvent extends Shared.BrowserEvent {
+			+ buttonTitle : string
+			+ buttonHref? : string
+			+ ButtonClickEvent(tabID : number, windowID : number, buttonTitle : string, buttonHref? : string, url : string)
+		}
+		class HoverEvent extends Shared.BrowserEvent {
+			+ target : string
+			+ HoverEvent(tabID : number, windowID : number, target : string, url : string)
+		}
+		class TextSelectionEvent extends Shared.BrowserEvent {
+			+ textSelection : string
+			+ TextSelectionEvent(tabID : number, windowID : number, textSelection : string, url : string)
+		}
+		DOMEventListener ..> WebsiteContext.DOMEventRecorder
+	}
+	namespace DownloadListener #DDDDD1{
+		class DownloadListener implements Shared.IListener {
+			+ DownloadListener(callback : (Shared.BrowserEvent) => void)
+			+ start()
+			+ stop()
+		}
+		class DownloadEvent extends Shared.BrowserEvent {
+		    + mimeType : string
+		    + fileURL : string
+		    + Download(tabID : number, windowID : number, mimeType : string, fileURL : string, url : string)
+		}
+	}
+	enum DOMEventType {
+		CLICK
+		CHANGE
+		DBCLICK
+		KEYUP
+		KEYDOWN
+		INPUT
+		MOUSEENTER
+		MOUSEUP
+		MOUSEDOWN
+		SELECT
+		SUBMIT
+		SEARCH
+		FOCUS
+	}
+}
+namespace WebsiteContext #FFF1F1 {
+	class DOMEventRecorder {
+		start() : void
+		stop() : void
+	}
+	DOMEventRecorder ..> Listeners.DOMEventType
+}
+@enduml
