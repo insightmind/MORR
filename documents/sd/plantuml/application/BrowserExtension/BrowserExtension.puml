@@ -22,7 +22,7 @@ namespace Shared #A1AAA1 {
 	}
 
 	interface IListener {
-		+ IListener(callback : function(BrowserEvent) : void)
+		+ IListener(callback : (BrowserEvent) => void)
 		+ start() : void
 		+ stop() : void
 	}
@@ -57,6 +57,7 @@ namespace Background #D1D1DD {
 	}
 
     class ListenerManager {
+        + ListenerManager(callback : (Shared.BrowserEvent) => void, configurationString : string)
         + startAll()
         + stopAll()
     }
@@ -83,7 +84,7 @@ namespace Background #D1D1DD {
 namespace Listeners #AAAAA1{
 	namespace TabListener #DDDDD1 {
 		class TabListener implements Shared.IListener {
-			+ TabListener(callback : function(Shared.BrowserEvent) : void)
+			+ TabListener(callback : (Shared.BrowserEvent) => void)
 			+ start()
 			+ stop()
 		}
@@ -103,7 +104,7 @@ namespace Listeners #AAAAA1{
 	}
 	namespace DOMListener #DDDDD1{
 		class DOMEventListener implements Shared.IListener {
-			+ DOMEventListener(callback : function(Shared.BrowserEvent) : void)
+			+ DOMEventListener(callback : (Shared.BrowserEvent) => void)
 			+ start()
 			+ stop()
 		}
@@ -130,7 +131,7 @@ namespace Listeners #AAAAA1{
 	}
 	namespace DownloadListener #DDDDD1{
 		class DownloadListener implements Shared.IListener {
-			+ DownloadListener(callback : function(Shared.BrowserEvent) : void)
+			+ DownloadListener(callback : (Shared.BrowserEvent) => void)
 			+ start()
 			+ stop()
 		}

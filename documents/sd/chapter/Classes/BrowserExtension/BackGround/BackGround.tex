@@ -8,7 +8,7 @@
 \clsdsp{The BackGroundScript class serves as the main class of the browser extension. It is responsible for creating and starting/stopping the ListenerManager and the CommunicationStrategy.}
 
 \begin{constructors}
-\begin{constructor}{public BackGroundScript()}{Initialize the BackGroundScript and thus the browser extension. After this function is completed, the browser extension is ready and awaits a signal from the MORR application.}
+\begin{constructor}{constructor()}{Initialize the BackGroundScript and thus the browser extension. After this function is completed, the browser extension is ready and awaits a signal from the MORR application.}
 \end{constructor}
 \end{constructors}
 \begin{methods}
@@ -16,9 +16,9 @@
 \end{method}
 \begin{method}{public stop() : void}{Stop all components which should only be active during a session recording. To be called when a recording stops.}
 \end{method}
-\begin{method}{public callback(BrowserEvent event) : void}{Callback to be handed over to all components which create events during a recording. The BackGroundScript class is responsible to forward these events to the ICommunicationStrategy for transmission to the MORR application.}
+\begin{method}{public callback(BrowserEvent event) : void}{Function to be handed over as callback to all components which create events during a recording. The BackGroundScript class is responsible to forward these events to the ICommunicationStrategy for transmission to the MORR application.}
 \begin{parameters}
-\para{event : BrowserEvent}{The event to be forwarded to the MORR application.}
+\para{event : BrowserEvent}{The event to be handeled.}
 \end{parameters}
 \end{method}
 \end{methods}
@@ -33,9 +33,9 @@
 \clsdsp{The ListenerManager is responsible to create all IListeners and keep references to them. The ListenerManager provides methods to start/stop all attached listeners.}
 
 \begin{constructors}
-\begin{constructor}{constructor(callback : function(BrowserEvent) : void, configurationString : string)}{Initialize the ListenerManager and therefore all configured listeners.}
+\begin{constructor}{constructor(callback : (event : BrowserEvent) => void, configurationString : string)}{Initialize the ListenerManager and therefore all configured listeners.}
 \begin{parameters}
-\para{callback : function(Shared.BrowserEvent) : void}{The callback function to pass to the managed listeners.}
+\para{callback : (event : BrowserEvent) => void}{The callback function to pass to the managed listeners.}
 \para{configurationString : string}{A valid JSON string containing optional configuration. The configuration determines whether specific event types shall be recorded or not.}
 \end{parameters}
 \end{constructor}
@@ -94,7 +94,7 @@
 \clsdsp{Implements ICommunicationStrategy by sending HTTP POST-Requests to the MORR application.}
 
 \begin{constructors}
-\begin{constructor}{public PostHTTPInterface(url : string)}{Create a new PostHTTPInterface.}
+\begin{constructor}{constructor(url : string)}{Create a new PostHTTPInterface.}
 \begin{parameters}
 \para{url : string}{A string containg an URL with port number to send the HTTP requests to.}
 \end{parameters}

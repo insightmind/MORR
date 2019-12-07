@@ -11,7 +11,7 @@
 \begin{constructors}
 \begin{constructor}{constructor(callback: (event: BrowserEvent) => void)}{Create a new TabListener.}
 \begin{parameters}
-\para{callback : function(Shared.BrowserEvent) => void}{The function to invoke on created events.}
+\para{callback : (event : BrowserEvent) => void}{The function to invoke on created events.}
 \end{parameters}
 \end{constructor}
 \end{constructors}
@@ -68,12 +68,15 @@
 
 \clsdsp{A SwitchTabEvent occurs when the user switches between two existing tabs.}
 
+\begin{attributes}
+\attribute{public newTab : number}{The ID of the tab which gained focus.}
+\end{attributes}
 \begin{constructors}
 \begin{constructor}{constructor(tabID : number, windowID: number, newTabID : number, url : string)}{Create a new SwitchTabEvent.}
 \begin{parameters}
 \para{tabID : number}{The ID of the previously focused tab.}
 \para{windowID : number}{The ID of the window the tab with tabID belongs to.}
-\para{newTabID}{The ID of the newly focused tab.}
+\para{newTabID : number}{The ID of the newly focused tab.}
 \para{url : string}{The URL opened in the newly focused tab.}
 \end{parameters}
 \end{constructor}
@@ -110,9 +113,9 @@
 \clsdsp{The DOMListener is responsible for recording events which occur in the context of websites. To do so, the DOMListener needs to inject a ContentScript into opened websites and collect the events sent by the ContentScript through the browser message API.}
 
 \begin{constructors}
-\begin{constructor}{constructor(callback: (event: BrowserEvent) => void)}{Create a new DOMListener.}
+\begin{constructor}{constructor(callback : (event: BrowserEvent) => void)}{Create a new DOMListener.}
 \begin{parameters}
-\para{callback : function(Shared.BrowserEvent) => void}{The function to invoke on created events.}
+\para{callback : (event : BrowserEvent) => void}{The function to invoke on created events.}
 \end{parameters}
 \end{constructor}
 \end{constructors}
@@ -132,6 +135,9 @@
 
 \clsdsp{A TextSelectionEvent occurs when the user selects text on a website. This event should not be triggered while the text selection is still pending, i. e. when the user has started selecting text, but not yet released the mouse button.}
 
+\begin{attributes}
+\attribute{public textSelection : string}{The selected text.}
+\end{attributes}
 \begin{constructors}
 \begin{constructor}{constructor(tabID : number, windowID: number, textSelection : string, url : string)}{Create a new TextSelectionEvent.}
 \begin{parameters}
@@ -152,13 +158,17 @@
 
 \clsdsp{A TextInputEvent occurs when the user inputs text into a DOM element, e. g. a textbox.}
 
+\begin{attributes}
+\attribute{public text : string}{The input text.}
+\attribute{public target : string}{String describing the target element which received the input, e. g. a textbox.}
+\end{attributes}
 \begin{constructors}
 \begin{constructor}{constructor(tabID : number, windowID: number, text : string, target : string, url : string)}{Create a new TextInputEvent.}
 \begin{parameters}
 \para{tabID : number}{The ID of the tab in which the event occured in.}
 \para{windowID : number}{The ID of the window the tab with tabID belongs to.}
 \para{text : string}{The input text.}
-\para{target}{String describing the target element which received the input, i. e. a textbox.}
+\para{target}{String describing the target element which received the input, e. g. a textbox.}
 \para{url : string}{The URL of the open webpage.}
 \end{parameters}
 \end{constructor}
@@ -173,6 +183,10 @@
 
 \clsdsp{A ButtonClickEvent occurs when the user clicks on a button element on a website.}
 
+\begin{attributes}
+\attribute{public buttonTitle : string}{The title/label of the button which was clicked.}
+\attribute{public buttonHref : string}{Optional. The URL which the clicked button links to.}
+\end{attributes}
 \begin{constructors}
 \begin{constructor}{constructor(tabID : number, windowID: number, buttonTitle : string, url : string, buttonHref? : string)}{Create a new ButtonClickEvent.}
 \begin{parameters}
@@ -194,6 +208,9 @@
 
 \clsdsp{A HoverEvent occurs when the user hovers the mouse over an element on a website.}
 
+\begin{attributes}
+\attribute{public target : string}{String describing the element which was hovered.}
+\end{attributes}
 \begin{constructors}
 \begin{constructor}{constructor(tabID : number, windowID: number, target : string, url : string)}{Create a new HoverEvent.}
 \begin{parameters}
@@ -210,16 +227,16 @@
 %%Download%%
 \begin{class}{DownloadListener}
 
-\clsdiagram{resources/Classes/BrowserExtension/Listeners/DownloadListener.png}
+\clsdiagram[width=0.5\textwidth]{resources/Classes/BrowserExtension/Listeners/DownloadListener.png}
 
 \clsdcl{class DownloadListener implements IListener}
 
 \clsdsp{The DownloadListener is responsible for recording events connected to the download browser-API.}
 
 \begin{constructors}
-\begin{constructor}{constructor(callback: (event: BrowserEvent) => void)}{Create a new DownloadListener.}
+\begin{constructor}{constructor(callback: (event : BrowserEvent) => void)}{Create a new DownloadListener.}
 \begin{parameters}
-\para{callback : function(Shared.BrowserEvent) => void}{The function to invoke on created events.}
+\para{callback : (event : BrowserEvent) => void}{The function to invoke on created events.}
 \end{parameters}
 \end{constructor}
 \end{constructors}
@@ -239,6 +256,10 @@
 
 \clsdsp{A DownloadEvent occurs when the user starts downloading a file.}
 
+\begin{attributes}
+\attribute{public mimeType : string}{The MIME type of the downloaded file.}
+\attribute{public fileURL : string}{The URL of the downloaded file.}
+\end{attributes}
 \begin{constructors}
 \begin{constructor}{constructor(tabID : number, windowID : number, mimeType : string, fileURL : string, url : string)}{Create a new DownloadEvent.}
 \begin{parameters}
