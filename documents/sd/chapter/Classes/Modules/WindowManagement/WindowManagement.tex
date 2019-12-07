@@ -1,1 +1,68 @@
-\subsection{WindowManagement.tex}
+\subsection{WindowManagement}
+
+\begin{class}{WindowManagementModule} 
+    \clsdiagram{resources/Classes/Modules/WindowManagement/WindowManagementModule.png}
+
+    \clsdcl{public class WindowManagementModule}
+
+    \clsdsp{The WindowManagementModule is responsible for recording all window related user interactions.}
+\end{class}
+
+\begin{absclass}{WindowEvent} 
+    \clsdiagram{resources/Classes/Modules/WindowManagement/Events/WindowEvent.png}
+
+    \clsdcl{public abstract class WindowEvent: Event}
+
+    \clsdsp{A window management event which all specific WindowEvents inherit from.}
+
+    \begin{attributes}
+        \attribute{public string Title}{The title of the interacted window.}
+        \attribute{public string ProcessName}{The name of the process associated with the window}
+    \end{attributes}
+\end{absclass}
+
+\begin{class}{WindowFocusEvent} 
+    \clsdiagram{resources/Classes/Modules/WindowManagement/Events/WindowFocusEvent.png}
+
+    \clsdcl{public class WindowFocusEvent : WindowEvent}
+
+    \clsdsp{A window focus user interaction.}
+\end{class}
+
+\begin{class}{WindowMovementEvent} 
+    \clsdiagram{resources/Classes/Modules/WindowManagement/Events/WindowMovementEvent.png}
+
+    \clsdcl{public class WindowMovementEvent : WindowEvent}
+
+    \clsdsp{ A window movement user interaction.}
+
+    \begin{attributes}
+        \attribute{public Vector2 OldLocation}{The old location of the window.}
+        \attribute{public Vector2 NewLocation}{The new location of the window.}
+    \end{attributes}
+\end{class}
+
+\begin{class}{WindowResizingEvent} 
+    \clsdiagram{resources/Classes/Modules/WindowManagement/Events/WindowResizingEvent.png}
+
+    \clsdcl{public class WindowResizingEvent : WindowEvent}
+
+    \clsdsp{A window resizing user interaction.}
+
+    \begin{attributes}
+        \attribute{public Size OldSize}{The old size of the window.}
+        \attribute{public Size NewSize}{The new size of the window.}
+    \end{attributes}
+\end{class}
+
+\begin{class}{WindowStateChangedEvent} 
+    \clsdiagram{resources/Classes/Modules/WindowManagement/Events/WindowStateChangedEvent.png}
+
+    \clsdcl{public class WindowStateChangedEvent: WindowEvent}
+
+    \clsdsp{An user interaction that changes the state of a window.}
+
+    \begin{attributes}
+        \attribute{public WindowState State}{The new state of the window.}
+    \end{attributes}
+\end{class}
