@@ -1,1 +1,143 @@
 \subsection{Webbrowser}
+
+\begin{class}{WebBrowserModule} 
+	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/WebBrowserModule.png}
+	
+    \clsdcl{public class WebBrowserModule : ICollectingModule}
+
+    \clsdsp{The WebBrowserModule is responsible for recording all browser related user interactions}
+
+\end{class}
+
+\subsection*{Events}
+
+\begin{absclass}{WebBrowserEvent}
+	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Events/WebBrowserEvent.png}
+
+    \clsdcl{public abstract class WebBrowserEvent : Event}
+
+    \clsdsp{A generic web browser event which all specific WebBrowserEvents inherit from}
+
+    \begin{attributes}
+        \attribute{public Guid TabID}{The identifier of the tab where the web browser event occured in}
+        \attribute{public Uri CurrentURL}{The URL of the website where the web browser event occured in}
+    \end{attributes}
+
+\end{absclass}
+
+\begin{class}{ButtonClickEvent : WebBrowserEvent} 
+	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Events/ButtonClickEvent.png}
+    
+    \clsdcl{public class ButtonClickEvent}
+
+    \clsdsp{A button click user interaction}
+
+    \begin{attributes}
+    	\attribute{Attributes inherited from WebbrowserEvent}
+        \attribute{public string Button}{The title of the button item that was clicked on the website}
+        \attribute{public Uri URL}{The URL of the website that the button is linked to}
+    \end{attributes}
+\end{class}
+
+\begin{class}{CloseTabEvent} 
+    \clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Events/CloseTabEvent.png}
+    	
+    \clsdcl{public class CloseTabEvent : WebBrowserEvent}
+
+    \clsdsp{A close tab user interaction}
+
+    \begin{attributes}
+        \attribute{Only from WebBrowserEvent inherited attributes}
+    \end{attributes}
+\end{class}
+
+\begin{class}{FileDownloadEvent} 
+ 	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Events/FileDownloadEvent.png}
+ 	   
+    \clsdcl{public class FileDownloadEvent : WebBrowserEvent}
+
+    \clsdsp{A file download user interaction}
+
+    \begin{attributes}
+    	\attribute{Attributes inherited from WebbrowserEvent}
+        \attribute{public string MIMEType}{MIME type of the file that was downloaded}
+        \attribute{public Uri FileURL}{The URL of the file that was downloaded}
+    \end{attributes}
+\end{class}
+
+\begin{class}{HoverEvent} 
+    \clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Events/HoverEvent.png}
+    	
+    \clsdcl{public class HoverEvent : WebBrowserEvent}
+
+    \clsdsp{A hover user interaction}
+
+    \begin{attributes}
+    	\attribute{Attributes inherited from WebbrowserEvent}
+        \attribute{public string HoverElement}{The element on the website that has been hovered}
+    \end{attributes}
+\end{class}
+
+\begin{class}{NavigationEvent} 
+    \clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Events/NavigationEvent.png}
+    
+    \clsdcl{public class NaviagtionEvent : WebBrowserEvent}
+
+    \clsdsp{A navigation user interaction}
+
+    \begin{attributes}
+    	\attribute{Only from WebbrowserEvent inherited attributes}
+    \end{attributes}
+\end{class}
+
+\begin{class}{OpenTabEvent} 
+    \clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Events/OpenTabEvent.png}
+    
+    \clsdcl{public class OpenTabEvent : WebBrowserEvent}
+
+    \clsdsp{An open tab user interaction}
+
+    \begin{attributes}
+    	\attribute{Only from WebbrowserEvent inherited attributes}
+    \end{attributes}
+\end{class}
+
+\begin{class}{SwitchTabEvent} 
+    \clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Events/SwitchTabEvent.png}
+    
+    \clsdcl{public class SwitchTabEvent : WebBrowserEvent}
+
+    \clsdsp{A switch tab user interaction}
+
+    \begin{attributes}
+    	\attribute{Attributes inherited from WebbrowserEvent}
+        \attribute{public Guid NewTabID}{The identifier of the tab that the user switched to}
+    \end{attributes}
+\end{class}
+
+\begin{class}{TextInputEvent} 
+    \clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Events/TextInputEvent.png}
+    
+    \clsdcl{public class TextInputEvent : WebBrowserEvent}
+
+    \clsdsp{A text input user interaction}
+
+    \begin{attributes}
+    	\attribute{Attributes inherited from WebbrowserEvent}
+        \attribute{public string InputtedText}{The text that was inputted by the user on the website}
+        \attribute{public string Textbox}{The textbox where the text was inputted in}
+    \end{attributes}
+\end{class}
+
+\begin{class}{TextSelectionEvent} 
+    \clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Events/TextSelectionEvent.png}
+    
+    \clsdcl{public class TextSelectionEvent : WebBrowserEvent}
+
+    \clsdsp{A text selection user interaction}
+
+    \begin{attributes}
+    	\attribute{Attributes inherited from WebbrowserEvent}
+        \attribute{public string SelectedText}{The text that was selected on the website}
+    \end{attributes}
+\end{class}
