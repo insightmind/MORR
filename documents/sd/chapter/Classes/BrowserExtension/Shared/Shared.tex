@@ -9,7 +9,7 @@
 
 \begin{attributes}
 \attribute{public timeStamp : Date}{The time at which the event was created.}
-\attribute{public issuingModule : number}{The ID of the browser module. Is a fixed value in the context of the browser extension.}
+\attribute{public issuingModule : number}{The ID of the browser module. This is a fixed value in the context of the browser extension.}
 \attribute{public type : EventType}{The type of the event.}
 \end{attributes}
 \begin{methods}
@@ -29,9 +29,9 @@
 
 \begin{attributes}
 \attribute{public timeStamp : Date}{The time at which the event was created.}
-\attribute{public issuingModule : number}{The ID of the browser module. Is a fixed value in the context of the browser extension.}
+\attribute{public issuingModule : number}{The ID of the browser module. This is a fixed value in the context of the browser extension.}
 \attribute{public type : EventType}{The type of the event.}
-\attribute{public windowID : number}{The ID of the browser window the event occured in. This does not need to be serialized in accordance with the functional specifications, as this information can be easily gathered it is stored for internal purposes mostly.}
+\attribute{public windowID : number}{The ID of the browser window the event occured in. According to the functional specification this does not need to be serialized.}
 \attribute{public tabID : number}{The ID of the tab the event occured in.}
 \attribute{public url : URL}{The URL that was opened in the tab with ID tabID as the event occured.}
 \end{attributes}
@@ -58,12 +58,12 @@
 
 \clsdcl{interface IListener}
 
-\clsdsp{A listener is a class responsible for recording certain browser-specific events and sending them to the BackGroundScript.}
+\clsdsp{A listener is a class responsible for recording certain browser-specific events and sending them to the BackgroundScript.}
 
 \begin{constructors}
 \begin{constructor}{constructor(callback: (event : BrowserEvent) => void)}{Create a new listener.}
 \begin{parameters}
-\para{callback : (event : BrowserEvent) => void}{The function to invoke on created events in order to send them back to the BackGroundScript.}
+\para{callback : (event : BrowserEvent) => void}{The function to invoke on created events in order to send them back to the BackgroundScript.}
 \end{parameters}
 \end{constructor}
 \end{constructors}

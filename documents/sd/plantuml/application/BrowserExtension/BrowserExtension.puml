@@ -50,7 +50,7 @@ namespace Shared #A1AAA1 {
 
 }
 namespace Background #D1D1DD {
-	class BackGroundScript {
+	class BackgroundScript {
 		+ start() : void
 		+ stop() : void
 		+ callback(event : Shared.BrowserEvent) : void
@@ -76,9 +76,9 @@ namespace Background #D1D1DD {
 		+ sendData(data : string) : void
 	}
 
-	BackGroundScript "1" *-- "1" ListenerManager
+	BackgroundScript "1" *-- "1" ListenerManager
 	ListenerManager "1" *-- "0..*" Shared.IListener
-	BackGroundScript "1" *-- "1" ICommunicationStrategy
+	BackgroundScript "1" *-- "1" ICommunicationStrategy
 
 }
 namespace Listeners #AAAAA1{

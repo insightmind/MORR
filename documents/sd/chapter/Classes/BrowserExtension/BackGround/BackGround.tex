@@ -1,14 +1,14 @@
 \subsection{Background}
-\begin{class}{BackGroundScript}
+\begin{class}{BackgroundScript}
 
 \clsdiagram[width=1.0\textwidth]{resources/Classes/BrowserExtension/BackGround/BackGroundScript.png}
 
-\clsdcl{class BackGroundScript}
+\clsdcl{class BackgroundScript}
 
-\clsdsp{The BackGroundScript class serves as the main class of the browser extension. It is responsible for creating and starting/stopping the ListenerManager and the CommunicationStrategy.}
+\clsdsp{The BackgroundScript class serves as the main class of the browser extension. It is responsible for creating and starting/stopping the ListenerManager and the CommunicationStrategy.}
 
 \begin{constructors}
-\begin{constructor}{constructor()}{Initialize the BackGroundScript and thus the browser extension. After this function is completed, the browser extension is ready and awaits a signal from the MORR application.}
+\begin{constructor}{constructor()}{Initialize the BackgroundScript and thus the browser extension. After this function is completed, the browser extension is ready and awaits a signal from the MORR application.}
 \end{constructor}
 \end{constructors}
 \begin{methods}
@@ -16,9 +16,9 @@
 \end{method}
 \begin{method}{public stop() : void}{Stop all components which should only be active during a session recording. To be called when a recording stops.}
 \end{method}
-\begin{method}{public callback(BrowserEvent event) : void}{Function to be handed over as callback to all components which create events during a recording. The BackGroundScript class is responsible to forward these events to the ICommunicationStrategy for transmission to the MORR application.}
+\begin{method}{public callback(BrowserEvent event) : void}{Function to be handed over as callback to all components which create events during a recording. The BackgroundScript class is responsible to forward these events to the ICommunicationStrategy for transmission to the MORR application.}
 \begin{parameters}
-\para{event : BrowserEvent}{The event to be handeled.}
+\para{event : BrowserEvent}{The event to be handled.}
 \end{parameters}
 \end{method}
 \end{methods}
@@ -30,7 +30,7 @@
 
 \clsdcl{class ListenerManager}
 
-\clsdsp{The ListenerManager is responsible to create all IListeners and keep references to them. The ListenerManager provides methods to start/stop all attached listeners.}
+\clsdsp{The ListenerManager is responsible for creating all IListeners and keeping references to them. The ListenerManager provides methods to start/stop all attached listeners.}
 
 \begin{constructors}
 \begin{constructor}{constructor(callback : (event : BrowserEvent) => void, configurationString : string)}{Initialize the ListenerManager and therefore all configured listeners.}
