@@ -1,1 +1,30 @@
 \subsection{Clipboard}
+
+\begin{class}{ClipboardModule} 
+    \clsdiagram{resources/Classes/Modules/Clipboard/ClipboardModule.png}
+
+    \clsdcl{public class ClipboardModule}
+
+    \clsdsp{The ClipboardModule is responsible for recording all clipboard related user interactions.}
+\end{class}
+
+\begin{absclass}{ClipboardEvent} 
+    \clsdiagram{resources/Classes/Modules/Clipboard/Events/ClipboardEvent.png}
+
+    \clsdcl{public abstract class ClipboardEvent : Event}
+
+    \clsdsp{A generic clipboard event which all specific ClipboardEvents inherit from.}
+\end{absclass}
+
+\begin{class}{} 
+    \clsdiagram{resources/Classes/Modules/Clipboard/Events/ClipBoardInteractEvent.png}
+
+    \clsdcl{public class ClipBoardInteractEvent : ClipboardEvent}
+
+    \clsdsp{A clipboard user interaction}
+
+    \begin{attributes}
+        \attribute{public string Text}{The text in the clipboard}
+        \attribute{public InteractionType Interaction}{The interaction type}
+    \end{attributes}
+\end{class}
