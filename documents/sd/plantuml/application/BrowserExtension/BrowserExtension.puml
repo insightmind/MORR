@@ -29,7 +29,7 @@ namespace Shared #A1AAA1 {
 
 	interface IEvent {
 		+ timeStamp : Date
-		+ issuingModule : int
+		+ issuingModule : number
 		+ type : EventType
 		+ serialize() : string
 	}
@@ -40,12 +40,12 @@ namespace Shared #A1AAA1 {
 	class BrowserEvent {
         + BrowserEvent(type : EventType, tabID : number, windowID: number, url : string)
 		+ timeStamp : Date
-		+ issuingModule : int
+		+ issuingModule : number
 		+ type : EventType
 		+ serialize()
-		+ tabID : int
+		+ tabID : number
 		+ url : URL
-        + windowID : int
+        + windowID : number
 	}
 
 }
@@ -88,17 +88,17 @@ namespace Listeners #AAAAA1{
 			+ stop()
 		}
 		class OpenTabEvent extends Shared.BrowserEvent {
-			+ OpenTabEvent(tabID : int, windowID : int, url : string)
+			+ OpenTabEvent(tabID : number, windowID : number, url : string)
 		}
 		class CloseTabEvent extends Shared.BrowserEvent {
-			+ CloseTabEvent(tabID : int, windowID : int, url : string)
+			+ CloseTabEvent(tabID : number, windowID : number, url : string)
 		}
 		class SwitchTabEvent extends Shared.BrowserEvent {
-			+ newTab : int
-			+ SwitchTabEvent(tabID : int, windowID : int, newTabID : int, url : string)
+			+ newTab : number
+			+ SwitchTabEvent(tabID : number, windowID : number, newTabID : number, url : string)
 		}
 		class NavigationEvent extends Shared.BrowserEvent {
-			+ NavigationEvent(tabID : int, windowID : int, url : string)
+			+ NavigationEvent(tabID : number, windowID : number, url : string)
 		}
 	}
 	namespace DOMListener #DDDDD1{
@@ -111,20 +111,20 @@ namespace Listeners #AAAAA1{
 		class TextInputEvent extends Shared.BrowserEvent {
 			+ text : string
 			+ target : string
-			+ TextInputEvent(tabID : int, windowID : int, text : string, target : string, url : string)
+			+ TextInputEvent(tabID : number, windowID : number, text : string, target : string, url : string)
 		}
 		class ButtonClickEvent extends Shared.BrowserEvent {
 			+ buttonTitle : string
 			+ buttonHref? : string
-			+ ButtonClickEvent(tabID : int, windowID : int, buttonTitle : string, buttonHref? : string, url : string)
+			+ ButtonClickEvent(tabID : number, windowID : number, buttonTitle : string, buttonHref? : string, url : string)
 		}
 		class HoverEvent extends Shared.BrowserEvent {
 			+ target : string
-			+ HoverEvent(tabID : int, windowID : int, target : string, url : string)
+			+ HoverEvent(tabID : number, windowID : number, target : string, url : string)
 		}
 		class TextSelectionEvent extends Shared.BrowserEvent {
 			+ textSelection : string
-			+ TextSelectionEvent(tabID : int, windowID : int, textSelection : string, url : string)
+			+ TextSelectionEvent(tabID : number, windowID : number, textSelection : string, url : string)
 		}
 		DOMEventListener ..> WebsiteContext.DOMEventRecorder
 	}
@@ -137,7 +137,7 @@ namespace Listeners #AAAAA1{
 		class DownloadEvent extends Shared.BrowserEvent {
 		    + mimeType : string
 		    + fileURL : string
-		    + Download(tabID : int, windowID : int, mimeType : string, fileURL : string, url : string)
+		    + Download(tabID : number, windowID : number, mimeType : string, fileURL : string, url : string)
 		}
 	}
 	enum DOMEventType {

@@ -2,6 +2,8 @@
 %%Tab%%
 \begin{class}{TabListener}
 
+\clsdiagram[width=1.0\textwidth]{resources/Classes/BrowserExtension/Listeners/TabListener.png}
+
 \clsdcl{class TabListener implements IListener}
 
 \clsdsp{Listener responsible for recording events connected to the tab-API.}
@@ -9,7 +11,7 @@
 \begin{constructors}
 \begin{constructor}{constructor(callback: (event: BrowserEvent) => void)}{Create a new TabListener.}
 \begin{parameters}
-\para{callback : function(Shared.BrowserEvent) : void}{The function to invoke on created events.}
+\para{callback : function(Shared.BrowserEvent) => void}{The function to invoke on created events.}
 \end{parameters}
 \end{constructor}
 \end{constructors}
@@ -22,6 +24,8 @@
 \end{class}
 
 \begin{class}{OpenTabEvent}
+
+\clsdiagram[width=0.5\textwidth]{resources/Classes/BrowserExtension/Listeners/OpenTabEvent.png}
 
 \clsdcl{class OpenTabEvent extends BrowserEvent}
 
@@ -39,6 +43,8 @@
 
 \begin{class}{CloseTabEvent}
 
+\clsdiagram[width=0.5\textwidth]{resources/Classes/BrowserExtension/Listeners/CloseTabEvent.png}
+
 \clsdcl{class CloseTabEvent extends BrowserEvent}
 
 \clsdsp{A CloseTabEvent occurs when a tab is closed. This does include the closing of a browser window, where all attached tabs are automatically closed.}
@@ -55,6 +61,8 @@
 \end{class}
 
 \begin{class}{SwitchTabEvent}
+
+\clsdiagram[width=0.8\textwidth]{resources/Classes/BrowserExtension/Listeners/SwitchTabEvent.png}
 
 \clsdcl{class SwitchTabEvent extends BrowserEvent}
 
@@ -74,6 +82,8 @@
 
 \begin{class}{NavigationEvent}
 
+\clsdiagram[width=0.5\textwidth]{resources/Classes/BrowserExtension/Listeners/NavigationEvent.png}
+
 \clsdcl{class NavigationEvent extends BrowserEvent}
 
 \clsdsp{A NavigationEvent occurs when the browser navigates to an URL. This also includes navigation/redirection without explicit user input.}
@@ -92,6 +102,8 @@
 
 %%DOM%%
 \begin{class}{DOMListener}
+
+\clsdiagram[width=1.0\textwidth]{resources/Classes/BrowserExtension/Listeners/DOMListener.png}
 
 \clsdcl{class DOMListener implements IListener}
 
@@ -114,6 +126,8 @@
 
 \begin{class}{TextSelectionEvent}
 
+\clsdiagram[width=0.5\textwidth]{resources/Classes/BrowserExtension/Listeners/TextSelectionEvent.png}
+
 \clsdcl{class TextSelectionEvent extends BrowserEvent}
 
 \clsdsp{A TextSelectionEvent occurs when the user selects text on a website. This event should not be triggered while the text selection is still pending, i. e. when the user has started selecting text, but not yet released the mouse button.}
@@ -131,6 +145,8 @@
 \end{class}
 
 \begin{class}{TextInputEvent}
+
+\clsdiagram[width=0.5\textwidth]{resources/Classes/BrowserExtension/Listeners/TextInputEvent.png}
 
 \clsdcl{class TextInputEvent extends BrowserEvent}
 
@@ -150,6 +166,8 @@
 \end{class}
 
 \begin{class}{ButtonClickEvent}
+
+\clsdiagram[width=0.5\textwidth]{resources/Classes/BrowserExtension/Listeners/ButtonClickEvent.png}
 
 \clsdcl{class ButtonClickEvent extends BrowserEvent}
 
@@ -172,6 +190,8 @@
 
 \clsdcl{class HoverEvent extends BrowserEvent}
 
+\clsdiagram[width=0.5\textwidth]{resources/Classes/BrowserExtension/Listeners/HoverEvent.png}
+
 \clsdsp{A HoverEvent occurs when the user hovers the mouse over an element on a website.}
 
 \begin{constructors}
@@ -189,6 +209,8 @@
 
 %%Download%%
 \begin{class}{DownloadListener}
+
+\clsdiagram{resources/Classes/BrowserExtension/Listeners/DownloadListener.png}
 
 \clsdcl{class DownloadListener implements IListener}
 
@@ -210,6 +232,8 @@
 \end{class}
 
 \begin{class}{DownloadEvent}
+
+\clsdiagram[width=0.5\textwidth]{resources/Classes/BrowserExtension/Listeners/DownloadEvent.png}
 
 \clsdcl{class DownloadEvent extends BrowserEvent}
 

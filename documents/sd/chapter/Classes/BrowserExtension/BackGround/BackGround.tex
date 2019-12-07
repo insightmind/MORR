@@ -1,5 +1,8 @@
 \subsection{Background}
 \begin{class}{BackGroundScript}
+
+\clsdiagram[width=1.0\textwidth]{resources/Classes/BrowserExtension/BackGround/BackGroundScript.png}
+
 \clsdcl{class BackGroundScript}
 
 \clsdsp{The BackGroundScript class serves as the main class of the browser extension. It is responsible for creating and starting/stopping the ListenerManager and the CommunicationStrategy.}
@@ -22,13 +25,17 @@
 \end{class}
 
 \begin{class}{ListenerManager}
+
+\clsdiagram[width=0.7\textwidth]{resources/Classes/BrowserExtension/BackGround/ListenerManager.png}
+
 \clsdcl{class ListenerManager}
 
 \clsdsp{The ListenerManager is responsible to create all IListeners and keep references to them. The ListenerManager provides methods to start/stop all attached listeners.}
 
 \begin{constructors}
-\begin{constructor}{public ListenerManager(configurationString : string)}{Initialize the ListenerManager and therefore all configured listeners.}
+\begin{constructor}{constructor(callback : function(BrowserEvent) : void, configurationString : string)}{Initialize the ListenerManager and therefore all configured listeners.}
 \begin{parameters}
+\para{callback : function(Shared.BrowserEvent) : void}{The callback function to pass to the managed listeners.}
 \para{configurationString : string}{A valid JSON string containing optional configuration. The configuration determines whether specific event types shall be recorded or not.}
 \end{parameters}
 \end{constructor}
@@ -42,6 +49,8 @@
 \end{class}
 
 \begin{interface}{ICommunicationStrategy}
+
+\clsdiagram[width=1.0\textwidth]{resources/Classes/BrowserExtension/BackGround/ICommunicationStrategy.png}
 
 \clsdcl{interface ICommunicationStrategy}
 
@@ -79,6 +88,8 @@
 \begin{class}{PostHTTPInterface}
 
 \clsdcl{class PostHTTPInterface implements ICommunicationStrategy}
+
+\clsdiagram[width=1.0\textwidth]{resources/Classes/BrowserExtension/BackGround/PostHTTPInterface.png}
 
 \clsdsp{Implements ICommunicationStrategy by sending HTTP POST-Requests to the MORR application.}
 
