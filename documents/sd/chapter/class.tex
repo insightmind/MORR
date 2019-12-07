@@ -70,6 +70,13 @@
 % para1: declaration para2: description
 \newcommand{\para}[2]{\item \texttt{#1} \\ \dsp #2}
 
+% Exceptions enumeration with \excp (exception item)
+\newenvironment{exceptions}{\textbf{Exceptions:} \begin{enumerate}
+}{\end{enumerate}}
+% exception
+% para1: exception type para2: condition for throwing
+\newcommand{\excp}[2]{\item \texttt{#1} \\ \dsp #2}
+
 % return value
 % para1: declaration para2: description
 \newcommand{\return}[2]{\textbf{Return values:} \begin{itemize} \item \texttt{#1} \\ Description: #2 \end{itemize}}

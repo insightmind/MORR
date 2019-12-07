@@ -1,4 +1,29 @@
-% MetadataSampleDecodedEventHandler
-% MetadataSampleRequestedEventHandler
-% MetadataDecodingException
-% MetadataEncodingException
+\begin{class}{MetadataSampleRequestedEventHandler}
+    \clsdcl{public delegate MetadataSample? MetadataSampleRequestedEventHandler()}
+
+    \clsdsp{A handler for the IEncoder.MetadataSampleRequested event.}
+
+    \return{MetadataSample?}{The next MetadataSample to encode or null if there are no more samples.}
+\end{class}
+
+\begin{class}{MetadataSampleDecodedEventHandler}
+    \clsdcl{public delegate void MetadataSampleDecodedEventHandler(MetadataSample sample)}
+    
+    \clsdsp{A handler for the IDecoder.MetadataSampleDecoded event.}
+
+    \begin{parameters}
+        \para{MetadataSample sample}{The MetadataSample that was decoded.}
+    \end{parameters}
+\end{class}
+
+\begin{class}{MetadataEncodingException}
+    \clsdcl{MetadataEncodingException : EncodingException}
+
+    \clsdsp{An exception thrown if metadata encoding fails.}
+\end{class}
+
+\begin{class}{MetadataDecodingException}
+    \clsdcl{MetadataDecodingException : DecodingException}
+
+    \clsdsp{An exception thrown if metadata decoding fails.}
+\end{class}

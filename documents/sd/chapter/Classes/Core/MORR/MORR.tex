@@ -1,10 +1,120 @@
 \subsection{MORR}
 
+\subsubsection{Core}
+
+\begin{class}{RecordingManager}
+    \clsdcl{public class RecordingManager}
+
+    \clsdsp{Responsible for managing all aspects of recording. Holds all other current managers and the used encoder/decoder.}
+
+    \begin{attributes}
+        \attribute{public bool IsRecording \{ get; private set; \}}{Indicates whether a session is currently being recorded. True if a session is currently being recorded, false otherwise.}
+    \end{attributes}
+
+    \begin{methods}
+        \begin{method}{public void StartRecording()}{Starts a recording if no session is currently being recorded.}
+            \begin{exceptions}
+                \excp{AlreadyRecordingException}{Thrown if a recording is started while another recording is already running.}
+            \end{exceptions}
+        \end{method}
+        \begin{method}{public void StopRecording()}{Stops a recording if a session is currently being recorded.}
+            \begin{exceptions}
+                \excp{NotRecordingException}{Thrown if a recording is stopped while no recording is currently running.}
+            \end{exceptions}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{RecordingException}
+    \clsdcl{public class RecordingException : Exception}
+
+    \clsdsp{A generic recording exception that all specialized recording exceptions derive from.}
+\end{class}
+
+\begin{class}{AlreadyRecordingException}
+    \clsdcl{public class AlreadyRecordingException : RecordingException}
+
+    \clsdsp{An exception thrown if a recording is started while another recording is already running.}
+\end{class}
+
+\begin{class}{NotRecordingException}
+    \clsdcl{public class NotRecordingException : RecordingException}
+
+    \clsdsp{An exception thrown if a recording is stopped while no recording is currently running.}
+\end{class}
+
+\begin{class}{Bootstrapper}
+    \clsdcl{public class Bootstrapper}
+
+     \clsdsp{Responsible for bootstrapping the application and providing compositional facilities using MEF.}
+
+     \begin{methods}
+         \begin{method}{public void ComposeImports(object @object)}{Satisifies the imports on the specified object using MEF.}
+            \begin{parameters}
+                \para{object @object}{The object to satisfy the imports on.}
+            \end{parameters}
+        \end{method}
+     \end{methods}
+\end{class}
+
+\begin{class}{ConfigurationManager}
+    \clsdcl{public class ConfigurationManager}
+
+    \clsdsp{Loads the application's configuration from a file and manages the IConfiguration instances that are distributed to all objects requiring configuration.}
+
+    \begin{attributes}
+        \attribute{[ImportMany] public IEnumerable<IConfiguration> Configurations \{ get; private set; \}}{All available IConfiguration instances.}
+    \end{attributes}
+
+    \begin{methods}
+        \begin{method}{public void LoadConfiguration(string path)}{Loads the configuration in .json format from the specified part and initializes all IConfiguration instances.}
+            \begin{parameters}
+                \para{string path}{The path to load the configuration from.}
+            \end{parameters}
+            \begin{exceptions}
+                \excp{InvalidConfigurationException}{Exception thrown if the specified configuration is invalid.}
+            \end{exceptions}
+        \end{method}
+    \end{methods}
+    
+\end{class}
+
+\begin{class}{ModuleManager}
+    \clsdcl{public class ModuleManager}
+
+    \clsdsp{Initializes all modules and manages the status during runtime.}
+
+    \begin{attributes}
+        \attribute{[ImportMany] public IEnumerable<IModule> Modules \{ get; private set; \}}{All IModule instances available through MEF.}
+        \attribute{[ImportMany] public IEnumerable<ICollectingModule> CollectingModules \{ get; private set;\}}{All ICollectingModule instances available through MEF.}
+        \attribute{[Import] public GlobalModuleConfiguration ModuleConfiguration \{ get; private set;\}}{The IConfiguration instance specifying configuration options regarding all modules.}
+    \end{attributes}
+
+    \begin{methods}
+        \begin{method}{public void InitializeModules()}{Initializes all modules according to the configuration}
+            
+        \end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{GlobalModuleConfiguration}
+    \clsdcl{public class GlobalModuleConfiguration : IConfiguration}
+
+    \clsdsp{Encapsulates all global module configuration options.}
+
+    \begin{attributes}
+        \attribute{public IEnumerable<Type> EnabledModules \{ get; private set; \}}{The types of all IModule instances that should be enabled.}
+    \end{attributes}
+    
+    \begin{methods}
+        \begin{method}{public void Parse(string configuration)}{Parses the configuration from the provided value.}
+            \begin{parameters}
+                \para{string configuration}{The configuration value to parse from.}
+            \end{parameters}
+        \end{method}
+    \end{methods}
+\end{class}
+
 \input{chapter/Classes/Core/MORR/Data/Capture/Capture}
 \input{chapter/Classes/Core/MORR/Data/Sample/Samples}
 \input{chapter/Classes/Core/MORR/Data/Transcoding/Transcoding}
-
-% Bootstrapper
-% ConfigurationManager
-% ModuleManager
-% MORR Main class

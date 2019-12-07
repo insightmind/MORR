@@ -1,2 +1,43 @@
-% Decoder
-% Encoder
+\begin{class}{MPEGEncoder}
+    \clsdcl{public class MPEGEncoder : IEncoder}
+    
+    \clsdsp{Encodes the provided samples into a file at a path in MPEG format using the Windows API.}
+
+    \begin{attributes}
+        \attribute{event VideoSampleRequestedEventHandler VideoSampleRequested}{Event raised when the next VideoSample may be added for encoding.}
+        \attribute{event MetadataSampleRequestedEventHandler MetadataSampleRequested}{Event raised when the next MetadataSample may be added for encoding.}
+    \end{attributes}
+
+    \begin{methods}
+        \begin{method}{void EncodeTo(string path)}{Encodes all provided sample to a file at the specified location.}
+            \begin{parameters}
+                \para{string path}{The path to encode to.}
+            \end{parameters}
+            \begin{exceptions}
+                \excp{EncodingException}{Exception thrown if the encoding fails. This may be a MetadataEncodingException or a VideoEncodingException.}
+            \end{exceptions}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{MPEGDecoder}
+    \clsdcl{public class MPEGDecoder : IDecoder}
+
+    \clsdsp{Decodes samples stored in a file in MPEG format at a path using the Windows API and provides the decoded samples.}
+
+    \begin{attributes}
+        \attribute{event VideoSampleDecodedEventHandler VideoSampleDecoded}{Event raised when a VideoSample gets decoded.}
+        \attribute{event MetadataSampleDecodedEventHandler MetadataSampleDecoded}{Event raised when a MetadataSample gets decoded.}
+    \end{attributes}
+
+    \begin{methods}
+        \begin{method}{void DecodeFrom(string path)}{Decodes samples contained in a file at a specified location.}
+            \begin{parameters}
+                \para{string path}{The path to decode from.}
+            \end{parameters}
+            \begin{exceptions}
+                \excp{DecodingException}{Exception thrown if decoding fails. This may be a MetadataDecodingException or a VideoDecodingException.}
+            \end{exceptions}
+        \end{method}
+    \end{methods}
+\end{class}

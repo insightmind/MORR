@@ -1,4 +1,29 @@
-% VideoSampleDecodedEventHandler
-% VideoSampleRequestedEventHandler
-% VideoDecodingException
-% VideoEncodingException
+\begin{class}{VideoSampleRequestedEventHandler}
+    \clsdcl{public delegate VideoSample? VideoSampleRequestedEventHandler()}
+
+    \clsdsp{A handler for the IEncoder.VideoSampleRequested event.}
+
+    \return{VideoSample?}{The next VideoSample to encode or null if there are no more samples.}
+\end{class}
+
+\begin{class}{VideoSampleDecodedEventHandler}
+    \clsdcl{public delegate void VideoSampleDecodedEventHandler(VideoSample sample)}
+    
+    \clsdsp{A handler for the IDecoder.VideoSampleDecoded event.}
+
+    \begin{parameters}
+        \para{VideoSample sample}{The VideoSample that was decoded.}
+    \end{parameters}
+\end{class}
+
+\begin{class}{VideoEncodingException}
+    \clsdcl{VideoEncodingException : EncodingException}
+
+    \clsdsp{An exception thrown if video encoding fails.}
+\end{class}
+
+\begin{class}{VideoDecodingException}
+    \clsdcl{VideoDecodingException : DecodingException}
+
+    \clsdsp{An exception thrown if video decoding fails.}
+\end{class}
