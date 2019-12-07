@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MORR.Modules.Clipboard.Events
+﻿namespace MORR.Modules.Clipboard.Events
 {
     /// <summary>
     ///     A clipboard user interaction

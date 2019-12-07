@@ -3,10 +3,12 @@
 \begin{class}{MouseModule} 
     \clsdiagram{resources/Classes/Modules/Mouse/MouseModule.png}
 
-    \clsdcl{public class MouseModule}
+    \clsdcl{public class MouseModule : ICollectingModule}
 
     \clsdsp{The MouseModule is responsible for recording all mouse related user interactions.}
 \end{class}
+
+\subsection*{Events}
 
 \begin{absclass}{MouseEvent} 
     \clsdiagram{resources/Classes/Modules/Mouse/Events/MouseEvent.png}
@@ -24,9 +26,9 @@
     \clsdsp{ A mouse click user interaction.}
 
     \begin{attributes}
-        \attribute{public MouseButton Button}{The button that was clicked.}
-        \attribute{public MouseButtonState State}{The state of the button that was clicked.}
-        \attribute{public IntPtr HWnd}{The handle of the window in which the mouse click occurred.}
+        \attribute{public System.Windows.Input.MouseButton Button}{The button that was clicked.}
+        \attribute{public System.Windows.Input.MouseButtonState State}{The state of the button that was clicked.}
+        \attribute{public System.IntPtr HWnd}{The handle of the window in which the mouse click occurred.}
     \end{attributes}
 \end{class}
 
@@ -38,7 +40,7 @@
     \clsdsp{A mouse move user interaction.}
 
     \begin{attributes}
-        \attribute{public Vector2 Movement}{The movement of the mouse.}
+        \attribute{public System.Numerics.Vector2 Movement}{The movement of the mouse.}
     \end{attributes}
 \end{class}
 
@@ -51,6 +53,6 @@
 
     \begin{attributes}
         \attribute{public short ScrollAmount}{The amount of the wheel being scrolled.}
-        \attribute{public IntPtr HWnd}{The handle of the window in which the mouse scroll occurred.}
+        \attribute{public System.IntPtr HWnd}{The handle of the window in which the mouse scroll occurred.}
     \end{attributes}
 \end{class}

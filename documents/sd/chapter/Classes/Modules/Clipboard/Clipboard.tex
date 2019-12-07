@@ -3,10 +3,12 @@
 \begin{class}{ClipboardModule} 
     \clsdiagram{resources/Classes/Modules/Clipboard/ClipboardModule.png}
 
-    \clsdcl{public class ClipboardModule}
+    \clsdcl{public class ClipboardModule : ICollectingModule}
 
     \clsdsp{The ClipboardModule is responsible for recording all clipboard related user interactions.}
 \end{class}
+
+\subsection*{Events}
 
 \begin{absclass}{ClipboardEvent} 
     \clsdiagram{resources/Classes/Modules/Clipboard/Events/ClipboardEvent.png}
@@ -16,10 +18,10 @@
     \clsdsp{A generic clipboard event which all specific ClipboardEvents inherit from.}
 \end{absclass}
 
-\begin{class}{ClipBoardInteractEvent} 
-    \clsdiagram[scale=0.9]{resources/Classes/Modules/Clipboard/Events/ClipBoardInteractEvent.png}
+\begin{class}{ClipboardInteractEvent} 
+    \clsdiagram[scale=0.9]{resources/Classes/Modules/Clipboard/Events/ClipboardInteractEvent.png}
 
-    \clsdcl{public class ClipBoardInteractEvent : ClipboardEvent}
+    \clsdcl{public class ClipboardInteractEvent : ClipboardEvent}
 
     \clsdsp{A clipboard user interaction.}
 
