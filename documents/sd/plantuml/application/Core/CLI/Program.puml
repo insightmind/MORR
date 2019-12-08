@@ -1,6 +1,7 @@
-@startuml
+@startuml Program
 skinparam monochrome true
 skinparam classAttributeIconSize 0
+hide empty fields
 
 class Program {
     {static} Main(args:string[]) : void
@@ -10,5 +11,14 @@ class ICLICommand {
     + ExecuteCommand(options: Options)
 }
 
+class OutputFormatter {
+    + Verbose: bool <<get>>
+
+    + PrintMessage(message: string, verbose: bool) : void
+    + PrintException(exception: Exception) : void
+}
+
 Program o-> ICLICommand
+Program --> OutputFormatter
+Program --> RecordingManager
 @enduml

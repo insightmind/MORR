@@ -1,2 +1,16 @@
 \subsection{CLI}
-\input{chapter/Classes/Core/CLI/Classes/Program}
+\begin{class}{Program}
+	\clsdiagram[width=0.6\textwidth]{resources/Classes/Core/CLI/Program.png}
+	
+	\clsdcl{public class Program}
+	
+	\clsdsp{Main entrypoint class for the CLI tool. Resolves all commands and validates their arguments using the CommandLineParser library. It uses the OutputFormatter for any outputs resulting of the commands. Lastly it keeps a reference to the RecordingManager within the main function which may be used by a command executing. }
+	
+	\begin{methods}
+		\begin{method}{public static void Main(string[] args)}{\\ Gets called on application start and parses the arguments to resolve the given command using CommandLine.Parser. }
+			\begin{parameters}
+				\para{string[] args}{\\ Array of strings representing the arguments with which the application has been started using the command line. }
+			\end{parameters}
+		\end{method}
+	\end{methods}
+\end{class}
