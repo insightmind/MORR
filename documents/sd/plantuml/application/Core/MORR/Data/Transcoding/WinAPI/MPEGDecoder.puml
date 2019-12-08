@@ -2,6 +2,8 @@
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 
+interface IDecoder
+
 class MPEGDecoder {
     + DecodeFrom(string path) : void <<throws DecodingException>>
     + DecoderConfiguration : MPEGDecoderConfiguration <<get>> <<set>>

@@ -2,10 +2,9 @@
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 
+interface "IReadOnlyEventQueue<T>"
+
 abstract class "EventQueue<T>" {
-    
-}
-class "IReadOnlyEventQueue<T>" {
     + {abstract} GetEvents() : IAsyncEnumerable<T>
     # {abstract} Enqueue(T @event) : void
 }

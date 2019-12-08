@@ -2,5 +2,8 @@
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 
+interface IModule
+interface ITransformingModule
+
 IModule <|-- ITransformingModule
 @enduml

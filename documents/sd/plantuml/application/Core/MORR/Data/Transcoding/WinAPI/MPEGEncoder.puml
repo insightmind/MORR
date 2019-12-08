@@ -2,6 +2,8 @@
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 
+interface IEncoder
+
 class MPEGEncoder {
     + Encode() : void <<throws EncodingException>>
     + EncoderConfiguration : MPEGEncoderConfiguration <<get>> <<set>>
