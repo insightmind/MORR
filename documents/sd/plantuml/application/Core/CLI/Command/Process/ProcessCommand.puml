@@ -1,0 +1,25 @@
+@startuml ProcessCommand
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+hide empty fields
+
+class ICLICommand {
+    + ExecuteCommand(options: Options)
+}
+
+class ProcessOptions {
+    + Input : string
+    + Output : string
+    + ProcessingEnabled: bool
+    + Verbose: bool
+}
+
+class ProcessCommand {
+
+}
+
+ProcessCommand ... ProcessOptions : uses
+ICLICommand <.. ProcessCommand : implements
+RecordingManager <-- "receiver" ProcessCommand
+IEncoder <-- "encoder" ProcessCommand
+@enduml
