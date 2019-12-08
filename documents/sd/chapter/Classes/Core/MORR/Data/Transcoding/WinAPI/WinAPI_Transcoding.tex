@@ -1,0 +1,91 @@
+\subsection*{MORR.Core.Data.Transcoding.WinAPI}
+
+\begin{class}{MPEGEncoder}
+    \clsdiagram[width=0.7\textwidth]{resources/Classes/Core/MORR/Transcoding/WinAPI/MPEGEncoder.png}
+
+    \clsdcl{public class MPEGEncoder : IEncoder}
+    
+    \clsdsp{Encodes the provided samples into a file at a path in MPEG format using the Windows API.}
+
+    \begin{attributes}
+        \attribute{public event VideoSampleRequestedEventHandler VideoSampleRequested}{Event raised when the next VideoSample may be added for encoding.}
+        \attribute{public event MetadataSampleRequestedEventHandler MetadataSampleRequested}{Event raised when the next MetadataSample may be added for encoding.}
+        \attribute{public [Import] MPEGEncoderConfiguration EncoderConfiguration \{ get; set; \}}{The IConfiguration instance specifying configuration options regarding MPEG encoding.}
+    \end{attributes}
+
+    \begin{methods}
+        \begin{method}{public void Encode()}{Encodes all provided samples to a file at the location specified by the configuration.}
+            \begin{exceptions}
+                \excp{EncodingException}{Exception thrown if the encoding fails. This may be a MetadataEncodingException or a VideoEncodingException.}
+            \end{exceptions}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{MPEGEncoderConfiguration}
+    \clsdiagram[width=0.35\textwidth]{resources/Classes/Core/MORR/Transcoding/WinAPI/MPEGEncoderConfiguration.png}
+
+    \clsdcl{public class MPEGEncoderConfiguration : IConfiguration}
+
+    \clsdsp{Encapsulates all MPEGEncoder configuration options.}
+
+    \begin{attributes}
+        \attribute{public ushort Bitrate \{ get; set; \}}{The bitrate in bits per second of the video stream.}
+        \attribute{public byte Framerate \{ get; set; \}}{The framerate in frames per second of the video stream.}
+        \attribute{public Size Resolution \{ get; set; \}}{The resolution in pixels of the video stream.}
+        \attribute{public string Directory \{ get; set; \}}{The directory to store the encoded file in.}
+    \end{attributes}
+
+    \begin{methods}
+        \begin{method}{public void Parse(string configuration)}{Parses the configuration from the provided value.}
+            \begin{parameters}
+                \para{string configuration}{The configuration value to parse from.}
+            \end{parameters}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{MPEGDecoder}
+    \clsdiagram[width=0.7\textwidth]{resources/Classes/Core/MORR/Transcoding/WinAPI/MPEGDecoder.png}
+
+    \clsdcl{public class MPEGDecoder : IDecoder}
+
+    \clsdsp{Decodes samples stored in a file in MPEG format at a path using the Windows API and provides the decoded samples.}
+
+    \begin{attributes}
+        \attribute{public event VideoSampleDecodedEventHandler VideoSampleDecoded}{Event raised when a VideoSample gets decoded.}
+        \attribute{public event MetadataSampleDecodedEventHandler MetadataSampleDecoded}{Event raised when a MetadataSample gets decoded.}
+        \attribute{public [Import] MPEGDecoderConfiguration DecoderConfiguration \{ get; set; \}}{The IConfiguration instance specifying configuration options regarding MPEG decoding.}
+    \end{attributes}
+
+    \begin{methods}
+        \begin{method}{public void DecodeFrom(string path)}{Decodes samples contained in a file at a specified location.}
+            \begin{parameters}
+                \para{string path}{The path to decode from.}
+            \end{parameters}
+            \begin{exceptions}
+                \excp{DecodingException}{Exception thrown if decoding fails. This may be a MetadataDecodingException or a VideoDecodingException.}
+            \end{exceptions}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{MPEGDecoderConfiguration}
+    \clsdiagram[width=0.35\textwidth]{resources/Classes/Core/MORR/Transcoding/WinAPI/MPEGDecoderConfiguration.png}
+
+    \clsdcl{public class MPEGDecoderConfiguration : IConfiguration}
+
+    \clsdsp{Encapsulates all MPEGDecoder configuration options.}
+
+    \begin{attributes}
+        \attribute{bool ShouldExtractVideo \{ get; set; \}}{Indicates whether the encoder should extract video in addition to metadata. True if the encoder should extract video, false otherwise.}
+    \end{attributes}
+
+    \begin{methods}
+        \begin{method}{public void Parse(string configuration)}{Parses the configuration from the provided value.}
+            \begin{parameters}
+                \para{string configuration}{The configuration value to parse from.}
+            \end{parameters}
+        \end{method}
+    \end{methods}
+\end{class}

@@ -1,0 +1,17 @@
+\subsection*{MORR.Shared.Configuration}
+
+\begin{interface}{IConfiguration}
+    \clsdiagram[width=0.35\textwidth]{resources/Classes/Common/Shared/Configuration/IConfiguration.png}
+
+    \clsdcl{public interface IConfiguration}
+
+    \clsdsp{Encapsulates a self-contained unit of configuration.}
+
+    \begin{methods}
+        \begin{method}{void Parse(string configuration)}{Parses the configuration from the provided value.}
+            \begin{parameters}
+                \para{string configuration}{The configuration to parse from.}
+            \end{parameters}
+        \end{method}
+    \end{methods}
+\end{interface}

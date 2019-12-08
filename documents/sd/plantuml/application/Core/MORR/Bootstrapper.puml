@@ -3,6 +3,6 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 
 class Bootstrapper {
-    + LoadAssemblies(moduleManager:ModuleManager) : void
+    + ComposeImports(@object:object) : void
 }
 @enduml

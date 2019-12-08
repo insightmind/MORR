@@ -5,6 +5,7 @@ skinparam classAttributeIconSize 0
 abstract class Event {
     + Timestamp : DateTime
     + IssuingModule : Guid
-    + Type: Type
+    + Serialize() : string
+    + Deserialize(string serialized) : void
 }
 @enduml

@@ -1,0 +1,72 @@
+\input{chapter/Classes/Core/MORR/Data/Transcoding/Metadata/MetadataTranscoding}
+\input{chapter/Classes/Core/MORR/Data/Transcoding/Video/VideoTranscoding}
+
+\subsection*{MORR.Core.Data.Transcoding}
+
+\begin{interface}{IEncoder}
+    \clsdiagram[width=0.7\textwidth]{resources/Classes/Core/MORR/Transcoding/IEncoder.png}
+
+    \clsdcl{public interface IEncoder}
+
+    \clsdsp{Encodes the provided samples into a file at a path.}
+
+    \begin{attributes}
+        \attribute{event VideoSampleRequestedEventHandler VideoSampleRequested}{Event raised when the next VideoSample may be added for encoding.}
+        \attribute{event MetadataSampleRequestedEventHandler MetadataSampleRequested}{Event raised when the next MetadataSample may be added for encoding.}
+    \end{attributes}
+
+    \begin{methods}
+        \begin{method}{void EncodeTo(string path)}{Encodes all provided samples to a file at the specified location.}
+            \begin{parameters}
+                \para{string path}{The path to encode to.}
+            \end{parameters}
+            \begin{exceptions}
+                \excp{EncodingException}{Exception thrown if the encoding fails. This may be a MetadataEncodingException or a VideoEncodingException.}
+            \end{exceptions}
+        \end{method}
+    \end{methods}
+\end{interface}
+
+\begin{interface}{IDecoder}
+    \clsdiagram[width=0.7\textwidth]{resources/Classes/Core/MORR/Transcoding/IDecoder.png}
+
+    \clsdcl{public interface IDecoder}
+
+    \clsdsp{Decodes samples stored in a file at a path and provides the decoded samples.}
+
+    \begin{attributes}
+        \attribute{event VideoSampleDecodedEventHandler VideoSampleDecoded}{Event raised when a VideoSample gets decoded.}
+        \attribute{event MetadataSampleDecodedEventHandler MetadataSampleDecoded}{Event raised when a MetadataSample gets decoded.}
+    \end{attributes}
+
+    \begin{methods}
+        \begin{method}{void DecodeFrom(string path)}{Decodes samples contained in a file at a specified location.}
+            \begin{parameters}
+                \para{string path}{The path to decode from.}
+            \end{parameters}
+            \begin{exceptions}
+                \excp{DecodingException}{Exception thrown if decoding fails. This may be a MetadataDecodingException or a VideoDecodingException.}
+            \end{exceptions}
+        \end{method}
+    \end{methods}
+\end{interface}
+
+\subsection*{MORR.Core.Data.Transcoding.Exceptions}
+
+\begin{class}{EncodingException}
+    \clsdiagram[width=0.3\textwidth]{resources/Classes/Core/MORR/Transcoding/EncodingException.png}
+
+    \clsdcl{public class EncodingException : Exception}
+
+    \clsdsp{A generic encoding exception that all specialized encoding exceptions derive from.}
+\end{class}
+
+\begin{class}{DecodingException}
+    \clsdiagram[width=0.3\textwidth]{resources/Classes/Core/MORR/Transcoding/DecodingException.png}
+
+    \clsdcl{public class DecodingException : Exception}
+
+    \clsdsp{A generic decoding exception that all specialized decoding exceptions derive from.}
+\end{class}
+
+\input{chapter/Classes/Core/MORR/Data/Transcoding/WinAPI/WinAPI_Transcoding}

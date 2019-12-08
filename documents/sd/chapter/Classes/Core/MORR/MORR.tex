@@ -1,1 +1,153 @@
 \subsection{MORR}
+
+\subsection*{MORR.Core.Recording}
+
+\begin{class}{RecordingManager}
+    \clsdiagram[width=0.35\textwidth]{resources/Classes/Core/MORR/RecordingManager.png}
+
+    \clsdcl{public class RecordingManager}
+
+    \clsdsp{Responsible for managing all aspects of recording. Holds all other current managers and the used encoder/decoder.}
+
+    \begin{attributes}
+        \attribute{public bool IsRecording \{ get; private set; \}}{Indicates whether a session is currently being recorded. True if a session is currently being recorded, false otherwise.}
+    \end{attributes}
+
+    \begin{methods}
+        \begin{method}{public void StartRecording()}{Starts a recording if no session is currently being recorded.}
+            \begin{exceptions}
+                \excp{AlreadyRecordingException}{Thrown if a recording is started while another recording is already running.}
+            \end{exceptions}
+        \end{method}
+        \begin{method}{public void StopRecording()}{Stops a recording if a session is currently being recorded.}
+            \begin{exceptions}
+                \excp{NotRecordingException}{Thrown if a recording is stopped while no recording is currently running.}
+            \end{exceptions}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\subsection*{MORR.Core.Recording.Exceptions}
+
+\begin{class}{RecordingException}
+    \clsdiagram[width=0.3\textwidth]{resources/Classes/Core/MORR/RecordingException.png}
+
+    \clsdcl{public class RecordingException : Exception}
+
+    \clsdsp{A generic recording exception that all specialized recording exceptions derive from.}
+\end{class}
+
+\begin{class}{AlreadyRecordingException}
+    \clsdiagram[width=0.35\textwidth]{resources/Classes/Core/MORR/AlreadyRecordingException.png}
+
+    \clsdcl{public class AlreadyRecordingException : RecordingException}
+
+    \clsdsp{An exception thrown if a recording is started while another recording is already running.}
+\end{class}
+
+\begin{class}{NotRecordingException}
+    \clsdiagram[width=0.3\textwidth]{resources/Classes/Core/MORR/NotRecordingException.png}
+
+    \clsdcl{public class NotRecordingException : RecordingException}
+
+    \clsdsp{An exception thrown if a recording is stopped while no recording is currently running.}
+\end{class}
+
+\subsection*{MORR.Core}
+
+\begin{class}{Bootstrapper}
+    \clsdiagram[width=0.4\textwidth]{resources/Classes/Core/MORR/Bootstrapper.png}
+
+    \clsdcl{public class Bootstrapper}
+
+    \clsdsp{Responsible for bootstrapping the application and providing compositional facilities using MEF.}
+
+    \begin{methods}
+        \begin{method}{public void ComposeImports(object @object)}{Satisifies the imports on the specified object using MEF.}
+        \begin{parameters}
+            \para{object @object}{The object to satisfy the imports on.}
+        \end{parameters}
+    \end{method}
+    \end{methods}
+\end{class}
+
+\subsection*{MORR.Core.Configuration}
+
+\begin{class}{ConfigurationManager}
+    \clsdiagram[width=0.6\textwidth]{resources/Classes/Core/MORR/ConfigurationManager.png}
+
+    \clsdcl{public class ConfigurationManager}
+
+    \clsdsp{Loads the application's configuration from a file and manages the IConfiguration instances that are distributed to all objects requiring configuration.}
+
+    \begin{attributes}
+        \attribute{[ImportMany] public IEnumerable<IConfiguration> Configurations \{ get; private set; \}}{All available IConfiguration instances.}
+    \end{attributes}
+
+    \begin{methods}
+        \begin{method}{public void LoadConfiguration(string path)}{Loads the configuration in .json format from the specified part and initializes all IConfiguration instances.}
+            \begin{parameters}
+                \para{string path}{The path to load the configuration from.}
+            \end{parameters}
+            \begin{exceptions}
+                \excp{InvalidConfigurationException}{Exception thrown if the specified configuration is invalid.}
+            \end{exceptions}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\subsection*{MORR.Core.Configuration.Exceptions}
+
+\begin{class}{InvalidConfigurationException}
+    \clsdiagram[width=0.35\textwidth]{resources/Classes/Core/MORR/InvalidConfigurationException.png}
+
+    \clsdcl{public class InvalidConfigurationException : Exception}
+
+    \clsdsp{An exception thrown if the configuration is invalid.}
+\end{class}
+
+\subsection*{MORR.Core.ModuleManagement}
+
+\begin{class}{ModuleManager}
+    \clsdiagram[width=0.6\textwidth]{resources/Classes/Core/MORR/ModuleManager.png}
+
+    \clsdcl{public class ModuleManager}
+
+    \clsdsp{Initializes all modules and manages the status during runtime.}
+
+    \begin{attributes}
+        \attribute{[ImportMany] public IEnumerable<IModule> Modules \{ get; private set; \}}{All IModule instances available through MEF.}
+        \attribute{[ImportMany] public IEnumerable<ICollectingModule> CollectingModules \{ get; private set;\}}{All ICollectingModule instances available through MEF.}
+        \attribute{[Import] public GlobalModuleConfiguration ModuleConfiguration \{ get; private set;\}}{The IConfiguration instance specifying configuration options regarding all modules.}
+    \end{attributes}
+
+    \begin{methods}
+        \begin{method}{public void InitializeModules()}{Initializes all modules according to the configuration}
+            
+        \end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{GlobalModuleConfiguration}
+    \clsdiagram[width=0.4\textwidth]{resources/Classes/Core/MORR/GlobalModuleConfiguration.png}
+
+    \clsdcl{public class GlobalModuleConfiguration : IConfiguration}
+
+    \clsdsp{Encapsulates all global module configuration options.}
+
+    \begin{attributes}
+        \attribute{public IEnumerable<Type> EnabledModules \{ get; private set; \}}{The types of all IModule instances that should be enabled.}
+    \end{attributes}
+    
+    \begin{methods}
+        \begin{method}{public void Parse(string configuration)}{Parses the configuration from the provided value.}
+            \begin{parameters}
+                \para{string configuration}{The configuration value to parse from.}
+            \end{parameters}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\input{chapter/Classes/Core/MORR/Data/Capture/Capture}
+\input{chapter/Classes/Core/MORR/Data/Sample/Samples}
+\input{chapter/Classes/Core/MORR/Data/Transcoding/Transcoding}

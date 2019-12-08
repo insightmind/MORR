@@ -2,15 +2,8 @@
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 
-interfaceI Module {
-    + Identifier : Guid
-    + IsEnabled : bool <<get>> <<set>>
-    + Initialize() : void
-}
-
-interface IReceivingModule {
-
-}
+interface IModule
+interface IReceivingModule
 
 IModule <|-- IReceivingModule
 @enduml

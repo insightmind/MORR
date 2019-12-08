@@ -1,15 +1,9 @@
 @startuml
 skinparam monochrome true
 skinparam classAttributeIconSize 0
-interface ICollectingModule {
 
-}
-
-interface IModule {
-    + Identifier : Guid
-    + IsEnabled : bool <<get>> <<set>>
-    + Initialize() : void
-}
+interface IModule
+interface ICollectingModule
 
 IModule <|-- ICollectingModule
 @enduml
