@@ -3,10 +3,10 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 
 class ModuleManager {
+    + Modules : IEnumerable<IModule> <<get>> <<private set>>
+    + CollectingModules : IEnumerable<ICollectingModule> <<get>> <<private set>>
+    + ModuleConfiguration : GlobalModuleConfiguration <<get>> <<private set>>
     + InitializeModules() : void
 }
-class "IEnumerable<T>" {
-}
-ModuleManager --> "Modules<IModule>" "IEnumerable<T>"
-ModuleManager --> "CollectingModules<ICollectingModule>" "IEnumerable<T>"
+
 @enduml

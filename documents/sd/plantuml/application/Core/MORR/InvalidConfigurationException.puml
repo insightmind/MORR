@@ -2,9 +2,6 @@
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 
-class InvalidConfigurationException {
-
-}
-
 Exception <|-- InvalidConfigurationException
+
 @enduml

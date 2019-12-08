@@ -1,6 +1,8 @@
 \subsection*{MORR.Shared.Modules}
 
 \begin{interface}{IModule}
+    \clsdiagram{resources/Classes/Common/Shared/Modules/IModule.png}
+
     \clsdcl{public interface IModule}
 
     \clsdsp{Defines a module.}
@@ -16,18 +18,24 @@
 \end{interface}
 
 \begin{interface}{ICollectingModule}
+    \clsdiagram{resources/Classes/Common/Shared/Modules/ICollectingModule.png}
+
     \clsdcl{public interface ICollectingModule : IModule}
 
     \clsdsp{A module that accepts no events as an input and generates one or more events s an output.}
 \end{interface}
 
 \begin{interface}{ITransformingModule}
+    \clsdiagram{resources/Classes/Common/Shared/Modules/ITransformingModule.png}
+
     \clsdcl{public interface ITransformingModule : IModule}
 
     \clsdsp{A module that accepts one or more events as an input and generates one or more events as an output.}
 \end{interface}
 
 \begin{interface}{IReceivingModule}
+    \clsdiagram{resources/Classes/Common/Shared/Modules/IReceivingModule.png}
+
     \clsdcl{public interface IReceivingModule : IModule}
 
     \clsdsp{A module that accepts one or more events as an input and generates no events as an output.}

@@ -1,6 +1,8 @@
 \subsection*{MORR.Core.Data.Transcoding.Metadata.EventHandlers}
 
 \begin{class}{MetadataSampleRequestedEventHandler}
+    \clsdiagram{resources/Classes/Core/MORR/Transcoding/Metadata/MetadataSampleRequestedEventHandler.png}
+
     \clsdcl{public delegate MetadataSample? MetadataSampleRequestedEventHandler()}
 
     \clsdsp{A handler for the IEncoder.MetadataSampleRequested event.}
@@ -9,6 +11,8 @@
 \end{class}
 
 \begin{class}{MetadataSampleDecodedEventHandler}
+    \clsdiagram{resources/Classes/Core/MORR/Transcoding/Metadata/MetadataSampleDecodedEventHandler.png}
+
     \clsdcl{public delegate void MetadataSampleDecodedEventHandler(MetadataSample sample)}
     
     \clsdsp{A handler for the IDecoder.MetadataSampleDecoded event.}
@@ -21,12 +25,16 @@
 \subsection*{MORR.Core.Data.Transcoding.Metadata.Exceptions}
 
 \begin{class}{MetadataEncodingException}
+    \clsdiagram{resources/Classes/Core/MORR/Transcoding/Metadata/MetadataEncodingException.png}
+
     \clsdcl{MetadataEncodingException : EncodingException}
 
     \clsdsp{An exception thrown if metadata encoding fails.}
 \end{class}
 
 \begin{class}{MetadataDecodingException}
+    \clsdiagram{resources/Classes/Core/MORR/Transcoding/Metadata/MetadataDecodingException.png}
+
     \clsdcl{MetadataDecodingException : DecodingException}
 
     \clsdsp{An exception thrown if metadata decoding fails.}

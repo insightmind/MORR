@@ -5,6 +5,8 @@
 \subsection*{MORR.Core.Data.Transcoding}
 
 \begin{interface}{IEncoder}
+    \clsdiagram{resources/Classes/Core/MORR/Transcoding/IEncoder.png}
+
     \clsdcl{public interface IEncoder}
 
     \clsdsp{Encodes the provided samples into a file at a path.}
@@ -27,6 +29,8 @@
 \end{interface}
 
 \begin{interface}{IDecoder}
+    \clsdiagram{resources/Classes/Core/MORR/Transcoding/IDecoder.png}
+
     \clsdcl{public interface IDecoder}
 
     \clsdsp{Decodes samples stored in a file at a path and provides the decoded samples.}
@@ -51,12 +55,16 @@
 \subsection*{MORR.Core.Data.Transcoding.Exceptions}
 
 \begin{class}{EncodingException}
+    \clsdiagram{resources/Classes/Core/MORR/Transcoding/EncodingException.png}
+
     \clsdcl{public class EncodingException : Exception}
 
     \clsdsp{A generic encoding exception that all specialized encoding exceptions derive from.}
 \end{class}
 
 \begin{class}{DecodingException}
+    \clsdiagram{resources/Classes/Core/MORR/Transcoding/DecodingException.png}
+
     \clsdcl{public class DecodingException : Exception}
 
     \clsdsp{A generic decoding exception that all specialized decoding exceptions derive from.}

@@ -7,6 +7,7 @@ abstract class "EventQueue<T>" {
 }
 class "IReadOnlyEventQueue<T>" {
     + {abstract} GetEvents() : IAsyncEnumerable<T>
+    # {abstract} Enqueue(T @event) : void
 }
 
 "IReadOnlyEventQueue<T>" <|-- "EventQueue<T>"

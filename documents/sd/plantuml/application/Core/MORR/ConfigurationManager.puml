@@ -4,8 +4,7 @@ skinparam classAttributeIconSize 0
 
 class ConfigurationManager {
     + LoadConfiguration(path:string) : void
+    + Configurations : IEnumerable<IConfiguration> <<get>> <<private set>>
 }
-class "IEnumerable<T>" {
-}
-ConfigurationManager --> "Configurations<IConfiguration>" "IEnumerable<T>"
+
 @enduml

@@ -1,0 +1,11 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+class DesktopCapture {
+    + CaptureConfiguration : DesktopCaptureConfiguration <<get>> <<set>>
+    + NextSample() : VideoSample
+}
+
+IVideoCapture <|-- DesktopCapture
+@enduml

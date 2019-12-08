@@ -3,6 +3,8 @@
 \subsection*{MORR.Core.Recording}
 
 \begin{class}{RecordingManager}
+    \clsdiagram{resources/Classes/Core/MORR/RecordingManager.png}
+
     \clsdcl{public class RecordingManager}
 
     \clsdsp{Responsible for managing all aspects of recording. Holds all other current managers and the used encoder/decoder.}
@@ -28,18 +30,24 @@
 \subsection*{MORR.Core.Recording.Exceptions}
 
 \begin{class}{RecordingException}
+    \clsdiagram{resources/Classes/Core/MORR/RecordingException.png}
+
     \clsdcl{public class RecordingException : Exception}
 
     \clsdsp{A generic recording exception that all specialized recording exceptions derive from.}
 \end{class}
 
 \begin{class}{AlreadyRecordingException}
+    \clsdiagram{resources/Classes/Core/MORR/AlreadyRecordingException.png}
+
     \clsdcl{public class AlreadyRecordingException : RecordingException}
 
     \clsdsp{An exception thrown if a recording is started while another recording is already running.}
 \end{class}
 
 \begin{class}{NotRecordingException}
+    \clsdiagram{resources/Classes/Core/MORR/NotRecordingException.png}
+
     \clsdcl{public class NotRecordingException : RecordingException}
 
     \clsdsp{An exception thrown if a recording is stopped while no recording is currently running.}
@@ -48,22 +56,26 @@
 \subsection*{MORR.Core}
 
 \begin{class}{Bootstrapper}
+    \clsdiagram{resources/Classes/Core/MORR/Bootstrapper.png}
+
     \clsdcl{public class Bootstrapper}
 
-     \clsdsp{Responsible for bootstrapping the application and providing compositional facilities using MEF.}
+    \clsdsp{Responsible for bootstrapping the application and providing compositional facilities using MEF.}
 
-     \begin{methods}
-         \begin{method}{public void ComposeImports(object @object)}{Satisifies the imports on the specified object using MEF.}
-            \begin{parameters}
-                \para{object @object}{The object to satisfy the imports on.}
-            \end{parameters}
-        \end{method}
-     \end{methods}
+    \begin{methods}
+        \begin{method}{public void ComposeImports(object @object)}{Satisifies the imports on the specified object using MEF.}
+        \begin{parameters}
+            \para{object @object}{The object to satisfy the imports on.}
+        \end{parameters}
+    \end{method}
+    \end{methods}
 \end{class}
 
 \subsection*{MORR.Core.Configuration}
 
 \begin{class}{ConfigurationManager}
+    \clsdiagram{resources/Classes/Core/MORR/ConfigurationManager.png}
+
     \clsdcl{public class ConfigurationManager}
 
     \clsdsp{Loads the application's configuration from a file and manages the IConfiguration instances that are distributed to all objects requiring configuration.}
@@ -87,6 +99,8 @@
 \subsection*{MORR.Core.Configuration.Exceptions}
 
 \begin{class}{InvalidConfigurationException}
+    \clsdiagram{resources/Classes/Core/MORR/InvalidConfigurationException.png}
+
     \clsdcl{public class InvalidConfigurationException : Exception}
 
     \clsdsp{An exception thrown if the configuration is invalid.}
@@ -95,6 +109,8 @@
 \subsection*{MORR.Core.ModuleManagement}
 
 \begin{class}{ModuleManager}
+    \clsdiagram{resources/Classes/Core/MORR/ModuleManager.png}
+
     \clsdcl{public class ModuleManager}
 
     \clsdsp{Initializes all modules and manages the status during runtime.}
@@ -113,6 +129,8 @@
 \end{class}
 
 \begin{class}{GlobalModuleConfiguration}
+    \clsdiagram{resources/Classes/Core/MORR/GlobalModuleConfiguration.png}
+
     \clsdcl{public class GlobalModuleConfiguration : IConfiguration}
 
     \clsdsp{Encapsulates all global module configuration options.}

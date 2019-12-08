@@ -1,6 +1,8 @@
 \subsection*{MORR.Core.Data.Transcoding.Video.EventHandlers}
 
 \begin{class}{VideoSampleRequestedEventHandler}
+    \clsdiagram{resources/Classes/Core/MORR/Transcoding/Video/VideoSampleRequestedEventHandler.png}
+
     \clsdcl{public delegate VideoSample? VideoSampleRequestedEventHandler()}
 
     \clsdsp{A handler for the IEncoder.VideoSampleRequested event.}
@@ -9,6 +11,8 @@
 \end{class}
 
 \begin{class}{VideoSampleDecodedEventHandler}
+    \clsdiagram{resources/Classes/Core/MORR/Transcoding/Video/VideoSampleDecodedEventHandler.png}
+
     \clsdcl{public delegate void VideoSampleDecodedEventHandler(VideoSample sample)}
     
     \clsdsp{A handler for the IDecoder.VideoSampleDecoded event.}
@@ -21,12 +25,16 @@
 \subsection*{MORR.Core.Data.Transcoding.Video.Exceptions}
 
 \begin{class}{VideoEncodingException}
+    \clsdiagram{resources/Classes/Core/MORR/Transcoding/Video/VideoEncodingException.png}
+
     \clsdcl{VideoEncodingException : EncodingException}
 
     \clsdsp{An exception thrown if video encoding fails.}
 \end{class}
 
 \begin{class}{VideoDecodingException}
+    \clsdiagram{resources/Classes/Core/MORR/Transcoding/Video/VideoDecodingException.png}
+
     \clsdcl{VideoDecodingException : DecodingException}
 
     \clsdsp{An exception thrown if video decoding fails.}

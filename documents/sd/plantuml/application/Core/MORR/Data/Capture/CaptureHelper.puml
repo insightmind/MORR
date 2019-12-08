@@ -1,0 +1,10 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+class CaptureHelper {
+    + {static} CanCreateItemWithoutPicker : bool
+    + {static} CreateItemForMonitor(IntPtr hMon) : GraphicsCaptureItem
+}
+
+@enduml
