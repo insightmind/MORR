@@ -121,9 +121,8 @@
 	\begin{constructors}
         \begin{constructor}{public RelayCommand(Action<object> execute, Predicate<object>? canExecute = null)}{Creates a new RelayCommand}
         \begin{parameters}
-                \para{Action<object> execute}{The execution logicq}
-                \para{Predicate<object>? canExecute = null}{The execution status logic, set to null}
-            \end{parameters}
+                \para{Action<object> execute}{The execution logic}
+                \para{Predicate<object>? canExecute = null}{An optional predicate that needs to be fulfilled before the command can be executed}
         \end{constructor}
      \end{constructors}
     
