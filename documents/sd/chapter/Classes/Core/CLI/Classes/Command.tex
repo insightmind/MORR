@@ -48,3 +48,17 @@
 	\end{methods}
 \end{class}
 
+\begin{class}{ProcessOptions}
+	\clsdiagram[width=0.4\textwidth]{resources/Classes/Core/CLI/ProcessOptions.png}
+	
+	\clsdsp{The ProcessOptions contain all options which can be entered by the user when calling the command. In this case the command is the ProcessCommand. }
+	
+	\clsdcl{public class ProcessOptions : Options}
+	
+	\begin{attributes}
+		\attribute{public string Input}{\\ The fileURL to the input file. This property is required to be entered by the user.}
+		\attribute{public string Output}{\\  The fileURL for the output file. This property is required to be entered by the user.}
+		\attribute{public bool ProcessingEnabled = true}{\\  This attribute defines whether processing is enabled while converting the data. This is an optional property and defaults to true.}
+		\attribute{public bool Verbose = false}{\\ This attribute defines whether verbose outputs should be printed to the users command line. This is an optional property and defaults to false.}
+	\end{attributes}
+\end{class}
