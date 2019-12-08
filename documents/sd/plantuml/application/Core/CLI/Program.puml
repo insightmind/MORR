@@ -1,0 +1,8 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+class Program {
+    {static} Main(args:string[]) : void
+}
+@enduml

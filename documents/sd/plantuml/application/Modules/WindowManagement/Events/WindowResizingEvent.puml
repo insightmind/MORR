@@ -1,0 +1,16 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+class WindowResizingEvent {
+    + OldSize: Size
+    + NewSize: Size
+}
+WindowEvent <|-- WindowResizingEvent
+
+abstract class WindowEvent {
+    + Title : string <<get>> <<set>>
+    + ProcessName : string <<get>> <<set>>
+}
+Event <|-- WindowEvent
+@enduml

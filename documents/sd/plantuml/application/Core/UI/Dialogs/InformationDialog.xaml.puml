@@ -1,0 +1,6 @@
+@startuml
+class InformationDialog <<partial>> {
+    + InformationDialog()
+}
+Window <|-- InformationDialog
+@enduml

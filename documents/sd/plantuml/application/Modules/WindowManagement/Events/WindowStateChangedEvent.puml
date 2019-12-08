@@ -1,0 +1,16 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+class WindowStateChangedEvent {
+    + State: WindowState
+}
+WindowEvent <|-- WindowStateChangedEvent
+
+abstract class WebBrowserEvent {
+    + TabID: Guid
+    + CurrentURL: Uri
+}
+
+Event <|-- WebBrowserEvent
+@enduml

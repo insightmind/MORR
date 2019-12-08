@@ -1,0 +1,15 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+class FileDownloadEvent {
+    + MIMEType : string <<get>> <<set>>
+    + FileURL: Uri
+}
+abstract class WebBrowserEvent {
+    + TabID: Guid
+    + CurrentURL: Uri
+}
+WebBrowserEvent <|-- FileDownloadEvent
+Event <|-- WebBrowserEvent
+@enduml

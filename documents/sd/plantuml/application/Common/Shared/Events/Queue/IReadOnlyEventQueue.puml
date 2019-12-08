@@ -1,0 +1,8 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+interface "IReadOnlyEventQueue<out T>" {
+    GetEvents() : IAsyncEnumerable<T>
+}
+@enduml
