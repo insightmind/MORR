@@ -31,7 +31,7 @@
     \end{constructors}
     
     \begin{methods}
-    	\begin{method}{public void Dispose()}{Frees all unmanaged resources}
+    	\begin{method}{public void dispose()}{Frees all unmanaged resources}
         \end{method}
      \end{methods}
 
@@ -44,7 +44,7 @@
 
     \clsdcl{public partial class ErrorDialog : Window}
 
-    \clsdsp{Interaction logic for ErrorDialog}
+    \clsdsp{A dialog shown when an error occured}
 
     \begin{attributes}
         \attribute{public string ErrorMessage}{Error message of the error dialog}
@@ -65,7 +65,7 @@
 
     \clsdcl{public partial class InformationDialog : Window }
 
-    \clsdsp{Interaction logic for InformationDialog}
+    \clsdsp{A dialog shown before the start of the recording}
 
      \begin{constructors}
         \begin{constructor}{public InformationDialog()}{Initializes an InformationDialog}
@@ -79,7 +79,7 @@
 
     \clsdcl{public partial class SaveDialog : Window}
 
-    \clsdsp{Interaction logic for SaveDialog}
+    \clsdsp{A dialog shown after the end of the recording}
     
     \begin{constructors}
         \begin{constructor}{public SaveDialog()}{Initializes a SaveDialog}
@@ -95,7 +95,7 @@
 
     \clsdcl{public class ApplicationViewModel : DependencyObject}
 
-    \clsdsp{The controller that connects the view to the model}
+    \clsdsp{}
 
 	\begin{attributes}
         \attribute{public bool IsRecording}{Current state of the recording process}
@@ -121,8 +121,9 @@
 	\begin{constructors}
         \begin{constructor}{public RelayCommand(Action<object> execute, Predicate<object>? canExecute = null)}{Creates a new RelayCommand}
         \begin{parameters}
-                \para{Action<object> execute}{The execution logic}
-                \para{Predicate<object>? canExecute = null}{An optional predicate that needs to be fulfilled before the command can be executed}
+                \para{Action<object> execute}{The execution logicq}
+                \para{Predicate<object>? canExecute = null}{The execution status logic, set to null}
+            \end{parameters}
         \end{constructor}
      \end{constructors}
     
@@ -131,12 +132,12 @@
     	\begin{method}{public bool CanExecute(object parameter)}{Determines whether the RelayCommand can be executed in current state}
             \return{bool}{True if this RelayCommand can be executed; otherwise, false.}
             \begin{parameters}
-                \para{object parameter}{Data used by the RelayCommand}
+                \para{Object parameter}{Data used by the RelayCommand}
             \end{parameters}
         \end{method}
         \begin{method}{public void Execute(object parameter)}{Executes the RelayCommand}
             \begin{parameters}
-               \para{object parameter}{Data used by the RelayCommand}
+               \para{Object parameter}{Data used by the RelayCommand}
             \end{parameters}
         \end{method}
         
