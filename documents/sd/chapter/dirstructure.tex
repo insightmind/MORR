@@ -3,29 +3,27 @@
 \newcommand{\tab}[1][1cm]{\hspace*{#1}}
 \newcommand{\dir}[2]{\tab[#1cm] \textbullet \ #2 \\}
 
-\begin{multicols}{2}
 \dir{0}{application}
     \dir{0.5}{Core}
         \dir{1}{CLI}
             \dir{1.5}{CLI}
-                \dir{2}{Execution}
+            \dir{1.5}{Execution}
         \dir{1}{MORR}
+            \dir{1.5}{Recording}
+                \dir{2}{Exceptions}
+            \dir{1.5}{Configuration}
+                \dir{2}{Exceptions}
+            \dir{1.5}{ModuleManagement}
             \dir{1.5}{Data}
                 \dir{2}{Capture}
-                    \dir{2.5}{Audio}
-                        \dir{3}{Exceptions}
                     \dir{2.5}{Video}
                         \dir{3}{Exceptions}
-                            \dir{3.5}{WinAPI}
-                                \dir{4}{Utility}
+                        \dir{3}{WinAPI}
+                            \dir{3.5}{Utility}
                 \dir{2}{Sample}
-                    \dir{2.5}{Audio}
                     \dir{2.5}{Metadata}
                     \dir{2.5}{Video}
                 \dir{2}{Transcoding}
-                    \dir{2.5}{Audio}
-                        \dir{3}{EventHandlers}
-                        \dir{3}{Exceptions}
                     \dir{2.5}{Exceptions}
                     \dir{2.5}{Metadata}
                         \dir{3}{EventHandlers}
@@ -57,19 +55,22 @@
     \dir{0.5}{Common}
         \dir{1}{Shared}
             \dir{1.5}{Configuration}
-                \dir{2}{Exceptions}
             \dir{1.5}{Events}
                 \dir{2}{Queue}
             \dir{1.5}{Modules}
     \dir{0.5}{Modules}
         \dir{1}{Clipboard}
+            \dir{1.5}{Providers}
             \dir{1.5}{Events}
         \dir{1}{Keyboard}
+            \dir{1.5}{Providers}
             \dir{1.5}{Events}
         \dir{1}{Mouse}
+            \dir{1.5}{Providers}
             \dir{1.5}{Events}
         \dir{1}{Webbrowser}
+            \dir{1.5}{Providers}
             \dir{1.5}{Events}
         \dir{1}{WindowManagement}
+            \dir{1.5}{Providers}
             \dir{1.5}{Events}
-\end{multicols}
