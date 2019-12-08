@@ -14,3 +14,34 @@
 		\end{method}
 	\end{methods}
 \end{class}
+
+\begin{class}{OutputFormatter}
+	\clsdiagram[width=0.7\textwidth]{resources/Classes/Core/CLI/OutputFormatter.png}
+	
+	\clsdcl{public class OutputFormatter}
+	
+	\clsdsp{The OutputFormatter's main functionality is about printing and formatting any output made by the program. It also filters them according of the users preferences, e.g. whether the user wants to see verbose ouput or not. }
+	
+	\begin{attributes}
+		\attribute{public readonly bool Verbose = false}{Defines whether verbose output should be printed or not.}
+	\end{attributes}
+	
+	\begin{methods}
+		\begin{method}{public void PrintMessage(string message, bool verbose)}{\\ Prints the message to the command line. It also filters out based on the verbosity of the message}
+			\begin{parameters}
+				\para{string message}{\\ The message which should be printed to the command line.}
+				\para{bool verbose}{\\ The verbosity of the message. If it is false it will alwats be printed to the command line. Otherwise it will only be printed if the formatter is set to verbose itself.}
+			\end{parameters}
+		
+		\end{method}
+		
+		\begin{method}{public void PrintException(Exception exception)}{\\ Prints out an exception to the user indicating that something went wrong. This is always non-verbose as it may interrupt the process of our program. }
+			\begin{parameters}
+				\para{Exception exception}{\\ The exception which should be printed to the command line.}
+			\end{parameters}
+		
+		\end{method}
+	\end{methods}
+	
+\end{class}
+\input{chapter/Classes/Core/CLI/Classes/Command}
