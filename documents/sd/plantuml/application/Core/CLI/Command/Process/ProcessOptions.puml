@@ -1,11 +1,12 @@
-@startuml
+@startuml ProcessOptions
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 
-class Options {
+class ProcessOptions {
     + Input : string
     + Output : string
     + ProcessingEnabled: bool
     + Verbose: bool
 }
+
 @enduml
