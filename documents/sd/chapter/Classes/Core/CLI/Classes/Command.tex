@@ -1,0 +1,21 @@
+\subsection*{MORR.CORE.CLI.COMMAND}
+\begin{interface}{ICLICommand}
+	\clsdiagram[width=0.65\textwidth]{resources/Classes/Core/CLI/ICLICommand.png}
+	
+	\clsdsp{The ICLICommand interface allows us to create a variety of commands which can be run by the program. It is based on the command design pattern.}
+	
+	\clsdcl{public interface ICLICommand}
+	
+	\begin{methods}
+		\begin{method}{void ExecuteCommand(Options options)}{\\ Executes the implementing command using the options given to it.}
+		
+			\begin{parameters}
+				\para{Options options}{\\ The options entered by the user, which may be used to configure the command. A command may define its own options. }
+			\end{parameters}
+			
+			\begin{exceptions}
+				\excp{Exception}{ A command may throw any exception if execution fails. This however can be defined more specifically by each implementing command itself. }
+			\end{exceptions}
+		\end{method}
+	\end{methods}
+\end{interface}
