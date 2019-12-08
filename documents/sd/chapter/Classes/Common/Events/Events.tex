@@ -1,7 +1,7 @@
 \subsection*{MORR.Shared.Events}
 
 \begin{absclass}{Event}
-    \clsdiagram{resources/Classes/Common/Shared/Events/Event.png}
+    \clsdiagram[width=0.4\textwidth]{resources/Classes/Common/Shared/Events/Event.png}
 
     \clsdcl{public abstract class Event}
 
@@ -27,7 +27,7 @@
 \subsection*{MORR.Shared.Events.Queue}
 
 \begin{interface}{IReadOnlyEventQueue<T>}
-    \clsdiagram{resources/Classes/Common/Shared/Events/IReadOnlyEventQueue.png}
+    \clsdiagram[width=0.6\textwidth]{resources/Classes/Common/Shared/Events/IReadOnlyEventQueue.png}
 
     \clsdcl{public interface IReadOnlyEventQueue<out T> where T : Event}
 
@@ -41,7 +41,7 @@
 \end{interface}
 
 \begin{absclass}{EventQueue<T>}
-    \clsdiagram{resources/Classes/Common/Shared/Events/EventQueue.png}
+    \clsdiagram[width=0.4\textwidth]{resources/Classes/Common/Shared/Events/EventQueue.png}
 
     \clsdcl{public abstract class EventQueue<T> : IReadOnlyEventQueue<T> where T : Event}
 

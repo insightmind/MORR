@@ -1,11 +1,10 @@
 \input{chapter/Classes/Core/MORR/Data/Transcoding/Metadata/MetadataTranscoding}
 \input{chapter/Classes/Core/MORR/Data/Transcoding/Video/VideoTranscoding}
-\input{chapter/Classes/Core/MORR/Data/Transcoding/WinAPI/WinAPI_Transcoding}
 
 \subsection*{MORR.Core.Data.Transcoding}
 
 \begin{interface}{IEncoder}
-    \clsdiagram{resources/Classes/Core/MORR/Transcoding/IEncoder.png}
+    \clsdiagram[width=0.7\textwidth]{resources/Classes/Core/MORR/Transcoding/IEncoder.png}
 
     \clsdcl{public interface IEncoder}
 
@@ -29,7 +28,7 @@
 \end{interface}
 
 \begin{interface}{IDecoder}
-    \clsdiagram{resources/Classes/Core/MORR/Transcoding/IDecoder.png}
+    \clsdiagram[width=0.7\textwidth]{resources/Classes/Core/MORR/Transcoding/IDecoder.png}
 
     \clsdcl{public interface IDecoder}
 
@@ -55,7 +54,7 @@
 \subsection*{MORR.Core.Data.Transcoding.Exceptions}
 
 \begin{class}{EncodingException}
-    \clsdiagram{resources/Classes/Core/MORR/Transcoding/EncodingException.png}
+    \clsdiagram[width=0.3\textwidth]{resources/Classes/Core/MORR/Transcoding/EncodingException.png}
 
     \clsdcl{public class EncodingException : Exception}
 
@@ -63,9 +62,11 @@
 \end{class}
 
 \begin{class}{DecodingException}
-    \clsdiagram{resources/Classes/Core/MORR/Transcoding/DecodingException.png}
+    \clsdiagram[width=0.3\textwidth]{resources/Classes/Core/MORR/Transcoding/DecodingException.png}
 
     \clsdcl{public class DecodingException : Exception}
 
     \clsdsp{A generic decoding exception that all specialized decoding exceptions derive from.}
 \end{class}
+
+\input{chapter/Classes/Core/MORR/Data/Transcoding/WinAPI/WinAPI_Transcoding}
