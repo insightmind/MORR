@@ -1,2 +1,75 @@
 \chapter{Directory structure}
 \label{ch:dirstructure}
+\newcommand{\tab}[1][1cm]{\hspace*{#1}}
+\newcommand{\dir}[2]{\tab[#1cm] \textbullet \ #2 \\}
+
+\begin{multicols}{2}
+\dir{0}{application}
+    \dir{0.5}{Core}
+        \dir{1}{CLI}
+            \dir{1.5}{CLI}
+                \dir{2}{Execution}
+        \dir{1}{MORR}
+            \dir{1.5}{Data}
+                \dir{2}{Cpature}
+                    \dir{2.5}{Audio}
+                        \dir{3}{Exceptions}
+                    \dir{2.5}{Video}
+                        \dir{3}{Exceptions}
+                            \dir{3.5}{WinAPI}
+                                \dir{4}{Utility}
+                \dir{2}{Sample}
+                    \dir{2.5}{Audio}
+                    \dir{2.5}{Metadata}
+                    \dir{2.5}{Video}
+                \dir{2}{Transcoding}
+                    \dir{2.5}{Audio}
+                        \dir{3}{EventHandlers}
+                        \dir{3}{Exceptions}
+                    \dir{2.5}{Exceptions}
+                    \dir{2.5}{Metadata}
+                        \dir{3}{EventHandlers}
+                        \dir{3}{Exceptions}
+                    \dir{2.5}{Video}
+                        \dir{3}{EventHandlers}
+                        \dir{3}{Exceptions}
+                    \dir{2.5}{WinAPI}
+        \dir{1}{UI}
+            \dir{1.5}{Assets}
+                \dir{2}{Icon}
+            \dir{1.5}{Controls}
+                \dir{2}{NotifyIcon}
+                \dir{2}{Utility}
+            \dir{1.5}{Dialogs}
+            \dir{1.5}{Styles}
+            \dir{1.5}{ViewModules}
+                \dir{2}{Utility}
+    \dir{0.5}{BrowserExtension}
+        \dir{1}{materials}
+        \dir{1}{src}
+            \dir{1.5}{ApplicationInterface}
+            \dir{1.5}{Shared}
+            \dir{1.5}{Listeners}
+                \dir{2}{Download}
+                \dir{2}{Tab}
+                \dir{2}{DOM}
+                    \dir{2.5}{ContentScript}
+    \dir{0.5}{Common}
+        \dir{1}{Shared}
+            \dir{1.5}{Configuration}
+                \dir{2}{Exceptions}
+            \dir{1.5}{Events}
+                \dir{2}{Queue}
+            \dir{1.5}{Modules}
+    \dir{0.5}{Modules}
+        \dir{1}{Clipboard}
+            \dir{1.5}{Events}
+        \dir{1}{Keyboard}
+            \dir{1.5}{Events}
+        \dir{1}{Mouse}
+            \dir{1.5}{Events}
+        \dir{1}{Webbrowser}
+            \dir{1.5}{Events}
+        \dir{1}{WindowManagement}
+            \dir{1.5}{Events}
+\end{multicols}
