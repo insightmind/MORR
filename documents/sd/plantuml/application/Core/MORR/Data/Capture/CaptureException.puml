@@ -1,0 +1,9 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+class CaptureException {
+}
+
+Exception <|-- CaptureException
+@enduml

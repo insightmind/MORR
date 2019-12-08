@@ -1,0 +1,11 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+class OutputFormatter {
+    + Verbose: bool <<get>>
+
+    + PrintMessage(message: string, verbose: bool) : void
+    + PrintException(exception: Exception) : void
+}
+@enduml

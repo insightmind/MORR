@@ -1,0 +1,15 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+class HoverEvent {
+    + HoveredElement : string <<get>> <<set>>
+}
+abstract class WebBrowserEvent {
+    + TabID: Guid
+    + CurrentURL: Uri
+}
+
+WebBrowserEvent <|-- HoverEvent
+Event <|-- WebBrowserEvent
+@enduml

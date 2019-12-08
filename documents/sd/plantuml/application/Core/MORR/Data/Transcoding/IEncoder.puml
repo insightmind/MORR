@@ -1,0 +1,12 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+interface IEncoder {
+    IsEncoding : bool <<get>> <<set>>
+    EncodingPath : string <<get>> <<set>>
+     <<event>> AudioSampleRequested : AudioSampleRequestedEventHandler 
+     <<event>> VideoSampleRequested : VideoSampleRequestedEventHandler 
+     <<event>> MetadataSampleRequested : MetadataSampleRequestedEventHandler 
+}
+@enduml

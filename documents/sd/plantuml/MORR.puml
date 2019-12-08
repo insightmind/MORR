@@ -1,0 +1,564 @@
+@startuml MORR
+skinparam monochrome true
+'skinparam linetype ortho
+skinparam classAttributeIconSize 0
+
+left to right direction
+hide empty fields
+
+package "MORR" {
+    package "TRANSCODING" #E6E6E6 {
+        package "MPEG" #BFBFBF {
+            class MPEGDecoder {
+
+            }
+
+            class MPEGEncoder {
+
+            }
+
+            class DesktopCapture {
+                + <<creates>> DesktopCapture(device: IDirect3DDevice, item: GraphicsCaptureItem, size: SizeInt32)
+            }
+
+            class CaptureHelper <<static>> {
+                + <<static>> CanCreateItemWithoutPicker: bool
+                + <<static>> CreateItemForMonitor(hmon: IntPtr) : GraphicsCaptureItem
+            }
+
+            class Direct3D11Helpers <<static>> {
+                + <<static>> CreateDevice(useWARP: bool) : IDirect3DDevice
+                ~ <<static>> CreateDirect3DSufaceFromSharpDXTexture(texture: Texture2D) : IDirect3DSurface
+                ~ <<static>> CreateSharpDXDevice(device: IDirect3DDevice) : Device
+                ~ <<static>> CreateSharpDXTexture2D(surface: IDirect3DSurface) : Texture2D
+            }
+
+            class MonitorInfo {
+                + IsPrimary: bool
+                + ScreenSize: Vector2
+                + DeviceName: string
+                + Hmon: IntPtr
+                + MonitorArea: Rect
+                + WorkArea: Rect
+            }
+
+            class MonitorInfoEx {
+                + Size: int
+                + Flags: uint
+                + DeviceName: string
+                + WorkArea: Rect
+                + Monitor: Rect
+            }
+
+            class MonitorEnumerationHelper <<static>> {
+                + <<static>> GetMonitors() : IEnumerable<MonitorInfo>
+            }
+        }
+
+        package "CSV" #BFBFBF {
+            class CSVDecoder {
+
+            }
+
+            class CSVEncoder {
+
+            }
+        } 
+
+        class CaptureException {
+        
+        }
+
+        class AudioCaptureException {
+
+        }
+
+        class VideoCaptureException {
+
+        }
+
+        interface IAudioCapture {
+            + NextSample() : AudioSample
+        }
+        
+        interface IVideoCapture {
+            + NextSample() : VideoSample
+        }
+
+        abstract class AudioSample {
+
+        }
+
+        abstract class MetadataSample {
+
+        }
+
+        abstract class VideoSample {
+
+        }
+
+        class AudioDecodingException {
+
+        }
+
+        class VideoDecodingException {
+
+        }
+
+        class MetadataDecodingException {
+
+        }
+
+        class AudioEncodingException {
+
+        }
+
+        class VideoEncodingException {
+
+        }
+
+        class MetadataEncodingException {
+
+        }
+
+        class DecodingException {
+
+        }
+
+        class EncodingException {
+
+        }
+
+        interface IDecoder {
+            + IsDecoding : bool <<get>> <<set>>
+            + DecodingPath : string <<get>> <<set>>
+            + <<event>> AudioSampleDecoded : AudioSampleDecodedEventHandler 
+            + <<event>> VideoSampleDecoded : VideoSampleDecodedEventHandler 
+            + <<event>> MetadataSampleDecoded : MetadataSampleDecodedEventHandler 
+        }
+    
+        interface IEncoder {
+            + IsEncoding : bool <<get>> <<set>>
+            + EncodingPath : string <<get>> <<set>>
+            + <<event>> AudioSampleRequested : AudioSampleRequestedEventHandler 
+            + <<event>> VideoSampleRequested : VideoSampleRequestedEventHandler 
+            + <<event>> MetadataSampleRequested : MetadataSampleRequestedEventHandler 
+        }
+
+        class DecodingException {
+
+        }
+
+        class EncodingException {
+
+        }
+    }
+
+    package "CORE" #E6E6E6 {
+        class RecordingManager {
+            + isRunning : bool
+            + Start() : void
+            + Stop() : void
+        }
+
+        class ModuleManager {
+            + InitializeModules() : void
+        }
+
+        class Bootstrapper {
+            + LoadAssemblies(moduleManager:ModuleManager) : void
+        }
+
+        class ConfigurationManager {
+            + LoadConfiguration(path:string) : void
+        }
+    }
+
+    package "UI" #E6E6E6 {
+        class ErrorDialog <<partial>> {
+            + ErrorDialog(errorMessage:string)
+            + ErrorMessage : string <<get>>
+        }
+
+        class InformationDialog <<partial>> {
+            + InformationDialog()
+        }
+
+        class SaveDialog <<partial>> {
+            + SaveDialog()
+        }
+
+        class ApplicationViewModel {
+            + ApplicationViewModel()
+            + IsRecording : bool <<get>> <<set>>
+        }
+        
+        class NotifyIcon {
+            + NotifyIcon()
+            + Tooltip : string <<get>> <<set>>
+            + CommandParameter : object <<get>> <<set>>
+        }
+        
+        class RelayCommand {
+            + RelayCommand(execute:Action<object>, canExecute:Predicate<object>?)
+            + CanExecute(parameter:object) : bool
+            + Execute(parameter:object) : void
+        }
+
+        interface ICommand {
+
+        }
+
+        class ContextMenu {
+
+        }
+
+        class ImageSource {
+
+        }
+
+        class App <<partial>> {
+
+        }        
+    }
+
+    package "CLI" #E6E6E6 {
+        class Program {
+            {static} Main(args:string[]) : void
+        }
+
+        class Options {
+            + Input : string
+            + Output : string
+            + ProcessingEnabled: bool
+            + Verbose: bool
+        }
+    
+        class OutputFormatter {
+            + PrintMessage(message: string, verbose: bool) : void
+            + PrintException(exception: Exception) : void
+        }
+    
+        class Executor {
+            + Execute(options: Options) : void
+        }
+    }
+
+    package "MODULES" #E6E6E6 {
+        package "CLIPBOARD" #BFBFBF {
+            class ClipboardModule {
+            
+            }
+
+            abstract class ClipboardEvent {
+            
+            }
+
+            class ClipBoardInteractEvent {
+                + Text : string <<get>> <<set>>
+            }
+
+            enum InteractionType {
+                CLEAR
+                COPY
+                CUT
+                PASTE
+            }
+        }
+
+        package "KEYBOARD" #BFBFBF {
+            class KeyboardModule {
+            
+            }
+
+            abstract class KeyboardEvent {
+            }
+            
+            class KeyBoardInteractEvent {
+                + PressedKey: Key
+            }
+        }
+
+        package "MOUSE" #BFBFBF {
+            class MouseModule {
+        
+            }
+
+            
+            abstract class MouseEvent {
+            }
+
+            class MouseMoveEvent {
+                + Movement: Vector2
+            }
+
+            enum MouseButton {
+                LEFT,
+                CENTER,
+                RIGHT
+            }
+
+            enum MouseButtonState {
+
+            }
+            
+            class MouseClickEvent {
+                + HWnd: IntPtr
+            }
+            
+            class MouseScrollEvent {
+                + HWnd: IntPtr
+                + ScrollAmount : short <<get>> <<set>>
+            }
+        }
+
+        package "WEBBROWSER" #BFBFBF {
+            class WebBrowserModule {
+        
+            }
+
+            class ButtonClickEvent {
+                + Button : string <<get>> <<set>>
+                + URL: Uri
+            }
+            
+            class CloseTabEvent {
+            }
+            
+            class FileDownloadEvent {
+                + MIMEType : string <<get>> <<set>>
+                + FileURL: Uri
+            }
+            
+            class HoverEvent {
+                + HoveredElement : string <<get>> <<set>>
+            }
+            class NavigationEvent {
+            }
+            
+            class OpenTabEvent {
+            }
+            
+            class SwitchTabEvent {
+                + NewTabID: Guid
+            }
+            
+            class TextInputEvent {
+                + InputtedText : string <<get>> <<set>>
+                + Textbox : string <<get>> <<set>>
+            }
+            
+            class TextSelectionEvent {
+                + SelectedText : string <<get>> <<set>>
+            }
+            
+            abstract class WebBrowserEvent {
+                + TabID: Guid
+                + CurrentURL: Uri
+            }
+        }
+
+        package "WINDOWMANAGEMENT" #BFBFBF {
+            class WindowManagementModule {
+        
+            }
+
+            abstract class WindowEvent {
+                + Title : string <<get>> <<set>>
+                + ProcessName : string <<get>> <<set>>
+            }
+            
+            class WindowFocusEvent {
+
+            }
+
+            class WindowMovementEvent {
+                + OldLocation: Vector2
+                + NewLocation: Vector2
+            }
+
+            class WindowResizingEvent {
+                + OldSize: Size
+                + NewSize: Size
+            }
+
+            class WindowStateChangedEvent {
+                + State: WindowState
+            }
+        }
+    }
+    
+
+    package "SHARED" #E6E6E6 {
+        class InvalidConfigurationException {
+
+        }
+
+        interface IConfiguration {
+            + Parse(configuration:string) : void
+        }
+
+        abstract class Event {
+            + Timestamp: DateTime
+            + IssuingModule: Guid
+            + Type: Type
+            + Serialize() : string
+            + Deserialize(serialized:string) : void
+        }
+
+        interface IModule {
+            + IsEnabled : bool <<get>> <<set>>
+            + Initialize() : void
+            + Identifier: Guid
+        }
+
+        interface ICollectingModule {
+        
+        }
+
+        interface IReceivingModule {
+        
+        }
+
+        interface ITransformingModule {
+        
+        }
+
+        interface "IReadOnlyEventQueue<T>" {
+            + GetEvents() : IAsyncEnumerable<T>
+        }
+
+        abstract class "EventQueue<T>" {
+            + {abstract} GetEvents() : IAsyncEnumerable<T>
+        }
+    }
+
+    ' CLI
+    Program --> Executor : uses
+    Program --> "1" OutputFormatter
+    Executor --> "1" Options : uses
+    Executor --> "1" RecordingManager
+    Executor --> "1" IDecoder : uses
+
+    ' Exceptions
+    CaptureException <|-- AudioCaptureException
+    CaptureException <|-- VideoCaptureException
+
+    DecodingException <|-- AudioDecodingException
+    DecodingException <|-- VideoDecodingException
+    DecodingException <|-- MetadataDecodingException
+
+    EncodingException <|-- AudioEncodingException
+    EncodingException <|-- VideoEncodingException
+    EncodingException <|-- MetadataEncodingException
+
+    IEncoder --> AudioEncodingException : throws
+    IEncoder --> VideoEncodingException : throws
+    IEncoder --> MetadataEncodingException : throws
+
+    IDecoder --> AudioDecodingException : throws
+    IDecoder --> VideoDecodingException : throws
+    IDecoder --> MetadataDecodingException : throws
+
+    ' EventQueue
+    "IReadOnlyEventQueue<T>" <|-- "EventQueue<T>"
+
+    ' Modules
+    IModule <|-- ICollectingModule
+    IModule <|-- IReceivingModule
+    IModule <|-- ITransformingModule
+
+    ' CORE
+    Bootstrapper --> ModuleManager : uses
+    ConfigurationManager --> "*" IConfiguration
+    ConfigurationManager --> InvalidConfigurationException : throws
+    ModuleManager --> "*" IModule
+    ModuleManager --> "*" ICollectingModule
+
+    RecordingManager --> "moduleManager" ModuleManager
+    RecordingManager --> "ConfigurationManager" ConfigurationManager
+    RecordingManager --> Bootstrapper : uses
+    RecordingManager --> "encoder" IEncoder
+    RecordingManager --> "receiver" IReceivingModule : receiver
+
+    'Clipboard
+    Event <|-- ClipboardEvent
+    ClipboardEvent <|-- ClipBoardInteractEvent
+    ClipBoardInteractEvent --> "Interaction" InteractionType
+    ClipBoardInteractEvent +-- InteractionType
+    ICollectingModule <|-- ClipboardModule
+
+    ' Keyboard
+    Event <|-- KeyboardEvent
+    KeyboardEvent <|-- KeyBoardInteractEvent
+    ICollectingModule <|-- KeyboardModule
+
+    ' Mouse
+    Event <|-- MouseEvent
+    MouseEvent <|-- MouseClickEvent
+    MouseEvent <|-- MouseScrollEvent
+    MouseEvent <|-- MouseMoveEvent
+    ICollectingModule <|-- MouseModule
+    MouseClickEvent --> "Button" MouseButton
+    MouseClickEvent --> "State" MouseButtonState
+
+    ' WebBrowser
+    Event <|-- WebBrowserEvent
+    WebBrowserEvent <|-- ButtonClickEvent
+    WebBrowserEvent <|-- CloseTabEvent
+    WebBrowserEvent <|-- FileDownloadEvent
+    WebBrowserEvent <|-- HoverEvent
+    WebBrowserEvent <|-- NavigationEvent
+    WebBrowserEvent <|-- OpenTabEvent
+    WebBrowserEvent <|-- SwitchTabEvent
+    WebBrowserEvent <|-- TextInputEvent
+    WebBrowserEvent <|-- TextSelectionEvent
+    ICollectingModule <|-- WebBrowserModule
+
+    ' WindowManagement
+    Event <|-- WindowEvent
+    WindowEvent <|-- WindowFocusEvent
+    WindowEvent <|-- WindowMovementEvent
+    WindowEvent <|-- WindowResizingEvent
+    WindowEvent <|-- WindowStateChangedEvent
+
+    ICollectingModule <|-- WindowManagementModule
+
+    ' Transcoding
+    IDecoder --> MetadataSample : uses
+    IEncoder --> MetadataSample : uses
+    IAudioCapture --> AudioSample : <<creates>>
+    IAudioCapture --> AudioCaptureException : throws >
+    IVideoCapture --> VideoSample : <<creates>>
+    IVideoCapture --> VideoCaptureException : throws >
+
+    ' MPEG
+    IVideoCapture <|-- DesktopCapture
+    DesktopCapture --> Direct3D11Helpers : uses
+    DesktopCapture --> CaptureHelper : uses
+    IEncoder <|-- MPEGEncoder
+    IDecoder <|-- MPEGDecoder
+
+    MPEGEncoder --> DesktopCapture : uses
+    MPEGEncoder --> MonitorEnumerationHelper : uses
+    MonitorEnumerationHelper --> MonitorInfo : uses
+    MonitorEnumerationHelper --> MonitorInfoEx : uses
+
+    ' CSV
+    IEncoder <|-- CSVEncoder
+    IEncoder <|-- CSVDecoder
+
+    ' UI
+    App --> "1" RecordingManager : uses
+    ApplicationViewModel o--> "n" ICommand
+    App --> "1" ApplicationViewModel
+    App o-> SaveDialog
+    App o-> ErrorDialog
+    App o-> InformationDialog
+    App o-> NotifyIcon
+    NotifyIcon --> "IconSource" ImageSource
+    NotifyIcon --> "Command" ICommand
+    NotifyIcon --> "ContextMenu" ContextMenu
+    ICommand <|-- RelayCommand
+}
+@enduml

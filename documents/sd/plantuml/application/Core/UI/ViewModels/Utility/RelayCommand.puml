@@ -1,0 +1,8 @@
+@startuml
+class RelayCommand {
+    + RelayCommand(execute:Action<object>, canExecute:Predicate<object>?)
+    + CanExecute(parameter:object) : bool
+    + Execute(parameter:object) : void
+}
+ICommand <|-- RelayCommand
+@enduml

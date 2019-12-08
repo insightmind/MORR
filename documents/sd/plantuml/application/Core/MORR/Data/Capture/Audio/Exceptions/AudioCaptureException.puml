@@ -1,0 +1,11 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+class AudioCaptureException {
+
+}
+
+CaptureException <|-- AudioCaptureException
+Exception <|-- CaptureException
+@enduml

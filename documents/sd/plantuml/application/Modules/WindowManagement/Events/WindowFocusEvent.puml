@@ -1,0 +1,14 @@
+@startuml
+class WindowFocusEvent {
+}
+WindowEvent <|-- WindowFocusEvent
+
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+abstract class WindowEvent {
+    + Title : string <<get>> <<set>>
+    + ProcessName : string <<get>> <<set>>
+}
+Event <|-- WindowEvent
+@enduml

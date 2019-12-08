@@ -1,0 +1,11 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+class MouseScrollEvent {
+    + ScrollAmount : short <<get>> <<set>>
+    + HWnd: IntPtr
+}
+MouseEvent <|-- MouseScrollEvent
+Event <|-- MouseEvent
+@enduml

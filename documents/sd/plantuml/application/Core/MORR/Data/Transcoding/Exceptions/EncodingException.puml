@@ -1,0 +1,8 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+class EncodingException {
+}
+Exception <|-- EncodingException
+@enduml

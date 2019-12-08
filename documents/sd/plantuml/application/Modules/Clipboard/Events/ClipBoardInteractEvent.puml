@@ -1,0 +1,18 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+class ClipBoardInteractEvent {
+    + Text : string <<get>> <<set>>
+}
+enum InteractionType {
+    Clear,
+    Copy,
+    Cut,
+    Paste,
+}
+ClipboardEvent <|-- ClipBoardInteractEvent
+Event <|-- ClipboardEvent
+ClipBoardInteractEvent --> "Interaction" InteractionType
+ClipBoardInteractEvent +-- InteractionType
+@enduml

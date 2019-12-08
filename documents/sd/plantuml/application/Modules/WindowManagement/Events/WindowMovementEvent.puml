@@ -1,0 +1,16 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+class WindowMovementEvent {
+    + OldLocation: Vector2
+    + NewLocation: Vector2
+}
+WindowEvent <|-- WindowMovementEvent
+
+abstract class WindowEvent {
+    + Title : string <<get>> <<set>>
+    + ProcessName : string <<get>> <<set>>
+}
+Event <|-- WindowEvent
+@enduml
