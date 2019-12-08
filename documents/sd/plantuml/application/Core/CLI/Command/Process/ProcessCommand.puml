@@ -15,11 +15,11 @@ class ProcessOptions {
 }
 
 class ProcessCommand {
-
+    + ExecuteCommand(options: ProcessOptions)
 }
 
 ProcessCommand ... ProcessOptions : uses
 ICLICommand <.. ProcessCommand : implements
 RecordingManager <-- "receiver" ProcessCommand
-IEncoder <-- "encoder" ProcessCommand
+IDecoder <-- "decoder" ProcessCommand
 @enduml

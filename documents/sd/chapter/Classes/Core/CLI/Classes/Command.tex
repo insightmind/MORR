@@ -19,3 +19,32 @@
 		\end{method}
 	\end{methods}
 \end{interface}
+
+\begin{class}{ProcessCommand}
+	\clsdiagram[width=0.65\textwidth]{resources/Classes/Core/CLI/ProcessCommand.png}
+	
+	\clsdsp{The ProcessCommand is called by the user using the keyword process. It will process the collected events from a previous recording session by extracting it out of the recording container, e.g. MPEG and saving it in another recording container, e.g. CSV. It can probably be seen as a converter, however the command allows to process the events using the event pipeline if specified by the user. }
+	
+	\clsdcl{public class ProcessCommand : ICLICommand }
+	
+	\begin{attributes}
+		\attribute{public RecordingManager recordingManager}{The recording manager is the connection to the main application which is used to load all modules and process the decoded events through the pipeline and finally decode it. }
+		
+		\attribute{public IDecoder decoder}{The decoder is used to decode the given recording container and receive the captured events from it. }
+	\end{attributes}
+	
+	\begin{methods}
+		\begin{method}{void ExecuteCommand(ProcessOptions options)}{\\ Executes the implementing command using the options given to it.}
+		
+			\begin{parameters}
+				\para{ProcessOptions options}{\\ ProcessOptions which contain the configuration for this command. }
+			\end{parameters}
+			
+			\begin{exceptions}
+				\excp{IDecodingException}{ Is thrown if the decoding of the recording container fails. }
+				\excp{IEncodingException}{ Is thrown if the encoding of the processed events fails. }
+			\end{exceptions}
+		\end{method}
+	\end{methods}
+\end{class}
+
