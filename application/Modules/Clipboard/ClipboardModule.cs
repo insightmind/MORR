@@ -1,5 +1,7 @@
 ﻿using System;
 using MORR.Shared.Modules;
+using MORR.Modules.Clipboard.Producers;
+using System.Composition;
 
 namespace MORR.Modules.Clipboard
 {
@@ -12,6 +14,11 @@ namespace MORR.Modules.Clipboard
 
         public Guid Identifier => throw new NotImplementedException();
 
+        /// <summary>
+        /// A single-writer-multiple-reader queue for ClipboardInteractEvent
+        /// </summary>
+        [Import]
+        public ClipboardInteractEventProducer ClipboardInteractEventProducer { get; private set; }
         public void Initialize()
         {
             throw new NotImplementedException();
