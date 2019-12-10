@@ -89,7 +89,7 @@ namespace Listeners #AAAAA1{
 			+ start()
 			+ stop()
 		}
-        DOMEventListener ..> BrowserExtension.Listeners.DOMEventType
+        DOMEventListener ..> BrowserExtension.Listeners.DOMEventType : uses
 		class TextInputEvent extends BrowserExtension.Shared.BrowserEvent {
 			+ text : string
 			+ target : string
@@ -136,10 +136,10 @@ namespace Listeners #AAAAA1{
 			+ createEvent(tab : tabs.Tab) : BrowserEvent
 		}
 		TabListener *-- TabEventFactory
-		TabEventFactory .DOWN.> OpenTabEvent
-		TabEventFactory .DOWN.> CloseTabEvent
-		TabEventFactory .DOWN.> SwitchTabEvent
-		TabEventFactory .DOWN.> NavigationEvent
+		TabEventFactory .DOWN.> OpenTabEvent : creates
+		TabEventFactory .DOWN.> CloseTabEvent : creates
+		TabEventFactory .DOWN.> SwitchTabEvent : creates
+		TabEventFactory .DOWN.> NavigationEvent : creates
 	}
 	namespace DownloadListener #DDDDD1{
 		class DownloadListener implements BrowserExtension.Shared.IListener {
@@ -156,7 +156,7 @@ namespace Listeners #AAAAA1{
 			+ createEvent(downloadItem: downloads.DownloadItem) : DownloadEvent
 		}
 		DownloadListener *-- DownloadEventFactory
-		DownloadEventFactory .DOWN.> DownloadEvent
+		DownloadEventFactory .DOWN.> DownloadEvent : creates
 	}
 	enum DOMEventType {
 		CLICK
@@ -182,13 +182,13 @@ namespace WebsiteContext #FFF1F1 {
 			class DOMEventFactory {
 			+ createEvent(domEvent : Event) : BrowserEvent
 		}
-	DOMEventFactory .DOWN.> BrowserExtension.Listeners.DOMListener.TextInputEvent
-	DOMEventFactory .DOWN.> BrowserExtension.Listeners.DOMListener.TextSelectionEvent
-	DOMEventFactory .DOWN.> BrowserExtension.Listeners.DOMListener.ButtonClickEvent
-	DOMEventFactory .DOWN.> BrowserExtension.Listeners.DOMListener.HoverEvent
-	DOMEventRecorder ..> BrowserExtension.Listeners.DOMEventType
+	DOMEventFactory .DOWN.> BrowserExtension.Listeners.DOMListener.TextInputEvent : creates
+	DOMEventFactory .DOWN.> BrowserExtension.Listeners.DOMListener.TextSelectionEvent : creates
+	DOMEventFactory .DOWN.> BrowserExtension.Listeners.DOMListener.ButtonClickEvent : creates
+	DOMEventFactory .DOWN.> BrowserExtension.Listeners.DOMListener.HoverEvent : creates
+	DOMEventRecorder ..> BrowserExtension.Listeners.DOMEventType : uses
 	DOMEventRecorder *-- DOMEventFactory
-	BrowserExtension.Listeners.DOMListener.DOMEventListener ..> DOMEventRecorder
+	BrowserExtension.Listeners.DOMListener.DOMEventListener ..> DOMEventRecorder : injects
 }
 }
 @enduml
