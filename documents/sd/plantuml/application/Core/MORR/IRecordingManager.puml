@@ -6,6 +6,8 @@ interface IRecordingManager {
     + IsRecording : bool <<get>>
     + StartRecording() : void
     + StopRecording() : void
+    + StartDecoding() : void
+    + StopDecoding() : void
 }
 
 @enduml

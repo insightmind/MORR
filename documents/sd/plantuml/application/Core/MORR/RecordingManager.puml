@@ -10,12 +10,16 @@ class RecordingManager {
     + EventQueues : IEnumerable<EventQueue<Event>> <<get>> <<private set>>
     + StartRecording() : void
     + StopRecording() : void
+    + StartDecoding() : void
+    + StopDecoding() : void
 }
 
 interface IRecordingManager {
     + IsRecording : bool <<get>>
     + StartRecording() : void
     + StopRecording() : void
+    + StartDecoding() : void
+    + StopDecoding() : void
 }
 
 IRecordingManager <|-- RecordingManager
