@@ -110,6 +110,7 @@
 
 \begin{methods}
 \begin{method}{public createEvent(tabId : number, changeInfo : tabs.TabChangeInfo, tab : tabs.Tab) : BrowserEvent}{Create a new BrowserEvent from the input parameters.}
+\return{BrowserEvent}{A BrowserEvent.}
 \begin{parameters}
 \para{tabID : number}{The ID of the tab which provided the TabChangeInfo.}
 \para{changeInfo : tabs.TabChangeInfo}{Create a new BrowserEvent from the input parameters.}
@@ -117,17 +118,20 @@
 \end{parameters}
 \end{method}
 \begin{method}{public createEvent(activeInfo : tabs.TabActiveInfo) : BrowserEvent}{Create a new BrowserEvent from the input parameters.}
+\return{BrowserEvent}{A BrowserEvent.}
 \begin{parameters}
 \para{activeInfo : tabs.TabActiveInfo}{The TabActiveInfo to create the event from.}
 \end{parameters}
 \end{method}
-\begin{method}{public createEvent(tabId : number, removeInfo: tabs.TabRemoveInfo) : BrowserEvent}{}
+\begin{method}{public createEvent(tabId : number, removeInfo: tabs.TabRemoveInfo) : BrowserEvent}{Create a new BrowserEvent from the input parameters.}
+\return{BrowserEvent}{A BrowserEvent.}
 \begin{parameters}
 \para{tabId : number}{The ID of the tab which notified the caller.}
 \para{removeInfo : tabs.TabRemoveInfo}{The TabRemoveInfo to create the event from.}
 \end{parameters}
 \end{method}
 \begin{method}{public createEvent(tab : tabs.Tab) : BrowserEvent}{Create a new BrowserEvent from the input parameters.}
+\return{BrowserEvent}{A BrowserEvent.}
 \begin{parameters}
 \para{tab : tabs.Tab}{The tab to create the event from.}
 \end{parameters}
@@ -314,6 +318,7 @@
 
 \begin{methods}
 \begin{method}{createEvent(downloadItem: downloads.DownloadItem) : DownloadEvent}{Create a new DownloadEvent from a DownLoadItem.}
+\return{BrowserEvent}{A BrowserEvent.}
 \begin{parameters}
 \para{downloadItem : downloads.DownloadItem}{The DownLoadItem created by the browser when a download was started.}
 \end{parameters}

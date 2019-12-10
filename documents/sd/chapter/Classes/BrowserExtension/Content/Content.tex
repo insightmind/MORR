@@ -14,3 +14,19 @@
 \end{method}
 \end{methods}
 \end{class}
+
+\begin{class}{DOMEventFactory}
+
+\clsdcl{class DOMEventFactory}
+
+\clsdsp{The DOMEventFactory is responsible for creating BrowserEvent objects from the DOM-Event objects created by the browser upon user-interaction from a website.}
+
+\begin{methods}
+\begin{method}{createEvent(domEvent : Event) : BrowserEvent}{Create a new BrowserEvent from an Event object raised by the browser.}
+\return{BrowserEvent}{A BrowserEvent.}
+\begin{parameters}
+\para{domEvent : Event}{The DOM event raised by the browser.}
+\end{parameters}
+\end{method}
+\end{methods}
+\end{class}
