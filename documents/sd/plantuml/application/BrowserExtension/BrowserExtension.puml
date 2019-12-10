@@ -1,12 +1,13 @@
 @startuml
-skinparam linetype ortho
+'skinparam linetype ortho
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 'skinparam backgroundColor transparent
 'skinparam classBackgroundColor transparent
 'skinparam style strictuml
-'skinparam groupInheritance 2'
+skinparam groupInheritance 3
 left to right direction
+namespace BrowserExtension {
 namespace Shared #A1AAA1 {
 
 	enum EventType {
@@ -77,65 +78,64 @@ namespace Background #D1D1DD {
 	}
 
 	BackgroundScript "1" *-- "1" ListenerManager
-	ListenerManager "1" *-- "0..*" Shared.IListener
+	ListenerManager "1" *-- "0..*" BrowserExtension.Shared.IListener
 	BackgroundScript "1" *-- "1" ICommunicationStrategy
 
 }
 namespace Listeners #AAAAA1{
 	namespace TabListener #DDDDD1 {
-		class TabListener implements Shared.IListener {
+		class TabListener implements BrowserExtension.Shared.IListener {
 			+ TabListener(callback : (Shared.BrowserEvent) => void)
 			+ start()
 			+ stop()
 		}
-		class OpenTabEvent extends Shared.BrowserEvent {
+		class OpenTabEvent extends BrowserExtension.Shared.BrowserEvent {
 			+ OpenTabEvent(tabID : number, windowID : number, url : string)
 		}
-		class CloseTabEvent extends Shared.BrowserEvent {
+		class CloseTabEvent extends BrowserExtension.Shared.BrowserEvent {
 			+ CloseTabEvent(tabID : number, windowID : number, url : string)
 		}
-		class SwitchTabEvent extends Shared.BrowserEvent {
+		class SwitchTabEvent extends BrowserExtension.Shared.BrowserEvent {
 			+ newTab : number
 			+ SwitchTabEvent(tabID : number, windowID : number, newTabID : number, url : string)
 		}
-		class NavigationEvent extends Shared.BrowserEvent {
+		class NavigationEvent extends BrowserExtension.Shared.BrowserEvent {
 			+ NavigationEvent(tabID : number, windowID : number, url : string)
 		}
 	}
 	namespace DOMListener #DDDDD1{
-		class DOMEventListener implements Shared.IListener {
+		class DOMEventListener implements BrowserExtension.Shared.IListener {
 			+ DOMEventListener(callback : (Shared.BrowserEvent) => void)
 			+ start()
 			+ stop()
 		}
-        DOMEventListener ..> Listeners.DOMEventType
-		class TextInputEvent extends Shared.BrowserEvent {
+        DOMEventListener ..> BrowserExtension.Listeners.DOMEventType
+		class TextInputEvent extends BrowserExtension.Shared.BrowserEvent {
 			+ text : string
 			+ target : string
 			+ TextInputEvent(tabID : number, windowID : number, text : string, target : string, url : string)
 		}
-		class ButtonClickEvent extends Shared.BrowserEvent {
+		class ButtonClickEvent extends BrowserExtension.Shared.BrowserEvent {
 			+ buttonTitle : string
 			+ buttonHref? : string
 			+ ButtonClickEvent(tabID : number, windowID : number, buttonTitle : string, buttonHref? : string, url : string)
 		}
-		class HoverEvent extends Shared.BrowserEvent {
+		class HoverEvent extends BrowserExtension.Shared.BrowserEvent {
 			+ target : string
 			+ HoverEvent(tabID : number, windowID : number, target : string, url : string)
 		}
-		class TextSelectionEvent extends Shared.BrowserEvent {
+		class TextSelectionEvent extends BrowserExtension.Shared.BrowserEvent {
 			+ textSelection : string
 			+ TextSelectionEvent(tabID : number, windowID : number, textSelection : string, url : string)
 		}
-		DOMEventListener ..> WebsiteContext.DOMEventRecorder
 	}
 	namespace DownloadListener #DDDDD1{
-		class DownloadListener implements Shared.IListener {
+		class DownloadListener implements BrowserExtension.Shared.IListener {
 			+ DownloadListener(callback : (Shared.BrowserEvent) => void)
 			+ start()
 			+ stop()
 		}
-		class DownloadEvent extends Shared.BrowserEvent {
+		class DownloadEvent extends BrowserExtension.Shared.BrowserEvent {
 		    + mimeType : string
 		    + fileURL : string
 		    + Download(tabID : number, windowID : number, mimeType : string, fileURL : string, url : string)
@@ -162,6 +162,8 @@ namespace WebsiteContext #FFF1F1 {
 		start() : void
 		stop() : void
 	}
-	DOMEventRecorder ..> Listeners.DOMEventType
+	DOMEventRecorder ..> BrowserExtension.Listeners.DOMEventType
+	BrowserExtension.Listeners.DOMListener.DOMEventListener ..> DOMEventRecorder
+}
 }
 @enduml
