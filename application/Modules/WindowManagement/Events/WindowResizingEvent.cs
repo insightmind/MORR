@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace MORR.Modules.Mouse.Events
+namespace MORR.Modules.WindowManagement.Events
 {
     /// <summary>
     ///     A window resizing user interaction

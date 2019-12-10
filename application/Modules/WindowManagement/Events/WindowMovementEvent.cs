@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace MORR.Modules.Mouse.Events
+namespace MORR.Modules.WindowManagement.Events
 {
     /// <summary>
     ///     A window movement user interaction
