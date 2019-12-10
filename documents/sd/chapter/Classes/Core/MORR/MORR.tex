@@ -43,7 +43,8 @@
         \attribute{private IEncoder encoder}{The IEncoder that this recording manager uses during encoding of a recording.}
         \attribute{private IDecoder decoder}{The IDecoder that this recording manager uses during decoding of a recording.}
         \attribute{private IVideoCapture videoCapture}{The IVideoCapture instance that provides VideoSamples to the used encoder during a recording.}
-        \attribute{public [ImportMany] IEnumerable<EventQueue<Event>> EventQueues \{ get; private set;\}}{Provides access to the event queues to link encoders and decoders to the pipeline.}
+        \attribute{private IMetadataCapture metadataCapture}{The IMetadataCapture instance that provides MetadataSamples to the used encoder during a recording.}
+        \attribute{private IMetadataDeserializer metadataDeserializer}{The IMetadataDeserializer instance that provides specific events from the decoded MetadataSamples of the decoder.}
     \end{attributes}
 
     \begin{methods}

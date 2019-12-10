@@ -160,3 +160,19 @@
         \attribute{public IntPtr HMon \{ get; private set;\}}{The handle of the monitor.}
     \end{attributes}
 \end{class}
+
+\subsection*{MORR.Core.Data.Capture.Metadata}
+
+\begin{interface}{IMetadataCapture}
+    \clsdiagram[width=0.35\textwidth]{resources/Classes/Core/MORR/Capture/IMetadataCapture.png}
+
+    \clsdcl{public interface IMetadataCapture : IReceivingModule}
+
+    \clsdsp{Captures all events from all event queues and provides them on a per-sample basis.}
+
+    \begin{methods}
+        \begin{method}{MetadataSample NextSample()}{Gets the next MetadataSample from the capture.}
+            \return{MetadataSample}{The next MetadataSample from the capture.}
+        \end{method}
+    \end{methods}
+\end{interface}
