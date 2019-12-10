@@ -1,0 +1,16 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+class "RefCountedListStorageStrategy<T> where T : Event" {
+    + GetEvents() : IAsyncEnumerable<T>
+    + Enqueue(T @event) : void
+}
+
+interface "IEventQueueStorageStrategy<T> where T : Event" {
+    + GetEvents() : IAsyncEnumerable<T>
+    + Enqueue(T @event) : void
+}
+
+"IEventQueueStorageStrategy<T> where T : Event" <|-- "RefCountedListStorageStrategy<T> where T : Event"
+@enduml

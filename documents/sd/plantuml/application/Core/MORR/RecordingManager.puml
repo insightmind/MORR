@@ -3,9 +3,21 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 
 class RecordingManager {
+    - encoder : IEncoder
+    - decoder : IDecoder
+    - videoCapture : IVideoCapture
     + IsRecording : bool <<get>> <<private set>>
+    + EventQueues : IEnumerable<EventQueue<Event>> <<get>> <<private set>>
     + StartRecording() : void
     + StopRecording() : void
 }
+
+interface IRecordingManager {
+    + IsRecording : bool <<get>>
+    + StartRecording() : void
+    + StopRecording() : void
+}
+
+IRecordingManager <|-- RecordingManager
 
 @enduml

@@ -20,5 +20,5 @@ class OutputFormatter {
 
 Program o-> ICLICommand
 Program --> OutputFormatter
-Program --> RecordingManager
+Program --> IRecordingManager
 @enduml

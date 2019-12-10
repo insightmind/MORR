@@ -2,15 +2,9 @@
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 
-class ConfigurationManager {
-    + LoadConfiguration(path:string) : void
-    + Configurations : IEnumerable<IConfiguration> <<get>> <<private set>>
-}
-
 interface IConfigurationManager {
     + LoadConfiguration(path:string) : void
     + Configurations : IEnumerable<IConfiguration> <<get>>
 }
 
-IConfigurationManager <|-- ConfigurationManager
 @enduml

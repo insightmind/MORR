@@ -2,13 +2,6 @@
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 
-class ModuleManager {
-    + Modules : IEnumerable<IModule> <<get>> <<private set>>
-    + CollectingModules : IEnumerable<ICollectingModule> <<get>> <<private set>>
-    + ModuleConfiguration : GlobalModuleConfiguration <<get>> <<private set>>
-    + InitializeModules() : void
-}
-
 interface IModuleManager {
     + Modules : IEnumerable<IModule> <<get>>
     + CollectingModules : IEnumerable<ICollectingModule> <<get>>
@@ -16,5 +9,4 @@ interface IModuleManager {
     + InitializeModules() : void
 }
 
-IModuleManager <|-- ModuleManager
 @enduml

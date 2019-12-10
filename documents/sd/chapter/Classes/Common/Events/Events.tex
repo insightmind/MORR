@@ -47,14 +47,65 @@
 
     \clsdsp{Provides a single-writer-multiple-reader queue for Event types}
 
+    \begin{attributes}
+        \attribute{private IEventQueueStorageStrategy<T> storageStrategy}{The storage strategy to use.}
+    \end{attributes}
+
     \begin{methods}
         \begin{method}{public abstract IAsyncEnumerable<T> GetEvents()}{Asynchronously gets all events as concrete type T.}
             \return{IAsyncEnumerable<T>}{A stream of events of type T.}
         \end{method}
-        \begin{method}{protected abstract void Enqueue(T @event)}{Asynchronosuly enqueues a new event of type T.}
+        \begin{method}{protected abstract void Enqueue(T @event)}{Asynchronously enqueues a new event of type T.}
             \begin{parameters}
                 \para{T @event}{The event to enqueue.}
             \end{parameters}
         \end{method}
     \end{methods}
 \end{absclass}
+
+\begin{interface}{IEventQueueStorageStrategy}
+    \clsdiagram[width=0.4\textwidth]{resources/Classes/Common/Shared/Events/IEventQueueStorageStrategy.png}
+
+    \clsdcl{public interface IEventQueueStorageStrategy<T> where T : Event}
+
+    \clsdsp{Provides the backing store of an EventQueue with a specific storage strategy.}
+
+    \begin{methods}
+        \begin{method}{public IAsyncEnumerable<T> GetEventsInternal()}{Asynchronously gets all events as concrete type T from this storage strategy.}
+            \return{IAsyncEnumerable<T>}{A stream of events of type T.}
+        \end{method}
+        \begin{method}{public void Enqueue(T @event)}{Asynchronously enqueues a new event of type T with this storage strategy.}
+            \begin{parameters}
+                \para{T @event}{The event to enqueue.}
+            \end{parameters}
+        \end{method}
+    \end{methods}
+\end{interface}
+
+\begin{class}{RingBufferStorageStrategy}
+    \clsdiagram[width=0.4\textwidth]{resources/Classes/Common/Shared/Events/RingBufferStorageStrategy.png}
+
+    \clsdcl{public class RingBufferStorageStrategy<T> : IEventQueueStorageStrategy<T> where T : Event}
+
+    \clsdsp{Provides event storage using a ring buffer strategy. That means if the buffer is full, events will be overwritten even if they have not been read by all consumers yet.}
+
+    \begin{attributes}
+        \attribute{public uint Capacity \{ get; set; \}}{The capacity of the ring buffer.}
+    \end{attributes}
+\end{class}
+
+\begin{class}{RefCountedListStorageStrategy}
+    \clsdiagram[width=0.4\textwidth]{resources/Classes/Common/Shared/Events/RefCountedListStorageStrategy.png}
+
+    \clsdcl{public class RefCountedListStorageStrategy<T> : IEventQueueStorageStrategy<T> where T : Event}
+
+    \clsdsp{Provides event storage using a reference counted list strategy. That means that events will be deleted from the list they are stored in if all consumers have read them.}
+\end{class}
+
+\begin{class}{KeepAllStorageStrategy}
+    \clsdiagram[width=0.4\textwidth]{resources/Classes/Common/Shared/Events/KeepAllStorageStrategy.png}
+
+    \clsdcl{public class KeepAllStorageStrategy<T> : IEventQueueStorageStrategy<T> where T : Event}
+
+    \clsdsp{Provides event storage using a keep all strategy. That means that events that have been enqueued will not be removed from the queue.}
+\end{class}

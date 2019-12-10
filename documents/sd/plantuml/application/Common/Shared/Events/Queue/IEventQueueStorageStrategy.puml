@@ -1,0 +1,10 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+interface "IEventQueueStorageStrategy<T> where T : Event" {
+    + GetEvents() : IAsyncEnumerable<T>
+    + Enqueue(T @event) : void
+}
+
+@enduml

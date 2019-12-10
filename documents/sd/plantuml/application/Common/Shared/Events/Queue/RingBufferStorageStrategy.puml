@@ -1,0 +1,17 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+class "RingBufferStorageStrategy<T> where T : Event" {
+    + Capacity : uint <<get>> <<set>>
+    + GetEvents() : IAsyncEnumerable<T>
+    + Enqueue(T @event) : void
+}
+
+interface "IEventQueueStorageStrategy<T> where T : Event" {
+    + GetEvents() : IAsyncEnumerable<T>
+    + Enqueue(T @event) : void
+}
+
+"IEventQueueStorageStrategy<T> where T : Event" <|-- "RingBufferStorageStrategy<T> where T : Event"
+@enduml
