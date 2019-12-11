@@ -70,24 +70,20 @@ package "MORR" {
         
         }
 
-        class AudioCaptureException {
-
-        }
-
         class VideoCaptureException {
 
         }
 
-        interface IAudioCapture {
-            + NextSample() : AudioSample
+        interface IMetadataCapture {
+            + NextSample() : MetadataSample
+        }
+
+        interface IMetadataDeserializer {
+
         }
         
         interface IVideoCapture {
             + NextSample() : VideoSample
-        }
-
-        abstract class AudioSample {
-
         }
 
         abstract class MetadataSample {
@@ -98,19 +94,11 @@ package "MORR" {
 
         }
 
-        class AudioDecodingException {
-
-        }
-
         class VideoDecodingException {
 
         }
 
         class MetadataDecodingException {
-
-        }
-
-        class AudioEncodingException {
 
         }
 
@@ -133,7 +121,6 @@ package "MORR" {
         interface IDecoder {
             + IsDecoding : bool <<get>> <<set>>
             + DecodingPath : string <<get>> <<set>>
-            + <<event>> AudioSampleDecoded : AudioSampleDecodedEventHandler 
             + <<event>> VideoSampleDecoded : VideoSampleDecodedEventHandler 
             + <<event>> MetadataSampleDecoded : MetadataSampleDecodedEventHandler 
         }
@@ -141,7 +128,6 @@ package "MORR" {
         interface IEncoder {
             + IsEncoding : bool <<get>> <<set>>
             + EncodingPath : string <<get>> <<set>>
-            + <<event>> AudioSampleRequested : AudioSampleRequestedEventHandler 
             + <<event>> VideoSampleRequested : VideoSampleRequestedEventHandler 
             + <<event>> MetadataSampleRequested : MetadataSampleRequestedEventHandler 
         }
@@ -202,6 +188,10 @@ package "MORR" {
         interface IConfigurationManager {
             + LoadConfiguration(path:string) : void
             + Configurations : IEnumerable<IConfiguration> <<get>>
+        }
+
+        class InvalidConfigurationException {
+
         }
     }
     !endsub
@@ -440,10 +430,6 @@ package "MORR" {
 
     !startsub SHARED
     package "SHARED" #E6E6E6 {
-        class InvalidConfigurationException {
-
-        }
-
         interface IConfiguration {
             + Parse(configuration:string) : void
         }
@@ -492,27 +478,12 @@ package "MORR" {
             + GetEvents() : IAsyncEnumerable<T>
             + Enqueue(T @event) : void
         }
-
-        interface "IEventQueueStorageStrategy<T> where T : Event" {
-            + GetEvents() : IAsyncEnumerable<T>
-            + Enqueue(T @event) : void
-        }
         class "RefCountedListStorageStrategy<T> where T : Event" {
-            + GetEvents() : IAsyncEnumerable<T>
-            + Enqueue(T @event) : void
-        }
-
-        interface "IEventQueueStorageStrategy<T> where T : Event" {
             + GetEvents() : IAsyncEnumerable<T>
             + Enqueue(T @event) : void
         }
         class "RingBufferStorageStrategy<T> where T : Event" {
             + Capacity : uint <<get>> <<set>>
-            + GetEvents() : IAsyncEnumerable<T>
-            + Enqueue(T @event) : void
-        }
-
-        interface "IEventQueueStorageStrategy<T> where T : Event" {
             + GetEvents() : IAsyncEnumerable<T>
             + Enqueue(T @event) : void
         }
@@ -523,38 +494,34 @@ package "MORR" {
     Program --> "1" OutputFormatter
     Program --> IRecordingManager
     Executor --> "1" Options : uses
-    Executor --> "1" RecordingManager
+    Executor --> "1" IRecordingManager
     Executor --> "1" IDecoder : uses
-    IRecordingManager <-- "receiver" ProcessCommand
+    IRecordingManager <-- ProcessCommand
 
     ' Exceptions
     !startsub EXCEPTIONS
-    CaptureException <|-- AudioCaptureException
     CaptureException <|-- VideoCaptureException
 
-    DecodingException <|-- AudioDecodingException
     DecodingException <|-- VideoDecodingException
     DecodingException <|-- MetadataDecodingException
 
-    EncodingException <|-- AudioEncodingException
     EncodingException <|-- VideoEncodingException
     EncodingException <|-- MetadataEncodingException
 
-    IEncoder --> AudioEncodingException : throws
     IEncoder --> VideoEncodingException : throws
     IEncoder --> MetadataEncodingException : throws
 
-    IDecoder --> AudioDecodingException : throws
     IDecoder --> VideoDecodingException : throws
     IDecoder --> MetadataDecodingException : throws
     !endsub
 
     ' EventQueue
     !startsub EVENTQUEUES
-    "IReadOnlyEventQueue<out T> where T : Event" <|-- "EventQueue<T>"
+    "IReadOnlyEventQueue<out T> where T : Event" <|-- "EventQueue<T> where T : Event"
     "IEventQueueStorageStrategy<T> where T : Event" <|-- "KeepAllStorageStrategy<T> where T : Event"
     "IEventQueueStorageStrategy<T> where T : Event" <|-- "RefCountedListStorageStrategy<T> where T : Event"
     "IEventQueueStorageStrategy<T> where T : Event" <|-- "RingBufferStorageStrategy<T> where T : Event"
+    "EventQueue<T> where T : Event" --> "IEventQueueStorageStrategy<T> where T : Event"
     !endsub
 
     !startsub SHARED_INTERNAL
@@ -572,12 +539,14 @@ package "MORR" {
     ModuleManager --> "*" ICollectingModule
 
     RecordingManager --> "encoder" IEncoder
-    RecordingManager --> "receiver" IReceivingModule : receiver
+    RecordingManager --> "decoder" IDecoder
+    RecordingManager --> "videoCapture" IVideoCapture
+    RecordingManager --> "metadataCapture" IMetadataCapture
+    RecordingManager --> "metadataDeserializer" IMetadataDeserializer 
     !startsub CORE_INTERNAL
     RecordingManager --> "ConfigurationManager" ConfigurationManager
-    RecordingManager --> "moduleManager" ModuleManager
+    RecordingManager --> "ModuleManager" ModuleManager
     RecordingManager --> Bootstrapper : uses
-    Bootstrapper --> ModuleManager : uses
     IBootstrapper <|-- Bootstrapper
     IConfigurationManager <|-- ConfigurationManager
     IModuleManager <|-- ModuleManager
@@ -640,10 +609,9 @@ package "MORR" {
     !startsub TRANSCODING_INTERNAL
     IDecoder --> MetadataSample : uses
     IEncoder --> MetadataSample : uses
-    IAudioCapture --> AudioSample : <<creates>>
-    IAudioCapture --> AudioCaptureException : throws >
     IVideoCapture --> VideoSample : <<creates>>
     IVideoCapture --> VideoCaptureException : throws >
+    IReceivingModule <|-- IMetadataCapture
     !endsub
 
     ' MPEG
@@ -661,16 +629,16 @@ package "MORR" {
     !endsub
     ' CSV
     IEncoder <|-- CSVEncoder
-    IEncoder <|-- CSVDecoder
+    IDecoder <|-- CSVDecoder
 
     ' UI
-    App --> "1" RecordingManager : uses
+    ApplicationViewModel --> "1" IRecordingManager : uses
     !startsub UI_INTERNAL
     ApplicationViewModel o--> "n" ICommand
     App --> "1" ApplicationViewModel
-    App o-> SaveDialog
-    App o-> ErrorDialog
-    App o-> InformationDialog
+    ApplicationViewModel o-> SaveDialog
+    ApplicationViewModel o-> ErrorDialog
+    ApplicationViewModel o-> InformationDialog
     App o-> NotifyIcon
     NotifyIcon --> "IconSource" ImageSource
     NotifyIcon --> "Command" ICommand
