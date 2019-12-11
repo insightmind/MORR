@@ -18,7 +18,7 @@ namespace MORR.Modules.WindowManagement
         /// A single-writer-multiple-reader queue for WindowFocusEvent
         /// </summary>
         [Import]
-        public WindowFocusEventProducer WindowoFocusEventProducer { get; private set; }
+        public WindowFocusEventProducer WindowFocusEventProducer { get; private set; }
 
         /// <summary>
         /// A single-writer-multiple-reader queue for WindowMovementEvent
