@@ -7,6 +7,7 @@ left to right direction
 hide empty fields
 
 package "MORR" {
+    !startsub TRANSCODING
     package "TRANSCODING" #E6E6E6 {
         package "MPEG" #BFBFBF {
             class MPEGDecoder {
@@ -153,7 +154,9 @@ package "MORR" {
 
         }
     }
+    !endsub
 
+    !startsub CORE
     package "CORE" #E6E6E6 {
         class RecordingManager {
             + isRunning : bool
@@ -173,7 +176,9 @@ package "MORR" {
             + LoadConfiguration(path:string) : void
         }
     }
+    !endsub
 
+    !startsub UI
     package "UI" #E6E6E6 {
         class ErrorDialog <<partial>> {
             + ErrorDialog(errorMessage:string)
@@ -221,7 +226,9 @@ package "MORR" {
 
         }        
     }
+    !endsub
 
+    !startsub CLI
     package "CLI" #E6E6E6 {
         class Program {
             {static} Main(args:string[]) : void
@@ -243,8 +250,10 @@ package "MORR" {
             + Execute(options: Options) : void
         }
     }
+    !endsub
 
     package "MODULES" #E6E6E6 {
+        !startsub MODULES_CLIPBOARD
         package "CLIPBOARD" #BFBFBF {
             class ClipboardModule {
             
@@ -265,7 +274,9 @@ package "MORR" {
                 PASTE
             }
         }
+        !endsub
 
+        !startsub MODULES_KEYBOARD
         package "KEYBOARD" #BFBFBF {
             class KeyboardModule {
             
@@ -278,7 +289,9 @@ package "MORR" {
                 + PressedKey: Key
             }
         }
+        !endsub
 
+        !startsub MODULES_MOUSE
         package "MOUSE" #BFBFBF {
             class MouseModule {
         
@@ -311,7 +324,9 @@ package "MORR" {
                 + ScrollAmount : short <<get>> <<set>>
             }
         }
+        !endsub
 
+        !startsub MODULES_WEBBROWSER
         package "WEBBROWSER" #BFBFBF {
             class WebBrowserModule {
         
@@ -357,7 +372,9 @@ package "MORR" {
                 + CurrentURL: Uri
             }
         }
+        !endsub
 
+        !startsub MODULES_WINDOWMANAGEMENT
         package "WINDOWMANAGEMENT" #BFBFBF {
             class WindowManagementModule {
         
@@ -386,9 +403,10 @@ package "MORR" {
                 + State: WindowState
             }
         }
+        !endsub
     }
-    
 
+    !startsub SHARED
     package "SHARED" #E6E6E6 {
         class InvalidConfigurationException {
 
@@ -432,7 +450,7 @@ package "MORR" {
             + {abstract} GetEvents() : IAsyncEnumerable<T>
         }
     }
-
+    !endsub
     ' CLI
     Program --> Executor : uses
     Program --> "1" OutputFormatter
@@ -441,6 +459,7 @@ package "MORR" {
     Executor --> "1" IDecoder : uses
 
     ' Exceptions
+    !startsub EXCEPTIONS
     CaptureException <|-- AudioCaptureException
     CaptureException <|-- VideoCaptureException
 
@@ -459,51 +478,65 @@ package "MORR" {
     IDecoder --> AudioDecodingException : throws
     IDecoder --> VideoDecodingException : throws
     IDecoder --> MetadataDecodingException : throws
+    !endsub
 
     ' EventQueue
     "IReadOnlyEventQueue<T>" <|-- "EventQueue<T>"
 
+    !startsub SHARED_INTERNAL
     ' Modules
     IModule <|-- ICollectingModule
     IModule <|-- IReceivingModule
     IModule <|-- ITransformingModule
+    !endsub
+
 
     ' CORE
-    Bootstrapper --> ModuleManager : uses
     ConfigurationManager --> "*" IConfiguration
     ConfigurationManager --> InvalidConfigurationException : throws
     ModuleManager --> "*" IModule
     ModuleManager --> "*" ICollectingModule
 
-    RecordingManager --> "moduleManager" ModuleManager
-    RecordingManager --> "ConfigurationManager" ConfigurationManager
-    RecordingManager --> Bootstrapper : uses
     RecordingManager --> "encoder" IEncoder
     RecordingManager --> "receiver" IReceivingModule : receiver
+    !startsub CORE_INTERNAL
+    RecordingManager --> "ConfigurationManager" ConfigurationManager
+    RecordingManager --> "moduleManager" ModuleManager
+    RecordingManager --> Bootstrapper : uses
+    Bootstrapper --> ModuleManager : uses
+    !endsub
 
     'Clipboard
+    ICollectingModule <|-- ClipboardModule
     Event <|-- ClipboardEvent
+    !startsub MODULES_CLIPBOARD_INTERNAL
     ClipboardEvent <|-- ClipBoardInteractEvent
     ClipBoardInteractEvent --> "Interaction" InteractionType
     ClipBoardInteractEvent +-- InteractionType
-    ICollectingModule <|-- ClipboardModule
+    !endsub
 
     ' Keyboard
     Event <|-- KeyboardEvent
-    KeyboardEvent <|-- KeyBoardInteractEvent
     ICollectingModule <|-- KeyboardModule
+    !startsub MODULES_KEYBOARD_INTERNAL
+    KeyboardEvent <|-- KeyBoardInteractEvent
+    !endsub
 
     ' Mouse
     Event <|-- MouseEvent
+    ICollectingModule <|-- MouseModule
+    !startsub MODULES_MOUSE_INTERNAL
     MouseEvent <|-- MouseClickEvent
     MouseEvent <|-- MouseScrollEvent
     MouseEvent <|-- MouseMoveEvent
-    ICollectingModule <|-- MouseModule
     MouseClickEvent --> "Button" MouseButton
     MouseClickEvent --> "State" MouseButtonState
+    !endsub
 
     ' WebBrowser
     Event <|-- WebBrowserEvent
+    ICollectingModule <|-- WebBrowserModule
+    !startsub MODULES_WEBBROWSER_INTERNAL
     WebBrowserEvent <|-- ButtonClickEvent
     WebBrowserEvent <|-- CloseTabEvent
     WebBrowserEvent <|-- FileDownloadEvent
@@ -513,26 +546,30 @@ package "MORR" {
     WebBrowserEvent <|-- SwitchTabEvent
     WebBrowserEvent <|-- TextInputEvent
     WebBrowserEvent <|-- TextSelectionEvent
-    ICollectingModule <|-- WebBrowserModule
+    !endsub
 
     ' WindowManagement
     Event <|-- WindowEvent
+    ICollectingModule <|-- WindowManagementModule
+    !startsub MODULES_WINDOWMANAGEMENT_INTERNAL
     WindowEvent <|-- WindowFocusEvent
     WindowEvent <|-- WindowMovementEvent
     WindowEvent <|-- WindowResizingEvent
     WindowEvent <|-- WindowStateChangedEvent
-
-    ICollectingModule <|-- WindowManagementModule
+    !endsub
 
     ' Transcoding
+    !startsub TRANSCODING_INTERNAL
     IDecoder --> MetadataSample : uses
     IEncoder --> MetadataSample : uses
     IAudioCapture --> AudioSample : <<creates>>
     IAudioCapture --> AudioCaptureException : throws >
     IVideoCapture --> VideoSample : <<creates>>
     IVideoCapture --> VideoCaptureException : throws >
+    !endsub
 
     ' MPEG
+    !startsub TRANSCODING_MPEG_INTERNAL
     IVideoCapture <|-- DesktopCapture
     DesktopCapture --> Direct3D11Helpers : uses
     DesktopCapture --> CaptureHelper : uses
@@ -543,13 +580,14 @@ package "MORR" {
     MPEGEncoder --> MonitorEnumerationHelper : uses
     MonitorEnumerationHelper --> MonitorInfo : uses
     MonitorEnumerationHelper --> MonitorInfoEx : uses
-
+    !endsub
     ' CSV
     IEncoder <|-- CSVEncoder
     IEncoder <|-- CSVDecoder
 
     ' UI
     App --> "1" RecordingManager : uses
+    !startsub UI_INTERNAL
     ApplicationViewModel o--> "n" ICommand
     App --> "1" ApplicationViewModel
     App o-> SaveDialog
@@ -560,5 +598,6 @@ package "MORR" {
     NotifyIcon --> "Command" ICommand
     NotifyIcon --> "ContextMenu" ContextMenu
     ICommand <|-- RelayCommand
+    !endsub
 }
 @enduml

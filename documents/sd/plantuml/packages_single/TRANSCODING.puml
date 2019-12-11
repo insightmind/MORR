@@ -1,0 +1,12 @@
+@startuml
+skinparam monochrome true
+'skinparam linetype ortho
+skinparam classAttributeIconSize 0
+
+left to right direction
+hide empty fields
+!includesub ../MORR.puml!TRANSCODING
+!includesub ../MORR.puml!TRANSCODING_INTERNAL
+!includesub ../MORR.puml!TRANSCODING_MPEG_INTERNAL
+!includesub ../MORR.puml!EXCEPTIONS
+@enduml
