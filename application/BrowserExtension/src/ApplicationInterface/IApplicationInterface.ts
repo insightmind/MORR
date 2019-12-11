@@ -16,7 +16,7 @@ export default interface ICommunicationStrategy {
     requestConfig() : Promise<string>;
 
     /**
-     * Asynchronously wait for the start signal coming from the from the MORR main application.
+     * Asynchronously wait for the start signal coming from the MORR main application.
      * @returns a Promise which will be fulfilled when a start-signal is received
      */
     waitForStart() : Promise<void>;
