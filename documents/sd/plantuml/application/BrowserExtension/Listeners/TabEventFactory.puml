@@ -1,0 +1,16 @@
+@startuml
+skinparam linetype ortho
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+class TabEventFactory {
+	+ createEvent(tabId : number, changeInfo : tabs.TabChangeInfo, tab : tabs.Tab) : BrowserEvent
+	+ createEvent(activeInfo : tabs.TabActiveInfo) : BrowserEvent
+	+ createEvent(tabId : number, removeInfo: tabs.TabRemoveInfo) : BrowserEvent
+	+ createEvent(tab : tabs.Tab) : BrowserEvent
+}
+TabListener *-- TabEventFactory
+TabEventFactory .DOWN.> OpenTabEvent : creates
+TabEventFactory .DOWN.> CloseTabEvent : creates
+TabEventFactory .DOWN.> SwitchTabEvent : creates
+TabEventFactory .DOWN.> NavigationEvent : creates
+@enduml
