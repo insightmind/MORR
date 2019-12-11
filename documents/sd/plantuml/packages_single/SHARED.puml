@@ -7,4 +7,5 @@ left to right direction
 hide empty fields
 !includesub ../MORR.puml!SHARED
 !includesub ../MORR.puml!SHARED_INTERNAL
+!includesub ../MORR.puml!EVENTQUEUES
 @enduml

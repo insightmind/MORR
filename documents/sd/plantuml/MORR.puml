@@ -442,12 +442,47 @@ package "MORR" {
         
         }
 
-        interface "IReadOnlyEventQueue<T>" {
-            + GetEvents() : IAsyncEnumerable<T>
+        abstract class "EventQueue<T> where T : Event" {
+            + StorageStrategy : IEventQueueStorageStrategy<T> <<get>> <<set>>
+            + {abstract} GetEvents() : IAsyncEnumerable<T>
+            # {abstract} Enqueue(T @event) : void
         }
 
-        abstract class "EventQueue<T>" {
-            + {abstract} GetEvents() : IAsyncEnumerable<T>
+        interface "IReadOnlyEventQueue<out T> where T : Event" {
+            GetEvents() : IAsyncEnumerable<T>
+        }
+
+        interface "IEventQueueStorageStrategy<T> where T : Event" {
+            + GetEvents() : IAsyncEnumerable<T>
+            + Enqueue(T @event) : void
+        }
+        class "KeepAllStorageStrategy<T> where T : Event" {
+            + GetEvents() : IAsyncEnumerable<T>
+            + Enqueue(T @event) : void
+        }
+
+        interface "IEventQueueStorageStrategy<T> where T : Event" {
+            + GetEvents() : IAsyncEnumerable<T>
+            + Enqueue(T @event) : void
+        }
+        class "RefCountedListStorageStrategy<T> where T : Event" {
+            + GetEvents() : IAsyncEnumerable<T>
+            + Enqueue(T @event) : void
+        }
+
+        interface "IEventQueueStorageStrategy<T> where T : Event" {
+            + GetEvents() : IAsyncEnumerable<T>
+            + Enqueue(T @event) : void
+        }
+        class "RingBufferStorageStrategy<T> where T : Event" {
+            + Capacity : uint <<get>> <<set>>
+            + GetEvents() : IAsyncEnumerable<T>
+            + Enqueue(T @event) : void
+        }
+
+        interface "IEventQueueStorageStrategy<T> where T : Event" {
+            + GetEvents() : IAsyncEnumerable<T>
+            + Enqueue(T @event) : void
         }
     }
     !endsub
@@ -481,7 +516,12 @@ package "MORR" {
     !endsub
 
     ' EventQueue
-    "IReadOnlyEventQueue<T>" <|-- "EventQueue<T>"
+    !startsub EVENTQUEUES
+    "IReadOnlyEventQueue<out T> where T : Event" <|-- "EventQueue<T>"
+    "IEventQueueStorageStrategy<T> where T : Event" <|-- "KeepAllStorageStrategy<T> where T : Event"
+    "IEventQueueStorageStrategy<T> where T : Event" <|-- "RefCountedListStorageStrategy<T> where T : Event"
+    "IEventQueueStorageStrategy<T> where T : Event" <|-- "RingBufferStorageStrategy<T> where T : Event"
+    !endsub
 
     !startsub SHARED_INTERNAL
     ' Modules
