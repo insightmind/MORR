@@ -1,7 +1,7 @@
 import * as Listeners from './Listeners'
 import { IListener } from './Shared/SharedDeclarations';
 import { BrowserEvent } from './Shared/SharedDeclarations'
-import { IApplicationInterface, WebSocketInterface } from './ApplicationInterface/';
+import { ICommunicationStrategy, WebSocketInterface } from './ApplicationInterface/';
 
 /**
  * The "main" class of the webextension
@@ -14,7 +14,7 @@ class BackgroundScript {
     /**
      * App interface to the MORR application
      */
-    appInterface : IApplicationInterface;
+    appInterface : ICommunicationStrategy;
     /**
      * URI to initialize the appInterface to
      */
@@ -27,7 +27,7 @@ class BackgroundScript {
         this.listeners.push(new Listeners.DOMListener((event : BrowserEvent) => { this.callback(event);}));
         //etc.
         this.appInterface = new WebSocketInterface(BackgroundScript.receiverURI);
-        this.appInterface.establishConnection(this.requestConfig, this.retryConnection);
+        this.appInterface.establishConnection().then(this.requestConfig());
     }
     /**
      * Start all listeners
@@ -48,7 +48,7 @@ class BackgroundScript {
      */
     public callback = (event : BrowserEvent) => {
         console.log(`${BackgroundScript.timeStampString(event.timeStamp)}: ${event.type} occured in tab ${event.tabID} in window ${event.windowID}`);
-        this.appInterface.sendData(JSON.stringify(event), () => {}, this.stop);
+        this.appInterface.sendData(JSON.stringify(event)).catch(this.stop);
     }
 
     /**
