@@ -17,7 +17,7 @@ namespace MORR.Modules.WindowManagement.Producers
     public class WindowStateChangedEventProducer : EventQueue<WindowStateChangedEvent>
     {
         /// <summary>
-        ///     Asynchronously gets all window state changed events as WindowStateChangedEvent type
+        ///     Asynchronously gets all user interaction with changing the state of the window as WindowStateChangedEvent type
         /// </summary>
         /// <returns>A stream of WindowStateChangedEvent</returns>
         public override IAsyncEnumerable<WindowStateChangedEvent> GetEvents()

@@ -1,7 +1,7 @@
 \subsection{WindowManagement}
 
 \begin{class}{WindowManagementModule} 
-    \clsdiagram{resources/Classes/Modules/WindowManagement/WindowManagementModule.png}
+    \clsdiagram[scale = 0.7]{resources/Classes/Modules/WindowManagement/WindowManagementModule.png}
 
     \clsdcl{public class WindowManagementModule : ICollectingModule}
 
@@ -67,4 +67,82 @@
     \begin{attributes}
         \attribute{public System.Windows.WindowState State}{The new state of the window.}
     \end{attributes}
+\end{class}
+
+\subsection*{Producers}
+
+\begin{class}{WindowFocusEventProducer} 
+	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WindowManagement/Producers/WindowFocusEventProducer.png}
+    
+    \clsdcl{public class WindowFocusEventProducer : EventQueue<WindowFocusEvent>}
+
+    \clsdsp{A single-writer-multiple-reader queue for WindowFocusEvent}
+
+    \begin{methods}
+        \begin{method}{public override IAsyncEnumerable<WindowFocusEvent> GetEvents()}{Asynchronously gets all window focus events}
+          \return{IAsyncEnumerable<WindowFocusEvent>}{A stream of WindowFocusEvent}
+        \end{method}
+        \begin{method}{protected override void Enqueue(WindowFocusEvent event)}{Asynchronously enqueues a new window focus event}
+            \begin{parameters}
+                \para{WindowFocusEvent event}{WindowFocusEvent to enqueue}
+            \end{parameters}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{WindowMovementEventProducer} 
+	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WindowManagement/Producers/WindowMovementEventProducer.png}
+    
+    \clsdcl{public class WindowMovementEventProducer : EventQueue<WindowMovementEvent>}
+
+    \clsdsp{A single-writer-multiple-reader queue for WindowMovementEvent}
+
+    \begin{methods}
+        \begin{method}{public override IAsyncEnumerable<WindowMovementEvent> GetEvents()}{Asynchronously gets all window movement events}
+          \return{IAsyncEnumerable<WindowMovementEvent>}{A stream of WindowMovementEvent}
+        \end{method}
+        \begin{method}{protected override void Enqueue(WindowMovementEvent event)}{Asynchronously enqueues a new window movement event}
+            \begin{parameters}
+                \para{WindowMovementEvent event}{WindowMovementEvent to enqueue}
+            \end{parameters}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{WindowResizingEventProducer} 
+	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WindowManagement/Producers/WindowResizingEventProducer.png}
+    
+    \clsdcl{public class WindowResizingEventProducer : EventQueue<WindowResizingEvent>}
+
+    \clsdsp{A single-writer-multiple-reader queue for WindowResizingEvent}
+
+    \begin{methods}
+        \begin{method}{public override IAsyncEnumerable<WindowResizingEvent> GetEvents()}{Asynchronously gets all window resizing events}
+          \return{IAsyncEnumerable<WindowResizingEvent>}{A stream of WindowResizingEvent}
+        \end{method}
+        \begin{method}{protected override void Enqueue(WindowResizingEvent event)}{Asynchronously enqueues a new window resizing event}
+            \begin{parameters}
+                \para{WindowResizingEvent event}{WindowResizingEvent to enqueue}
+            \end{parameters}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{WindowStateChangedEventProducer} 
+	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WindowManagement/Producers/WindowStateChangedEventProducer.png}
+    
+    \clsdcl{public class WindowStateChangedEventProducer : EventQueue<WindowStateChangedEvent>}
+
+    \clsdsp{A single-writer-multiple-reader queue for WindowRStateChangedEvent}
+
+    \begin{methods}
+        \begin{method}{public override IAsyncEnumerable<WindowStateChangedEvent> GetEvents()}{Asynchronously gets all user interaction with changing the state of the window}
+          \return{IAsyncEnumerable<WindowStateChangedEvent>}{A stream of WindowStateChangedEvent}
+        \end{method}
+        \begin{method}{protected override void Enqueue(WindowStateChangedEvent event)}{Asynchronously enqueues a new window state changed event}
+            \begin{parameters}
+                \para{WindowStateChangedEvent event}{WindowStateChangedEvent to enqueue}
+            \end{parameters}
+        \end{method}
+    \end{methods}
 \end{class}

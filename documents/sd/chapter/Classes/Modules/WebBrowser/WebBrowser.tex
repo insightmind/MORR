@@ -1,7 +1,7 @@
 \subsection{Webbrowser}
 
 \begin{class}{WebBrowserModule} 
-	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/WebBrowserModule.png}
+	\clsdiagram[scale = 0.45]{resources/Classes/Modules/WebBrowser/WebBrowserModule.png}
 	
     \clsdcl{public class WebBrowserModule : ICollectingModule}
 
@@ -129,7 +129,7 @@
 
 \subsection*{Producers}
 
-\begin{class}{ButtonClickEventProducer} 
+\begin{class}{ButtonClickEventProducer : EventQueue<ButtonClickEvent>} 
 	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/ButtonClickEventProducer.png}
     
     \clsdcl{public class ButtonClickEventProducer}
@@ -142,7 +142,7 @@
         \end{method}
         \begin{method}{protected override void Enqueue(ButtonClickEvent event)}{Asynchronously enqueues a new button click event}
             \begin{parameters}
-                \para{ButtonClickEvent event}{ButtonClickEvent event}
+                \para{ButtonClickEvent event}{ButtonClickEvent to enqueue}
             \end{parameters}
         \end{method}
     \end{methods}
@@ -151,7 +151,7 @@
 \begin{class}{CloseTabEventProducer} 
 	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/CloseTabEventProducer.png}
     
-    \clsdcl{public class CloseTabEventProducer}
+    \clsdcl{public class CloseTabEventProducer : EventQueue<CloseTabEvent>}
 
     \clsdsp{A single-writer-multiple-reader queue for CloseTabEvent}
 
@@ -161,7 +161,7 @@
         \end{method}
         \begin{method}{protected override void Enqueue(CloseTabEvent event)}{Asynchronously enqueues a new close tab event}
             \begin{parameters}
-                \para{CloseTabEvent event}{CloseTabEvent event}
+                \para{CloseTabEvent event}{CloseTabEvent to enqueue}
             \end{parameters}
         \end{method}
     \end{methods}
@@ -170,7 +170,7 @@
 \begin{class}{FileDownloadEventProducer} 
 	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/FileDownloadEventProducer.png}
     
-    \clsdcl{public class FileDownloadEventProducer}
+    \clsdcl{public class FileDownloadEventProducer : EventQueue<FileDownloadEvent>}
 
     \clsdsp{A single-writer-multiple-reader queue for FileDownloadEvent}
 
@@ -180,7 +180,7 @@
         \end{method}
         \begin{method}{protected override void Enqueue(FileDownloadEvent event)}{Asynchronously enqueues a new file download event}
             \begin{parameters}
-                \para{FileDownloadEvent event}{FileDownloadEvent event}
+                \para{FileDownloadEvent event}{FileDownloadEvent to enqueue}
             \end{parameters}
         \end{method}
     \end{methods}
@@ -189,7 +189,7 @@
 \begin{class}{HoverEventProducer} 
 	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/HoverEventProducer.png}
     
-    \clsdcl{public class HoverEventProducer}
+    \clsdcl{public class HoverEventProducer : EventQueue<HoverEvent>}
 
     \clsdsp{A single-writer-multiple-reader queue for HoverEvent}
 
@@ -199,7 +199,7 @@
         \end{method}
         \begin{method}{protected override void Enqueue(HoverEvent event)}{Asynchronously enqueues a new hover event}
             \begin{parameters}
-                \para{HoverEvent event}{HoverEvent event}
+                \para{HoverEvent event}{HoverEvent to enqueue}
             \end{parameters}
         \end{method}
     \end{methods}
@@ -208,7 +208,7 @@
 \begin{class}{NavigationEventProducer} 
 	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/NavigationEventProducer.png}
     
-    \clsdcl{public class NavigationEventProducer}
+    \clsdcl{public class NavigationEventProducer : EventQueue<NavigationEvent>}
 
     \clsdsp{A single-writer-multiple-reader queue for NavigationEvent}
 
@@ -218,7 +218,7 @@
         \end{method}
         \begin{method}{protected override void Enqueue(NavigationEvent event)}{Asynchronously enqueues a new navigation event}
             \begin{parameters}
-                \para{NavigationEvent event}{NavigationEvent event}
+                \para{NavigationEvent event}{NavigationEvent to enqueue}
             \end{parameters}
         \end{method}
     \end{methods}
@@ -227,7 +227,7 @@
 \begin{class}{OpenTabEventProducer} 
 	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/OpenTabEventProducer.png}
     
-    \clsdcl{public class OpenTabEventProducer}
+    \clsdcl{public class OpenTabEventProducer : EventQueue<OpenTabEvent>}
 
     \clsdsp{A single-writer-multiple-reader queue for OpenTabEvent}
 
@@ -237,7 +237,7 @@
         \end{method}
         \begin{method}{protected override void Enqueue(OpenTabEvent event)}{Asynchronously enqueues a new open tab event}
             \begin{parameters}
-                \para{OpenTabEvent event}{OpenTabEvent event}
+                \para{OpenTabEvent event}{OpenTabEvent to enqueue}
             \end{parameters}
         \end{method}
     \end{methods}
@@ -246,7 +246,7 @@
 \begin{class}{SwitchTabEventProducer} 
 	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/SwitchTabEventProducer.png}
     
-    \clsdcl{public class SwitchTabEventProducer}
+    \clsdcl{public class SwitchTabEventProducer : EventQueue<SwitchTabEvent>}
 
     \clsdsp{A single-writer-multiple-reader queue for SwitchTabEvent}
 
@@ -256,7 +256,7 @@
         \end{method}
         \begin{method}{protected override void Enqueue(SwitchTabEvent event)}{Asynchronously enqueues a new switch tab event}
             \begin{parameters}
-                \para{SwitchTabEvent event}{SwitchTabEvent event}
+                \para{SwitchTabEvent event}{SwitchTabEvent to enqueue}
             \end{parameters}
         \end{method}
     \end{methods}
@@ -265,7 +265,7 @@
 \begin{class}{TextInputEventProducer} 
 	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/TextInputEventProducer.png}
     
-    \clsdcl{public class TextInputEventProducer}
+    \clsdcl{public class TextInputEventProducer : EventQueue<TextInputEvent>}
 
     \clsdsp{A single-writer-multiple-reader queue for TextInputEvent}
 
@@ -275,7 +275,7 @@
         \end{method}
         \begin{method}{protected override void Enqueue(TextInputEvent event)}{Asynchronously enqueues a new text input event}
             \begin{parameters}
-                \para{TextInputEvent event}{TextInputEvent event}
+                \para{TextInputEvent event}{TextInputEvent to enqueue}
             \end{parameters}
         \end{method}
     \end{methods}
@@ -284,7 +284,7 @@
 \begin{class}{TextSelectionEventProducer} 
 	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/TextSelectionEventProducer.png}
     
-    \clsdcl{public class TextSelectionEventProducer}
+    \clsdcl{public class TextSelectionEventProducer : EventQueue<TextSelectionEvent>}
 
     \clsdsp{A single-writer-multiple-reader queue for TextSelectionEvent}
 
@@ -294,7 +294,7 @@
         \end{method}
         \begin{method}{protected override void Enqueue(TextSelectionEvent event)}{Asynchronously enqueues a new text selection event}
             \begin{parameters}
-                \para{TextSelectionEvent event}{TextSelectionEvent event}
+                \para{TextSelectionEvent event}{TextSelectionEvent to enqueue}
             \end{parameters}
         \end{method}
     \end{methods}

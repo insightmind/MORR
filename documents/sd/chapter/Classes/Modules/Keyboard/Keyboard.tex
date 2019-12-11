@@ -1,6 +1,6 @@
 \subsection{Keyboard}
 \begin{class}{KeyboardModule} 
-    \clsdiagram{resources/Classes/Modules/Keyboard/KeyboardModule.png}
+    \clsdiagram[scale = 0.7]{resources/Classes/Modules/Keyboard/KeyboardModule.png}
 
     \clsdcl{public class KeyboardModule : ICollectingModule}
 
@@ -27,4 +27,25 @@
     \begin{attributes}
         \attribute{public Key System.Windows.Input.PressedKey}{The key that was pressed.}
     \end{attributes}
+\end{class}
+
+\subsection*{Producers}
+
+\begin{class}{KeyboardInteractEventProducer} 
+	\clsdiagram[scale = 0.7]{resources/Classes/Modules/Keyboard/Producers/KeyboardInteractEventProducer.png}
+    
+    \clsdcl{public class KeyboardInteractEventProducer : EventQueue<KeyboardInteractEvent>}
+
+    \clsdsp{A single-writer-multiple-reader queue for KeyboardInteractEvent}
+
+    \begin{methods}
+        \begin{method}{public override IAsyncEnumerable<KeyboardInteractEvent> GetEvents()}{Asynchronously gets all keyboard interaction events}
+          \return{IAsyncEnumerable<KeyboardInteractEvent>}{A stream of KeyboardInteractEvent}
+        \end{method}
+        \begin{method}{protected override void Enqueue(KeyboardInteractEvent event)}{Asynchronously enqueues a new keyboard interaction event}
+            \begin{parameters}
+                \para{KeyboardInteractEvent event}{KeyboardInteractEvent to enqueue}
+            \end{parameters}
+        \end{method}
+    \end{methods}
 \end{class}

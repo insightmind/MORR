@@ -1,7 +1,7 @@
     \subsection{Clipboard}
 
 \begin{class}{ClipboardModule} 
-    \clsdiagram{resources/Classes/Modules/Clipboard/ClipboardModule.png}
+    \clsdiagram[scale = 0.6]{resources/Classes/Modules/Clipboard/ClipboardModule.png}
 
     \clsdcl{public class ClipboardModule : ICollectingModule}
 
@@ -45,3 +45,24 @@
         \element{Paste}{Paste from the clipboard.}
     \end{elements}
 \end{enum}
+
+\subsection*{Producers}
+
+\begin{class}{ClipboardInteractEventProducer} 
+	\clsdiagram[scale = 0.7]{resources/Classes/Modules/Clipboard/Producers/ClipboardInteractEventProducer.png}
+    
+    \clsdcl{public class ClipboardInteractEventProducer : EventQueue<ClipboardInteractEvent>}
+
+    \clsdsp{A single-writer-multiple-reader queue for ClipboardInteractEvent}
+
+    \begin{methods}
+        \begin{method}{public override IAsyncEnumerable<ClipboardInteractEvent> GetEvents()}{Asynchronously gets all clipboard interaction events}
+          \return{IAsyncEnumerable<ClipboardInteractEvent>}{A stream of ClipboardInteractEvent}
+        \end{method}
+        \begin{method}{protected override void Enqueue(ClipboardInteractEvent event)}{Asynchronously enqueues a new clipboard interaction event}
+            \begin{parameters}
+                \para{ClipboardInteractEvent event}{ClipboardInteractEvent to enqueue}
+            \end{parameters}
+        \end{method}
+    \end{methods}
+\end{class}
