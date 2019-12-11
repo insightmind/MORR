@@ -5,7 +5,7 @@ export default interface ICommunicationStrategy {
     /**
      * Asynchronously establish a connection with the main application.
      * Implementations may retry indefinetly until a connection could be established automatically or return an error upon failure.
-     * @returns a Promise which will be fulfilled when a connection was established
+     * @returns a Promise which will be resolved when a connection was established
      */
     establishConnection() : Promise<void>;
 
@@ -17,14 +17,14 @@ export default interface ICommunicationStrategy {
 
     /**
      * Asynchronously wait for the start signal coming from the MORR main application.
-     * @returns a Promise which will be fulfilled when a start-signal is received
+     * @returns a Promise which will be resolved when a start-signal is received
      */
     waitForStart() : Promise<void>;
 
     /**
      * Asynchronously send serialized (event-) data to the MORR main application.
      * @param data The serialized data to send
-     * @returns a Promise which fill be fulfilled when the data was successfully sent
+     * @returns a Promise which fill be resolved when the data was successfully sent
      */
     sendData(data : string) : Promise<void>;
 }
