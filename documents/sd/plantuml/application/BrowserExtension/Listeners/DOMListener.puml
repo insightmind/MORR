@@ -1,0 +1,22 @@
+@startuml
+skinparam linetype ortho
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+class DOMListener {
+    + DOMListener(callback : function(BrowserEvent) : void)
+    + start()
+    + stop()
+}
+interface IListener {
+    + IListener(callback : function(BrowserEvent) : void)
+    + start() : void
+    + stop() : void
+}
+DOMListener .UP.|> IListener : implements
+DOMListener ..> TextInputEvent : creates
+DOMListener ..> ButtonClickEvent : creates
+DOMListener ..> HoverEvent : creates
+DOMListener ..> TextSelectionEvent : creates
+DOMListener ..> ContentScript : injects
+
+@enduml

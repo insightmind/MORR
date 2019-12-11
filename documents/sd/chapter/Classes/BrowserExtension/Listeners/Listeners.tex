@@ -101,6 +101,45 @@
 \end{constructor}
 \end{constructors}
 \end{class}
+
+\begin{class}{TabEventFactory}
+
+\clsdiagram[width=1.0\textwidth]{resources/Classes/BrowserExtension/Listeners/TabEventFactory.png}
+
+\clsdcl{class TabEventFactory}
+
+\clsdsp{The TabEventFactory is responsible for creating BrowserEvent objects from the information a TabListener gathers. As different listeners get different input parameters, the createEvent method is overloaded several times to account for the possible combinations of parameters.}
+
+\begin{methods}
+\begin{method}{public createEvent(tabId : number, changeInfo : tabs.TabChangeInfo, tab : tabs.Tab) : BrowserEvent}{Create a new BrowserEvent from the input parameters.}
+\return{BrowserEvent}{A BrowserEvent.}
+\begin{parameters}
+\para{tabID : number}{The ID of the tab which provided the TabChangeInfo.}
+\para{changeInfo : tabs.TabChangeInfo}{Create a new BrowserEvent from the input parameters.}
+\para{tab : tabs.Tab}{}
+\end{parameters}
+\end{method}
+\begin{method}{public createEvent(activeInfo : tabs.TabActiveInfo) : BrowserEvent}{Create a new BrowserEvent from the input parameters.}
+\return{BrowserEvent}{A BrowserEvent.}
+\begin{parameters}
+\para{activeInfo : tabs.TabActiveInfo}{The TabActiveInfo to create the event from.}
+\end{parameters}
+\end{method}
+\begin{method}{public createEvent(tabId : number, removeInfo: tabs.TabRemoveInfo) : BrowserEvent}{Create a new BrowserEvent from the input parameters.}
+\return{BrowserEvent}{A BrowserEvent.}
+\begin{parameters}
+\para{tabId : number}{The ID of the tab which notified the caller.}
+\para{removeInfo : tabs.TabRemoveInfo}{The TabRemoveInfo to create the event from.}
+\end{parameters}
+\end{method}
+\begin{method}{public createEvent(tab : tabs.Tab) : BrowserEvent}{Create a new BrowserEvent from the input parameters.}
+\return{BrowserEvent}{A BrowserEvent.}
+\begin{parameters}
+\para{tab : tabs.Tab}{The tab to create the event from.}
+\end{parameters}
+\end{method}
+\end{methods}
+\end{class}
 %%End Tab%%
 
 %%DOM%%
@@ -273,4 +312,21 @@
 \end{constructors}
 \end{class}
 
+\begin{class}{DownloadEventFactory}
+
+\clsdiagram[width=0.5\textwidth]{resources/Classes/BrowserExtension/Listeners/DownloadEventFactory.png}
+
+\clsdcl{class DownloadEventFactory}
+
+\clsdsp{The TabEventFactory is responsible for creating DownloadEvent objects from the information a DownloadListener gathers.}
+
+\begin{methods}
+\begin{method}{createEvent(downloadItem: downloads.DownloadItem) : DownloadEvent}{Create a new DownloadEvent from a DownLoadItem.}
+\return{BrowserEvent}{A BrowserEvent.}
+\begin{parameters}
+\para{downloadItem : downloads.DownloadItem}{The DownloadItem created by the browser when a download was started.}
+\end{parameters}
+\end{method}
+\end{methods}
+\end{class}
 %%End Download%%

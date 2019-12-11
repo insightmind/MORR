@@ -1,0 +1,36 @@
+@startuml
+skinparam linetype ortho
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+interface IEvent {
+    + timeStamp : Date
+    + issuingModule : number
+    + type : EventType
+    + serialize() : string
+}
+IEvent .RIGHT.> EventType : uses
+
+enum EventType {
+    Navigation,
+    OpenTab,
+    CloseTab,
+    SwitchTab,
+    TextInput,
+    ButtonClick,
+    Hover,
+    TextSelection,
+    Download
+}
+IEvent <|.DOWN. BrowserEvent : implements
+class BrowserEvent {
+    + BrowserEvent(type : EventType, tabID : number, windowID: number, url : string)
+    + timeStamp : Date
+    + issuingModule : number
+    + type : EventType
+    + serialize() : string
+    + tabID : number
+    + url : URL
+    + windowID : number
+}
+
+@enduml

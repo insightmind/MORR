@@ -1,5 +1,6 @@
 \documentclass[parskip=full, 12pt, oneside]{scrbook}
-
+\usepackage{imakeidx}
+\makeindex[title=Class Index, columns=2]
 \usepackage[utf8]{inputenc} % use utf8 file encoding for TeX sources
 \usepackage[T1]{fontenc} % avoid garbled Unicode text in pdf
 \usepackage[english]{babel} % english hyphenation, quotes, etc
@@ -46,5 +47,9 @@
 \include{chapter/class}           % Class design and description
 \include{chapter/dynamicdiagram}  % Dynamic diagrams
 \include{chapter/libraries}		  % Libraries
+\phantomsection
+\addtocounter{chapter}{1} %a bit of hacking to give the index a toc entry and chapter number
+\addcontentsline{toc}{chapter}{\protect\numberline{\thechapter}Class Index}
+\printindex
 \printnoidxglossaries
 \end{document}
