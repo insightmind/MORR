@@ -159,12 +159,32 @@ package "MORR" {
     !startsub CORE
     package "CORE" #E6E6E6 {
         class RecordingManager {
-            + isRunning : bool
-            + Start() : void
-            + Stop() : void
+            - encoder : IEncoder
+            - decoder : IDecoder
+            - videoCapture : IVideoCapture
+            + IsRecording : bool <<get>> <<private set>>
+            + EventQueues : IEnumerable<EventQueue<Event>> <<get>> <<private set>>
+            + StartRecording() : void
+            + StopRecording() : void
+            + StartDecoding() : void
+            + StopDecoding() : void
+        }
+
+        interface IRecordingManager {
+            + IsRecording : bool <<get>>
+            + StartRecording() : void
+            + StopRecording() : void
+            + StartDecoding() : void
+            + StopDecoding() : void
         }
 
         class ModuleManager {
+            + InitializeModules() : void
+        }
+        interface IModuleManager {
+            + Modules : IEnumerable<IModule> <<get>>
+            + CollectingModules : IEnumerable<ICollectingModule> <<get>>
+            + ModuleConfiguration : GlobalModuleConfiguration <<get>>
             + InitializeModules() : void
         }
 
@@ -172,8 +192,16 @@ package "MORR" {
             + LoadAssemblies(moduleManager:ModuleManager) : void
         }
 
+        interface IBootstrapper {
+            + ComposeImports(@object:object) : void
+        }
+
         class ConfigurationManager {
             + LoadConfiguration(path:string) : void
+        }
+        interface IConfigurationManager {
+            + LoadConfiguration(path:string) : void
+            + Configurations : IEnumerable<IConfiguration> <<get>>
         }
     }
     !endsub
@@ -248,6 +276,10 @@ package "MORR" {
     
         class Executor {
             + Execute(options: Options) : void
+        }
+        class ProcessCommand {
+            + ProcessCommand(recordingManager : IRecordingManager)
+            + ExecuteCommand(options: ProcessOptions)
         }
     }
     !endsub
@@ -489,9 +521,11 @@ package "MORR" {
     ' CLI
     Program --> Executor : uses
     Program --> "1" OutputFormatter
+    Program --> IRecordingManager
     Executor --> "1" Options : uses
     Executor --> "1" RecordingManager
     Executor --> "1" IDecoder : uses
+    IRecordingManager <-- "receiver" ProcessCommand
 
     ' Exceptions
     !startsub EXCEPTIONS
@@ -544,6 +578,10 @@ package "MORR" {
     RecordingManager --> "moduleManager" ModuleManager
     RecordingManager --> Bootstrapper : uses
     Bootstrapper --> ModuleManager : uses
+    IBootstrapper <|-- Bootstrapper
+    IConfigurationManager <|-- ConfigurationManager
+    IModuleManager <|-- ModuleManager
+    IRecordingManager <|-- RecordingManager
     !endsub
 
     'Clipboard
