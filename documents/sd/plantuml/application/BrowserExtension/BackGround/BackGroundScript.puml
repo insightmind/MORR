@@ -16,10 +16,10 @@ class ListenerManager {
     + stopAll()
 }
 interface ICommunicationStrategy {
-    + establishConnection(onSuccess : (response? : string) => void, onFail : (response? : string) => void) : void
-    + requestConfig(onSuccess : (response? : string) : void, onFail : (response? : string) : void) : void
-    + waitForStart(onSuccess : (response? : string) : void, onFail : (response? : string) : void) : void
-    + sendData(data : string) : void
+    + establishConnection() : Promise<void>
+    + requestConfig() : Promise<string>
+    + waitForStart() : Promise<void>
+    + sendData(data : string) : Promise<void>
 }
 
 BackgroundScript *-- ListenerManager
