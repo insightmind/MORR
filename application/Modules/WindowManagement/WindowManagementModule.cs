@@ -24,19 +24,19 @@ namespace MORR.Modules.WindowManagement
         /// A single-writer-multiple-reader queue for WindowMovementEvent
         /// </summary>
         [Import]
-        public WindowMovementEventProducer WindowoMovementEventProducer { get; private set; }
+        public WindowMovementEventProducer WindowMovementEventProducer { get; private set; }
 
         /// <summary>
         /// A single-writer-multiple-reader queue for WindowResizingEvent
         /// </summary>
         [Import]
-        public WindowResizingEventProducer WindoworResizingEventProducer { get; private set; }
+        public WindowResizingEventProducer WindowResizingEventProducer { get; private set; }
 
         /// <summary>
         /// A single-writer-multiple-reader queue for WindowStateChangedEvent
         /// </summary>
         [Import]
-        public WindowStateChangedEventProducer WindowoStateChangedEventProducer { get; private set; }
+        public WindowStateChangedEventProducer WindowStateChangedEventProducer { get; private set; }
 
         public void Initialize()
         {
