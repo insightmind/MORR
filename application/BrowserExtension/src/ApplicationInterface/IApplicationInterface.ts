@@ -1,34 +1,30 @@
 /**
  * The interface to the MORR main application
  */
-export default interface IApplicationInterface {
+export default interface ICommunicationStrategy {
     /**
-     * Establish a connection with the main application.
+     * Asynchronously establish a connection with the main application.
      * Implementations may retry indefinetly until a connection could be established automatically or return an error upon failure.
-     * @param onSuccess Callback function, invoked if connection was established
-     * @param onFail Callback function, invoked upon errors not handeled by the implementation.
+     * @returns a Promise which will be resolved when a connection was established
      */
-    establishConnection(onSuccess : (response? : string) => void, onFail : (response? : string) => void) : void;
+    establishConnection() : Promise<void>;
 
     /**
-     * Request the configuration from the MORR main application.
-     * @param onSuccess Callback function, invoked if request succeeds
-     * @param onFail Callback function, invoked if request fails
+     * Asynchronously request the configuration from the MORR main application.
+     * @returns a Promise which will be filled with the config string when resolved
      */
-    requestConfig(onSuccess : (response? : string) => void, onFail : (response? : string) => void) : void;
+    requestConfig() : Promise<string>;
 
     /**
-     * Wait for the start signal coming from the from the MORR main application.
-     * @param onSuccess Callback function, invoked if request succeeds
-     * @param onFail Callback function, invoked if request fails
+     * Asynchronously wait for the start signal coming from the MORR main application.
+     * @returns a Promise which will be resolved when a start-signal is received
      */
-    waitForStart(onStart : (response? : string) => void, onFail : (response? : string) => void) : void;
+    waitForStart() : Promise<void>;
 
     /**
-     * Send serialized (event-) data to the MORR main application.
+     * Asynchronously send serialized (event-) data to the MORR main application.
      * @param data The serialized data to send
-     * @param onSuccess Callback function, invoked if sending succeeds
-     * @param onFail Callback function, invoked if sending fails
+     * @returns a Promise which fill be resolved when the data was successfully sent
      */
-    sendData(data : string, onSuccess : (response? : string) => void, onFail : (response? : string) => void) : void;
+    sendData(data : string) : Promise<void>;
 }

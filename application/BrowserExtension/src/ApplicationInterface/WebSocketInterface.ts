@@ -1,9 +1,9 @@
-import IApplicationInterface from './IApplicationInterface'
+import ICommunicationStrategy from './IApplicationInterface'
 
 /**
  * Application interface using  a web socket. Expects a websocket-server on the main application side.
  */
-export default class WebSocketInterface implements IApplicationInterface {
+export default class WebSocketInterface implements ICommunicationStrategy {
     /**
      * URI of the websocket server of the main application.
      */
@@ -28,16 +28,16 @@ export default class WebSocketInterface implements IApplicationInterface {
             throw new Error("Method not implemented.");
         };
     }
-    establishConnection(onSuccess: (response?: string | undefined) => void, onFail: (response?: string | undefined) => void): void {
+    establishConnection(): Promise<void> {
         throw new Error("Method not implemented.");
     }
-    requestConfig(onSuccess: (response?: string | undefined) => void, onFail: (response?: string | undefined) => void): void {
+    requestConfig(): Promise<string> {
         throw new Error("Method not implemented.");
     }
-    waitForStart(onStart: (response?: string | undefined) => void, onFail: (response?: string | undefined) => void): void {
+    waitForStart(): Promise<void> {
         throw new Error("Method not implemented.");
     }
-    sendData(data: string, onSuccess: (response?: string | undefined) => void, onFail: (response?: string | undefined) => void): void {
+    sendData(data: string): Promise<void> {
         throw new Error("Method not implemented.");
     }
 }

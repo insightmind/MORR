@@ -1,9 +1,9 @@
 import * as jquery from 'jquery';
-import IApplicationInterface from './IApplicationInterface';
+import ICommunicationStrategy from './IApplicationInterface';
 /**
  * Application Interface using the HTTP-POST. Expects a HTTPListener on the main application side.
  */
-export default class PostHTTPInterface implements IApplicationInterface {
+export default class PostHTTPInterface implements ICommunicationStrategy {
     /**
      * URL of the HTTPListener attached to the main application.
      */
@@ -11,19 +11,16 @@ export default class PostHTTPInterface implements IApplicationInterface {
     constructor(url: string) {
         this.listenerURL = url;
     }
-    establishConnection(onSuccess: (response?: string | undefined) => void, onFail: (response?: string | undefined) => void): void {
+    establishConnection(): Promise<void> {
         throw new Error("Method not implemented.");
     }
-    public requestConfig(onSuccess : (response? : string) => void, onFail : (response? : string) => void) : void {
+    requestConfig(): Promise<string> {
         throw new Error("Method not implemented.");
     }
-
-    public waitForStart = (onStart : (response? : string) => void, onFail : (response? : string) => void) => {
+    waitForStart(): Promise<void> {
         throw new Error("Method not implemented.");
     }
-    
-    public sendData(data : string, onSuccess : (response? : string) => void, onFail : (response? : string) => void) : void{
+    sendData(data: string): Promise<void> {
         throw new Error("Method not implemented.");
     }
-    
 }
