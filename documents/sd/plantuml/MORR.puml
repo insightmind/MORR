@@ -490,13 +490,15 @@ package "MORR" {
     }
     !endsub
     ' CLI
-    Program --> Executor : uses
-    Program --> "1" OutputFormatter
-    Program --> IRecordingManager
-    Executor --> "1" Options : uses
-    Executor --> "1" IRecordingManager
     Executor --> "1" IDecoder : uses
     IRecordingManager <-- ProcessCommand
+    Program --> IRecordingManager
+    Executor --> "1" IRecordingManager
+    !startsub CLI_INTERNAL
+    Program --> Executor : uses
+    Program --> "1" OutputFormatter
+    Executor --> "1" Options : uses
+    !endsub
 
     ' Exceptions
     !startsub EXCEPTIONS
@@ -606,12 +608,12 @@ package "MORR" {
     !endsub
 
     ' Transcoding
+    IReceivingModule <|-- IMetadataCapture
     !startsub TRANSCODING_INTERNAL
     IDecoder --> MetadataSample : uses
     IEncoder --> MetadataSample : uses
     IVideoCapture --> VideoSample : <<creates>>
     IVideoCapture --> VideoCaptureException : throws >
-    IReceivingModule <|-- IMetadataCapture
     !endsub
 
     ' MPEG
