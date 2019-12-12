@@ -21,6 +21,15 @@ In this chapter, all packages and their purpose are introduced.
 
 The MORR package is the master package containing the whole application. It does not contain any classes directly as it only serves as a container for all packages required in the design.
 
+\begin{packpack}
+\packobj{CORE}
+\packobj{CLI}
+\packobj{SHARED}
+\packobj{TRANSCODING}
+\packobj{MODULES}
+\packobj{UI}
+\end{packpack}
+
 \newpage
 \section{MORR.CORE}
 
@@ -35,6 +44,7 @@ The \textbf{CORE} package contains the central initializing logic to be called w
 \packobj{Bootstrapper}
 \packobj{ModuleManager}
 \packobj{ConfigurationManager}
+\packobj{InvalidConfigurationException}
 \end{packclass}
 
 \begin{packif}
@@ -55,6 +65,7 @@ The \textbf{CLI} package contains all logic exclusively needed for the command l
 
 \begin{packclass}
 \packobj{ProcessCommand}
+\packobj{ProcessOptions}
 \packobj{Executor}
 \packobj{OutputFormatter}
 \packobj{Options}
@@ -83,7 +94,6 @@ The \textbf{SHARED} package provides interfaces and classes which have to be kno
 \begin{packclass}
 \packobj{\abstract{EventQueue<T>}}
 \packobj{\abstract{Event}}
-\packobj{InvalidConfigurationException}
 \packobj{RingBufferStorageStrategy<T>}
 \packobj{RefCountedListStorageStrategy<T>}
 \packobj{KeepAllStorageStrategy<T>}
@@ -98,55 +108,53 @@ The \textbf{SHARED} package provides interfaces and classes which have to be kno
 
 The \textbf{TRANSCODING} package is responsible for serialization and deserialization of recorded video-, audio- and event-data. 
 
-Contained interfaces:
-\begin{itemize}
-\item IVideoCapture
-\item IAudioCapture
-\item IDecoder
-\item IEncoder
-\end{itemize}
+\begin{packif}
+\packobj{IVideoCapture}
+\packobj{IMetadataCapture}
+\packobj{IDecoder}
+\packobj{IEncoder}
+\packobj{IMetaDataDeserializer}
+\end{packif}
 
-Contained classes:
-\begin{itemize}
-\item \textit{abstract} AudioSample
-\item \textit{abstract} VideoSample
-\item \textit{abstract} MetadataSample
-\item DecodingException
-\item EncodingException
-\item CaptureException
-\item MetadataDecodingException
-\item AudioDecodingException
-\item VideoDecodingException
-\item MetadataEncodingException
-\item AudioEncodingException
-\item VideoEncodingException
-\item VideoCaptureException
-\item AudioCaptureException
-\end{itemize}
+\begin{packclass}
+\packobj{\abstract{VideoSample}}
+\packobj{\abstract{MetadataSample}}
+\packobj{DecodingException}
+\packobj{EncodingException}
+\packobj{CaptureException}
+\packobj{MetadataDecodingException}
+\packobj{VideoDecodingException}
+\packobj{MetadataEncodingException}
+\packobj{VideoEncodingException}
+\packobj{VideoCaptureException}
+\end{packclass}
 
-Contained packages:
-\begin{itemize}
-\item CSV
-\item MPEG
-\end{itemize}
+\begin{packpack}
+\packobj{CSV}
+\packobj{MPEG}
+\end{packpack}
 
 \section*{MORR.TRANSCODING.CSV}
 The \textbf{TRANSCODING.CSV} package is responsible for providing functionality which allows for encoding/decoding events from/to CSV (comma separated values) format.
 
-Contained classes:
-\begin{itemize}
-\item CSVDecoder
-\item CSVEncoder
-\end{itemize}
+\begin{packclass}
+\packobj{CSVDecoder}
+\packobj{CSVEncoder}
+\end{packclass}
 
 \section*{MORR.TRANSCODING.MPEG}
 The \textbf{TRANSCODING.MPEG} package allows for storing video-, audio- and event-data in a MPEG container and also retrieving this data again from such a container.
 
-Contained classes:
-\begin{itemize}
-\item CSVDecoder
-\item CSVEncoder
-\end{itemize}
+\begin{packclass}
+\packobj{MPEGEncoder}
+\packobj{MPEGDecoder}
+\packobj{DesktopCapture}
+\packobj{<<static>> MonitorEnumerationHelper}
+\packobj{<<static>> Durect3D11Helpers}
+\packobj{<<static>> CaptureHelper}
+\packobj{MonitorInfoEx}
+\packobj{MonitorInfo}
+\end{packclass}
 
 \newpage
 \section{MORR.MODULES}
@@ -157,6 +165,14 @@ Contained classes:
 
 The \textbf{MODULES} package serves as a container for all module-subpackages.
 
+\begin{packpack}
+\packobj{WINDOWMANAGEMENT}
+\packobj{KEYBOARD}
+\packobj{CLIPBOARD}
+\packobj{WEBBROWSER}
+\packobj{MOUSE}
+\end{packpack}
+
 \subsection*{MORR.MODULES.WINDOWMANAGEMENT}
 
 \begin{center}
@@ -165,15 +181,14 @@ The \textbf{MODULES} package serves as a container for all module-subpackages.
 
 The \textbf{WINDOWMANAGEMENT} package is responsible for providing the classes and concepts necessary for recording the window related user-interactions.
 
-Contained classes:
-\begin{itemize}
-\item WindowManagementModule
-\item \textit{abstract} WindowEvent
-\item WindowMovementEvent
-\item WindowFocusEvent
-\item WindowSateChangedEvent
-\item WindowResizingEvent
-\end{itemize}
+\begin{packclass}
+\packobj{WindowManagementModule}
+\packobj{\abstract{WindowEvent}}
+\packobj{WindowMovementEvent}
+\packobj{WindowFocusEvent}
+\packobj{WindowSateChangedEvent}
+\packobj{WindowResizingEvent}
+\end{packclass}
 \newpage
 \subsection*{MORR.MODULES.KEYBOARD}
 
@@ -183,12 +198,11 @@ Contained classes:
 
 The \textbf{KEYBOARD} package is responsible for providing the classes and concepts necessary for recording the keyboard related user-inputs.
 
-Contained classes:
-\begin{itemize}
-\item \textit{abstract} KeyboardEvent
-\item KeyboardModule
-\item KeyboardInteractEvent
-\end{itemize}
+\begin{packclass}
+\packobj{\abstract{KeyboardEvent}}
+\packobj{KeyboardModule}
+\packobj{KeyboardInteractEvent}
+\end{packclass}
 
 \newpage
 \subsection*{MORR.MODULES.WEBBROWSER}
@@ -199,20 +213,19 @@ Contained classes:
 
 The \textbf{WEBBROWSER} package is responsible for providing the classes and concepts necessary for recording the webbrowser related user-interactions.
 
-Contained classes:
-\begin{itemize}
-\item WebBrowserModule
-\item \textit{abstract} WebBrowserEvent
-\item TextSelectionEvent
-\item TextInputEvent
-\item SwitchTabEvent
-\item OpenTabEvent
-\item CloseTabEvent
-\item NavigationEvent
-\item HoverEvent
-\item FileDownloadEvent
-\item ButtonClickEvent
-\end{itemize}
+\begin{packclass}
+\packobj{WebBrowserModule}
+\packobj{\abstract{WebBrowserEvent}}
+\packobj{TextSelectionEvent}
+\packobj{TextInputEvent}
+\packobj{SwitchTabEvent}
+\packobj{OpenTabEvent}
+\packobj{CloseTabEvent}
+\packobj{NavigationEvent}
+\packobj{HoverEvent}
+\packobj{FileDownloadEvent}
+\packobj{ButtonClickEvent}
+\end{packclass}
 
 \newpage
 \subsection*{MORR.MODULES.CLIPBOARD}
@@ -223,17 +236,15 @@ Contained classes:
 
 The \textbf{CLIPBOARD} package is responsible for providing the classes and concepts necessary for recording the clipboard related user-interactions.
 
-Contained classes:
-\begin{itemize}
-\item ClipboardModule
-\item \textit{abstract} ClipboardEvent
-\item ClipBoardInteractEvent
-\end{itemize}
+\begin{packclass}
+\packobj{ClipboardModule}
+\packobj{\abstract{ClipboardEvent}}
+\packobj{ClipBoardInteractEvent}
+\end{packclass}
 
-Contained enums:
-\begin{itemize}
-\item InteractionType
-\end{itemize}
+\begin{packenum}
+\packobj{InteractionType}
+\end{packenum}
 
 \newpage
 \subsection*{MORR.MODULES.MOUSE}
@@ -244,17 +255,40 @@ Contained enums:
 
 The \textbf{MOUSE} package is responsible for providing the classes and concepts necessary for recording the mouse related user-inputs.
 
-Contained classes:
-\begin{itemize}
-\item MouseModule
-\item \textit{abstract} MouseEvent
-\item MouseScrollEvent
-\item MouseClickEvent
-\item MouseMoveEvent
-\end{itemize}
+\begin{packclass}
+\packobj{MouseModule}
+\packobj{\abstract{MouseEvent}}
+\packobj{MouseScrollEvent}
+\packobj{MouseClickEvent}
+\packobj{MouseMoveEvent}
+\end{packclass}
 
-Contained enums:
-\begin{itemize}
-\item MouseButton
-\item MouseButtonState
-\end{itemize}
+\begin{packenum}
+\packobj{MouseButton}
+\packobj{MouseButtonState}
+\end{packenum}
+\newpage
+
+\section{MORR.UI}
+
+\begin{center}
+    \includegraphics[width=1.0\textwidth]{resources/Packages/AllPackages.png}
+\end{center}
+
+The \textbf{UI} package is responsible for the graphical user interface.
+
+\begin{packif}
+\packobj{ICommand}
+\end{packif}
+
+\begin{packclass}
+\packobj{ContextMenu}
+\packobj{NotifyIcon}
+\packobj{<<partial> App}
+\packobj{ImageSource}
+\packobj{<<partial>> InformationDialog}
+\packobj{<<partial>> SaveDialog}
+\packobj{<<partial>> ErrorDialog}
+\packobj{ApplicationViewModel}
+\packobj{RelayCommand}
+\end{packclass}
