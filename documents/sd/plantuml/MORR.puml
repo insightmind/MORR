@@ -552,9 +552,9 @@ package "MORR" {
     RecordingManager --> "metadataCapture" IMetadataCapture
     RecordingManager --> "metadataDeserializer" IMetadataDeserializer 
     !startsub CORE_INTERNAL
-    RecordingManager --> "ConfigurationManager" ConfigurationManager
-    RecordingManager --> "ModuleManager" ModuleManager
-    RecordingManager --> Bootstrapper : uses
+    RecordingManager --> "ConfigurationManager" IConfigurationManager
+    RecordingManager --> "ModuleManager" IModuleManager
+    RecordingManager --> IBootstrapper : uses
     IBootstrapper <|-- Bootstrapper
     IConfigurationManager <|-- ConfigurationManager
     IModuleManager <|-- ModuleManager
