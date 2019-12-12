@@ -1,6 +1,6 @@
 ﻿using MORR.Shared;
 
-namespace MORR.Modules.Mouse.Events
+namespace MORR.Modules.WindowManagement.Events
 {
     /// <summary>
     ///     A window management event which all specific WindowEvents inherit from.

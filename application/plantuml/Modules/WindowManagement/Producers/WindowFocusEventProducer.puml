@@ -1,0 +1,12 @@
+@startuml
+skinparam monochrome true
+skinparam ClassAttributeIconSize 0
+
+class WindowFocusEventProducer {
+    + <<override>> GetEvents() : IAsyncEnumerable<WindowFocusEvent>
+    # <<override>> Enqueue(WindowFocusEvent event) : void
+}
+class "EventQueue<T>" {
+}
+"EventQueue<T>" "<WindowFocusEvent>" <|-- WindowFocusEventProducer
+@enduml

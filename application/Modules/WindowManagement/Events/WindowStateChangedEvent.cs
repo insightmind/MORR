@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace MORR.Modules.Mouse.Events
+namespace MORR.Modules.WindowManagement.Events
 {
     /// <summary>
     ///     An user interaction that changes the state of a window

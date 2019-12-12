@@ -1,0 +1,12 @@
+@startuml
+skinparam monochrome true
+skinparam ClassAttributeIconSize 0
+
+class MouseScrollEventProducer {
+    + <<override>> GetEvents() : IAsyncEnumerable<MouseScrollEvent>
+    # <<override>> Enqueue(MouseScrollEvent event) : void
+}
+class "EventQueue<T>" {
+}
+"EventQueue<T>" "<MouseScrollEvent>" <|-- MouseScrollEventProducer
+@enduml

@@ -1,0 +1,8 @@
+@startuml
+class ButtonClickEventProducer {
+    + <<override>> GetEvents() : IAsyncEnumerable<ButtonClickEvent>
+}
+class "EventQueue`1"<T> {
+}
+"EventQueue`1" "<ButtonClickEvent>" <|-- ButtonClickEventProducer
+@enduml

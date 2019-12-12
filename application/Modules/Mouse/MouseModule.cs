@@ -1,5 +1,7 @@
 ﻿using System;
 using MORR.Shared.Modules;
+using MORR.Modules.Mouse.Producers;
+using System.Composition;
 
 namespace MORR.Modules.Mouse
 {
@@ -11,6 +13,24 @@ namespace MORR.Modules.Mouse
         public bool IsEnabled { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public Guid Identifier => throw new NotImplementedException();
+
+        /// <summary>
+        /// A single-writer-multiple-reader queue for MouseClickEvent
+        /// </summary>
+        [Import]
+        public MouseClickEventProducer MouseClickEventProducer { get; private set; }
+
+        /// <summary>
+        /// A single-writer-multiple-reader queue for MouseScrollEvent
+        /// </summary>
+        [Import]
+        public MouseScrollEventProducer MouseScrollEventProducer { get; private set; }
+
+        /// <summary>
+        /// A single-writer-multiple-reader queue for MouseMoveEvent
+        /// </summary>
+        [Import]
+        public MouseMoveEventProducer MouseMoveEventProducer { get; private set; }
 
         public void Initialize()
         {

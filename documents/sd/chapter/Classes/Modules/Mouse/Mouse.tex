@@ -1,7 +1,7 @@
 \subsection{Mouse}
 
 \begin{class}{MouseModule} 
-    \clsdiagram{resources/Classes/Modules/Mouse/MouseModule.png}
+    \clsdiagram[scale = 0.7]{resources/Classes/Modules/Mouse/MouseModule.png}
 
     \clsdcl{public class MouseModule : ICollectingModule}
 
@@ -55,4 +55,63 @@
         \attribute{public short ScrollAmount}{The amount of the wheel being scrolled.}
         \attribute{public System.IntPtr HWnd}{The handle of the window in which the mouse scroll occurred.}
     \end{attributes}
+\end{class}
+
+\subsection*{Producers}
+
+\begin{class}{MouseClickEventProducer} 
+	\clsdiagram[scale = 0.7]{resources/Classes/Modules/Mouse/Producers/MouseClickEventProducer.png}
+    
+    \clsdcl{public class MouseClickEventProducer : EventQueue<MouseClickEvent>}
+
+    \clsdsp{A single-writer-multiple-reader queue for MouseClickEvent}
+
+    \begin{methods}
+        \begin{method}{public override IAsyncEnumerable<MouseClickEvent> GetEvents()}{Asynchronously gets all mouse click events}
+          \return{IAsyncEnumerable<MouseClickEvent>}{A stream of MouseClickEvent}
+        \end{method}
+        \begin{method}{protected override void Enqueue(MouseClickEvent event)}{Asynchronously enqueues a new mouse click event}
+            \begin{parameters}
+                \para{MouseClickEvent event}{MouseClickEvent to enqueue}
+            \end{parameters}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{MouseScrollEventProducer} 
+	\clsdiagram[scale = 0.7]{resources/Classes/Modules/Mouse/Producers/MouseScrollEventProducer.png}
+    
+    \clsdcl{public class MouseScrollEventProducer : EventQueue<MouseScrollEvent>}
+
+    \clsdsp{A single-writer-multiple-reader queue for MouseScrollEvent}
+
+    \begin{methods}
+        \begin{method}{public override IAsyncEnumerable<MouseScrollEvent> GetEvents()}{Asynchronously gets all mouse scroll events}
+          \return{IAsyncEnumerable<MouseScrollEvent>}{A stream of MouseScrollEvent}
+        \end{method}
+        \begin{method}{protected override void Enqueue(MouseScrollEvent event)}{Asynchronously enqueues a new mouse scroll event}
+            \begin{parameters}
+                \para{MouseScrollEvent event}{MouseScrollEvent to enqueue}
+            \end{parameters}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{MouseMoveEventProducer} 
+	\clsdiagram[scale = 0.7]{resources/Classes/Modules/Mouse/Producers/MouseMoveEventProducer.png}
+    
+    \clsdcl{public class MouseMoveEventProducer : EventQueue<MouseMoveEvent>}
+
+    \clsdsp{A single-writer-multiple-reader queue for MouseMoveEvent}
+
+    \begin{methods}
+        \begin{method}{public override IAsyncEnumerable<MouseMoveEvent> GetEvents()}{Asynchronously gets all mouse move events}
+          \return{IAsyncEnumerable<MouseMoveEvent>}{A stream of MouseMoveEvent}
+        \end{method}
+        \begin{method}{protected override void Enqueue(MouseMoveEvent event)}{Asynchronously enqueues a new mouse move event}
+            \begin{parameters}
+                \para{MouseMoveEvent event}{MouseMoveEvent to enqueue}
+            \end{parameters}
+        \end{method}
+    \end{methods}
 \end{class}
