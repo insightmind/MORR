@@ -1,6 +1,6 @@
 @startuml MORR
 skinparam monochrome true
-'skinparam linetype ortho
+skinparam linetype ortho
 skinparam classAttributeIconSize 0
 
 left to right direction
