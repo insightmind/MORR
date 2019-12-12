@@ -516,11 +516,11 @@ package "MORR" {
     EncodingException <|-- VideoEncodingException
     EncodingException <|-- MetadataEncodingException
 
-    IEncoder --> VideoEncodingException : throws
-    IEncoder --> MetadataEncodingException : throws
+    IEncoder ..> VideoEncodingException : throws >
+    IEncoder ..> MetadataEncodingException : throws >
 
-    IDecoder --> VideoDecodingException : throws
-    IDecoder --> MetadataDecodingException : throws
+    IDecoder ..> VideoDecodingException : throws >
+    IDecoder ..> MetadataDecodingException : throws >
     !endsub
 
     ' EventQueue
@@ -554,7 +554,7 @@ package "MORR" {
     !startsub CORE_INTERNAL
     RecordingManager --> "ConfigurationManager" IConfigurationManager
     RecordingManager --> "ModuleManager" IModuleManager
-    RecordingManager --> IBootstrapper : uses
+    RecordingManager ..> IBootstrapper : uses
     IBootstrapper <|-- Bootstrapper
     IConfigurationManager <|-- ConfigurationManager
     IModuleManager <|-- ModuleManager
@@ -616,24 +616,24 @@ package "MORR" {
     ' Transcoding
     IReceivingModule <|-- IMetadataCapture
     !startsub TRANSCODING_INTERNAL
-    IDecoder --> MetadataSample : uses
-    IEncoder --> MetadataSample : uses
-    IVideoCapture --> VideoSample : <<creates>>
-    IVideoCapture --> VideoCaptureException : throws >
+    IDecoder ..> MetadataSample : uses
+    IEncoder ..> MetadataSample : uses
+    IVideoCapture ..> VideoSample : <<creates>>
+    IVideoCapture ..> VideoCaptureException : throws >
     !endsub
 
     ' MPEG
     !startsub TRANSCODING_MPEG_INTERNAL
     IVideoCapture <|-- DesktopCapture
-    DesktopCapture --> Direct3D11Helpers : uses
-    DesktopCapture --> CaptureHelper : uses
+    DesktopCapture ..> Direct3D11Helpers : uses
+    DesktopCapture ..> CaptureHelper : uses
     IEncoder <|-- MPEGEncoder
     IDecoder <|-- MPEGDecoder
 
-    MPEGEncoder --> DesktopCapture : uses
-    MPEGEncoder --> MonitorEnumerationHelper : uses
-    MonitorEnumerationHelper --> MonitorInfo : uses
-    MonitorEnumerationHelper --> MonitorInfoEx : uses
+    MPEGEncoder ..> DesktopCapture : uses
+    MPEGEncoder ..> MonitorEnumerationHelper : uses
+    MonitorEnumerationHelper ..> MonitorInfo : uses
+    MonitorEnumerationHelper ..> MonitorInfoEx : uses
     !endsub
     ' CSV
     IEncoder <|-- CSVEncoder
