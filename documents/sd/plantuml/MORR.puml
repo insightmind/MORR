@@ -251,8 +251,16 @@ package "MORR" {
         class Program {
             {static} Main(args:string[]) : void
         }
-
+        
         class Options {
+
+        }
+
+        class ICLICommand {
+            + ExecuteCommand(options: Options)
+        }
+
+        class ProcessOptions {
             + Input : string
             + Output : string
             + ProcessingEnabled: bool
@@ -264,9 +272,6 @@ package "MORR" {
             + PrintException(exception: Exception) : void
         }
     
-        class Executor {
-            + Execute(options: Options) : void
-        }
         class ProcessCommand {
             + ProcessCommand(recordingManager : IRecordingManager)
             + ExecuteCommand(options: ProcessOptions)
@@ -490,14 +495,15 @@ package "MORR" {
     }
     !endsub
     ' CLI
-    Executor --> "1" IDecoder : uses
     IRecordingManager <-- ProcessCommand
     Program --> IRecordingManager
-    Executor --> "1" IRecordingManager
     !startsub CLI_INTERNAL
-    Program --> Executor : uses
     Program --> "1" OutputFormatter
-    Executor --> "1" Options : uses
+    Program o--> ICLICommand
+    ICLICommand ..> Options : uses
+    ICLICommand <|-- ProcessCommand
+    Options <|-- ProcessOptions
+    ProcessCommand ..> ProcessOptions: uses
     !endsub
 
     ' Exceptions

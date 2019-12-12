@@ -1,4 +1,4 @@
-@startuml
+@startuml CORE
 skinparam monochrome true
 'skinparam linetype ortho
 skinparam classAttributeIconSize 0

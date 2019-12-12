@@ -1,4 +1,4 @@
-@startuml
+@startuml MODULES_CLIPBOARD
 skinparam monochrome true
 'skinparam linetype ortho
 skinparam classAttributeIconSize 0

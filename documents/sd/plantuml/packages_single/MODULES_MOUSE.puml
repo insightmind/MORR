@@ -1,4 +1,4 @@
-@startuml
+@startuml MODULES_MOUSE
 skinparam monochrome true
 'skinparam linetype ortho
 skinparam classAttributeIconSize 0
