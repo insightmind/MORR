@@ -239,22 +239,22 @@ package "MORR" {
     Exception <|-- InvalidConfigurationException
     IBootstrapper <|-- Bootstrapper
 
-    IConfigurationManager <|-- ConfigurationManager
-    IConfiguration <|-- GlobalModuleConfiguration
-    IModuleManager <|-- ModuleManager
-    IRecordingManager <|-- RecordingManager
+    IConfigurationManager <|.. ConfigurationManager
+    IConfiguration <|.. GlobalModuleConfiguration
+    IModuleManager <|.. ModuleManager
+    IRecordingManager <|.. RecordingManager
 
-    Exception <|-- CaptureException
+    Exception <|.. CaptureException
 
-    IVideoCapture <|-- DesktopCapture
-    IConfiguration <|-- DesktopCaptureConfiguration
+    IVideoCapture <|.. DesktopCapture
+    IConfiguration <|.. DesktopCaptureConfiguration
 
     CaptureException <|-- VideoCaptureException
 
-    IReceivingModule <|-- IMetadataCapture
-    IMetadataCapture <|-- MetadataCapture
+    IReceivingModule <|.. IMetadataCapture
+    IMetadataCapture <|.. MetadataCapture
 
-    IEncoder <|-- CSVEncoder
+    IEncoder <|.. CSVEncoder
 
     Exception <|-- DecodingException
     Exception <|-- EncodingException
@@ -262,16 +262,16 @@ package "MORR" {
     DecodingException <|-- MetadataDecodingException
     EncodingException <|-- MetadataEncodingException
 
-    IMetadataDeserializer <|-- MetadataDeserializer
+    IMetadataDeserializer <|.. MetadataDeserializer
 
     DecodingException <|-- VideoDecodingException
     EncodingException <|-- VideoEncodingException
 
-    IDecoder <|-- MPEGDecoder
-    IEncoder <|-- MPEGEncoder
+    IDecoder <|.. MPEGDecoder
+    IEncoder <|.. MPEGEncoder
 
-    IConfiguration <|-- MPEGDecoderConfiguration
-    IConfiguration <|-- MPEGEncoderConfiguration
+    IConfiguration <|.. MPEGDecoderConfiguration
+    IConfiguration <|.. MPEGEncoderConfiguration
 
     ConfigurationManager --> "*" IConfiguration
     ConfigurationManager --> InvalidConfigurationException : throws
@@ -362,7 +362,7 @@ package "MORR" {
     NotifyIcon --> "IconSource" ImageSource
     NotifyIcon --> "Command" ICommand
     NotifyIcon --> "ContextMenu" ContextMenu
-    ICommand <|-- RelayCommand
+    ICommand <|.. RelayCommand
     !endsub
 
     !startsub CLI
@@ -404,7 +404,7 @@ package "MORR" {
     Program --> "1" OutputFormatter
     Program o--> ICLICommand
     ICLICommand ..> Options : uses
-    ICLICommand <|-- ProcessCommand
+    ICLICommand <|.. ProcessCommand
     Options <|-- ProcessOptions
     ProcessCommand ..> ProcessOptions: uses
     !endsub
@@ -433,7 +433,7 @@ package "MORR" {
         }
 
         'Clipboard
-        ICollectingModule <|-- ClipboardModule
+        ICollectingModule <|.. ClipboardModule
         Event <|-- ClipboardEvent
         ClipboardEvent <|-- ClipBoardInteractEvent
         ClipBoardInteractEvent --> "Interaction" InteractionType
@@ -456,7 +456,7 @@ package "MORR" {
 
         ' Keyboard
         Event <|-- KeyboardEvent
-        ICollectingModule <|-- KeyboardModule
+        ICollectingModule <|.. KeyboardModule
         KeyboardEvent <|-- KeyBoardInteractEvent
         !endsub
 
@@ -496,7 +496,7 @@ package "MORR" {
 
         ' Mouse
         Event <|-- MouseEvent
-        ICollectingModule <|-- MouseModule
+        ICollectingModule <|.. MouseModule
         MouseEvent <|-- MouseClickEvent
         MouseEvent <|-- MouseScrollEvent
         MouseEvent <|-- MouseMoveEvent
@@ -553,7 +553,7 @@ package "MORR" {
 
         ' WebBrowser
         Event <|-- WebBrowserEvent
-        ICollectingModule <|-- WebBrowserModule
+        ICollectingModule <|.. WebBrowserModule
         WebBrowserEvent <|-- ButtonClickEvent
         WebBrowserEvent <|-- CloseTabEvent
         WebBrowserEvent <|-- FileDownloadEvent
@@ -597,7 +597,7 @@ package "MORR" {
 
         ' WindowManagement
         Event <|-- WindowEvent
-        ICollectingModule <|-- WindowManagementModule
+        ICollectingModule <|.. WindowManagementModule
         WindowEvent <|-- WindowFocusEvent
         WindowEvent <|-- WindowMovementEvent
         WindowEvent <|-- WindowResizingEvent
@@ -671,9 +671,9 @@ package "MORR" {
     "EventQueue<T> where T : Event" --> "IEventQueueStorageStrategy<T> where T : Event"
 
     ' Modules
-    IModule <|-- ICollectingModule
-    IModule <|-- IReceivingModule
-    IModule <|-- ITransformingModule
+    IModule <|.. ICollectingModule
+    IModule <|.. IReceivingModule
+    IModule <|.. ITransformingModule
     !endsub 
 
     ' Exceptions
