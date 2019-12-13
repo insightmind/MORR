@@ -62,7 +62,7 @@ The \textbf{CORE} package contains the central initializing logic to be called w
 \packobj{CAPTURE}
 \end{packpack}
 
-\section*{MORR.TRANSCODING}
+\section*{MORR.CORE.TRANSCODING}
 
 The \textbf{TRANSCODING} package is responsible for serialization and deserialization of recorded video-, audio- and event-data. 
 
@@ -91,14 +91,14 @@ The \textbf{TRANSCODING} package is responsible for serialization and deserializ
 \packobj{MPEG}
 \end{packpack}
 
-\section*{MORR.TRANSCODING.CSV}
+\section*{MORR.CORE.TRANSCODING.CSV}
 The \textbf{TRANSCODING.CSV} package is responsible for providing functionality which allows for encoding of event data to CSV (comma separated values) format.
 
 \begin{packclass}
 \packobj{CSVEncoder}
 \end{packclass}
 
-\section*{MORR.TRANSCODING.MPEG}
+\section*{MORR.CORE.TRANSCODING.MPEG}
 The \textbf{TRANSCODING.MPEG} package allows for storing video-, audio- and event-data in a MPEG container and also retrieving this data again from such a container.
 
 \begin{packclass}
@@ -108,7 +108,7 @@ The \textbf{TRANSCODING.MPEG} package allows for storing video-, audio- and even
 \packobj{MPEGDecoderConfiguration}
 \end{packclass}
 
-\section*{MORR.CAPTURE}
+\section*{MORR.CORE.CAPTURE}
 
 The\textbf{TRANSCODING.CAPTURE} package is responsible for capturing and supplying samples to the encoders.
 
