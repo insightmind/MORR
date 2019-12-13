@@ -27,12 +27,14 @@
 	
 	\clsdcl{public class ProcessCommand : ICLICommand }
 	
-	\begin{attributes}
-		\attribute{public RecordingManager recordingManager}{The recording manager is the connection to the main application which is used to load all modules and process the decoded events through the pipeline and finally decode it. }
-		
-		\attribute{public IDecoder decoder}{The decoder is used to decode the given recording container and receive the captured events from it. }
-	\end{attributes}
-	
+	\begin{constructors}
+		\begin{constructor}{public ProcessCommand(IRecordingManager recordingManager)}{Creates a new instance of the ProcessCommand which will use the provided IRecordingManager for decoding.}
+			\begin{parameters}
+				\para{IRecordingManager recordingManager}{The IRecordingManager to use.}
+			\end{parameters}
+		\end{constructor}
+	\end{constructors}
+
 	\begin{methods}
 		\begin{method}{void ExecuteCommand(ProcessOptions options)}{\\ Executes the implementing command using the options given to it.}
 		

@@ -1,179 +1,379 @@
 @startuml MORR
 skinparam monochrome true
-'skinparam linetype ortho
+skinparam linetype ortho
 skinparam classAttributeIconSize 0
 
 left to right direction
 hide empty fields
 
 package "MORR" {
-    package "TRANSCODING" #E6E6E6 {
-        package "MPEG" #BFBFBF {
-            class MPEGDecoder {
-
-            }
-
-            class MPEGEncoder {
-
-            }
-
-            class DesktopCapture {
-                + <<creates>> DesktopCapture(device: IDirect3DDevice, item: GraphicsCaptureItem, size: SizeInt32)
-            }
-
-            class CaptureHelper <<static>> {
-                + <<static>> CanCreateItemWithoutPicker: bool
-                + <<static>> CreateItemForMonitor(hmon: IntPtr) : GraphicsCaptureItem
-            }
-
-            class Direct3D11Helpers <<static>> {
-                + <<static>> CreateDevice(useWARP: bool) : IDirect3DDevice
-                ~ <<static>> CreateDirect3DSufaceFromSharpDXTexture(texture: Texture2D) : IDirect3DSurface
-                ~ <<static>> CreateSharpDXDevice(device: IDirect3DDevice) : Device
-                ~ <<static>> CreateSharpDXTexture2D(surface: IDirect3DSurface) : Texture2D
-            }
-
-            class MonitorInfo {
-                + IsPrimary: bool
-                + ScreenSize: Vector2
-                + DeviceName: string
-                + Hmon: IntPtr
-                + MonitorArea: Rect
-                + WorkArea: Rect
-            }
-
-            class MonitorInfoEx {
-                + Size: int
-                + Flags: uint
-                + DeviceName: string
-                + WorkArea: Rect
-                + Monitor: Rect
-            }
-
-            class MonitorEnumerationHelper <<static>> {
-                + <<static>> GetMonitors() : IEnumerable<MonitorInfo>
-            }
+    !startsub SHARED
+    package "SHARED" #E6E6E6 {
+        interface IConfiguration {
+            + Parse(configuration:string) : void
         }
 
-        package "CSV" #BFBFBF {
-            class CSVDecoder {
-
-            }
-
-            class CSVEncoder {
-
-            }
-        } 
-
-        class CaptureException {
-        
+        abstract class Event {
+            + Timestamp : DateTime
+            + IssuingModule : Guid
+            + Serialize() : string
+            + Deserialize(string serialized) : void
         }
 
-        class AudioCaptureException {
-
+        interface IModule {
+            + Identifier : Guid
+            + IsEnabled : bool <<get>> <<set>>
+            + Initialize() : void
         }
 
-        class VideoCaptureException {
-
+        interface ICollectingModule {    
         }
 
-        interface IAudioCapture {
-            + NextSample() : AudioSample
-        }
-        
-        interface IVideoCapture {
-            + NextSample() : VideoSample
+        interface IReceivingModule {     
         }
 
-        abstract class AudioSample {
-
+        interface ITransformingModule {  
         }
 
-        abstract class MetadataSample {
-
+        abstract class "EventQueue<T> where T : Event" {
+            + StorageStrategy : IEventQueueStorageStrategy<T> <<get>> <<set>>
+            + {abstract} GetEvents() : IAsyncEnumerable<T>
+            # {abstract} Enqueue(T @event) : void
         }
 
-        abstract class VideoSample {
-
+        interface "IReadOnlyEventQueue<out T> where T : Event" {
+            + GetEvents() : IAsyncEnumerable<T>
         }
 
-        class AudioDecodingException {
-
+        interface "IEventQueueStorageStrategy<T> where T : Event" {
+            + GetEvents() : IAsyncEnumerable<T>
+            + Enqueue(T @event) : void
         }
 
-        class VideoDecodingException {
-
+        class "KeepAllStorageStrategy<T> where T : Event" {
+            + GetEvents() : IAsyncEnumerable<T>
+            + Enqueue(T @event) : void
         }
-
-        class MetadataDecodingException {
-
+        class "RefCountedListStorageStrategy<T> where T : Event" {
+            + GetEvents() : IAsyncEnumerable<T>
+            + Enqueue(T @event) : void
         }
-
-        class AudioEncodingException {
-
-        }
-
-        class VideoEncodingException {
-
-        }
-
-        class MetadataEncodingException {
-
-        }
-
-        class DecodingException {
-
-        }
-
-        class EncodingException {
-
-        }
-
-        interface IDecoder {
-            + IsDecoding : bool <<get>> <<set>>
-            + DecodingPath : string <<get>> <<set>>
-            + <<event>> AudioSampleDecoded : AudioSampleDecodedEventHandler 
-            + <<event>> VideoSampleDecoded : VideoSampleDecodedEventHandler 
-            + <<event>> MetadataSampleDecoded : MetadataSampleDecodedEventHandler 
-        }
-    
-        interface IEncoder {
-            + IsEncoding : bool <<get>> <<set>>
-            + EncodingPath : string <<get>> <<set>>
-            + <<event>> AudioSampleRequested : AudioSampleRequestedEventHandler 
-            + <<event>> VideoSampleRequested : VideoSampleRequestedEventHandler 
-            + <<event>> MetadataSampleRequested : MetadataSampleRequestedEventHandler 
-        }
-
-        class DecodingException {
-
-        }
-
-        class EncodingException {
-
+        class "RingBufferStorageStrategy<T> where T : Event" {
+            + Capacity : uint <<get>> <<set>>
+            + GetEvents() : IAsyncEnumerable<T>
+            + Enqueue(T @event) : void
         }
     }
 
+    ' EventQueue
+    "IReadOnlyEventQueue<out T> where T : Event" <|-- "EventQueue<T> where T : Event"
+    "IEventQueueStorageStrategy<T> where T : Event" <|-- "KeepAllStorageStrategy<T> where T : Event"
+    "IEventQueueStorageStrategy<T> where T : Event" <|-- "RefCountedListStorageStrategy<T> where T : Event"
+    "IEventQueueStorageStrategy<T> where T : Event" <|-- "RingBufferStorageStrategy<T> where T : Event"
+    "EventQueue<T> where T : Event" --> "IEventQueueStorageStrategy<T> where T : Event"
+
+    ' Modules
+    IModule <|.. ICollectingModule
+    IModule <|.. IReceivingModule
+    IModule <|.. ITransformingModule
+    !endsub 
+
+    !startsub CORE
     package "CORE" #E6E6E6 {
-        class RecordingManager {
-            + isRunning : bool
-            + Start() : void
-            + Stop() : void
+        interface IRecordingManager {
+            + IsRecording : bool <<get>>
+            + StartRecording() : void
+            + StopRecording() : void
+            + StartDecoding() : void
+            + StopDecoding() : void
         }
 
-        class ModuleManager {
+        class RecordingManager {
+            - encoder : IEncoder
+            - decoder : IDecoder
+            - videoCapture : IVideoCapture
+            + IsRecording : bool <<get>> <<private set>>
+            + EventQueues : IEnumerable<EventQueue<Event>> <<get>> <<private set>>
+            + StartRecording() : void
+            + StopRecording() : void
+            + StartDecoding() : void
+            + StopDecoding() : void
+        }
+
+        interface IModuleManager {
+            + Modules : IEnumerable<IModule> <<get>>
+            + CollectingModules : IEnumerable<ICollectingModule> <<get>>
+            + ModuleConfiguration : GlobalModuleConfiguration <<get>>
             + InitializeModules() : void
         }
 
+        class ModuleManager {
+            + Modules : IEnumerable<IModule> <<get>> <<private set>>
+            + CollectingModules : IEnumerable<ICollectingModule> <<get>> <<private set>>
+            + ModuleConfiguration : GlobalModuleConfiguration <<get>> <<private set>>
+            + InitializeModules() : void
+        }
+
+        interface IBootstrapper {
+            + ComposeImports(@object:object) : void
+        }
+
         class Bootstrapper {
-            + LoadAssemblies(moduleManager:ModuleManager) : void
+            + ComposeImports(@object:object) : void
+        }
+
+        interface IConfigurationManager {
+            + LoadConfiguration(path:string) : void
+            + Configurations : IEnumerable<IConfiguration> <<get>>
         }
 
         class ConfigurationManager {
             + LoadConfiguration(path:string) : void
+            + Configurations : IEnumerable<IConfiguration> <<get>> <<private set>>
+        }
+
+        class GlobalModuleConfiguration {
+            + EnabledModules : IEnumerable<Type> <<get>> <<set>>
+            + Parse(string configuration) : void
+        }
+
+        class RecordingException {
+        }
+
+        class InvalidConfigurationException {
+        }
+
+        class AlreadyRecordingException {
+        }
+
+        class NotRecordingException {
+        }
+
+        package "CAPTURE" #BFBFBF {
+            interface IVideoCapture {
+                + NextSample() : VideoSample
+            }
+
+            class DesktopCapture {
+                + CaptureConfiguration : DesktopCaptureConfiguration <<get>> <<set>>
+                + NextSample() : VideoSample
+            }
+
+            class DesktopCaptureConfiguration {
+                + DeviceToRecord : string <<get>> <<set>>
+                + Parse(string configuration) : void
+            }
+
+            class CaptureHelper {
+                + {static} CanCreateItemWithoutPicker : bool
+                + {static} CreateItemForMonitor(IntPtr hMon) : GraphicsCaptureItem
+            }
+
+            class Direct3D11Helper {
+                + {static} CreateDevice(bool useWARP = false) : IDirect3DDevice
+                + {static} CreateDirect3DSurfaceFromSharpDXTexture(Texture2D texture) : IDirect3DSurface
+                + {static} CreatesharpDXDevice(IDirect3DDevice device) : Device
+                + {static} CreateSharpDXTexture2D(IDirect3DSurface surface) : Texture2D
+            }
+
+            class MonitorInfo {
+                + IsPrimary : bool <<get>> <<set>>
+                + ScreenSize : Vector2 <<get>> <<set>>
+                + MonitorArea : Rect <<get>> <<set>>
+                + WorkArea : Rect <<get>> <<set>>
+                + DeviceName : string <<get>> <<set>>
+                + HMon : IntPtr <<get>> <<set>>
+            }
+
+            class MonitorEnumerationHelper {
+                + {static} GetMonitors() : IEnumerable<MonitorInfo>
+            }
+
+            class CaptureException {
+            }
+
+            class VideoCaptureException {
+            }
+
+            interface IMetadataCapture {
+                + NextSample() : MetadataSample
+            }
+
+            class MetadataCapture {
+                + EventQueues : IEnumerable<EventQueue<Event>> <<get>> <<private set>>
+                + NextSample() : MetadataSample
+            }
+        }
+
+        package "TRANSCODING" #BFBFBF {
+            package "MPEG" #8F8F8F {
+                class MPEGDecoder {
+                    + Decode(string path) : void <<throws DecodingException>>
+                    + DecoderConfiguration : MPEGDecoderConfiguration <<get>> <<set>>
+                    + <<event>> VideoSampleDecoded : VideoSampleDecodedEventHandler 
+                    + <<event>> MetadataSampleDecoded : MetadataSampleDecodedEventHandler 
+                }
+
+                class MPEGDecoderConfiguration {
+                    + ShouldExtractVideo : bool <<get>> <<set>>
+                    + Parse(string configuration) : void
+                }
+
+                class MPEGEncoder {
+                    + Encode() : void <<throws EncodingException>>
+                    + EncoderConfiguration : MPEGEncoderConfiguration <<get>> <<set>>
+                    + <<event>> VideoSampleRequested : VideoSampleRequestedEventHandler 
+                    + <<event>> MetadataSampleRequested : MetadataSampleRequestedEventHandler 
+                }
+
+                class MPEGEncoderConfiguration {
+                    + Bitrate : ushort <<get>> <<set>>
+                    + Framerate : byte <<get>> <<set>>
+                    + Resolution : Size <<get>> <<set>>
+                    + Directory : string <<get>> <<set>>
+                    + Parse(string configuration) : void
+                }
+            }
+
+            package "CSV" #8F8F8F {
+                class CSVEncoder {
+                    + Encode() : void <<throws EncodingException>>
+                    + <<event>> MetadataSampleRequested : MetadataSampleRequestedEventHandler 
+                }
+            } 
+
+            abstract class MetadataSample {
+            }
+
+            abstract class VideoSample {
+            }
+
+            class VideoDecodingException {
+            }
+
+            class MetadataDecodingException {
+            }
+
+            class VideoEncodingException {
+            }
+
+            class MetadataEncodingException {
+            }
+
+            class DecodingException {
+            }
+
+            class EncodingException {
+            }
+
+            "Func<VideoSample, void>" <|-- VideoSampleDecodedEventHandler
+
+            "Func<VideoSample?>" <|-- VideoSampleRequestedEventHandler
+
+            "Func<MetadataSample, void>" <|-- MetadataSampleDecodedEventHandler
+
+            "Func<MetadataSample?>" <|-- MetadataSampleRequestedEventHandler
+
+            interface IMetadataDeserializer {
+            }
+
+            class MetadataDeserializer {
+                + EventQueues : IEnumerable<EventQueue<Event>> <<get>> <<private set>>
+            }
+
+            interface IDecoder {
+                + Decode(string path) : void <<throws DecodingException>>
+                + <<event>> VideoSampleDecoded : VideoSampleDecodedEventHandler 
+                + <<event>> MetadataSampleDecoded : MetadataSampleDecodedEventHandler 
+            }
+        
+            interface IEncoder {
+                + Encode(string path) : void <<throws EncodingException>>
+                + <<event>> VideoSampleRequested : VideoSampleRequestedEventHandler 
+                + <<event>> MetadataSampleRequested : MetadataSampleRequestedEventHandler 
+            }
+
+            class DecodingException {
+            }
+
+            class EncodingException {
+            }
         }
     }
 
+    ' CORE
+
+    Exception <|-- RecordingException
+    RecordingException <|-- AlreadyRecordingException
+    RecordingException <|-- NotRecordingException
+
+    Exception <|-- InvalidConfigurationException
+    IBootstrapper <|-- Bootstrapper
+
+    IConfigurationManager <|.. ConfigurationManager
+    IConfiguration <|.. GlobalModuleConfiguration
+    IModuleManager <|.. ModuleManager
+    IRecordingManager <|.. RecordingManager
+
+    Exception <|.. CaptureException
+
+    IVideoCapture <|.. DesktopCapture
+    IConfiguration <|.. DesktopCaptureConfiguration
+
+    CaptureException <|-- VideoCaptureException
+
+    IReceivingModule <|.. IMetadataCapture
+    IMetadataCapture <|.. MetadataCapture
+
+    IEncoder <|.. CSVEncoder
+
+    Exception <|-- DecodingException
+    Exception <|-- EncodingException
+
+    DecodingException <|-- MetadataDecodingException
+    EncodingException <|-- MetadataEncodingException
+
+    IMetadataDeserializer <|.. MetadataDeserializer
+
+    DecodingException <|-- VideoDecodingException
+    EncodingException <|-- VideoEncodingException
+
+    IDecoder <|.. MPEGDecoder
+    IEncoder <|.. MPEGEncoder
+
+    IConfiguration <|.. MPEGDecoderConfiguration
+    IConfiguration <|.. MPEGEncoderConfiguration
+
+    ConfigurationManager --> "*" IConfiguration
+    ConfigurationManager --> InvalidConfigurationException : throws
+    ModuleManager --> "*" IModule
+    ModuleManager --> "*" ICollectingModule
+
+    RecordingManager --> "encoder" IEncoder
+    RecordingManager --> "decoder" IDecoder
+    RecordingManager --> "videoCapture" DesktopCapture
+    RecordingManager --> "metadataCapture" MetadataCapture
+    RecordingManager --> "metadataDeserializer" MetadataDeserializer
+    RecordingManager --> "ConfigurationManager" ConfigurationManager
+    RecordingManager --> "ModuleManager" ModuleManager
+    RecordingManager ..> IBootstrapper : uses
+
+    ' Transcoding
+    IDecoder ..> MetadataSample : uses
+    IEncoder ..> MetadataSample : uses
+    IVideoCapture ..> VideoSample : <<creates>>
+    IVideoCapture ..> VideoCaptureException : throws >
+
+    ' MPEG
+    DesktopCapture ..> Direct3D11Helper : uses
+    DesktopCapture ..> CaptureHelper : uses
+
+    MPEGEncoder ..> DesktopCapture : uses
+    MPEGEncoder ..> MonitorEnumerationHelper : uses
+    MonitorEnumerationHelper ..> MonitorInfo : uses
+    !endsub
+
+    !startsub UI
     package "UI" #E6E6E6 {
         class ErrorDialog <<partial>> {
             + ErrorDialog(errorMessage:string)
@@ -222,12 +422,35 @@ package "MORR" {
         }        
     }
 
+    ' UI
+    ApplicationViewModel --> "1" IRecordingManager : uses
+    ApplicationViewModel o--> "n" ICommand
+    App --> "1" ApplicationViewModel
+    ApplicationViewModel o-> SaveDialog
+    ApplicationViewModel o-> ErrorDialog
+    ApplicationViewModel o-> InformationDialog
+    App o-> NotifyIcon
+    NotifyIcon --> "IconSource" ImageSource
+    NotifyIcon --> "Command" ICommand
+    NotifyIcon --> "ContextMenu" ContextMenu
+    ICommand <|.. RelayCommand
+    !endsub
+
+    !startsub CLI
     package "CLI" #E6E6E6 {
         class Program {
             {static} Main(args:string[]) : void
         }
-
+        
         class Options {
+
+        }
+
+        interface ICLICommand {
+            + ExecuteCommand(options: Options)
+        }
+
+        class ProcessOptions {
             + Input : string
             + Output : string
             + ProcessingEnabled: bool
@@ -239,12 +462,26 @@ package "MORR" {
             + PrintException(exception: Exception) : void
         }
     
-        class Executor {
-            + Execute(options: Options) : void
+        class ProcessCommand {
+            + ProcessCommand(recordingManager : IRecordingManager)
+            + ExecuteCommand(options: ProcessOptions)
         }
     }
 
+    ' CLI
+    IRecordingManager <-- ProcessCommand
+    Program --> IRecordingManager
+
+    Program --> "1" OutputFormatter
+    Program o--> ICLICommand
+    ICLICommand ..> Options : uses
+    ICLICommand <|.. ProcessCommand
+    Options <|-- ProcessOptions
+    ProcessCommand ..> ProcessOptions: uses
+    !endsub
+
     package "MODULES" #E6E6E6 {
+        !startsub MODULES_CLIPBOARD
         package "CLIPBOARD" #BFBFBF {
             class ClipboardModule {
             
@@ -266,6 +503,15 @@ package "MORR" {
             }
         }
 
+        'Clipboard
+        ICollectingModule <|.. ClipboardModule
+        Event <|-- ClipboardEvent
+        ClipboardEvent <|-- ClipBoardInteractEvent
+        ClipBoardInteractEvent --> "Interaction" InteractionType
+        ClipBoardInteractEvent +-- InteractionType
+        !endsub
+
+        !startsub MODULES_KEYBOARD
         package "KEYBOARD" #BFBFBF {
             class KeyboardModule {
             
@@ -279,6 +525,13 @@ package "MORR" {
             }
         }
 
+        ' Keyboard
+        Event <|-- KeyboardEvent
+        ICollectingModule <|.. KeyboardModule
+        KeyboardEvent <|-- KeyBoardInteractEvent
+        !endsub
+
+        !startsub MODULES_MOUSE
         package "MOUSE" #BFBFBF {
             class MouseModule {
         
@@ -312,6 +565,17 @@ package "MORR" {
             }
         }
 
+        ' Mouse
+        Event <|-- MouseEvent
+        ICollectingModule <|.. MouseModule
+        MouseEvent <|-- MouseClickEvent
+        MouseEvent <|-- MouseScrollEvent
+        MouseEvent <|-- MouseMoveEvent
+        MouseClickEvent --> "Button" MouseButton
+        MouseClickEvent --> "State" MouseButtonState
+        !endsub
+
+        !startsub MODULES_WEBBROWSER
         package "WEBBROWSER" #BFBFBF {
             class WebBrowserModule {
         
@@ -358,6 +622,21 @@ package "MORR" {
             }
         }
 
+        ' WebBrowser
+        Event <|-- WebBrowserEvent
+        ICollectingModule <|.. WebBrowserModule
+        WebBrowserEvent <|-- ButtonClickEvent
+        WebBrowserEvent <|-- CloseTabEvent
+        WebBrowserEvent <|-- FileDownloadEvent
+        WebBrowserEvent <|-- HoverEvent
+        WebBrowserEvent <|-- NavigationEvent
+        WebBrowserEvent <|-- OpenTabEvent
+        WebBrowserEvent <|-- SwitchTabEvent
+        WebBrowserEvent <|-- TextInputEvent
+        WebBrowserEvent <|-- TextSelectionEvent
+        !endsub
+
+        !startsub MODULES_WINDOWMANAGEMENT
         package "WINDOWMANAGEMENT" #BFBFBF {
             class WindowManagementModule {
         
@@ -386,179 +665,25 @@ package "MORR" {
                 + State: WindowState
             }
         }
+
+        ' WindowManagement
+        Event <|-- WindowEvent
+        ICollectingModule <|.. WindowManagementModule
+        WindowEvent <|-- WindowFocusEvent
+        WindowEvent <|-- WindowMovementEvent
+        WindowEvent <|-- WindowResizingEvent
+        WindowEvent <|-- WindowStateChangedEvent
+        !endsub
     }
-    
-
-    package "SHARED" #E6E6E6 {
-        class InvalidConfigurationException {
-
-        }
-
-        interface IConfiguration {
-            + Parse(configuration:string) : void
-        }
-
-        abstract class Event {
-            + Timestamp: DateTime
-            + IssuingModule: Guid
-            + Type: Type
-            + Serialize() : string
-            + Deserialize(serialized:string) : void
-        }
-
-        interface IModule {
-            + IsEnabled : bool <<get>> <<set>>
-            + Initialize() : void
-            + Identifier: Guid
-        }
-
-        interface ICollectingModule {
-        
-        }
-
-        interface IReceivingModule {
-        
-        }
-
-        interface ITransformingModule {
-        
-        }
-
-        interface "IReadOnlyEventQueue<T>" {
-            + GetEvents() : IAsyncEnumerable<T>
-        }
-
-        abstract class "EventQueue<T>" {
-            + {abstract} GetEvents() : IAsyncEnumerable<T>
-        }
-    }
-
-    ' CLI
-    Program --> Executor : uses
-    Program --> "1" OutputFormatter
-    Executor --> "1" Options : uses
-    Executor --> "1" RecordingManager
-    Executor --> "1" IDecoder : uses
 
     ' Exceptions
-    CaptureException <|-- AudioCaptureException
-    CaptureException <|-- VideoCaptureException
+    !startsub EXCEPTIONS
 
-    DecodingException <|-- AudioDecodingException
-    DecodingException <|-- VideoDecodingException
-    DecodingException <|-- MetadataDecodingException
+    IEncoder ..> VideoEncodingException : throws >
+    IEncoder ..> MetadataEncodingException : throws >
 
-    EncodingException <|-- AudioEncodingException
-    EncodingException <|-- VideoEncodingException
-    EncodingException <|-- MetadataEncodingException
-
-    IEncoder --> AudioEncodingException : throws
-    IEncoder --> VideoEncodingException : throws
-    IEncoder --> MetadataEncodingException : throws
-
-    IDecoder --> AudioDecodingException : throws
-    IDecoder --> VideoDecodingException : throws
-    IDecoder --> MetadataDecodingException : throws
-
-    ' EventQueue
-    "IReadOnlyEventQueue<T>" <|-- "EventQueue<T>"
-
-    ' Modules
-    IModule <|-- ICollectingModule
-    IModule <|-- IReceivingModule
-    IModule <|-- ITransformingModule
-
-    ' CORE
-    Bootstrapper --> ModuleManager : uses
-    ConfigurationManager --> "*" IConfiguration
-    ConfigurationManager --> InvalidConfigurationException : throws
-    ModuleManager --> "*" IModule
-    ModuleManager --> "*" ICollectingModule
-
-    RecordingManager --> "moduleManager" ModuleManager
-    RecordingManager --> "ConfigurationManager" ConfigurationManager
-    RecordingManager --> Bootstrapper : uses
-    RecordingManager --> "encoder" IEncoder
-    RecordingManager --> "receiver" IReceivingModule : receiver
-
-    'Clipboard
-    Event <|-- ClipboardEvent
-    ClipboardEvent <|-- ClipBoardInteractEvent
-    ClipBoardInteractEvent --> "Interaction" InteractionType
-    ClipBoardInteractEvent +-- InteractionType
-    ICollectingModule <|-- ClipboardModule
-
-    ' Keyboard
-    Event <|-- KeyboardEvent
-    KeyboardEvent <|-- KeyBoardInteractEvent
-    ICollectingModule <|-- KeyboardModule
-
-    ' Mouse
-    Event <|-- MouseEvent
-    MouseEvent <|-- MouseClickEvent
-    MouseEvent <|-- MouseScrollEvent
-    MouseEvent <|-- MouseMoveEvent
-    ICollectingModule <|-- MouseModule
-    MouseClickEvent --> "Button" MouseButton
-    MouseClickEvent --> "State" MouseButtonState
-
-    ' WebBrowser
-    Event <|-- WebBrowserEvent
-    WebBrowserEvent <|-- ButtonClickEvent
-    WebBrowserEvent <|-- CloseTabEvent
-    WebBrowserEvent <|-- FileDownloadEvent
-    WebBrowserEvent <|-- HoverEvent
-    WebBrowserEvent <|-- NavigationEvent
-    WebBrowserEvent <|-- OpenTabEvent
-    WebBrowserEvent <|-- SwitchTabEvent
-    WebBrowserEvent <|-- TextInputEvent
-    WebBrowserEvent <|-- TextSelectionEvent
-    ICollectingModule <|-- WebBrowserModule
-
-    ' WindowManagement
-    Event <|-- WindowEvent
-    WindowEvent <|-- WindowFocusEvent
-    WindowEvent <|-- WindowMovementEvent
-    WindowEvent <|-- WindowResizingEvent
-    WindowEvent <|-- WindowStateChangedEvent
-
-    ICollectingModule <|-- WindowManagementModule
-
-    ' Transcoding
-    IDecoder --> MetadataSample : uses
-    IEncoder --> MetadataSample : uses
-    IAudioCapture --> AudioSample : <<creates>>
-    IAudioCapture --> AudioCaptureException : throws >
-    IVideoCapture --> VideoSample : <<creates>>
-    IVideoCapture --> VideoCaptureException : throws >
-
-    ' MPEG
-    IVideoCapture <|-- DesktopCapture
-    DesktopCapture --> Direct3D11Helpers : uses
-    DesktopCapture --> CaptureHelper : uses
-    IEncoder <|-- MPEGEncoder
-    IDecoder <|-- MPEGDecoder
-
-    MPEGEncoder --> DesktopCapture : uses
-    MPEGEncoder --> MonitorEnumerationHelper : uses
-    MonitorEnumerationHelper --> MonitorInfo : uses
-    MonitorEnumerationHelper --> MonitorInfoEx : uses
-
-    ' CSV
-    IEncoder <|-- CSVEncoder
-    IEncoder <|-- CSVDecoder
-
-    ' UI
-    App --> "1" RecordingManager : uses
-    ApplicationViewModel o--> "n" ICommand
-    App --> "1" ApplicationViewModel
-    App o-> SaveDialog
-    App o-> ErrorDialog
-    App o-> InformationDialog
-    App o-> NotifyIcon
-    NotifyIcon --> "IconSource" ImageSource
-    NotifyIcon --> "Command" ICommand
-    NotifyIcon --> "ContextMenu" ContextMenu
-    ICommand <|-- RelayCommand
+    IDecoder ..> VideoDecodingException : throws >
+    IDecoder ..> MetadataDecodingException : throws >
+    !endsub
 }
 @enduml

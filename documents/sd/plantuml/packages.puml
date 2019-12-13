@@ -57,7 +57,6 @@ package "MORR" {
     CORE --> SHARED
     CORE --> TRANSCODING
     CORE --> MODULES
-    CLI --> TRANSCODING
     MODULES --> SHARED
 }
 @enduml

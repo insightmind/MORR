@@ -2,15 +2,15 @@
 
 \subsection*{MORR.Core.Recording}
 
-\begin{class}{RecordingManager}
-    \clsdiagram[width=0.35\textwidth]{resources/Classes/Core/MORR/RecordingManager.png}
+\begin{interface}{IRecordingManager}
+    \clsdiagram[width=0.35\textwidth]{resources/Classes/Core/MORR/IRecordingManager.png}
 
-    \clsdcl{public class RecordingManager}
+    \clsdcl{public interface IRecordingManager}
 
-    \clsdsp{Responsible for managing all aspects of recording. Holds all other current managers and the used encoder/decoder.}
+    \clsdsp{Responsible for managing all aspects of recording. Holds all other current managers, the used encoder/decoder and video capture instances.}
 
     \begin{attributes}
-        \attribute{public bool IsRecording \{ get; private set; \}}{Indicates whether a session is currently being recorded. True if a session is currently being recorded, false otherwise.}
+        \attribute{public bool IsRecording \{ get; \}}{Indicate whether a session is currently being recorded. True if a session is currently being recorded, false otherwise.}
     \end{attributes}
 
     \begin{methods}
@@ -23,6 +23,44 @@
             \begin{exceptions}
                 \excp{NotRecordingException}{Thrown if a recording is stopped while no recording is currently running.}
             \end{exceptions}
+        \end{method}
+        \begin{method}{public void StartDecoding()}{Starts the encoding process.}
+        \end{method}
+        \begin{method}{public void StopDecoding()}{Stops the encoding process.}
+        \end{method}
+    \end{methods}
+\end{interface}
+
+\begin{class}{RecordingManager}
+    \clsdiagram[width=0.5\textwidth]{resources/Classes/Core/MORR/RecordingManager.png}
+
+    \clsdcl{public class RecordingManager : IRecordingManager}
+
+    \clsdsp{Responsible for managing all aspects of recording. Holds all other current managers and the used encoder/decoder.}
+
+    \begin{attributes}
+        \attribute{public bool IsRecording \{ get; private set; \}}{Indicates whether a session is currently being recorded. True if a session is currently being recorded, false otherwise.}
+        \attribute{private IEncoder encoder}{The IEncoder that this recording manager uses during encoding of a recording.}
+        \attribute{private IDecoder decoder}{The IDecoder that this recording manager uses during decoding of a recording.}
+        \attribute{private IVideoCapture videoCapture}{The IVideoCapture instance that provides VideoSamples to the used encoder during a recording.}
+        \attribute{private IMetadataCapture metadataCapture}{The IMetadataCapture instance that provides MetadataSamples to the used encoder during a recording.}
+        \attribute{private IMetadataDeserializer metadataDeserializer}{The IMetadataDeserializer instance that provides specific events from the decoded MetadataSamples of the decoder.}
+    \end{attributes}
+
+    \begin{methods}
+        \begin{method}{public void StartRecording()}{Starts a recording if no session is currently being recorded.}
+            \begin{exceptions}
+                \excp{AlreadyRecordingException}{Thrown if a recording is started while another recording is already running.}
+            \end{exceptions}
+        \end{method}
+        \begin{method}{public void StopRecording()}{Stops a recording if a session is currently being recorded.}
+            \begin{exceptions}
+                \excp{NotRecordingException}{Thrown if a recording is stopped while no recording is currently running.}
+            \end{exceptions}
+        \end{method}
+        \begin{method}{public void StartEncoding()}{Starts the encoding process.}
+        \end{method}
+        \begin{method}{public void StopEncoding()}{Stops the encoding process.}
         \end{method}
     \end{methods}
 \end{class}
@@ -55,10 +93,26 @@
 
 \subsection*{MORR.Core}
 
+\begin{interface}{IBootstrapper}
+    \clsdiagram[width=0.4\textwidth]{resources/Classes/Core/MORR/IBootstrapper.png}
+
+    \clsdcl{public interface IBootstrapper}
+
+    \clsdsp{Responsible for bootstrapping the application and providing compositional facilities using MEF.}
+
+    \begin{methods}
+        \begin{method}{void ComposeImports(object @object)}{Satisifies the imports on the specified object using MEF.}
+        \begin{parameters}
+            \para{object @object}{The object to satisfy the imports on.}
+        \end{parameters}
+    \end{method}
+    \end{methods}
+\end{interface}
+
 \begin{class}{Bootstrapper}
     \clsdiagram[width=0.4\textwidth]{resources/Classes/Core/MORR/Bootstrapper.png}
 
-    \clsdcl{public class Bootstrapper}
+    \clsdcl{public class Bootstrapper : IBootstrapper}
 
     \clsdsp{Responsible for bootstrapping the application and providing compositional facilities using MEF.}
 
@@ -73,10 +127,33 @@
 
 \subsection*{MORR.Core.Configuration}
 
+\begin{interface}{IConfigurationManager}
+    \clsdiagram[width=0.6\textwidth]{resources/Classes/Core/MORR/IConfigurationManager.png}
+
+    \clsdcl{public interface IConfigurationManager}
+
+    \clsdsp{Loads the application's configuration from a file and manages the IConfiguration instances that are distributed to all objects requiring configuration.}
+
+    \begin{attributes}
+        \attribute{[ImportMany] public IEnumerable<IConfiguration> Configurations \{ get; private set; \}}{All available IConfiguration instances.}
+    \end{attributes}
+
+    \begin{methods}
+        \begin{method}{void LoadConfiguration(string path)}{Loads the configuration in .json format from the specified part and initializes all IConfiguration instances.}
+            \begin{parameters}
+                \para{string path}{The path to load the configuration from.}
+            \end{parameters}
+            \begin{exceptions}
+                \excp{InvalidConfigurationException}{Exception thrown if the specified configuration is invalid.}
+            \end{exceptions}
+        \end{method}
+    \end{methods}
+\end{interface}
+
 \begin{class}{ConfigurationManager}
     \clsdiagram[width=0.6\textwidth]{resources/Classes/Core/MORR/ConfigurationManager.png}
 
-    \clsdcl{public class ConfigurationManager}
+    \clsdcl{public class ConfigurationManager : IConfigurationManager}
 
     \clsdsp{Loads the application's configuration from a file and manages the IConfiguration instances that are distributed to all objects requiring configuration.}
 
@@ -108,10 +185,29 @@
 
 \subsection*{MORR.Core.ModuleManagement}
 
+\begin{interface}{IModuleManager}
+    \clsdiagram[width=0.6\textwidth]{resources/Classes/Core/MORR/IModuleManager.png}
+
+    \clsdcl{public interface IModuleManager}
+
+    \clsdsp{Initializes all modules and manages the status during runtime.}
+
+    \begin{attributes}
+        \attribute{[ImportMany] public IEnumerable<IModule> Modules \{ get; private set; \}}{All IModule instances available through MEF.}
+        \attribute{[ImportMany] public IEnumerable<ICollectingModule> CollectingModules \{ get; private set;\}}{All ICollectingModule instances available through MEF.}
+        \attribute{[Import] public GlobalModuleConfiguration ModuleConfiguration \{ get; private set;\}}{The IConfiguration instance specifying configuration options regarding all modules.}
+    \end{attributes}
+
+    \begin{methods}
+        \begin{method}{void InitializeModules()}{Initializes all modules according to the configuration}      
+        \end{method}
+    \end{methods}
+\end{interface}
+
 \begin{class}{ModuleManager}
     \clsdiagram[width=0.6\textwidth]{resources/Classes/Core/MORR/ModuleManager.png}
 
-    \clsdcl{public class ModuleManager}
+    \clsdcl{public class ModuleManager : IModuleManager}
 
     \clsdsp{Initializes all modules and manages the status during runtime.}
 

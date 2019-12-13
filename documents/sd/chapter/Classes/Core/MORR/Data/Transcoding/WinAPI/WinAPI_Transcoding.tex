@@ -3,7 +3,7 @@
 \begin{class}{MPEGEncoder}
     \clsdiagram[width=0.7\textwidth]{resources/Classes/Core/MORR/Transcoding/WinAPI/MPEGEncoder.png}
 
-    \clsdcl{public class MPEGEncoder : IEncoder}
+    \clsdcl{internal class MPEGEncoder : IEncoder, IReceivingModule}
     
     \clsdsp{Encodes the provided samples into a file at a path in MPEG format using the Windows API.}
 
@@ -25,7 +25,7 @@
 \begin{class}{MPEGEncoderConfiguration}
     \clsdiagram[width=0.35\textwidth]{resources/Classes/Core/MORR/Transcoding/WinAPI/MPEGEncoderConfiguration.png}
 
-    \clsdcl{public class MPEGEncoderConfiguration : IConfiguration}
+    \clsdcl{internal class MPEGEncoderConfiguration : IConfiguration}
 
     \clsdsp{Encapsulates all MPEGEncoder configuration options.}
 
@@ -48,7 +48,7 @@
 \begin{class}{MPEGDecoder}
     \clsdiagram[width=0.7\textwidth]{resources/Classes/Core/MORR/Transcoding/WinAPI/MPEGDecoder.png}
 
-    \clsdcl{public class MPEGDecoder : IDecoder}
+    \clsdcl{internal class MPEGDecoder : IDecoder}
 
     \clsdsp{Decodes samples stored in a file in MPEG format at a path using the Windows API and provides the decoded samples.}
 
@@ -59,7 +59,7 @@
     \end{attributes}
 
     \begin{methods}
-        \begin{method}{public void DecodeFrom(string path)}{Decodes samples contained in a file at a specified location.}
+        \begin{method}{public void Decode(string path)}{Decodes samples contained in a file at a specified location.}
             \begin{parameters}
                 \para{string path}{The path to decode from.}
             \end{parameters}
@@ -73,12 +73,12 @@
 \begin{class}{MPEGDecoderConfiguration}
     \clsdiagram[width=0.35\textwidth]{resources/Classes/Core/MORR/Transcoding/WinAPI/MPEGDecoderConfiguration.png}
 
-    \clsdcl{public class MPEGDecoderConfiguration : IConfiguration}
+    \clsdcl{internal class MPEGDecoderConfiguration : IConfiguration}
 
     \clsdsp{Encapsulates all MPEGDecoder configuration options.}
 
     \begin{attributes}
-        \attribute{bool ShouldExtractVideo \{ get; set; \}}{Indicates whether the encoder should extract video in addition to metadata. True if the encoder should extract video, false otherwise.}
+        \attribute{public bool ShouldExtractVideo \{ get; set; \}}{Indicates whether the encoder should extract video in addition to metadata. True if the encoder should extract video, false otherwise.}
     \end{attributes}
 
     \begin{methods}

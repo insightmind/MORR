@@ -3,7 +3,7 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 
 interface IDecoder {
-    + DecodeFrom(string path) : void <<throws DecodingException>>
+    + Decode(string path) : void <<throws DecodingException>>
     + <<event>> VideoSampleDecoded : VideoSampleDecodedEventHandler 
     + <<event>> MetadataSampleDecoded : MetadataSampleDecodedEventHandler 
 }

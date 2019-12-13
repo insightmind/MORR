@@ -27,7 +27,7 @@
 \begin{class}{MetadataEncodingException}
     \clsdiagram[width=0.3\textwidth]{resources/Classes/Core/MORR/Transcoding/Metadata/MetadataEncodingException.png}
 
-    \clsdcl{MetadataEncodingException : EncodingException}
+    \clsdcl{public MetadataEncodingException : EncodingException}
 
     \clsdsp{An exception thrown if metadata encoding fails.}
 \end{class}
@@ -35,7 +35,29 @@
 \begin{class}{MetadataDecodingException}
     \clsdiagram[width=0.3\textwidth]{resources/Classes/Core/MORR/Transcoding/Metadata/MetadataDecodingException.png}
 
-    \clsdcl{MetadataDecodingException : DecodingException}
+    \clsdcl{public MetadataDecodingException : DecodingException}
 
     \clsdsp{An exception thrown if metadata decoding fails.}
+\end{class}
+
+\subsection*{MORR.Core.Data.Transcoding.Metadata}
+
+\begin{interface}{IMetadataDeserializer}
+    \clsdiagram[width=0.3\textwidth]{resources/Classes/Core/MORR/Transcoding/Metadata/IMetadataDeserializer.png}
+
+    \clsdcl{public interface IMetadataDeserializer}
+
+    \clsdsp{Provides deserialization from generic events from a decoder to type-specific events.}
+\end{interface}
+
+\begin{class}{MetadataDeserializer}
+    \clsdiagram[width=0.5\textwidth]{resources/Classes/Core/MORR/Transcoding/Metadata/MetadataDeserializer.png}
+
+    \clsdcl{public class MetadataDeserializer : IMetadataDeserializer}
+
+    \clsdsp{Provides deserialization from generic events from a decoder to type-specific events.}
+
+    \begin{attributes}
+        \attribute{[ImportMany] public IEnumerable<EventQueue<Event>> EventQueues \{ get; private set\}}{All available event queues.}
+    \end{attributes}
 \end{class}

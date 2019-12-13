@@ -5,7 +5,7 @@ skinparam classAttributeIconSize 0
 interface IDecoder
 
 class MPEGDecoder {
-    + DecodeFrom(string path) : void <<throws DecodingException>>
+    + Decode(string path) : void <<throws DecodingException>>
     + DecoderConfiguration : MPEGDecoderConfiguration <<get>> <<set>>
     + <<event>> VideoSampleDecoded : VideoSampleDecodedEventHandler 
     + <<event>> MetadataSampleDecoded : MetadataSampleDecodedEventHandler 

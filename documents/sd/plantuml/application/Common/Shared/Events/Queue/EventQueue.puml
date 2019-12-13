@@ -2,12 +2,15 @@
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 
-interface "IReadOnlyEventQueue<T>"
-
-abstract class "EventQueue<T>" {
+abstract class "EventQueue<T> where T : Event" {
+    + StorageStrategy : IEventQueueStorageStrategy<T> <<get>> <<set>>
     + {abstract} GetEvents() : IAsyncEnumerable<T>
     # {abstract} Enqueue(T @event) : void
 }
 
-"IReadOnlyEventQueue<T>" <|-- "EventQueue<T>"
+interface "IReadOnlyEventQueue<out T> where T : Event" {
+    GetEvents() : IAsyncEnumerable<T>
+}
+
+"IReadOnlyEventQueue<out T> where T : Event" <|-- "EventQueue<T>"
 @enduml

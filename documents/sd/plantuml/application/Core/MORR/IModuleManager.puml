@@ -1,0 +1,12 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+interface IModuleManager {
+    + Modules : IEnumerable<IModule> <<get>>
+    + CollectingModules : IEnumerable<ICollectingModule> <<get>>
+    + ModuleConfiguration : GlobalModuleConfiguration <<get>>
+    + InitializeModules() : void
+}
+
+@enduml

@@ -1,0 +1,13 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+interface IRecordingManager {
+    + IsRecording : bool <<get>>
+    + StartRecording() : void
+    + StopRecording() : void
+    + StartDecoding() : void
+    + StopDecoding() : void
+}
+
+@enduml

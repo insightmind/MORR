@@ -5,4 +5,10 @@ skinparam classAttributeIconSize 0
 class Bootstrapper {
     + ComposeImports(@object:object) : void
 }
+
+interface IBootstrapper {
+    + ComposeImports(@object:object) : void
+}
+
+IBootstrapper <|-- Bootstrapper
 @enduml
