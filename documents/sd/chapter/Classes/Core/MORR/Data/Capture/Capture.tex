@@ -48,7 +48,7 @@
     \end{attributes}
 
     \begin{methods}
-        \begin{method}{VideoSample NextSample()}{Gets the next VideoSample from the capture.}
+        \begin{method}{public VideoSample NextSample()}{Gets the next VideoSample from the capture.}
             \return{VideoSample}{The next VideoSample from the capture.}
         \end{method}
     \end{methods}   
@@ -84,7 +84,7 @@
     \clsdsp{Provides utility methods for working with Windows' GraphicsCaptureItems.}
 
     \begin{attributes}
-        \attribute{static bool CanCreateItemWithoutPicker \{ get; \}}{Indicates whether the creation of a GraphicsCaptureItem instance requires user interaction. True if GraphicsCaptureItems can be created without user interaction, false otherwise.}
+        \attribute{public static bool CanCreateItemWithoutPicker \{ get; \}}{Indicates whether the creation of a GraphicsCaptureItem instance requires user interaction. True if GraphicsCaptureItems can be created without user interaction, false otherwise.}
     \end{attributes}
     \begin{methods}
         \begin{method}{public static GraphicsCaptureItem CreateItemForMonitor(IntPtr hMon)}{Creates a GraphicsCaptureItem for the specified monitor.}
@@ -176,3 +176,21 @@
         \end{method}
     \end{methods}
 \end{interface}
+
+\begin{class}{MetadataCapture}
+    \clsdiagram[width=0.5\textwidth]{resources/Classes/Core/MORR/Capture/MetadataCapture.png}
+
+    \clsdcl{public class MetadataCapture : IMetadataCapture}
+
+    \clsdsp{Captures all events from all event queues and provides them on a per-sample basis.}
+
+    \begin{attributes}
+        \attribute{[ImportMany] IEnumerable<EventQueue<Event>> \{ get; private set; \}}{All available event queues.}
+    \end{attributes}
+
+    \begin{methods}
+        \begin{method}{public MetadataSample NextSample()}{Gets the next MetadataSample from the capture.}
+            \return{MetadataSample}{The next MetadataSample from the capture.}
+        \end{method}
+    \end{methods}
+\end{class}

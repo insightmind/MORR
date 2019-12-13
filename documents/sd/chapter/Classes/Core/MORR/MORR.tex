@@ -32,7 +32,7 @@
 \end{interface}
 
 \begin{class}{RecordingManager}
-    \clsdiagram[width=0.35\textwidth]{resources/Classes/Core/MORR/RecordingManager.png}
+    \clsdiagram[width=0.5\textwidth]{resources/Classes/Core/MORR/RecordingManager.png}
 
     \clsdcl{public class RecordingManager : IRecordingManager}
 
@@ -101,7 +101,7 @@
     \clsdsp{Responsible for bootstrapping the application and providing compositional facilities using MEF.}
 
     \begin{methods}
-        \begin{method}{public void ComposeImports(object @object)}{Satisifies the imports on the specified object using MEF.}
+        \begin{method}{void ComposeImports(object @object)}{Satisifies the imports on the specified object using MEF.}
         \begin{parameters}
             \para{object @object}{The object to satisfy the imports on.}
         \end{parameters}
@@ -139,7 +139,7 @@
     \end{attributes}
 
     \begin{methods}
-        \begin{method}{public void LoadConfiguration(string path)}{Loads the configuration in .json format from the specified part and initializes all IConfiguration instances.}
+        \begin{method}{void LoadConfiguration(string path)}{Loads the configuration in .json format from the specified part and initializes all IConfiguration instances.}
             \begin{parameters}
                 \para{string path}{The path to load the configuration from.}
             \end{parameters}
@@ -199,7 +199,7 @@
     \end{attributes}
 
     \begin{methods}
-        \begin{method}{public void InitializeModules()}{Initializes all modules according to the configuration}      
+        \begin{method}{void InitializeModules()}{Initializes all modules according to the configuration}      
         \end{method}
     \end{methods}
 \end{interface}

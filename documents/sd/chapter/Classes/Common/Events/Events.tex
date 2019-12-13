@@ -71,10 +71,10 @@
     \clsdsp{Provides the backing store of an EventQueue with a specific storage strategy.}
 
     \begin{methods}
-        \begin{method}{public IAsyncEnumerable<T> GetEventsInternal()}{Asynchronously gets all events as concrete type T from this storage strategy.}
+        \begin{method}{IAsyncEnumerable<T> GetEventsInternal()}{Asynchronously gets all events as concrete type T from this storage strategy.}
             \return{IAsyncEnumerable<T>}{A stream of events of type T.}
         \end{method}
-        \begin{method}{public void Enqueue(T @event)}{Asynchronously enqueues a new event of type T with this storage strategy.}
+        \begin{method}{void Enqueue(T @event)}{Asynchronously enqueues a new event of type T with this storage strategy.}
             \begin{parameters}
                 \para{T @event}{The event to enqueue.}
             \end{parameters}

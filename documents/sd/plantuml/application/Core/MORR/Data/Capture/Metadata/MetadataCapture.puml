@@ -1,0 +1,15 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+class MetadataCapture {
+    + EventQueues : IEnumerable<EventQueue<Event>> <<get>> <<private set>>
+    + NextSample() : MetadataSample
+}
+
+interface IMetadataCapture {
+    + NextSample() : MetadataSample
+}
+
+IMetadataCapture <|-- MetadataCapture
+@enduml

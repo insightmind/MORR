@@ -59,7 +59,7 @@
     \end{attributes}
 
     \begin{methods}
-        \begin{method}{public void DecodeFrom(string path)}{Decodes samples contained in a file at a specified location.}
+        \begin{method}{public void Decode(string path)}{Decodes samples contained in a file at a specified location.}
             \begin{parameters}
                 \para{string path}{The path to decode from.}
             \end{parameters}
@@ -78,7 +78,7 @@
     \clsdsp{Encapsulates all MPEGDecoder configuration options.}
 
     \begin{attributes}
-        \attribute{bool ShouldExtractVideo \{ get; set; \}}{Indicates whether the encoder should extract video in addition to metadata. True if the encoder should extract video, false otherwise.}
+        \attribute{public bool ShouldExtractVideo \{ get; set; \}}{Indicates whether the encoder should extract video in addition to metadata. True if the encoder should extract video, false otherwise.}
     \end{attributes}
 
     \begin{methods}

@@ -3,7 +3,7 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 
 interface IEncoder {
-    + EncodeTo(string path) : void <<throws EncodingException>>
+    + Encode(string path) : void <<throws EncodingException>>
     + <<event>> VideoSampleRequested : VideoSampleRequestedEventHandler 
     + <<event>> MetadataSampleRequested : MetadataSampleRequestedEventHandler 
 }
