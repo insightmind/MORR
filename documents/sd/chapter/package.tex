@@ -19,7 +19,7 @@ In this chapter, all packages and their purpose are introduced.
     \includegraphics[width=1.0\textwidth]{resources/Packages/AllPackages.png}
 \end{center}
 
-The MORR package is the master package containing the whole application. It does not contain any classes directly as it only serves as a container for all packages required in the design.
+The \textbf{MORR} package is the master package containing the whole application. It does not contain any classes directly as it only serves as a container for all packages required in the design.
 
 \begin{packpack}
 \packobj{CORE}
@@ -64,12 +64,12 @@ The \textbf{CORE} package contains the central initializing logic to be called w
 
 \section*{MORR.CORE.TRANSCODING}
 
-The \textbf{TRANSCODING} package is responsible for serialization and deserialization of recorded video-, audio- and event-data. 
+The \textbf{CORE.TRANSCODING} package is responsible for serialization and deserialization of recorded video-, audio- and event-data.
 
 \begin{packif}
 \packobj{IDecoder}
 \packobj{IEncoder}
-\packobj{IMetaDataDeserializer}
+\packobj{IMetadataDeserializer}
 \end{packif}
 
 \begin{packclass}
@@ -92,14 +92,14 @@ The \textbf{TRANSCODING} package is responsible for serialization and deserializ
 \end{packpack}
 
 \section*{MORR.CORE.TRANSCODING.CSV}
-The \textbf{TRANSCODING.CSV} package is responsible for providing functionality which allows for encoding of event data to CSV (comma separated values) format.
+The \textbf{CORE.TRANSCODING.CSV} package is responsible for providing functionality which allows for encoding of event data to CSV (comma separated values) format.
 
 \begin{packclass}
 \packobj{CSVEncoder}
 \end{packclass}
 
 \section*{MORR.CORE.TRANSCODING.MPEG}
-The \textbf{TRANSCODING.MPEG} package allows for storing video-, audio- and event-data in a MPEG container and also retrieving this data again from such a container.
+The \textbf{CORE.TRANSCODING.MPEG} package allows for storing video-, audio- and event-data in a MPEG container and also retrieving this data again from such a container.
 
 \begin{packclass}
 \packobj{MPEGEncoder}
@@ -110,7 +110,7 @@ The \textbf{TRANSCODING.MPEG} package allows for storing video-, audio- and even
 
 \section*{MORR.CORE.CAPTURE}
 
-The\textbf{TRANSCODING.CAPTURE} package is responsible for capturing and supplying samples to the encoders.
+The \textbf{CORE.CAPTURE} package is responsible for capturing and supplying samples to the encoders.
 
 \begin{packif}
 \packobj{IVideoCapture}
@@ -196,7 +196,7 @@ The \textbf{MODULES} package serves as a container for all module-subpackages.
     \includegraphics[width=1.0\textwidth]{resources/Packages/MODULES_WINDOWMANAGEMENT.png}
 \end{center}
 
-The \textbf{WINDOWMANAGEMENT} package is responsible for providing the classes and concepts necessary for recording the window related user-interactions.
+The \textbf{MODULES.WINDOWMANAGEMENT} package is responsible for providing the classes and concepts necessary for recording the window related user-interactions.
 
 \begin{packclass}
 \packobj{WindowManagementModule}
@@ -213,7 +213,7 @@ The \textbf{WINDOWMANAGEMENT} package is responsible for providing the classes a
     \includegraphics[width=1.0\textwidth]{resources/Packages/MODULES_KEYBOARD.png}
 \end{center}
 
-The \textbf{KEYBOARD} package is responsible for providing the classes and concepts necessary for recording the keyboard related user-inputs.
+The \textbf{MODULES.KEYBOARD} package is responsible for providing the classes and concepts necessary for recording the keyboard related user-inputs.
 
 \begin{packclass}
 \packobj{\abstract{KeyboardEvent}}
@@ -228,7 +228,7 @@ The \textbf{KEYBOARD} package is responsible for providing the classes and conce
     \includegraphics[width=1.0\textwidth]{resources/Packages/MODULES_WEBBROWSER.png}
 \end{center}
 
-The \textbf{WEBBROWSER} package is responsible for providing the classes and concepts necessary for recording the webbrowser related user-interactions.
+The \textbf{MODULES.WEBBROWSER} package is responsible for providing the classes and concepts necessary for recording the webbrowser related user-interactions.
 
 \begin{packclass}
 \packobj{WebBrowserModule}
@@ -251,7 +251,7 @@ The \textbf{WEBBROWSER} package is responsible for providing the classes and con
     \includegraphics[width=1.0\textwidth]{resources/Packages/MODULES_CLIPBOARD.png}
 \end{center}
 
-The \textbf{CLIPBOARD} package is responsible for providing the classes and concepts necessary for recording the clipboard related user-interactions.
+The \textbf{MODULES.CLIPBOARD} package is responsible for providing the classes and concepts necessary for recording the clipboard related user-interactions.
 
 \begin{packclass}
 \packobj{ClipboardModule}
@@ -270,7 +270,7 @@ The \textbf{CLIPBOARD} package is responsible for providing the classes and conc
     \includegraphics[width=1.0\textwidth]{resources/Packages/MODULES_MOUSE.png}
 \end{center}
 
-The \textbf{MOUSE} package is responsible for providing the classes and concepts necessary for recording the mouse related user-inputs.
+The \textbf{MODULES.MOUSE} package is responsible for providing the classes and concepts necessary for recording the mouse related user-inputs.
 
 \begin{packclass}
 \packobj{MouseModule}
@@ -294,15 +294,9 @@ The \textbf{MOUSE} package is responsible for providing the classes and concepts
 
 The \textbf{UI} package is responsible for the graphical user interface.
 
-\begin{packif}
-\packobj{ICommand}
-\end{packif}
-
 \begin{packclass}
-\packobj{ContextMenu}
 \packobj{NotifyIcon}
 \packobj{<<partial> App}
-\packobj{ImageSource}
 \packobj{<<partial>> InformationDialog}
 \packobj{<<partial>> SaveDialog}
 \packobj{<<partial>> ErrorDialog}
