@@ -8,6 +8,7 @@ User -> UIApp : starts UI application
 activate UIApp
 create ":NotifyIconControl" as TrayIcon
 UIApp -> TrayIcon : <<create>>
+UIApp <- TrayIcon
 create ":ApplicationViewModel" as ApplicationViewModel
 UIApp -> ApplicationViewModel : <<create>>
 activate ApplicationViewModel
@@ -30,8 +31,10 @@ end note
 deactivate Bootstrapper
 create ":ModuleManager" as ModuleManager
 RecordingManager -> ModuleManager : <<create>>
+RecordingManager <- ModuleManager
 create ":ConfigurationManager" as ConfigurationManager
 RecordingManager -> ConfigurationManager : <<create>>
+RecordingManager <- ConfigurationManager
 
 RecordingManager -> Bootstrapper : ComposeImports(ModuleManager)
 activate Bootstrapper
@@ -56,17 +59,22 @@ deactivate ModuleManager
 
 create ":MPEGEncoder" as MPEGEncoder
 RecordingManager -> MPEGEncoder : <<create>>
+RecordingManager <- MPEGEncoder
 create ":MPEGDecoder" as MPEGDecoder
 RecordingManager -> MPEGDecoder : <<create>>
+RecordingManager <- MPEGDecoder
 create ":DesktopCapture" as DesktopCapture
 RecordingManager -> DesktopCapture : <<create>>
+RecordingManager <- DesktopCapture
 create ":MetadataCapture" as MetadataCapture
 RecordingManager -> MetadataCapture : <<create>>
+RecordingManager <- MetadataCapture
 create ":MetadataDeserializer" as MetadataDeserializer
 RecordingManager -> MetadataDeserializer : <<create>>
+RecordingManager <- MetadataDeserializer
 ApplicationViewModel <- RecordingManager
 deactivate RecordingManager
-ApplicationViewModel <- UIApp
+UIApp <- ApplicationViewModel
 deactivate ApplicationViewModel
 deactivate UIApp
 @enduml
