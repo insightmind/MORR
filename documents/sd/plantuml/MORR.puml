@@ -78,7 +78,7 @@ package "MORR" {
         class NotRecordingException {
         }
 
-        package "CAPTURE" {
+        package "CAPTURE" #BFBFBF {
             interface IVideoCapture {
                 + NextSample() : VideoSample
             }
@@ -134,8 +134,8 @@ package "MORR" {
             }
         }
 
-        package "TRANSCODING" #E6E6E6 {
-            package "MPEG" #BFBFBF {
+        package "TRANSCODING" #BFBFBF {
+            package "MPEG" #8F8F8F {
                 class MPEGDecoder {
                     + Decode(string path) : void <<throws DecodingException>>
                     + DecoderConfiguration : MPEGDecoderConfiguration <<get>> <<set>>
@@ -164,7 +164,7 @@ package "MORR" {
                 }
             }
 
-            package "CSV" #BFBFBF {
+            package "CSV" #8F8F8F {
                 class CSVEncoder {
                     + Encode() : void <<throws EncodingException>>
                     + <<event>> MetadataSampleRequested : MetadataSampleRequestedEventHandler 
@@ -678,20 +678,6 @@ package "MORR" {
 
     ' Exceptions
     !startsub EXCEPTIONS
-    Exception <|-- CaptureException
-    Exception <|-- RecordingException
-    Exception <|-- InvalidConfigurationException
-
-    CaptureException <|-- VideoCaptureException
-
-    RecordingException <|-- AlreadyRecordingException
-    RecordingException <|-- NotRecordingException
-
-    DecodingException <|-- VideoDecodingException
-    DecodingException <|-- MetadataDecodingException
-
-    EncodingException <|-- VideoEncodingException
-    EncodingException <|-- MetadataEncodingException
 
     IEncoder ..> VideoEncodingException : throws >
     IEncoder ..> MetadataEncodingException : throws >
