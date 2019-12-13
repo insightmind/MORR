@@ -8,7 +8,7 @@ User -> UIApp : starts UI application
 activate UIApp
 create ":NotifyIconControl" as TrayIcon
 UIApp -> TrayIcon : <<create>>
-UIApp <- TrayIcon
+UIApp <-- TrayIcon
 create ":ApplicationViewModel" as ApplicationViewModel
 UIApp -> ApplicationViewModel : <<create>>
 activate ApplicationViewModel
@@ -31,10 +31,10 @@ end note
 deactivate Bootstrapper
 create ":ModuleManager" as ModuleManager
 RecordingManager -> ModuleManager : <<create>>
-RecordingManager <- ModuleManager
+RecordingManager <-- ModuleManager
 create ":ConfigurationManager" as ConfigurationManager
 RecordingManager -> ConfigurationManager : <<create>>
-RecordingManager <- ConfigurationManager
+RecordingManager <-- ConfigurationManager
 
 RecordingManager -> Bootstrapper : ComposeImports(ModuleManager)
 activate Bootstrapper
@@ -48,33 +48,33 @@ deactivate Bootstrapper
 RecordingManager -> ConfigurationManager : LoadConfiguration(path)
 activate ConfigurationManager
 ConfigurationManager -> IConfigurationsImport : <<foreach>> Parse(section)
-RecordingManager <- ConfigurationManager
+RecordingManager <-- ConfigurationManager
 deactivate ConfigurationManager
 
 RecordingManager -> ModuleManager : InitializeModules()
 activate ModuleManager
 ModuleManager -> IModulesImport : <<foreach>> Initialize()
-RecordingManager <- ModuleManager
+RecordingManager <-- ModuleManager
 deactivate ModuleManager
 
 create ":MPEGEncoder" as MPEGEncoder
 RecordingManager -> MPEGEncoder : <<create>>
-RecordingManager <- MPEGEncoder
+RecordingManager <-- MPEGEncoder
 create ":MPEGDecoder" as MPEGDecoder
 RecordingManager -> MPEGDecoder : <<create>>
-RecordingManager <- MPEGDecoder
+RecordingManager <-- MPEGDecoder
 create ":DesktopCapture" as DesktopCapture
 RecordingManager -> DesktopCapture : <<create>>
-RecordingManager <- DesktopCapture
+RecordingManager <-- DesktopCapture
 create ":MetadataCapture" as MetadataCapture
 RecordingManager -> MetadataCapture : <<create>>
-RecordingManager <- MetadataCapture
+RecordingManager <-- MetadataCapture
 create ":MetadataDeserializer" as MetadataDeserializer
 RecordingManager -> MetadataDeserializer : <<create>>
-RecordingManager <- MetadataDeserializer
-ApplicationViewModel <- RecordingManager
+RecordingManager <-- MetadataDeserializer
+ApplicationViewModel <-- RecordingManager
 deactivate RecordingManager
-UIApp <- ApplicationViewModel
+UIApp <-- ApplicationViewModel
 deactivate ApplicationViewModel
 deactivate UIApp
 @enduml
