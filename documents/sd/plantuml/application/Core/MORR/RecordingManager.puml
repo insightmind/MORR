@@ -6,8 +6,9 @@ class RecordingManager {
     - encoder : IEncoder
     - decoder : IDecoder
     - videoCapture : IVideoCapture
+    - metadataCapture : IMetadataCapture
+    - metadataDeserializer : IMetadataDeserializer
     + IsRecording : bool <<get>> <<private set>>
-    + EventQueues : IEnumerable<EventQueue<Event>> <<get>> <<private set>>
     + StartRecording() : void
     + StopRecording() : void
     + StartDecoding() : void
