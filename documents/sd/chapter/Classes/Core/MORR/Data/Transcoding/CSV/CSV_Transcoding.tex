@@ -1,0 +1,21 @@
+\subsection*{MORR.Core.Data.Transcoding.CSV}
+
+\begin{class}{CSVEncoder}
+    \clsdiagram[width=0.7\textwidth]{resources/Classes/Core/MORR/Transcoding/CSV/CSVEncoder.png}
+
+    \clsdcl{internal class CSVEncoder : IEncoder}
+    
+    \clsdsp{Encodes the provided samples into a file at a path in CSV format.}
+
+    \begin{attributes}
+        \attribute{public event MetadataSampleRequestedEventHandler MetadataSampleRequested}{Event raised when the next MetadataSample may be added for encoding.}
+    \end{attributes}
+
+    \begin{methods}
+        \begin{method}{public void Encode()}{Encodes all provided samples to a file at the location specified by the configuration.}
+            \begin{exceptions}
+                \excp{EncodingException}{Exception thrown if the encoding fails. This may be a MetadataEncodingException or a VideoEncodingException.}
+            \end{exceptions}
+        \end{method}
+    \end{methods}
+\end{class}
