@@ -1,0 +1,80 @@
+@startuml
+'skinparam monochrome true
+hide footbox
+title Core initialization from UI
+actor User
+create ":App" as UIApp
+User -> UIApp : starts UI application
+activate UIApp
+create ":NotifyIconControl" as TrayIcon
+UIApp -> TrayIcon : <<create>>
+UIApp <-- TrayIcon
+create ":ApplicationViewModel" as ApplicationViewModel
+UIApp -> ApplicationViewModel : <<create>>
+activate ApplicationViewModel
+create ":RecordingManager" as RecordingManager
+ApplicationViewModel -> RecordingManager : <<create>>
+activate RecordingManager
+create ":Bootstrapper" as Bootstrapper
+RecordingManager -> Bootstrapper : <<create>>
+activate Bootstrapper
+create ":IEnumerable<IModule>" as IModulesImport
+Bootstrapper [#blue]-> IModulesImport : <<create>>
+note right
+Implicitly created through MEF
+end note
+create ":IEnumerable<IConfiguration>" as IConfigurationsImport
+Bootstrapper [#blue]-> IConfigurationsImport : <<create>>
+note right
+Implicitly created through MEF
+end note
+deactivate Bootstrapper
+create ":ModuleManager" as ModuleManager
+RecordingManager -> ModuleManager : <<create>>
+RecordingManager <-- ModuleManager
+create ":ConfigurationManager" as ConfigurationManager
+RecordingManager -> ConfigurationManager : <<create>>
+RecordingManager <-- ConfigurationManager
+
+RecordingManager -> Bootstrapper : ComposeImports(ModuleManager)
+activate Bootstrapper
+Bootstrapper -> ModuleManager : <<Import IModules, GlobalModuleConfiguration through MEF>>
+deactivate Bootstrapper
+RecordingManager -> Bootstrapper : ComposeImports(ConfigurationManager)
+activate Bootstrapper
+Bootstrapper -> ConfigurationManager : <<Import IConfiguration through MEF>>
+deactivate Bootstrapper
+
+RecordingManager -> ConfigurationManager : LoadConfiguration(path)
+activate ConfigurationManager
+ConfigurationManager -> IConfigurationsImport : <<foreach>> Parse(section)
+RecordingManager <-- ConfigurationManager
+deactivate ConfigurationManager
+
+RecordingManager -> ModuleManager : InitializeModules()
+activate ModuleManager
+ModuleManager -> IModulesImport : <<foreach>> Initialize()
+RecordingManager <-- ModuleManager
+deactivate ModuleManager
+
+create ":MPEGEncoder" as MPEGEncoder
+RecordingManager -> MPEGEncoder : <<create>>
+RecordingManager <-- MPEGEncoder
+create ":MPEGDecoder" as MPEGDecoder
+RecordingManager -> MPEGDecoder : <<create>>
+RecordingManager <-- MPEGDecoder
+create ":DesktopCapture" as DesktopCapture
+RecordingManager -> DesktopCapture : <<create>>
+RecordingManager <-- DesktopCapture
+create ":MetadataCapture" as MetadataCapture
+RecordingManager -> MetadataCapture : <<create>>
+RecordingManager <-- MetadataCapture
+create ":MetadataDeserializer" as MetadataDeserializer
+RecordingManager -> MetadataDeserializer : <<create>>
+RecordingManager <-- MetadataDeserializer
+ApplicationViewModel <-- RecordingManager
+deactivate RecordingManager
+UIApp <-- ApplicationViewModel
+deactivate ApplicationViewModel
+deactivate UIApp
+@enduml
