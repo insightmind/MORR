@@ -7,6 +7,77 @@ left to right direction
 hide empty fields
 
 package "MORR" {
+    !startsub SHARED
+    package "SHARED" #E6E6E6 {
+        interface IConfiguration {
+            + Parse(configuration:string) : void
+        }
+
+        abstract class Event {
+            + Timestamp : DateTime
+            + IssuingModule : Guid
+            + Serialize() : string
+            + Deserialize(string serialized) : void
+        }
+
+        interface IModule {
+            + Identifier : Guid
+            + IsEnabled : bool <<get>> <<set>>
+            + Initialize() : void
+        }
+
+        interface ICollectingModule {    
+        }
+
+        interface IReceivingModule {     
+        }
+
+        interface ITransformingModule {  
+        }
+
+        abstract class "EventQueue<T> where T : Event" {
+            + StorageStrategy : IEventQueueStorageStrategy<T> <<get>> <<set>>
+            + {abstract} GetEvents() : IAsyncEnumerable<T>
+            # {abstract} Enqueue(T @event) : void
+        }
+
+        interface "IReadOnlyEventQueue<out T> where T : Event" {
+            + GetEvents() : IAsyncEnumerable<T>
+        }
+
+        interface "IEventQueueStorageStrategy<T> where T : Event" {
+            + GetEvents() : IAsyncEnumerable<T>
+            + Enqueue(T @event) : void
+        }
+
+        class "KeepAllStorageStrategy<T> where T : Event" {
+            + GetEvents() : IAsyncEnumerable<T>
+            + Enqueue(T @event) : void
+        }
+        class "RefCountedListStorageStrategy<T> where T : Event" {
+            + GetEvents() : IAsyncEnumerable<T>
+            + Enqueue(T @event) : void
+        }
+        class "RingBufferStorageStrategy<T> where T : Event" {
+            + Capacity : uint <<get>> <<set>>
+            + GetEvents() : IAsyncEnumerable<T>
+            + Enqueue(T @event) : void
+        }
+    }
+
+    ' EventQueue
+    "IReadOnlyEventQueue<out T> where T : Event" <|-- "EventQueue<T> where T : Event"
+    "IEventQueueStorageStrategy<T> where T : Event" <|-- "KeepAllStorageStrategy<T> where T : Event"
+    "IEventQueueStorageStrategy<T> where T : Event" <|-- "RefCountedListStorageStrategy<T> where T : Event"
+    "IEventQueueStorageStrategy<T> where T : Event" <|-- "RingBufferStorageStrategy<T> where T : Event"
+    "EventQueue<T> where T : Event" --> "IEventQueueStorageStrategy<T> where T : Event"
+
+    ' Modules
+    IModule <|.. ICollectingModule
+    IModule <|.. IReceivingModule
+    IModule <|.. ITransformingModule
+    !endsub 
+
     !startsub CORE
     package "CORE" #E6E6E6 {
         interface IRecordingManager {
@@ -604,77 +675,6 @@ package "MORR" {
         WindowEvent <|-- WindowStateChangedEvent
         !endsub
     }
-
-    !startsub SHARED
-    package "SHARED" #E6E6E6 {
-        interface IConfiguration {
-            + Parse(configuration:string) : void
-        }
-
-        abstract class Event {
-            + Timestamp : DateTime
-            + IssuingModule : Guid
-            + Serialize() : string
-            + Deserialize(string serialized) : void
-        }
-
-        interface IModule {
-            + Identifier : Guid
-            + IsEnabled : bool <<get>> <<set>>
-            + Initialize() : void
-        }
-
-        interface ICollectingModule {    
-        }
-
-        interface IReceivingModule {     
-        }
-
-        interface ITransformingModule {  
-        }
-
-        abstract class "EventQueue<T> where T : Event" {
-            + StorageStrategy : IEventQueueStorageStrategy<T> <<get>> <<set>>
-            + {abstract} GetEvents() : IAsyncEnumerable<T>
-            # {abstract} Enqueue(T @event) : void
-        }
-
-        interface "IReadOnlyEventQueue<out T> where T : Event" {
-            + GetEvents() : IAsyncEnumerable<T>
-        }
-
-        interface "IEventQueueStorageStrategy<T> where T : Event" {
-            + GetEvents() : IAsyncEnumerable<T>
-            + Enqueue(T @event) : void
-        }
-
-        class "KeepAllStorageStrategy<T> where T : Event" {
-            + GetEvents() : IAsyncEnumerable<T>
-            + Enqueue(T @event) : void
-        }
-        class "RefCountedListStorageStrategy<T> where T : Event" {
-            + GetEvents() : IAsyncEnumerable<T>
-            + Enqueue(T @event) : void
-        }
-        class "RingBufferStorageStrategy<T> where T : Event" {
-            + Capacity : uint <<get>> <<set>>
-            + GetEvents() : IAsyncEnumerable<T>
-            + Enqueue(T @event) : void
-        }
-    }
-
-    ' EventQueue
-    "IReadOnlyEventQueue<out T> where T : Event" <|-- "EventQueue<T> where T : Event"
-    "IEventQueueStorageStrategy<T> where T : Event" <|-- "KeepAllStorageStrategy<T> where T : Event"
-    "IEventQueueStorageStrategy<T> where T : Event" <|-- "RefCountedListStorageStrategy<T> where T : Event"
-    "IEventQueueStorageStrategy<T> where T : Event" <|-- "RingBufferStorageStrategy<T> where T : Event"
-    "EventQueue<T> where T : Event" --> "IEventQueueStorageStrategy<T> where T : Event"
-
-    ' Modules
-    IModule <|.. ICollectingModule
-    IModule <|.. IReceivingModule
-    IModule <|.. ITransformingModule
-    !endsub 
 
     ' Exceptions
     !startsub EXCEPTIONS
