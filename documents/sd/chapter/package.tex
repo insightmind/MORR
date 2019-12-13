@@ -1,2 +1,305 @@
 \chapter{Packages}
 \label{ch:package}
+\newenvironment{packclass}[0]{\textbf{Contained classes:} \begin{itemize}
+}{\end{itemize}}
+\newenvironment{packenum}[0]{\textbf{Contained enums:} \begin{itemize}
+}{\end{itemize}}
+\newenvironment{packif}[0]{\textbf{Contained interfaces:} \begin{itemize}
+}{\end{itemize}}
+\newenvironment{packpack}[0]{\textbf{Contained packages:} \begin{itemize}
+}{\end{itemize}}
+\newcommand{\packobj}[1]{\item #1}
+\newcommand{\abstract}[1]{\textit{abstract} #1}
+
+In this chapter, all packages and their purpose are introduced.
+
+\section{MORR}
+
+\begin{center}
+    \includegraphics[width=1.0\textwidth]{resources/Packages/AllPackages.png}
+\end{center}
+
+The \textbf{MORR} package is the master package containing the whole application. It does not contain any classes directly as it only serves as a container for all packages required in the design.
+
+\begin{packpack}
+\packobj{CORE}
+\packobj{CLI}
+\packobj{SHARED}
+\packobj{MODULES}
+\packobj{UI}
+\end{packpack}
+
+\newpage
+\section{MORR.CORE}
+
+\begin{center}
+    \includegraphics[width=1.0\textwidth]{resources/Packages/CORE.png}
+\end{center}
+
+The \textbf{CORE} package contains the central initializing logic to be called when the program is started and coordinates state-changes while the application is running.
+
+\begin{packif}
+\packobj{IModuleManager}
+\packobj{IBootstrapper}
+\packobj{IConfigurationManager}
+\packobj{IRecordingsManager}
+\end{packif}
+
+\begin{packclass}
+\packobj{RecordingManager}
+\packobj{Bootstrapper}
+\packobj{ModuleManager}
+\packobj{ConfigurationManager}
+\packobj{RecordingException}
+\packobj{InvalidConfigurationException}
+\packobj{AlreadyRecordingException}
+\packobj{NotRecordingException}
+\packobj{GlobalModuleConfiguration}
+\end{packclass}
+
+\begin{packpack}
+\packobj{TRANSCODING}
+\packobj{CAPTURE}
+\end{packpack}
+
+\section*{MORR.CORE.TRANSCODING}
+
+The \textbf{CORE.TRANSCODING} package is responsible for serialization and deserialization of recorded video-, audio- and event-data.
+
+\begin{packif}
+\packobj{IDecoder}
+\packobj{IEncoder}
+\packobj{IMetadataDeserializer}
+\end{packif}
+
+\begin{packclass}
+\packobj{\abstract{VideoSample}}
+\packobj{\abstract{MetadataSample}}
+\packobj{DecodingException}
+\packobj{EncodingException}
+\packobj{CaptureException}
+\packobj{MetadataDecodingException}
+\packobj{VideoDecodingException}
+\packobj{MetadataEncodingException}
+\packobj{VideoEncodingException}
+\packobj{VideoCaptureException}
+\packobj{MetadataDeserializer}
+\end{packclass}
+
+\begin{packpack}
+\packobj{CSV}
+\packobj{MPEG}
+\end{packpack}
+
+\section*{MORR.CORE.TRANSCODING.CSV}
+The \textbf{CORE.TRANSCODING.CSV} package is responsible for providing functionality which allows for encoding of event data to CSV (comma separated values) format.
+
+\begin{packclass}
+\packobj{CSVEncoder}
+\end{packclass}
+
+\section*{MORR.CORE.TRANSCODING.MPEG}
+The \textbf{CORE.TRANSCODING.MPEG} package allows for storing video-, audio- and event-data in a MPEG container and also retrieving this data again from such a container.
+
+\begin{packclass}
+\packobj{MPEGEncoder}
+\packobj{MPEGDecoder}
+\packobj{MPEGEncoderConfiguration}
+\packobj{MPEGDecoderConfiguration}
+\end{packclass}
+
+\section*{MORR.CORE.CAPTURE}
+
+The \textbf{CORE.CAPTURE} package is responsible for capturing and supplying samples to the encoders.
+
+\begin{packif}
+\packobj{IVideoCapture}
+\packobj{IMetadataCapture}
+\end{packif}
+
+\begin{packclass}
+\packobj{DesktopCapture}
+\packobj{DesktopCaptureConfiguration}
+\packobj{CaptureHelper}
+\packobj{Direct3D11Helper}
+\packobj{MonitorInfo}
+\packobj{MonitorEnumerationHelper}
+\packobj{CaptureException}
+\packobj{VideoCaptureException}
+\packobj{MetadataCapture}
+\end{packclass}
+
+\newpage
+\section{MORR.CLI}
+
+\begin{center}
+    \includegraphics[width=1.0\textwidth]{resources/Packages/CLI.png}
+\end{center}
+
+The \textbf{CLI} package contains all logic exclusively needed for the command line interface which allows for the extraction of event data from saved recordings.
+
+\begin{packif}
+\packobj{ICLICommand}
+\end{packif}
+
+\begin{packclass}
+\packobj{ProcessCommand}
+\packobj{ProcessOptions}
+\packobj{OutputFormatter}
+\packobj{Options}
+\packobj{Program}
+\end{packclass}
+
+\newpage
+\section{MORR.SHARED}
+
+\begin{center}
+    \includegraphics[width=1.0\textwidth]{resources/Packages/SHARED.png}
+\end{center}
+
+The \textbf{SHARED} package provides interfaces and classes which have to be known and shared across multiple packages, such as the concept of an event or a module.
+
+\begin{packif}
+\packobj{IConfiguration}
+\packobj{IModule}
+\packobj{ITransformingModule}
+\packobj{ICollectingModule}
+\packobj{IReceivingModule}
+\packobj{IReadOnlyEventQueue<out T>}
+\packobj{IEventQueueStorageStrategy<T>}
+\end{packif}
+
+\begin{packclass}
+\packobj{\abstract{EventQueue<T>}}
+\packobj{\abstract{Event}}
+\packobj{RingBufferStorageStrategy<T>}
+\packobj{RefCountedListStorageStrategy<T>}
+\packobj{KeepAllStorageStrategy<T>}
+\end{packclass}
+
+\newpage
+\section{MORR.MODULES}
+
+The \textbf{MODULES} package serves as a container for all module-subpackages.
+
+\begin{packpack}
+\packobj{WINDOWMANAGEMENT}
+\packobj{KEYBOARD}
+\packobj{CLIPBOARD}
+\packobj{WEBBROWSER}
+\packobj{MOUSE}
+\end{packpack}
+
+\subsection*{MORR.MODULES.WINDOWMANAGEMENT}
+
+\begin{center}
+    \includegraphics[width=1.0\textwidth]{resources/Packages/MODULES_WINDOWMANAGEMENT.png}
+\end{center}
+
+The \textbf{MODULES.WINDOWMANAGEMENT} package is responsible for providing the classes and concepts necessary for recording the window related user-interactions.
+
+\begin{packclass}
+\packobj{WindowManagementModule}
+\packobj{\abstract{WindowEvent}}
+\packobj{WindowMovementEvent}
+\packobj{WindowFocusEvent}
+\packobj{WindowSateChangedEvent}
+\packobj{WindowResizingEvent}
+\end{packclass}
+\newpage
+\subsection*{MORR.MODULES.KEYBOARD}
+
+\begin{center}
+    \includegraphics[width=1.0\textwidth]{resources/Packages/MODULES_KEYBOARD.png}
+\end{center}
+
+The \textbf{MODULES.KEYBOARD} package is responsible for providing the classes and concepts necessary for recording the keyboard related user-inputs.
+
+\begin{packclass}
+\packobj{\abstract{KeyboardEvent}}
+\packobj{KeyboardModule}
+\packobj{KeyboardInteractEvent}
+\end{packclass}
+
+\newpage
+\subsection*{MORR.MODULES.WEBBROWSER}
+
+\begin{center}
+    \includegraphics[width=1.0\textwidth]{resources/Packages/MODULES_WEBBROWSER.png}
+\end{center}
+
+The \textbf{MODULES.WEBBROWSER} package is responsible for providing the classes and concepts necessary for recording the webbrowser related user-interactions.
+
+\begin{packclass}
+\packobj{WebBrowserModule}
+\packobj{\abstract{WebBrowserEvent}}
+\packobj{TextSelectionEvent}
+\packobj{TextInputEvent}
+\packobj{SwitchTabEvent}
+\packobj{OpenTabEvent}
+\packobj{CloseTabEvent}
+\packobj{NavigationEvent}
+\packobj{HoverEvent}
+\packobj{FileDownloadEvent}
+\packobj{ButtonClickEvent}
+\end{packclass}
+
+\newpage
+\subsection*{MORR.MODULES.CLIPBOARD}
+
+\begin{center}
+    \includegraphics[width=1.0\textwidth]{resources/Packages/MODULES_CLIPBOARD.png}
+\end{center}
+
+The \textbf{MODULES.CLIPBOARD} package is responsible for providing the classes and concepts necessary for recording the clipboard related user-interactions.
+
+\begin{packclass}
+\packobj{ClipboardModule}
+\packobj{\abstract{ClipboardEvent}}
+\packobj{ClipBoardInteractEvent}
+\end{packclass}
+
+\begin{packenum}
+\packobj{InteractionType}
+\end{packenum}
+
+\newpage
+\subsection*{MORR.MODULES.MOUSE}
+
+\begin{center}
+    \includegraphics[width=1.0\textwidth]{resources/Packages/MODULES_MOUSE.png}
+\end{center}
+
+The \textbf{MODULES.MOUSE} package is responsible for providing the classes and concepts necessary for recording the mouse related user-inputs.
+
+\begin{packclass}
+\packobj{MouseModule}
+\packobj{\abstract{MouseEvent}}
+\packobj{MouseScrollEvent}
+\packobj{MouseClickEvent}
+\packobj{MouseMoveEvent}
+\end{packclass}
+
+\begin{packenum}
+\packobj{MouseButton}
+\packobj{MouseButtonState}
+\end{packenum}
+\newpage
+
+\section{MORR.UI}
+
+\begin{center}
+    \includegraphics[width=1.0\textwidth]{resources/Packages/UI.png}
+\end{center}
+
+The \textbf{UI} package is responsible for the graphical user interface.
+
+\begin{packclass}
+\packobj{NotifyIcon}
+\packobj{<<partial> App}
+\packobj{<<partial>> InformationDialog}
+\packobj{<<partial>> SaveDialog}
+\packobj{<<partial>> ErrorDialog}
+\packobj{ApplicationViewModel}
+\packobj{RelayCommand}
+\end{packclass}
