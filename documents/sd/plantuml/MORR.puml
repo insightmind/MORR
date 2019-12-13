@@ -446,7 +446,7 @@ package "MORR" {
 
         }
 
-        class ICLICommand {
+        interface ICLICommand {
             + ExecuteCommand(options: Options)
         }
 
