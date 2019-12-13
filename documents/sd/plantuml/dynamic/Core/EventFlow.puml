@@ -9,6 +9,7 @@ User -> KeyboardEventProducer : <<performs keypress>>
 activate KeyboardEventProducer
 create "keypressEvent :KeyboardInteractEvent" as KeyboardEvent
 KeyboardEventProducer -> KeyboardEvent : <<create>>
+KeyboardEventProducer <-- KeyboardEvent
 KeyboardEventProducer -> KeyboardEventProducer : enqueue(keypressEvent)
 deactivate KeyboardEventProducer
 
@@ -26,6 +27,7 @@ deactivate KeyboardEventProducer
 
 create "metadataSample :MetadataSample" as MetadataSample
 MetadataCapture -> MetadataSample : <<create>>
+MetadataCapture <-- MetadataSample
 deactivate MetadataCapture
 
 participant ":RecordingManager" as RecordingManager
@@ -35,9 +37,9 @@ MPEGEncoder -> RecordingManager : <<MetadataSampleRequestedEvent>>
 activate RecordingManager
 RecordingManager -> MetadataCapture : NextSample()
 activate MetadataCapture
-RecordingManager <- MetadataCapture : <<metadataSample>>
+RecordingManager <-- MetadataCapture : <<metadataSample>>
 deactivate MetadataCapture
-MPEGEncoder <- RecordingManager : <<metadataSample>>
+MPEGEncoder <-- RecordingManager : <<metadataSample>>
 deactivate RecordingManager
 MPEGEncoder -> MPEGEncoder : <<perform encoding>>
 
