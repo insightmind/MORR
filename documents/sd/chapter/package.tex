@@ -25,7 +25,6 @@ The MORR package is the master package containing the whole application. It does
 \packobj{CORE}
 \packobj{CLI}
 \packobj{SHARED}
-\packobj{TRANSCODING}
 \packobj{MODULES}
 \packobj{UI}
 \end{packpack}
@@ -39,20 +38,96 @@ The MORR package is the master package containing the whole application. It does
 
 The \textbf{CORE} package contains the central initializing logic to be called when the program is started and coordinates state-changes while the application is running.
 
-\begin{packclass}
-\packobj{RecordingManager}
-\packobj{Bootstrapper}
-\packobj{ModuleManager}
-\packobj{ConfigurationManager}
-\packobj{InvalidConfigurationException}
-\end{packclass}
-
 \begin{packif}
 \packobj{IModuleManager}
 \packobj{IBootstrapper}
 \packobj{IConfigurationManager}
 \packobj{IRecordingsManager}
 \end{packif}
+
+\begin{packclass}
+\packobj{RecordingManager}
+\packobj{Bootstrapper}
+\packobj{ModuleManager}
+\packobj{ConfigurationManager}
+\packobj{RecordingException}
+\packobj{InvalidConfigurationException}
+\packobj{AlreadyRecordingException}
+\packobj{NotRecordingException}
+\packobj{GlobalModuleConfiguration}
+\end{packclass}
+
+\begin{packpack}
+\packobj{TRANSCODING}
+\packobj{CAPTURE}
+\end{packpack}
+
+\section*{MORR.TRANSCODING}
+
+The \textbf{TRANSCODING} package is responsible for serialization and deserialization of recorded video-, audio- and event-data. 
+
+\begin{packif}
+\packobj{IDecoder}
+\packobj{IEncoder}
+\packobj{IMetaDataDeserializer}
+\end{packif}
+
+\begin{packclass}
+\packobj{\abstract{VideoSample}}
+\packobj{\abstract{MetadataSample}}
+\packobj{DecodingException}
+\packobj{EncodingException}
+\packobj{CaptureException}
+\packobj{MetadataDecodingException}
+\packobj{VideoDecodingException}
+\packobj{MetadataEncodingException}
+\packobj{VideoEncodingException}
+\packobj{VideoCaptureException}
+\packobj{MetadataDeserializer}
+\end{packclass}
+
+\begin{packpack}
+\packobj{CSV}
+\packobj{MPEG}
+\end{packpack}
+
+\section*{MORR.TRANSCODING.CSV}
+The \textbf{TRANSCODING.CSV} package is responsible for providing functionality which allows for encoding of event data to CSV (comma separated values) format.
+
+\begin{packclass}
+\packobj{CSVEncoder}
+\end{packclass}
+
+\section*{MORR.TRANSCODING.MPEG}
+The \textbf{TRANSCODING.MPEG} package allows for storing video-, audio- and event-data in a MPEG container and also retrieving this data again from such a container.
+
+\begin{packclass}
+\packobj{MPEGEncoder}
+\packobj{MPEGDecoder}
+\packobj{MPEGEncoderConfiguration}
+\packobj{MPEGDecoderConfiguration}
+\end{packclass}
+
+\section*{MORR.CAPTURE}
+
+The\textbf{TRANSCODING.CAPTURE} package is responsible for capturing and supplying samples to the encoders.
+
+\begin{packif}
+\packobj{IVideoCapture}
+\packobj{IMetadataCapture}
+\end{packif}
+
+\begin{packclass}
+\packobj{DesktopCapture}
+\packobj{DesktopCaptureConfiguration}
+\packobj{CaptureHelper}
+\packobj{Direct3D11Helper}
+\packobj{MonitorInfo}
+\packobj{MonitorEnumerationHelper}
+\packobj{CaptureException}
+\packobj{VideoCaptureException}
+\packobj{MetadataCapture}
+\end{packclass}
 
 \newpage
 \section{MORR.CLI}
@@ -63,10 +138,13 @@ The \textbf{CORE} package contains the central initializing logic to be called w
 
 The \textbf{CLI} package contains all logic exclusively needed for the command line interface which allows for the extraction of event data from saved recordings.
 
+\begin{packif}
+\packobj{ICLICommand}
+\end{packif}
+
 \begin{packclass}
 \packobj{ProcessCommand}
 \packobj{ProcessOptions}
-\packobj{Executor}
 \packobj{OutputFormatter}
 \packobj{Options}
 \packobj{Program}
@@ -88,7 +166,7 @@ The \textbf{SHARED} package provides interfaces and classes which have to be kno
 \packobj{ICollectingModule}
 \packobj{IReceivingModule}
 \packobj{IReadOnlyEventQueue<out T>}
-\packobj{IEventQueueStorageStrategy}
+\packobj{IEventQueueStorageStrategy<T>}
 \end{packif}
 
 \begin{packclass}
@@ -100,68 +178,7 @@ The \textbf{SHARED} package provides interfaces and classes which have to be kno
 \end{packclass}
 
 \newpage
-\section{MORR.TRANSCODING}
-
-\begin{center}
-    \includegraphics[width=1.0\textwidth]{resources/Packages/AllPackages.png}
-\end{center}
-
-The \textbf{TRANSCODING} package is responsible for serialization and deserialization of recorded video-, audio- and event-data. 
-
-\begin{packif}
-\packobj{IVideoCapture}
-\packobj{IMetadataCapture}
-\packobj{IDecoder}
-\packobj{IEncoder}
-\packobj{IMetaDataDeserializer}
-\end{packif}
-
-\begin{packclass}
-\packobj{\abstract{VideoSample}}
-\packobj{\abstract{MetadataSample}}
-\packobj{DecodingException}
-\packobj{EncodingException}
-\packobj{CaptureException}
-\packobj{MetadataDecodingException}
-\packobj{VideoDecodingException}
-\packobj{MetadataEncodingException}
-\packobj{VideoEncodingException}
-\packobj{VideoCaptureException}
-\end{packclass}
-
-\begin{packpack}
-\packobj{CSV}
-\packobj{MPEG}
-\end{packpack}
-
-\section*{MORR.TRANSCODING.CSV}
-The \textbf{TRANSCODING.CSV} package is responsible for providing functionality which allows for encoding/decoding events from/to CSV (comma separated values) format.
-
-\begin{packclass}
-\packobj{CSVDecoder}
-\packobj{CSVEncoder}
-\end{packclass}
-
-\section*{MORR.TRANSCODING.MPEG}
-The \textbf{TRANSCODING.MPEG} package allows for storing video-, audio- and event-data in a MPEG container and also retrieving this data again from such a container.
-
-\begin{packclass}
-\packobj{MPEGEncoder}
-\packobj{MPEGDecoder}
-\packobj{DesktopCapture}
-\packobj{<<static>> MonitorEnumerationHelper}
-\packobj{<<static>> Durect3D11Helpers}
-\packobj{<<static>> CaptureHelper}
-\packobj{MonitorInfoEx}
-\packobj{MonitorInfo}
-\end{packclass}
-
-\newpage
 \section{MORR.MODULES}
-
-\begin{center}
-    \includegraphics[width=1.0\textwidth]{resources/Packages/AllPackages.png}
-\end{center}
 
 The \textbf{MODULES} package serves as a container for all module-subpackages.
 
