@@ -6,5 +6,5 @@ skinparam classAttributeIconSize 0
 left to right direction
 hide empty fields
 !includesub ../MORR.puml!MODULES_WEBBROWSER
-!includesub ../MORR.puml!MODULES_WEBBROWSER_INTERNAL
+'!includesub ../MORR.puml!MODULES_WEBBROWSER_INTERNAL
 @enduml

@@ -6,5 +6,5 @@ skinparam classAttributeIconSize 0
 left to right direction
 hide empty fields
 !includesub ../MORR.puml!CORE
-!includesub ../MORR.puml!CORE_INTERNAL
+'!includesub ../MORR.puml!CORE_INTERNAL
 @enduml
