@@ -2,15 +2,16 @@ import * as Listeners from './Listeners'
 import { IListener } from './Shared/SharedDeclarations';
 import { BrowserEvent } from './Shared/SharedDeclarations'
 import { ICommunicationStrategy, WebSocketInterface } from './ApplicationInterface/';
+import ListenerManager from "./ListenerManager"
 
 /**
  * The "main" class of the webextension
  */
 class BackgroundScript {
     /**
-     * Listeners controlled by background script
+     * ListenerManager controlled by background script
      */
-    listeners: IListener[] = new Array();
+    listenerManager : ListenerManager;
     /**
      * App interface to the MORR application
      */
@@ -23,9 +24,7 @@ class BackgroundScript {
      * Creates an instance of background script and initializes the listeners.
      */
     constructor() {
-        this.listeners.push(new Listeners.TabListener((event : BrowserEvent) => { this.callback(event);}));
-        this.listeners.push(new Listeners.DOMListener((event : BrowserEvent) => { this.callback(event);}));
-        //etc.
+        this.listenerManager = new ListenerManager(this.callback);
         this.appInterface = new WebSocketInterface(BackgroundScript.receiverURI);
         this.appInterface.establishConnection().then(this.requestConfig());
     }
@@ -33,13 +32,13 @@ class BackgroundScript {
      * Start all listeners
      */
     public start = () => {
-        this.listeners.forEach(listener => listener.start())
+        this.listenerManager.startAll();
     }
     /**
      * Stop all listeners and wait for next start signal
      */
     public stop = () => {
-        this.listeners.forEach(listener => listener.stop())
+        this.listenerManager.stopAll();
         this.waitForStart();
     }
 
