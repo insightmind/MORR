@@ -3,6 +3,7 @@ import { IListener } from './Shared/SharedDeclarations';
 import { BrowserEvent } from './Shared/SharedDeclarations'
 import { ICommunicationStrategy, WebSocketInterface } from './ApplicationInterface/';
 import ListenerManager from "./ListenerManager"
+import * as Mock from './__mock'
 
 /**
  * The "main" class of the webextension
@@ -25,7 +26,7 @@ class BackgroundScript {
      */
     constructor() {
         this.listenerManager = new ListenerManager(this.callback);
-        this.appInterface = new WebSocketInterface(BackgroundScript.receiverURI);
+        this.appInterface = new Mock.CommunicationMock();
         this.appInterface.establishConnection().then(this.requestConfig());
     }
     /**
