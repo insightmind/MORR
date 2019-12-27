@@ -1,3 +1,4 @@
+import '@babel/polyfill'
 import * as Listeners from './Listeners'
 import { IListener } from './Shared/SharedDeclarations';
 import { BrowserEvent } from './Shared/SharedDeclarations'
@@ -21,14 +22,23 @@ class BackgroundScript {
      * URI to initialize the appInterface to
      */
     static receiverURI : string = "ws://127.0.0.1:31337/";
+
+
+    /**
+     * Helper variables
+     */
+    private configString : string | undefined;
+    private readonly retryDelayMS = 5000;
+
     /**
      * Creates an instance of background script and initializes the listeners.
      */
     constructor() {
         this.listenerManager = new ListenerManager(this.callback);
         this.appInterface = new Mock.CommunicationMock();
-        this.appInterface.establishConnection().then(this.requestConfig());
+        this.run();
     }
+
     /**
      * Start all listeners
      */
@@ -41,6 +51,12 @@ class BackgroundScript {
     public stop = () => {
         this.listenerManager.stopAll();
         this.waitForStart();
+    }
+
+    private async run() {
+        await this.establishConnection(true);
+        await this.waitForStart();
+        this.start();
     }
 
     /**
@@ -63,21 +79,39 @@ class BackgroundScript {
     /**
      * Wait for start signal of the MORR application
      */
-    private waitForStart = () => {
-        throw new Error("Method not implemented.");
+    private waitForStart = async () => {
+        await this.appInterface.waitForStart();
     }
 
     /**
      * Request config of the MORR application
      */
-    private requestConfig = (response? : string) => {
+    private requestConfig = () => {
         throw new Error("Method not implemented.");
     }
     /**
-     * Retry setting up a connection to the main application
+     * Set up a connection to the main application using the appInterface.
+     * @param getConfig set to true if a (new) configuration string should be requested, false otherwise
      */
-    private retryConnection = () => {
-        throw new Error("Method not implemented.");
+    private establishConnection = (getConfig : boolean) : Promise<void> => {
+        return new Promise((resolve, reject) => {
+            this.appInterface.establishConnection()
+            .then(() => {
+                if (getConfig) {
+                    return this.appInterface.requestConfig()
+            } else {
+                return Promise.resolve(undefined);
+            }})
+            .then((configString : string | undefined) => {
+                if (configString)
+                    this.configString = configString;
+                resolve();
+            })
+            .catch((err : string) => {
+                console.log(`Error during initialization: ${err}`);
+                reject(`Error during initialization: ${err}`);
+            });
+        });
     }
 
     /**

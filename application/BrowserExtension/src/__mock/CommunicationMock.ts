@@ -10,7 +10,7 @@ import { ICommunicationStrategy } from '../ApplicationInterface'
 export default class CommunicationMock implements ICommunicationStrategy {
     private readonly CONNECTIONDELAYMS : number = 3000; //artificial delay for establishing a connection
     private readonly SENDDELAYMS : number = 1000; // artificial delay for send-calls
-    private readonly STARTDELAYMS : number = 5000; //artificial delay until start-signal is received
+    private readonly STARTDELAYMS : number = 2000; //artificial delay until start-signal is received
 
     establishConnection(): Promise<void> {
         console.log("CommMock: Attempting to establish connection.")
@@ -20,7 +20,7 @@ export default class CommunicationMock implements ICommunicationStrategy {
     }
     requestConfig(): Promise<string> {
         return new Promise((resolve, reject) => {
-            setTimeout(() => {console.log("CommMock: Config received."); resolve('{"enabled":"true", "mock":"true"')}, this.SENDDELAYMS);
+            setTimeout(() => {console.log("CommMock: Config received."); resolve('{"enabled":"true", "mock":"true"}')}, this.SENDDELAYMS);
         });
     }
     waitForStart(): Promise<void> {
