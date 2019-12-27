@@ -1,6 +1,4 @@
 import '@babel/polyfill'
-import * as Listeners from './Listeners'
-import { IListener } from './Shared/SharedDeclarations';
 import { BrowserEvent } from './Shared/SharedDeclarations'
 import { ICommunicationStrategy, WebSocketInterface } from './ApplicationInterface/';
 import ListenerManager from "./ListenerManager"
@@ -28,7 +26,7 @@ class BackgroundScript {
      * Helper variables
      */
     private configString : string | undefined;
-    private readonly retryDelayMS = 5000;
+    private readonly RETRYDELAYMS = 5000;
 
     /**
      * Creates an instance of background script and initializes the listeners.
@@ -42,27 +40,32 @@ class BackgroundScript {
     /**
      * Start all listeners
      */
-    public start = () => {
+    public start = () : void => {
         this.listenerManager.startAll();
     }
     /**
      * Stop all listeners and wait for next start signal
      */
-    public stop = () => {
+    public stop = () : void => {
         this.listenerManager.stopAll();
         this.waitForStart();
     }
 
-    private async run() {
+    private async run() : Promise<void> {
         await this.establishConnection(true);
-        await this.waitForStart();
+        try {
+            await this.waitForStart();
+        } catch (e) {
+            this.run();
+            return;
+        }
         this.start();
     }
 
     /**
      * Callback to hand over to the listeners
      */
-    public callback = (event : BrowserEvent) => {
+    public callback = (event : BrowserEvent) : void => {
         console.log(`${BackgroundScript.timeStampString(event.timeStamp)}: ${event.type} occured in tab ${event.tabID} in window ${event.windowID}`);
         this.appInterface.sendData(JSON.stringify(event)).catch(this.stop);
     }
@@ -79,16 +82,18 @@ class BackgroundScript {
     /**
      * Wait for start signal of the MORR application
      */
-    private waitForStart = async () => {
-        await this.appInterface.waitForStart();
+    private waitForStart = () : Promise<void> => {
+        return this.appInterface.waitForStart();
     }
 
     /**
+     * @deprecated
      * Request config of the MORR application
      */
-    private requestConfig = () => {
-        throw new Error("Method not implemented.");
+    private requestConfig = () : void => {
+        throw new Error("Method unused.");
     }
+
     /**
      * Set up a connection to the main application using the appInterface.
      * @param getConfig set to true if a (new) configuration string should be requested, false otherwise
@@ -115,6 +120,7 @@ class BackgroundScript {
     }
 
     /**
+     * @deprecated
      * Parses configuration string and applies the configuration by setting the respective values in the web storage.
      * @param configuration The configuration string (JSON)
      * @returns true if configuration was valid, false otherwise
