@@ -4,7 +4,8 @@
   "description": "MORR browser extension.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npx jest --verbose",
+    "testcoverage": "npx jest --coverage",
     "build": "npx tsc --noEmit && npx parcel build ./src/background.ts ./src/Listeners/DOM/ContentScript/DOMEventRecorder.ts --no-source-maps -d dist",
     "dbuild": "npx tsc --noEmit && npx parcel build ./src/background.ts ./src/Listeners/DOM/ContentScript/DOMEventRecorder.ts --no-source-maps --no-minify -d debug --detailed-report 10",
     "clean": "rm -rf dist/ debug/"
@@ -20,9 +21,15 @@
   ],
   "devDependencies": {
     "@types/chrome": "0.0.91",
+    "@types/jest": "^24.0.25",
     "@types/jquery": "^3.3.31",
+    "@types/node": "^13.1.1",
+    "@types/sinon-chrome": "^2.2.6",
+    "jest": "^24.9.0",
     "parcel-bundler": "^1.12.4",
     "parcel-plugin-static-files-copy": "^2.2.1",
+    "sinon-chrome": "^3.0.1",
+    "ts-jest": "^24.2.0",
     "typescript": "^3.7.4"
   },
   "dependencies": {

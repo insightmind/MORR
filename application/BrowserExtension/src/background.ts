@@ -2,7 +2,7 @@ import '@babel/polyfill'
 import { BrowserEvent } from './Shared/SharedDeclarations'
 import { ICommunicationStrategy, WebSocketInterface } from './ApplicationInterface/';
 import ListenerManager from "./ListenerManager"
-import * as Mock from './__mock'
+import * as Mock from './__mock__'
 
 /**
  * The "main" class of the webextension
