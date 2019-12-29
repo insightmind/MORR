@@ -22,7 +22,9 @@ test('Factory Create DownloadEvent', async () => {
         {id: 13, url: 'https://google.com', windowId: 3}
       ]);
     let evt : DownloadEvent = await factory.createEvent(item as chrome.downloads.DownloadItem);
-    expect(evt).toMatchObject({_tabID : 7, _windowID : 5, _fileURL : new URL("http://kit.edu/downloads/plan.png"), _url : new URL("http://kit.edu"), _mimeType : "PNG"});
+    expect(evt).toMatchObject({_tabID : 7, _windowID : 5, _mimeType : "PNG"});
+    expect(evt.fileURL.href).toEqual("http://kit.edu/downloads/plan.png");
+    expect(evt.url.href).toEqual("http://kit.edu/");
     expect(evt.timeStamp.valueOf()).toBeGreaterThanOrEqual(now.valueOf());
     expect(evt.timeStamp.valueOf()).toBeLessThanOrEqual(new Date().valueOf());
 });
