@@ -7,7 +7,7 @@ export class DownloadEventFactory {
      * @returns a Promise which will be resolved when the DownloadEvent was created
      */
     public createEvent(downloadItem: chrome.downloads.DownloadItem) : Promise<DownloadEvent> {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             let activeTab : chrome.tabs.Tab;
             //as chrome.tabs.query is asynchronous but can't be awaited, this is the reason
             //why the whole function is asynchronous
@@ -17,8 +17,16 @@ export class DownloadEventFactory {
                 let windowID =  activeTab.windowId;
                 let mimeType = downloadItem.mime;
                 let fileURL = downloadItem.url;
-                let url = activeTab.url ? activeTab.url : "";
-                resolve(new DownloadEvent(tabID, windowID, mimeType, fileURL, url));
+                if (!activeTab.url)
+                    reject("Could not obtain URL of active tab");
+                let url = activeTab.url;
+                let evt : DownloadEvent;
+                try {
+                    evt = new DownloadEvent(tabID, windowID, mimeType, fileURL, url!);
+                    resolve(evt);
+                } catch (e) {
+                    reject((<Error>e).message);
+                }
             });
         });
     }
