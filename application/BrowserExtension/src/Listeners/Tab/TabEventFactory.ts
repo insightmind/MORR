@@ -13,7 +13,7 @@ export default class TabEventFactory {
      * @returns NavigationEvent
      */
     public createNavigationEvent(tabId : number, changeInfo : chrome.tabs.TabChangeInfo, tab : chrome.tabs.Tab) : NavigationEvent {
-        return new NavigationEvent(tabId, tab.windowId, tab.url!);
+        return new NavigationEvent(tabId, tab.windowId, changeInfo.url!);
     }
 
     /**
