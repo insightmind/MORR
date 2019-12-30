@@ -1,6 +1,6 @@
 import { BrowserEvent, EventType } from '../../Shared/SharedDeclarations'
 
-const UNKOWN_URL = "url:unknown";
+export const UNKOWN_URL = "url:unknown";
 
 /**
  * Open tab event
