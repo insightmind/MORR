@@ -3,24 +3,35 @@ import { BrowserEvent } from '../../Shared/SharedDeclarations'
 import TabEventFactory from './TabEventFactory'
 
 /**
- * Listener for tab-related events.
+ * Listener responsible for recording events connected to the tab-API.
  */
 export default class TabListener implements IListener {
     private _callBack: (event: BrowserEvent) => void;
-    private lastActiveTabs : chrome.tabs.Tab[]; //[0] is the active Tab, [1] is the last active Tab
+    private lastActiveTabs : chrome.tabs.Tab[]; //last 2 active tabs. Mainly used for SwitchTabEvent.
     private factory : TabEventFactory;
+    /**
+     * Creates an instance of tab listener.
+     * @param callback The function to invoke on created events.
+     */
     constructor(callback: (event: BrowserEvent) => void) {
         this._callBack = callback;
         this.factory = new TabEventFactory();
         this.lastActiveTabs = new Array(2);
         this.updateActiveTab();
     }
+    /**
+     * Start the listener.
+     * While the listener is running, it will create events and invoke the callback function on them.
+     */
     public start() : void {
         chrome.tabs.onUpdated.addListener(this.onUpdatedCallback);
         chrome.tabs.onActivated.addListener(this.onActivatedCallback);
         chrome.tabs.onRemoved.addListener(this.onRemovedCallback);
         chrome.tabs.onCreated.addListener(this.onCreatedCallback);
     }
+    /**
+     * Stop the listener.
+     */
     public stop(): void {
         chrome.tabs.onUpdated.removeListener(this.onUpdatedCallback);
         chrome.tabs.onActivated.removeListener(this.onActivatedCallback);
@@ -62,6 +73,9 @@ export default class TabListener implements IListener {
             this._callBack(this.factory.createOpenTabEvent(tab));
     }
 
+    /**
+     * Update active tab and previously active tab Info.
+     */
     private updateActiveTab = () : Promise<void> => {
         return new Promise((resolve, reject) => {
             chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {

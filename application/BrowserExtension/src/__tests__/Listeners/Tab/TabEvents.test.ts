@@ -10,6 +10,7 @@ describe("OpenTabEvent Tests", () => {
         initTime = new Date();
         event = new OpenTabEvent(sample._tabID, sample._windowID);
     })
+    //Test of constructor correctly sets values.
     test("Constructor", () => {
         let mySample = sample;
         mySample._type = EventType.OpenTab;
@@ -26,6 +27,7 @@ describe("CloseTabEvent Tests", () => {
         initTime = new Date();
 
     })
+    //Test of constructor correctly sets values.
     test("Constructor", () => {
         let event = new CloseTabEvent(sample._tabID, sample._windowID, sample._url.href);
         let mySample = sample;
@@ -35,6 +37,7 @@ describe("CloseTabEvent Tests", () => {
         expect(event.timeStamp.valueOf()).toBeLessThanOrEqual(new Date().valueOf());
         expect(event.timeStamp.valueOf()).toBeGreaterThanOrEqual(initTime.valueOf());
     });
+    //Test of constructor correctly sets values if no URL is passed.
     test("Constructor no URL", () => {
         let event = new CloseTabEvent(sample._tabID, sample._windowID);
         let mySample = sample;
@@ -53,6 +56,7 @@ describe("NavigationEvent Tests", () => {
         initTime = new Date();
         event = new NavigationEvent(sample._tabID, sample._windowID, sample._url.href);
     })
+    //Test of constructor correctly sets values.
     test("Constructor", () => {
         let mySample = sample;
         mySample._type = EventType.Navigation;
@@ -70,6 +74,7 @@ describe("SwitchTabEvent Tests", () => {
         initTime = new Date();
         event = new SwitchTabEvent(sample._tabID, sample._windowID, 8, sample._url.href);
     })
+    //Test of constructor correctly sets values.
     test("Constructor", () => {
         let mySample = sample;
         mySample._type = EventType.SwitchTab;
@@ -79,16 +84,12 @@ describe("SwitchTabEvent Tests", () => {
         expect(event.timeStamp.valueOf()).toBeLessThanOrEqual(new Date().valueOf());
         expect(event.timeStamp.valueOf()).toBeGreaterThanOrEqual(initTime.valueOf());
     });
-    
-    /** 
-    * Test if the specific getters return the desired values.
-    */
+
+    //Test if the specific getters return the desired values.
     test("Getters", () => {
         expect(event.newTabID).toBe(8);
     })
-    /** 
-     * Test if the specific setters set the desired values
-    */
+    //Test if the specific setters set the desired values
     test("Setters", () => {
         let mySample = sample;
         mySample._type = EventType.SwitchTab;
