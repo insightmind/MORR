@@ -32,11 +32,11 @@ export default class TabListener implements IListener {
      * To trigger when a tab is updated
      */
     private onUpdatedCallback = (tabId : number, changeInfo : chrome.tabs.TabChangeInfo, tab : chrome.tabs.Tab) : void => {
-        this.updateActiveTab()
-        .then(() => {
+        chrome.tabs.get(tabId, (tab : chrome.tabs.Tab) => {
             if (changeInfo.url)
-                this._callBack(this.factory.createNavigationEvent(tabId, changeInfo, this.lastActiveTabs[0]));
-        });
+                this._callBack(this.factory.createNavigationEvent(tabId, changeInfo, tab));
+        })
+        this.updateActiveTab();
     }
 
     /**
@@ -67,7 +67,7 @@ export default class TabListener implements IListener {
             chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
                 if (tabs.length == 0 || !tabs[0])
                     reject("Tab query did not return an entry.");
-                if (tabs[0].id != this.lastActiveTabs[1].id) {
+                if (!this.lastActiveTabs[0] || tabs[0].id != this.lastActiveTabs[0].id) {
                     //active tab has changed, move back in array
                     this.lastActiveTabs[1] = this.lastActiveTabs[0];
                 }

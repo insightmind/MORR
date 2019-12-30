@@ -28,7 +28,9 @@ export default class TabEventFactory {
      * @returns close tab event 
      */
     public createCloseTabEvent(tabId : number, removeInfo: chrome.tabs.TabRemoveInfo, tab : chrome.tabs.Tab) : CloseTabEvent {
-        return (new CloseTabEvent(tabId, removeInfo.windowId, tab.url!));
+        //in case the tab was closed while inactive, the url can not be recovered
+        let url : string | undefined = (tab.url && tabId == tab.id) ? tab.url : undefined;
+        return (new CloseTabEvent(tabId, removeInfo.windowId, url));
     }
     /**
      * Creates switch tab event
