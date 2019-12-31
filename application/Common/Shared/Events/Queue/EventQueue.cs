@@ -19,12 +19,18 @@ namespace MORR.Shared.Events.Queue
         ///     Asynchronously gets all events as concrete type <typeparamref name="T" />.
         /// </summary>
         /// <returns>A stream of <typeparamref name="T" /></returns>
-        public IAsyncEnumerable<T> GetEvents() => storageStrategy.GetEvents();
+        public IAsyncEnumerable<T> GetEvents()
+        {
+            return storageStrategy.GetEvents();
+        }
 
         /// <summary>
         ///     Asynchronously enqueues a new event.
         /// </summary>
         /// <param name="event">The event to enqueue</param>
-        protected void Enqueue(T @event) => storageStrategy.Enqueue(@event);
+        protected void Enqueue(T @event)
+        {
+            storageStrategy.Enqueue(@event);
+        }
     }
 }
