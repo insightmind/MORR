@@ -1,22 +1,38 @@
 import { BrowserEvent } from '../../../Shared/SharedDeclarations'
 import { DOMEventTypes } from '../DOMEvents'
 import { TextInputEvent, ButtonClickEvent, HoverEvent, TextSelectionEvent } from '../DOMEvents';
-
+import DOMEventFactory from './DOMEventFactory'
 /**
  * Recorder injected into the website to capture DOM events.
  */
 class DOMEventRecorder {
+	private factory : DOMEventFactory;
+	constructor() {
+		this.factory = new DOMEventFactory();
+	}
+	
 	/**
 	 * Starts domevent recorder.
 	 */
 	public start() : void {
-		throw new Error("Method not implemented.");
+		Object.values(DOMEventTypes).forEach((key : string) => {
+			document.addEventListener(key, (evt) => {console.log(evt); this.handleEvent(evt);}, {
+				capture: true,
+				passive: true,
+			});
+		});
+		document.body.style.backgroundColor = "yellow"; //TODO: remove. Just there for testing purposes
 	}
 	/**
 	 * Stops domevent recorder
 	 */
 	public stop() : void {
-		throw new Error("Method not implemented.");
+		Object.values(DOMEventTypes).forEach(function (key : string) {
+			document.removeEventListener(key, (evt) => {console.log(evt)}, {
+				capture: true,
+			});
+		});
+		document.body.style.backgroundColor = "white";
 	}
 
 	/**
@@ -27,41 +43,12 @@ class DOMEventRecorder {
 		throw new Error("Method not implemented.");
 	}
 
-	/**
-	 * Creates text input event
-	 * @param ev The event which occured on the website
-	 * @returns text input event 
-	 */
-	private createTextInputEvent(ev : any) : TextInputEvent {
-		throw new Error("Method not implemented.");
-	}
-	/**
-	 * Creates button click event
-	 * @param ev The event which occured on the website
-	 * @returns button click event 
-	 */
-	private createButtonClickEvent(ev : any) : ButtonClickEvent {
-		throw new Error("Method not implemented.");
-	}
-	/**
-	 * Creates hover event
-	 * @param ev The event which occured on the website
-	 * @returns hover event 
-	 */
-	private createHoverEvent(ev : any) : HoverEvent {
-		throw new Error("Method not implemented.");
-	}
-	/**
-	 * Creates text selection event
-	 * @param ev The event which occured on the website
-	 * @returns text selection event 
-	 */
-	/**
-	 * Params domevent recorder
-	 * @param ev The event which occured on the website
-	 * @returns text selection event 
-	 */
-	private createTextSelectionEvent(ev : any) : TextSelectionEvent {
-		throw new Error("Method not implemented.");
+	private handleEvent = (domEvent : Event) : void => {
+		let event : BrowserEvent | undefined = this.factory.createEvent(domEvent);
+		if (event)
+			chrome.runtime.sendMessage(event.serialize());
 	}
 }
+
+const script = new DOMEventRecorder();
+script.start();
