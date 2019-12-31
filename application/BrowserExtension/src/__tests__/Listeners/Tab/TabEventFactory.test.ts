@@ -1,16 +1,10 @@
 import TabEventFactory from '../../../Listeners/Tab/TabEventFactory'
-import { chrome, resetChrome } from '../../../__mock__/chrome_mock'
 import { OpenTabEvent, CloseTabEvent, NavigationEvent, SwitchTabEvent, UNKOWN_URL } from '../../../Listeners/Tab/TabEvents'
 
 const WAITTIME = 200; //how long to wait before counting callback-invocations
-const globalAny:any = global;
 const item = {url : "http://sample.com/downloads/plan.png", id : 5, windowId : 2};
 
 let factory : TabEventFactory;
-
-beforeAll(() => {
-    globalAny.chrome = chrome
-})
 
 beforeAll(() => {
     factory = new TabEventFactory();

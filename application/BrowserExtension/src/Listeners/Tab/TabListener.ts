@@ -18,6 +18,7 @@ export default class TabListener implements IListener {
         this.factory = new TabEventFactory();
         this.lastActiveTabs = new Array(2);
         this.updateActiveTab();
+        this.lastActiveTabs[1] = this.lastActiveTabs[0];
     }
     /**
      * Start the listener.
@@ -43,10 +44,8 @@ export default class TabListener implements IListener {
      * To trigger when a tab is updated
      */
     private onUpdatedCallback = (tabId : number, changeInfo : chrome.tabs.TabChangeInfo, tab : chrome.tabs.Tab) : void => {
-        chrome.tabs.get(tabId, (tab : chrome.tabs.Tab) => {
-            if (changeInfo.url)
-                this._callBack(this.factory.createNavigationEvent(tabId, changeInfo, tab));
-        })
+        if (changeInfo.url)
+            this._callBack(this.factory.createNavigationEvent(tabId, changeInfo, tab));
         this.updateActiveTab();
     }
 
