@@ -23,11 +23,9 @@ export default class DOMListener implements IListener {
      */
     private injectEventRecorder = (details? : chrome.webNavigation.WebNavigationFramedCallbackDetails) => {
         if (details && details.frameId === 0) {
-            if (details.url.startsWith("chrome://"))
-                return;
             chrome.tabs.executeScript(details.tabId, { file: 'Listeners/DOM/ContentScript/DOMEventRecorder.js' }, () => {
                 if (chrome.runtime.lastError)
-                    console.log("Could not inject contentscript: " + chrome.runtime.lastError.message);
+                    console.error("Could not inject contentscript: " + chrome.runtime.lastError.message);
             });
         };
     }
@@ -46,20 +44,19 @@ export default class DOMListener implements IListener {
      * @returns domevent 
      */
     private static deserializeDOMEvent(request : any, sender : chrome.runtime.MessageSender) : BrowserEvent | undefined {
-        const fromTab = sender.tab;
-        let tabID : number = -1;
-        let windowID : number = -1;
-        if (fromTab && fromTab.id) {
-            tabID = fromTab.id;
-            if (fromTab.windowId)
-                windowID = fromTab.windowId;
-        }
-        let parsedEvent : any = JSON.parse(request);
         let event : BrowserEvent | undefined;
-        switch(parsedEvent._type) {
-            case(EventType.ButtonClick):
-                event = new ButtonClickEvent(tabID, windowID, parsedEvent._buttonTitle, parsedEvent._url, parsedEvent._buttonHref);
-                break;
+        const parsedObj : any = JSON.parse(request);
+        if (!parsedObj || !parsedObj._type)
+            return undefined;
+        try {
+            switch(parsedObj._type) {
+                case(EventType.ButtonClick):
+                    event = ButtonClickEvent.deserialize(parsedObj, sender);
+                    break;
+            }
+        } catch (e) {
+            console.error(e);
+            return undefined;
         }
         return event;
     }

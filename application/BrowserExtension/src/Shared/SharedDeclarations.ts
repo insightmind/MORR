@@ -85,6 +85,9 @@ export class BrowserEvent implements IEvent{
 	public get timeStamp() : Date {
 		return this._timeStamp;
 	}
+	public set timeStamp(date : Date) {
+		this._timeStamp = date;
+	}
 	public get issuingModule() {
 		return this._issuingModule;
 	}

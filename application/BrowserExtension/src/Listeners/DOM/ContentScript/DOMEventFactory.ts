@@ -5,6 +5,7 @@ interface ParsedEvent {
 }
 
 export default class DOMEventFactory {
+    static readonly emptyMatcher = new RegExp('^\ *$');
     /**
      * Creates event
      * @param domEvent 
@@ -31,8 +32,15 @@ export default class DOMEventFactory {
      * @param domEvent 
      * @returns button click event 
      */
-    public createButtonClickEvent(domEvent : MouseEvent) : DOM.ButtonClickEvent | undefined {
-        let text : string = this.extractContent((<Element>domEvent.target).outerHTML);
+    private createButtonClickEvent(domEvent : MouseEvent) : DOM.ButtonClickEvent | undefined {
+        const target : Element = <Element>domEvent.target;
+        let text : string = this.extractContent(target.outerHTML);
+        if (DOMEventFactory.emptyMatcher.test(text)) {
+            if ((<any>target).value)
+                text = (<any>target).value;
+            else if ((<any>target).name)
+                text = (<any>target).name;
+        }
         let buttonHref : string | null = (<Element>domEvent.target).getAttribute("href");
         return new DOM.ButtonClickEvent(0, 0, text, window.location.href, buttonHref ? buttonHref : undefined);
     }
@@ -42,7 +50,7 @@ export default class DOMEventFactory {
      * @param domEvent 
      * @returns text input event 
      */
-    public createTextInputEvent(domEvent : Event) : DOM.TextInputEvent | undefined {
+    private createTextInputEvent(domEvent : Event) : DOM.TextInputEvent | undefined {
         return undefined;
     }
 
@@ -51,7 +59,7 @@ export default class DOMEventFactory {
      * @param domEvent 
      * @returns text selection event 
      */
-    public createTextSelectionEvent(domEvent : Event) : DOM.TextSelectionEvent | undefined {
+    private createTextSelectionEvent(domEvent : Event) : DOM.TextSelectionEvent | undefined {
         return undefined;
     }
 
@@ -68,6 +76,6 @@ export default class DOMEventFactory {
               children[i].innerText+= ' ';
           }
         }
-        return [span.textContent || span.innerText].toString().replace(/ +/g,' ');
+        return [span.textContent || span.innerText].toString().replace(/ +/g,' ').replace(/\ *$/, '');
       };
 }

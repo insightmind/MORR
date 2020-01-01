@@ -38,6 +38,25 @@ export class TextInputEvent extends BrowserEvent {
     }
 
     /**
+     * Deserializes TextInputEvent
+     * @param parsed the object parsed from a JSON string
+     * @param [sender] the sender of the serialized event
+     * @returns the deserialized TextInputEvent
+     * @throws if parsed does not contain all necessary fields to create the event
+     */
+    public static deserialize(parsed : any, sender? : chrome.runtime.MessageSender) : TextInputEvent {
+        let tabID = parsed._tabID;
+        let windowID = parsed._windowID;
+        if (sender && sender.tab) {
+            tabID = sender.tab.id;
+            windowID = sender.tab.windowId;
+        }
+        let evt = new TextInputEvent(tabID, windowID, parsed._text, parsed._target, parsed._url);
+        evt.timeStamp = new Date(parsed._timeStamp);
+        return evt;
+    }
+
+    /**
      * Gets text
      */
     public get text() : string {
@@ -85,6 +104,25 @@ export class ButtonClickEvent extends BrowserEvent {
     }
 
     /**
+     * Deserializes button click event from parsed JSON object
+     * @param parsed the object parsed from a JSON string
+     * @param [sender] the sender of the serialized event
+     * @returns the deserialized ButtonClickEvent
+     * @throws if parsed does not contain all necessary fields to create the event
+     */
+    public static deserialize(parsed : any, sender? : chrome.runtime.MessageSender) : ButtonClickEvent {
+        let tabID = parsed._tabID;
+        let windowID = parsed._windowID;
+        if (sender && sender.tab) {
+            tabID = sender.tab.id;
+            windowID = sender.tab.windowId;
+        }
+        let evt = new ButtonClickEvent(tabID, windowID, parsed._buttonTitle, parsed._url, parsed._buttonHref);
+        evt.timeStamp = new Date(parsed._timeStamp);
+        return evt;
+    }
+
+    /**
      * Gets button title
      */
     public get buttonTitle() : string {
@@ -127,6 +165,26 @@ export class HoverEvent extends BrowserEvent {
         super(EventType.Hover, tabID, windowID, url);
         this._target = target;
     }
+
+    /**
+     * Deserializes hover event
+     * @param parsed the object parsed from a JSON string
+     * @param [sender] the sender of the serialized event
+     * @returns the deserialized HoverEvent
+     * @throws if parsed does not contain all necessary fields to create the event
+     */
+    public static deserialize(parsed : any, sender? : chrome.runtime.MessageSender) : HoverEvent {
+        let tabID = parsed._tabID;
+        let windowID = parsed._windowID;
+        if (sender && sender.tab) {
+            tabID = sender.tab.id;
+            windowID = sender.tab.windowId;
+        }
+        let evt = new HoverEvent(tabID, windowID, parsed._target, parsed._url);
+        evt.timeStamp = new Date(parsed._timeStamp);
+        return evt;
+    }
+
     /**
      * Gets target
      */
@@ -157,6 +215,26 @@ export class TextSelectionEvent extends BrowserEvent {
         super(EventType.TextSelection, tabID, windowID, url);
         this._textSelection = textSelection;
     }
+
+    /**
+     * Deserializes text selection event
+     * @param parsed the object parsed from a JSON string
+     * @param [sender] the sender of the serialized event
+     * @returns the deserialized TextSelectionEvent
+     * @throws if parsed does not contain all necessary fields to create the event
+     */
+    public static deserialize(parsed : any, sender? : chrome.runtime.MessageSender) : TextSelectionEvent {
+        let tabID = parsed._tabID;
+        let windowID = parsed._windowID;
+        if (sender && sender.tab) {
+            tabID = sender.tab.id;
+            windowID = sender.tab.windowId;
+        }
+        let evt = new TextSelectionEvent(tabID, windowID, parsed._textSelection, parsed._url);
+        evt.timeStamp = new Date(parsed._timeStamp);
+        return evt;
+    }
+
     /**
      * Gets text selection
      */
