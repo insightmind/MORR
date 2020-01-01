@@ -8,7 +8,7 @@ export enum DOMEventTypes {
 	DBLCLICK = 'dblclick',
 	//KEYDOWN = 'keydown',
 	//MOUSEENTER = 'mouseenter',
-	//MOUSEUP = 'mouseup', //for text selection events
+	MOUSEUP = 'mouseup', //for text selection events
 	//MOUSEDOWN = 'mousedown',
 	SELECT = 'select', //user selects a dropdown entry or similar
 	SUBMIT = 'submit',
