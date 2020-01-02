@@ -1,6 +1,6 @@
 import { IListener, EventType } from '../../Shared/SharedDeclarations'
 import { BrowserEvent } from '../../Shared/SharedDeclarations'
-import { ButtonClickEvent, TextSelectionEvent, TextInputEvent } from './DOMEvents';
+import { ButtonClickEvent, TextSelectionEvent, TextInputEvent, HoverEvent } from './DOMEvents';
 
 /**
  * Listener responsible to gather all releveant events happening in the website context.
@@ -80,6 +80,9 @@ export default class DOMListener implements IListener {
                     break;
                 case(EventType.TextInput):
                     event = TextInputEvent.deserialize(parsedObj, sender);
+                    break;
+                case(EventType.Hover):
+                    event = HoverEvent.deserialize(parsedObj, sender);
                     break;
                 default:
                     throw(`Received unexpected eventtype: ${parsedObj._type}`);

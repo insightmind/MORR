@@ -25,20 +25,28 @@ export default class DOMEventFactory {
      * @param domEvent 
      * @returns event 
      */
-    public createEvent(domEvent : Event) : Shared.BrowserEvent | undefined {
-        let evt : Shared.BrowserEvent | undefined;
-        switch(domEvent.type) {
-            case(DOM.DOMEventTypes.CLICK):
-                evt = this.createButtonClickEvent(domEvent as MouseEvent);
-                break;
-            case(DOM.DOMEventTypes.MOUSEUP):
-                evt = this.createTextSelectionEvent(domEvent);
-                break;
-            case(DOM.DOMEventTypes.CHANGE):
-                evt = this.createTextInputEvent(domEvent);
-                break;
-        }
-        return evt;
+    public createEvent(domEvent : Event) : Promise<Shared.BrowserEvent | undefined> {
+        return new Promise((resolve) => {
+            let evt : Shared.BrowserEvent | undefined;
+            switch(domEvent.type) {
+                case(DOM.DOMEventTypes.CLICK):
+                    evt = this.createButtonClickEvent(domEvent as MouseEvent);
+                    resolve(evt);
+                    break;
+                case(DOM.DOMEventTypes.MOUSEUP):
+                    evt = this.createTextSelectionEvent(domEvent);
+                    resolve(evt);
+                    break;
+                case(DOM.DOMEventTypes.CHANGE):
+                    evt = this.createTextInputEvent(domEvent);
+                    resolve(evt);
+                    break;
+                case(DOM.DOMEventTypes.MOUSEENTER):
+                    this.createHoverEvent(domEvent)
+                    .then((evt) => resolve(evt));
+                    break;
+            }
+        });
     }
 
     /**
@@ -54,7 +62,7 @@ export default class DOMEventFactory {
                 if (target.tagName.toLowerCase() == "input" && !DOMEventFactory.inputTypeWhiteListFilter.test((<HTMLInputElement>target).type))
                     return undefined;
                 let buttonHref : string | null = target.getAttribute("href");
-                return new DOM.ButtonClickEvent(0, 0, DOMEventFactory.extractTargetAsString(domEvent), window.location.href,
+                return new DOM.ButtonClickEvent(0, 0, DOMEventFactory.extractTargetAsString(target), window.location.href,
                                                 buttonHref ? buttonHref : undefined);
             }
             target = target.parentElement;
@@ -72,13 +80,13 @@ export default class DOMEventFactory {
         if (domEvent.target) {
             const target = domEvent.target as HTMLInputElement;
             let inputText : string;
-            let targetString = DOMEventFactory.extractTargetAsString(domEvent);
+            let targetString = DOMEventFactory.extractTargetAsString(target);
             if (DOMEventFactory.passwordMatcher.test(target.type) || DOMEventFactory.passwordMatcher.test(targetString))
                 inputText = "<password>";
             else {
                 inputText = target.value;
             }
-            return new DOM.TextInputEvent(0, 0, inputText, DOMEventFactory.extractTargetAsString(domEvent), window.location.href);
+            return new DOM.TextInputEvent(0, 0, inputText, DOMEventFactory.extractTargetAsString(target), window.location.href);
         }
         return undefined;
     }
@@ -100,14 +108,45 @@ export default class DOMEventFactory {
         return undefined;
     }
 
+    private createHoverEvent(domEvent : Event) : Promise<DOM.HoverEvent | undefined> {
+        return new Promise((resolve) => {
+            let url : string = window.location.href;
+            if (!domEvent.target)
+                resolve(undefined);
+            if ((<HTMLElement>domEvent.target).children.length != 0)
+                resolve(undefined);
+            let valid : boolean = true;
+            let invalidate = () => {valid = false;}
+            document.addEventListener("mouseout", invalidate, {
+                capture : true,
+                passive : true,
+                once : true
+            });
+            setTimeout(() => {
+                document.removeEventListener("mouseout", invalidate, {capture : true});
+                if (!valid)
+                    resolve(undefined);
+                else
+                    resolve(new DOM.HoverEvent(0, 0, DOMEventFactory.extractTargetAsString(<HTMLElement>domEvent.target), url));
+            }, DOM.HoverEvent.HOVERDELAYMS);
+        });
+    }
+ 
     /**
      * Extracts target as string from Event
      * @param domEvent the domEvent to extract the target from
      * @returns string describing the target (label of button, etc.)
      */
-    private static extractTargetAsString(domEvent : Event) : string {
-        const target = <Element>domEvent.target;
-        let targetString : string = DOMEventFactory.extractContent(target.outerHTML);
+    private static extractTargetAsString(target : HTMLElement) : string {
+        let targetString : string;
+        if (target.title && target.title.length > 0)
+            return target.title;
+        else if (target.hasAttribute("aria-label")) {
+            let ariaLabel = target.getAttribute("aria-label");
+            if (ariaLabel && ariaLabel.length > 0)
+                return ariaLabel;
+        }
+        targetString = DOMEventFactory.extractContent(target.outerHTML);
         if (DOMEventFactory.emptyMatcher.test(targetString)) {
             if ((<HTMLButtonElement>target).name)
             targetString = (<HTMLButtonElement>target).name;

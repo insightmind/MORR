@@ -1,8 +1,8 @@
 import { TextInputEvent, ButtonClickEvent, HoverEvent, TextSelectionEvent } from '../../../Listeners/DOM/DOMEvents'
 import { EventType } from '../../../Shared/SharedDeclarations'
-import { url } from 'inspector';
 
 const sample : any = {_issuingModule : 0, _windowID : 3, _tabID : 7,  _url : new URL("http://sample.com")};
+const sender : chrome.runtime.MessageSender = {tab : ({id : 7, windowId : 3} as chrome.tabs.Tab)} as chrome.runtime.MessageSender;
 
 describe("TextInputEvent Tests", () => {
     const mySample = {...sample};
@@ -38,6 +38,12 @@ describe("TextInputEvent Tests", () => {
         localSample._text = newText;
         localSample._target = newTarget;
         expect(evt).toMatchObject(localSample);
+    });
+
+    test("Deserialize", () => {
+        let deserialized = TextInputEvent.deserialize(JSON.parse(evt.serialize()), sender);
+        expect(deserialized).toMatchObject(evt);
+        expect(deserialized.url).toStrictEqual(mySample._url);
     });
 });
 
@@ -82,6 +88,12 @@ describe("ButtonClickEvent Tests", () => {
         localSample._buttonHref = newHref;
         expect(evt).toMatchObject(localSample);
     });
+
+    test("Deserialize", () => {
+        let deserialized = ButtonClickEvent.deserialize(JSON.parse(evt.serialize()), sender);
+        expect(deserialized).toMatchObject(evt);
+        expect(deserialized.url).toStrictEqual(mySample._url);
+    });
 });
 
 describe("HoverEvent Tests", () => {
@@ -109,6 +121,12 @@ describe("HoverEvent Tests", () => {
         localSample._target = "New Target";
         expect(evt).toMatchObject(localSample);
     })
+
+    test("Deserialize", () => {
+        let deserialized = HoverEvent.deserialize(JSON.parse(evt.serialize()), sender);
+        expect(deserialized).toMatchObject(evt);
+        expect(deserialized.url).toStrictEqual(mySample._url);
+    });
 });
 
 describe("TextSelectionEvent Tests", () => {
@@ -134,4 +152,10 @@ describe("TextSelectionEvent Tests", () => {
         evt.textSelection = "new selection";
         expect(evt.textSelection).toBe("new selection");
     })
+
+    test("Deserialize", () => {
+        let deserialized = TextSelectionEvent.deserialize(JSON.parse(evt.serialize()), sender);
+        expect(deserialized).toMatchObject(evt);
+        expect(deserialized.url).toStrictEqual(mySample._url);
+    });
 });

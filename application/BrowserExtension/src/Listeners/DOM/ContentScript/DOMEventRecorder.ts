@@ -33,7 +33,7 @@ class DOMEventRecorder {
 			});
 		});
 		document.body.style.backgroundColor = "yellow"; //TODO: remove. Just there for testing purposes
-		chrome.runtime.onMessage.addListener(this.stop);
+		chrome.runtime.onMessage.addListener(this.handleMessage);
 	}
 	/**
 	 * Stops domevent recorder. After this, this script is done.
@@ -46,7 +46,7 @@ class DOMEventRecorder {
 				capture: true
 			});
 		});
-		chrome.runtime.onMessage.removeListener(this.stop);
+		chrome.runtime.onMessage.removeListener(this.handleMessage);
 	}
 
 	/**
@@ -62,9 +62,12 @@ class DOMEventRecorder {
 		console.log(domEvent); //TODO: remove, debug-use only
 		if (!domEvent.isTrusted) //events are trused if invoked by the user, untrusted if invoked by a script
 			return;
-		let event : BrowserEvent | undefined = this.factory.createEvent(domEvent);
-		if (event)
-			this.sendEvent(event);
+		this.factory.createEvent(domEvent)
+		.then((event) => {
+			if (event) {
+				this.sendEvent(event);
+			}
+		});
 	}
 
 	/**
