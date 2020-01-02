@@ -37,9 +37,11 @@ export default class DownloadListener implements IListener {
      * @returns download event 
      */
     private onDownloadStarted = (downloadItem: chrome.downloads.DownloadItem) : void => {
-        this.factory.createEvent(downloadItem)
-        .then((event : DownloadEvent) => {
-            this._callBack(event)
-        });
+        if(downloadItem.state == "in_progress") {
+            this.factory.createEvent(downloadItem)
+            .then((event : DownloadEvent) => {
+                this._callBack(event)
+            });
+        }
     }
 }
