@@ -9,26 +9,48 @@ import { ButtonClickEvent, TextSelectionEvent, TextInputEvent } from './DOMEvent
 export default class DOMListener implements IListener {
     private _callBack: (event: BrowserEvent) => void;
     constructor(callback: (event: BrowserEvent) => void) {
-        chrome.webNavigation.onDOMContentLoaded.addListener(this.injectEventRecorder);
         this._callBack = callback;
     }
     public start(): void {
-        chrome.runtime.onMessage.addListener(this.onDOMEventReceived);
+        chrome.tabs.query({}, (result : chrome.tabs.Tab[]) => {
+            for (let tab of result) {
+                if (tab.id)
+                    this.executeScript(tab.id);
+            }
+            chrome.runtime.onMessage.addListener(this.onDOMEventReceived);
+            chrome.webNavigation.onDOMContentLoaded.addListener(this.injectEventRecorder);
+        });
     }
+
     public stop(): void {
         chrome.runtime.onMessage.removeListener(this.onDOMEventReceived);
+        chrome.webNavigation.onDOMContentLoaded.removeListener(this.injectEventRecorder);
+        chrome.tabs.query({}, (result : chrome.tabs.Tab[]) => {
+            for (let tab of result)
+                if (tab.id)
+                    chrome.tabs.sendMessage(tab.id, "Stop");
+        });
     }
     /**
      * Inject event recorder into a website.
      */
     private injectEventRecorder = (details? : chrome.webNavigation.WebNavigationFramedCallbackDetails) => {
         if (details && details.frameId === 0) {
-            chrome.tabs.executeScript(details.tabId, { file: 'Listeners/DOM/ContentScript/DOMEventRecorder.js' }, () => {
-                if (chrome.runtime.lastError)
-                    console.error("Could not inject contentscript: " + chrome.runtime.lastError.message);
-            });
+            this.executeScript(details.tabId);
         };
     }
+
+    /**
+     * Executes contentscript in a tab
+     * @param tabID the tabID to inject to script into
+     */
+    private executeScript(tabID : number) : void {
+        chrome.tabs.executeScript(tabID, { file: 'Listeners/DOM/ContentScript/DOMEventRecorder.js' }, () => {
+            if (chrome.runtime.lastError)
+                console.error("Could not inject contentscript: " + chrome.runtime.lastError.message);
+        });
+    }
+
     /**
      * Called when a contest script sends back serialized event data.
      */
