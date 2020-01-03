@@ -22,7 +22,6 @@
   "devDependencies": {
     "@types/chrome": "0.0.91",
     "@types/jest": "^24.0.25",
-    "@types/jquery": "^3.3.31",
     "@types/node": "^13.1.1",
     "@types/sinon-chrome": "^2.2.6",
     "jest": "^24.9.0",
@@ -32,7 +31,5 @@
     "ts-jest": "^24.2.0",
     "typescript": "^3.7.4"
   },
-  "dependencies": {
-    "jquery": "^3.4.1"
-  }
+  "dependencies": {}
 }
