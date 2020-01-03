@@ -1,6 +1,6 @@
 import '@babel/polyfill'
 import { BrowserEvent } from './Shared/SharedDeclarations'
-import { ICommunicationStrategy, WebSocketInterface } from './ApplicationInterface/';
+import { ICommunicationStrategy, PostHTTPInterface } from './ApplicationInterface/';
 import ListenerManager from "./ListenerManager"
 import * as Mock from './__mock__'
 
@@ -19,14 +19,14 @@ class BackgroundScript {
     /**
      * URI to initialize the appInterface to
      */
-    static receiverURI : string = "ws://127.0.0.1:31337/";
-
+    private static receiverURI : string = "http://localhost:60024/someuser";
 
     /**
      * Helper variables
      */
     private configString : string | undefined;
-    private readonly RETRYDELAYMS = 5000;
+    private static readonly RETRYDELAYMS = 5000;
+    private isRunning : boolean;
 
     /**
      * Creates an instance of background script and initializes the listeners.
@@ -34,6 +34,7 @@ class BackgroundScript {
     constructor() {
         this.listenerManager = new ListenerManager(this.callback);
         this.appInterface = new Mock.CommunicationMock();
+        this.isRunning = false;
         this.run();
     }
 
@@ -41,25 +42,40 @@ class BackgroundScript {
      * Start all listeners
      */
     public start = () : void => {
-        this.listenerManager.startAll();
+        if (!this.isRunning) {
+            this.isRunning = true;
+            this.listenerManager.startAll();
+        }
     }
     /**
      * Stop all listeners and wait for next start signal
      */
     public stop = () : void => {
-        this.listenerManager.stopAll();
-        this.waitForStart();
+        if (this.isRunning) {
+            this.isRunning = false;
+            this.listenerManager.stopAll();
+            this.waitForStart()
+            .then(() => this.start())
+            .catch((e) => {
+                this.reset();
+            });
+        }
     }
 
-    private async run() : Promise<void> {
-        await this.establishConnection(true);
-        try {
-            await this.waitForStart();
-        } catch (e) {
+    //completely reset the connection status
+    private reset = () : void => {
+        if (this.isRunning) {
+            this.isRunning = false;
+            this.listenerManager.stopAll();
             this.run();
-            return;
         }
-        this.start();
+    }
+
+    private run = () : void => {
+        this.establishConnection(true)
+        .then(() => this.waitForStart())
+        .catch((e) => this.run())
+        .then(() => this.start());
     }
 
     /**
@@ -67,7 +83,13 @@ class BackgroundScript {
      */
     public callback = (event : BrowserEvent) : void => {
         console.log(`${BackgroundScript.timeStampString(event.timeStamp)}: ${event.type} occured in tab ${event.tabID} in window ${event.windowID}`);
-        this.appInterface.sendData(JSON.stringify(event)).catch(this.stop);
+        this.appInterface.sendData(JSON.stringify(event)).
+        catch((e) => {
+            if (e == "Stop")
+                this.stop();
+            else
+                this.reset();
+        });
     }
 
     /**
@@ -91,7 +113,7 @@ class BackgroundScript {
      * Request config of the MORR application
      */
     private requestConfig = () : void => {
-        throw new Error("Method unused.");
+        this.appInterface.requestConfig();
     }
 
     /**
@@ -113,8 +135,11 @@ class BackgroundScript {
                 resolve();
             })
             .catch((err : string) => {
-                console.log(`Error during initialization: ${err}`);
-                reject(`Error during initialization: ${err}`);
+                console.error(`Error during initialization: ${err}`);
+                setTimeout(() => {
+                    this.establishConnection(getConfig)
+                    .then(() => resolve());
+                }, BackgroundScript.RETRYDELAYMS);
             });
         });
     }
