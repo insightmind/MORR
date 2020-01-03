@@ -6,7 +6,7 @@
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>MORR.Modules.WindowManagement</RootNamespace>
     <Platforms>x64</Platforms>
     <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\Modules</OutDir>
@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <Reference Include="PresentationFramework">
-      <HintPath>C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\3.0.0\PresentationFramework.dll</HintPath>
+      <HintPath>C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\3.1.0\PresentationFramework.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>
