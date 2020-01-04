@@ -111,9 +111,8 @@ export default class DOMEventFactory {
     private createHoverEvent(domEvent : Event) : Promise<DOM.HoverEvent | undefined> {
         return new Promise((resolve) => {
             let url : string = window.location.href;
-            if (!domEvent.target)
-                resolve(undefined);
-            if ((<HTMLElement>domEvent.target).children.length != 0)
+            //ignore empty and paragraph targets. Add regex for further ignores if deemed necessary
+            if (!domEvent.target || (<HTMLElement>domEvent.target).tagName.toLowerCase() == "p")
                 resolve(undefined);
             let valid : boolean = true;
             let invalidate = () => {valid = false;}

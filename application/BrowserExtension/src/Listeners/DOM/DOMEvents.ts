@@ -7,7 +7,7 @@ export enum DOMEventTypes {
 	CHANGE = 'change', //change event usually happens when the element loses focus again (e. g. when the user switches to the next input field in a form)
 	DBLCLICK = 'dblclick',
 	//KEYDOWN = 'keydown',
-	MOUSEENTER = 'mouseenter',
+	MOUSEENTER = 'mouseover',
 	MOUSEUP = 'mouseup', //for text selection events
 	//MOUSEDOWN = 'mousedown',
 	SELECT = 'select', //user selects a dropdown entry or similar
