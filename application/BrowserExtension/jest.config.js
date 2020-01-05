@@ -15,4 +15,8 @@ module.exports = {
   "transform": {
     "^.+\\.(ts|tsx)$": "ts-jest"
   },
+  "setupFiles": [
+    "./src/__mock__/client.ts"
+  ],
+  "testEnvironment" : "node"
 }
