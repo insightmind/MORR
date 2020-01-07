@@ -15,9 +15,12 @@ namespace MORR.Core
     {
         private CompositionHost container;
 
+        private const string moduleSubdirectoryRelativePath = "\\Modules";
+        private const string moduleNamePattern = "*.MORR-Module.dll";
+
         public Bootstrapper()
         {
-            LoadFromPath(new FilePath(Directory.GetCurrentDirectory() + "\\Modules"));
+            LoadFromPath(new FilePath(Directory.GetCurrentDirectory() + moduleSubdirectoryRelativePath));
         }
 
         public void ComposeImports(object @object)
@@ -27,8 +30,6 @@ namespace MORR.Core
 
         private void LoadFromPath(FilePath path)
         {
-            const string moduleNamePattern = "*.MORR-Module.dll";
-
             var assemblies = Directory.GetFiles(path.ToString(), moduleNamePattern)
                                       .Select(AssemblyLoadContext.Default.LoadFromAssemblyPath);
 
