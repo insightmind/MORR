@@ -16,6 +16,6 @@ namespace MORR.Core.Data.Sample.Metadata
         /// <summary>
         ///     The data that is serialized.
         /// </summary>
-        public string SerializedData { get; set; }
+        public byte[] SerializedData { get; set; }
     }
 }
