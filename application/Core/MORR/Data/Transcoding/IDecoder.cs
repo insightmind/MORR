@@ -1,13 +1,14 @@
 ﻿using MORR.Core.Data.Transcoding.Audio.EventHandlers;
 using MORR.Core.Data.Transcoding.Metadata.EventHandlers;
 using MORR.Core.Data.Transcoding.Video.EventHandlers;
+using MORR.Shared.Modules;
 
 namespace MORR.Core.Data.Transcoding
 {
     /// <summary>
     ///     Decodes samples from a path and provides the decoded samples
     /// </summary>
-    public interface IDecoder
+    public interface IDecoder : ICollectingModule
     {
         /// <summary>
         ///     <see langword="true" /> when the decoder is decoding, <see langword="false" /> otherwise
