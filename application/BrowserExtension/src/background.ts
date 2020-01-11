@@ -16,10 +16,6 @@ class BackgroundScript {
      * App interface to the MORR application
      */
     appInterface : ICommunicationStrategy;
-    /**
-     * URI to initialize the appInterface to
-     */
-    private static receiverURI : string = "http://localhost:60024/someuser";
 
     /**
      * Helper variables
