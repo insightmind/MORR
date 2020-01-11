@@ -78,8 +78,10 @@ export default class TabListener implements IListener {
     private updateActiveTab = () : Promise<void> => {
         return new Promise((resolve, reject) => {
             chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-                if (tabs.length == 0 || !tabs[0])
+                if (tabs.length == 0 || !tabs[0]) {
                     reject("Tab query did not return an entry.");
+                    return;
+                }
                 if (!this.lastActiveTabs[0] || tabs[0].id != this.lastActiveTabs[0].id) {
                     //active tab has changed, move back in array
                     this.lastActiveTabs[1] = this.lastActiveTabs[0];
