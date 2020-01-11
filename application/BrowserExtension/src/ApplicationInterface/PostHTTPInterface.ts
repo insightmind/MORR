@@ -1,4 +1,11 @@
-import ICommunicationStrategy from './IApplicationInterface';
+import ICommunicationStrategy from './ICommunicationStrategy';
+const URLPrefix = "http://localhost:";
+const portRegex = new RegExp("^([1-9][0-9]{0,4})(\/\\w+)*$");
+chrome.runtime.onInstalled.addListener((details : chrome.runtime.InstalledDetails) => {
+    if (details.reason == "install") {
+        chrome.storage.local.set({"port": "No Port Set!"});
+    }
+});
 /**
  * Application Interface using the HTTP-POST. Expects a HTTPListener on the main application side.
  */
@@ -7,8 +14,35 @@ export default class PostHTTPInterface implements ICommunicationStrategy {
      * URL of the HTTPListener attached to the main application.
      */
     private listenerURL : string;
-    constructor(url: string) {
-        this.listenerURL = url;
+    private gotURL : Promise<void>; //resolve when URL is set
+    constructor(url?: string) {
+        if (url) {
+            this.listenerURL = url;
+            this.gotURL = new Promise((resolve) => {
+                resolve();
+            });
+        }
+
+        else {
+            this.listenerURL = "undefined";
+            this.gotURL = new Promise((resolve) => {
+                chrome.storage.local.get(['port'], (result) => {
+                    this.listenerURL = URLPrefix + result.port;
+                    resolve();
+                });
+            })
+        }
+        chrome.storage.onChanged.addListener((changes : any, areaname : string) => {
+            if (areaname == "local" && changes.port.newValue && portRegex.test(changes.port.newValue)) {
+                let port = Number(portRegex.exec(changes.port.newValue)![1]);
+                if (port >= 80 && port <= 65536) {
+                    this.listenerURL = URLPrefix + changes.port.newValue;
+                    console.log("Set new URI: " + this.listenerURL);
+                    return;
+                }
+            }
+            console.error("Post HTTPListener Received invalid URL prefix, ignoring");
+        });
     }
     /**
      * Establishes connection to the MORR main application
@@ -17,22 +51,25 @@ lished successfully or rejected upon connection failure or unexpected response
      */
     public establishConnection(): Promise<void> {
         return new Promise ((resolve, reject) => {
-            fetch(this.listenerURL, {
-                method : "POST",
-                body: JSON.stringify({request : "connect"}),
-            }).then(
-                response => response.json()
-            ).then((response) => {
-                if (response.response == "MORR") {
-                    console.log("Connection established");
-                    resolve();
-                } else {
-                    throw("Unexpected Listener");
-                }
-            }).catch((e) => {
-                console.log(`POSTHTTPInterface error (est): ${e}`);
-                reject(e);
-            });
+            this.gotURL
+            .then(() => {
+                fetch(this.listenerURL, {
+                    method : "POST",
+                    body: JSON.stringify({request : "connect"}),
+                }).then(
+                    response => response.json()
+                ).then((response) => {
+                    if (response.response == "MORR") {
+                        console.log("Connection established");
+                        resolve();
+                    } else {
+                        throw("Unexpected Listener");
+                    }
+                }).catch((e) => {
+                    console.log(`POSTHTTPInterface error (est): ${e}`);
+                    reject(e);
+                });
+            })
         });
     }
 

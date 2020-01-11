@@ -1,4 +1,4 @@
-import ICommunicationStrategy from './IApplicationInterface'
+import ICommunicationStrategy from './ICommunicationStrategy'
 
 /**
  * Application interface using  a web socket. Expects a websocket-server on the main application side.
