@@ -19,6 +19,7 @@ export default class DOMEventFactory {
     //a (href) and button elements are the common tags for button-like objects.
     private static readonly targetWhiteListFilter = new RegExp('^(a|button|input)$', 'i');
     private static readonly inputTypeWhiteListFilter = new RegExp('^(submit|checkbox|button)$', 'i');
+    private static readonly hoverBlackListFilter = new RegExp('^(p|body|head|div|html|ul|span)$', 'i');
     lastTextSelection : string = "";
     /**
      * Creates event
@@ -29,10 +30,12 @@ export default class DOMEventFactory {
         return new Promise((resolve) => {
             let evt : Shared.BrowserEvent | undefined;
             switch(domEvent.type) {
+                case(DOM.DOMEventTypes.DBLCLICK):
                 case(DOM.DOMEventTypes.CLICK):
                     evt = this.createButtonClickEvent(domEvent as MouseEvent);
                     resolve(evt);
                     break;
+                case(DOM.DOMEventTypes.KEYUP):
                 case(DOM.DOMEventTypes.MOUSEUP):
                     evt = this.createTextSelectionEvent(domEvent);
                     resolve(evt);
@@ -97,6 +100,10 @@ export default class DOMEventFactory {
      * @returns text selection event 
      */
     private createTextSelectionEvent(domEvent : Event) : DOM.TextSelectionEvent | undefined {
+        if (domEvent.type == DOM.DOMEventTypes.KEYUP) {
+            if ((<KeyboardEvent>domEvent).key != "Control" && (<KeyboardEvent>domEvent).key != "Shift")
+                return;
+        }
         if (window && window.getSelection()) {
             let textSelection : Selection | null = window.getSelection();
             if (textSelection && textSelection.toString() != this.lastTextSelection) {
@@ -112,7 +119,7 @@ export default class DOMEventFactory {
         return new Promise((resolve) => {
             let url : string = window.location.href;
             //ignore empty and paragraph targets. Add regex for further ignores if deemed necessary
-            if (!domEvent.target || (<HTMLElement>domEvent.target).tagName.toLowerCase() == "p")
+            if (!domEvent.target || DOMEventFactory.hoverBlackListFilter.test((<HTMLElement>domEvent.target).tagName))
                 resolve(undefined);
             let valid : boolean = true;
             let invalidate = () => {valid = false;}
