@@ -16,13 +16,15 @@ export default class DOMEventFactory {
      */
     //p, span and div are usually not used as buttons.
     private static readonly targetBlackListFilter = new RegExp('^(p|span|div)$', 'i');
-    //a (href) and button elements are the common tags for button-like objects.
+    //a (href) and button elements are the common tags for button-like objects, but also input-type:submit.
     private static readonly targetWhiteListFilter = new RegExp('^(a|button|input)$', 'i');
     private static readonly inputTypeWhiteListFilter = new RegExp('^(submit|checkbox|button)$', 'i');
     private static readonly hoverBlackListFilter = new RegExp('^(p|body|head|div|html|ul|span)$', 'i');
+    //helper variable to prevent misfires of textselection-events. It declared here since there are no static method variables.
     lastTextSelection : string = "";
+
     /**
-     * Creates event
+     * Creates (MORR-)Event based on DOM Event type
      * @param domEvent 
      * @returns event 
      */
@@ -115,10 +117,15 @@ export default class DOMEventFactory {
         return undefined;
     }
 
+    /**
+     * Create a HoverEvent if the cursor does not leave the element for HOVERDELAYMS seconds
+     * @param domEvent
+     * @returns hover event or undefined if not applicable
+     */
     private createHoverEvent(domEvent : Event) : Promise<DOM.HoverEvent | undefined> {
         return new Promise((resolve) => {
             let url : string = window.location.href;
-            //ignore empty and paragraph targets. Add regex for further ignores if deemed necessary
+            //apply blacklist filtering
             if (!domEvent.target || DOMEventFactory.hoverBlackListFilter.test((<HTMLElement>domEvent.target).tagName))
                 resolve(undefined);
             let valid : boolean = true;
@@ -163,7 +170,7 @@ export default class DOMEventFactory {
             targetString = target.outerHTML; //fallback if everything else fails
         return targetString;
     }
-    //TODO: replace this copy-paste
+    //TODO: replace this copy-paste with a better method of extracting a target description from the HTML
     private static extractContent(s : any, space : boolean = true) : string {
         var span= document.createElement('span');
         span.innerHTML= s;

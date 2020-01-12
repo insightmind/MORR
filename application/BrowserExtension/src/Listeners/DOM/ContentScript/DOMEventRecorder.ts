@@ -32,7 +32,6 @@ class DOMEventRecorder {
 				passive: true,
 			});
 		});
-		document.body.style.backgroundColor = "yellow"; //TODO: remove. Just there for testing purposes
 		chrome.runtime.onMessage.addListener(this.handleMessage);
 	}
 	/**
@@ -40,7 +39,6 @@ class DOMEventRecorder {
 	 * To restart the script on an open site, simply inject this script again.
 	 */
 	public stop() : void {
-		document.body.style.backgroundColor = "white"; //TODO: remove. Just there for testing purposes
 		Object.values(DOMEventTypes).forEach((key : string) => {
 			document.removeEventListener(key, handleEvent, {
 				capture: true
