@@ -21,6 +21,12 @@ namespace MORR.Core
 
         internal ApplicationConfiguration AppConfig { get; private set; }
 
+        private const string saveLocationKey = "SaveLocation";
+        private const string saveNameKey = "SaveName";
+        private const string moduleIdentifierKey = "ModuleID";
+        private const string moduleConfigKey = "ModuleConfiguration";
+
+
         /// <summary>
         ///     Loads the configuration from the specified path
         /// </summary>
@@ -34,8 +40,8 @@ namespace MORR.Core
                 throw new InvalidConfigurationException("Invalid configuration file path!");
             }
             
-            var saveLocation = new FilePath(document.RootElement.GetProperty("SaveLocation").GetString());
-            var saveName = document.RootElement.GetProperty("SaveName").GetString();
+            var saveLocation = new FilePath(document.RootElement.GetProperty(saveLocationKey).GetString());
+            var saveName = document.RootElement.GetProperty(saveNameKey).GetString();
 
             AppConfig = new ApplicationConfiguration(saveLocation, saveName);
 
@@ -69,9 +75,9 @@ namespace MORR.Core
         {
             var resolvedConfigs = new Dictionary<string, string>();
 
-            foreach (var moduleConfig in document.RootElement.GetProperty("ModuleConfiguration").EnumerateArray())
+            foreach (var moduleConfig in document.RootElement.GetProperty(moduleConfigKey).EnumerateArray())
             {
-                var moduleIdentifier = moduleConfig.GetProperty("ModuleID").GetString();
+                var moduleIdentifier = moduleConfig.GetProperty(moduleIdentifierKey).GetString();
 
                 if (resolvedConfigs.ContainsKey(moduleIdentifier))
                 {
