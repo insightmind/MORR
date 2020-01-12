@@ -1,5 +1,6 @@
 import { IListener, EventType } from '../../Shared/SharedDeclarations'
 import { BrowserEvent } from '../../Shared/SharedDeclarations'
+import { ButtonClickEvent, TextSelectionEvent, TextInputEvent, HoverEvent } from './DOMEvents';
 
 /**
  * Listener responsible to gather all releveant events happening in the website context.
@@ -11,31 +12,52 @@ export default class DOMListener implements IListener {
         this._callBack = callback;
     }
     public start(): void {
-        chrome.webNavigation.onDOMContentLoaded.addListener(this.injectEventRecorder);
-        chrome.runtime.onMessage.addListener(this.onDOMEventReceived);
+        chrome.tabs.query({}, (result : chrome.tabs.Tab[]) => {
+            for (let tab of result) {
+                if (tab.id)
+                    this.executeScript(tab.id);
+            }
+            chrome.runtime.onMessage.addListener(this.onDOMEventReceived);
+            chrome.webNavigation.onDOMContentLoaded.addListener(this.injectEventRecorder);
+        });
     }
+
     public stop(): void {
-        chrome.webNavigation.onDOMContentLoaded.removeListener(this.injectEventRecorder);
         chrome.runtime.onMessage.removeListener(this.onDOMEventReceived);
+        chrome.webNavigation.onDOMContentLoaded.removeListener(this.injectEventRecorder);
+        chrome.tabs.query({}, (result : chrome.tabs.Tab[]) => {
+            for (let tab of result)
+                if (tab.id)
+                    chrome.tabs.sendMessage(tab.id, "Stop");
+        });
     }
     /**
      * Inject event recorder into a website.
      */
     private injectEventRecorder = (details? : chrome.webNavigation.WebNavigationFramedCallbackDetails) => {
-        return new Promise((resolve, reject) => {
-            if (!details || details.frameId === 0) {
-                chrome.tabs.executeScript({ file: 'Listeners/DOM/ContentScript/DOMEventRecorder.js' }, () => {
-                    if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
-                    else resolve();
-                });
-            } else resolve();
+        if (details && details.frameId === 0) {
+            this.executeScript(details.tabId);
+        };
+    }
+
+    /**
+     * Executes contentscript in a tab
+     * @param tabID the tabID to inject to script into
+     */
+    private executeScript(tabID : number) : void {
+        chrome.tabs.executeScript(tabID, { file: 'Listeners/DOM/ContentScript/DOMEventRecorder.js' }, () => {
+            if (chrome.runtime.lastError)
+                console.error("Could not inject contentscript: " + chrome.runtime.lastError.message);
         });
     }
+
     /**
      * Called when a contest script sends back serialized event data.
      */
     private onDOMEventReceived = (request : any, sender : chrome.runtime.MessageSender, sendResponse : (response? : any) => void) => {
-        this._callBack(DOMListener.deserializeDOMEvent(request, sender));
+        let event = DOMListener.deserializeDOMEvent(request, sender);
+        if (event)
+            this._callBack(event);
     }
     /**
      * Deserializes domevent
@@ -43,17 +65,32 @@ export default class DOMListener implements IListener {
      * @param sender the sender of the message
      * @returns domevent 
      */
-    private static deserializeDOMEvent(request : any, sender : chrome.runtime.MessageSender) : BrowserEvent {
-        const fromTab = sender.tab;
-        let tabID : number = -1;
-        let windowID : number = -1;
-        if (fromTab && fromTab.id) {
-            tabID = fromTab.id;
-            if (fromTab.windowId)
-                windowID = fromTab.windowId;
+    private static deserializeDOMEvent(request : any, sender : chrome.runtime.MessageSender) : BrowserEvent | undefined {
+        let event : BrowserEvent | undefined;
+        const parsedObj : any = JSON.parse(request);
+        if (!parsedObj || !parsedObj._type)
+            return undefined;
+        try {
+            switch(parsedObj._type) {
+                case(EventType.ButtonClick):
+                    event = ButtonClickEvent.deserialize(parsedObj, sender);
+                    break;
+                case(EventType.TextSelection):
+                    event = TextSelectionEvent.deserialize(parsedObj, sender);
+                    break;
+                case(EventType.TextInput):
+                    event = TextInputEvent.deserialize(parsedObj, sender);
+                    break;
+                case(EventType.Hover):
+                    event = HoverEvent.deserialize(parsedObj, sender);
+                    break;
+                default:
+                    throw(`Received unexpected eventtype: ${parsedObj._type}`);
+            }
+        } catch (e) {
+            console.error(e);
+            return undefined;
         }
-        let parsedEvent = JSON.parse(request);
-        let event = new BrowserEvent(parsedEvent.type, tabID, windowID, parsedEvent.url);
         return event;
     }
 }

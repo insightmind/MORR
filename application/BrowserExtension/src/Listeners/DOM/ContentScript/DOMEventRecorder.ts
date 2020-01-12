@@ -1,22 +1,50 @@
 import { BrowserEvent } from '../../../Shared/SharedDeclarations'
 import { DOMEventTypes } from '../DOMEvents'
 import { TextInputEvent, ButtonClickEvent, HoverEvent, TextSelectionEvent } from '../DOMEvents';
+import DOMEventFactory from './DOMEventFactory'
+
+//workaround for the fact that "document.removeListener" will not correctly
+//remove the eventlisteners if directly passing this.handleEvent
+//TODO: check for more idiomatic alternative
+let handleEvent : (domEvent : Event) => void;
 
 /**
  * Recorder injected into the website to capture DOM events.
+ * This class is "single use" only. Once stopped, it is
+ * not expected to be started again. Instead, the script should be reinjected.
  */
 class DOMEventRecorder {
+	private factory : DOMEventFactory;
+
+	constructor() {
+		this.factory = new DOMEventFactory();
+		handleEvent = this.handleEvent;
+	}
+	
 	/**
 	 * Starts domevent recorder.
 	 */
 	public start() : void {
-		throw new Error("Method not implemented.");
+		//attach listeners to all wanted eventtypes
+		Object.values(DOMEventTypes).forEach((key : string) => {
+			document.addEventListener(key, handleEvent, {
+				capture: true,
+				passive: true,
+			});
+		});
+		chrome.runtime.onMessage.addListener(this.handleMessage);
 	}
 	/**
-	 * Stops domevent recorder
+	 * Stops domevent recorder. After this, this script is done.
+	 * To restart the script on an open site, simply inject this script again.
 	 */
 	public stop() : void {
-		throw new Error("Method not implemented.");
+		Object.values(DOMEventTypes).forEach((key : string) => {
+			document.removeEventListener(key, handleEvent, {
+				capture: true
+			});
+		});
+		chrome.runtime.onMessage.removeListener(this.handleMessage);
 	}
 
 	/**
@@ -24,44 +52,31 @@ class DOMEventRecorder {
 	 * @param event the event to serialize and send.
 	 */
 	private sendEvent(event : BrowserEvent) {
-		throw new Error("Method not implemented.");
+		if (event)
+			chrome.runtime.sendMessage(event.serialize());
+	}
+
+	private handleEvent = (domEvent : Event) : void => {
+		console.log(domEvent); //TODO: remove, debug-use only
+		if (!domEvent.isTrusted) //events are trused if invoked by the user, untrusted if invoked by a script
+			return;
+		this.factory.createEvent(domEvent)
+		.then((event) => {
+			if (event) {
+				this.sendEvent(event);
+			}
+		});
 	}
 
 	/**
-	 * Creates text input event
-	 * @param ev The event which occured on the website
-	 * @returns text input event 
+	 * If the "Stop" keyword is sent from the background script, stop the DOMEventRecorder
 	 */
-	private createTextInputEvent(ev : any) : TextInputEvent {
-		throw new Error("Method not implemented.");
-	}
-	/**
-	 * Creates button click event
-	 * @param ev The event which occured on the website
-	 * @returns button click event 
-	 */
-	private createButtonClickEvent(ev : any) : ButtonClickEvent {
-		throw new Error("Method not implemented.");
-	}
-	/**
-	 * Creates hover event
-	 * @param ev The event which occured on the website
-	 * @returns hover event 
-	 */
-	private createHoverEvent(ev : any) : HoverEvent {
-		throw new Error("Method not implemented.");
-	}
-	/**
-	 * Creates text selection event
-	 * @param ev The event which occured on the website
-	 * @returns text selection event 
-	 */
-	/**
-	 * Params domevent recorder
-	 * @param ev The event which occured on the website
-	 * @returns text selection event 
-	 */
-	private createTextSelectionEvent(ev : any) : TextSelectionEvent {
-		throw new Error("Method not implemented.");
+	private handleMessage = (message : any) : void => {
+		if (message == "Stop")
+			this.stop();
 	}
 }
+
+const script = new DOMEventRecorder();
+//we expect the script to be only injected when the recorder is actually supposed to run
+script.start();
