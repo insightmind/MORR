@@ -49,11 +49,14 @@
     <Folder Include="src\Shared\" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="src\ApplicationInterface\IApplicationInterface.ts" />
+    <TypeScriptCompile Include="src\ApplicationInterface\ICommunicationStrategy.ts" />
     <TypeScriptCompile Include="src\ApplicationInterface\index.ts" />
     <TypeScriptCompile Include="src\ApplicationInterface\PostHTTPInterface.ts" />
     <TypeScriptCompile Include="src\ApplicationInterface\WebSocketInterface.ts" />
     <TypeScriptCompile Include="src\background.ts" />
+    <TypeScriptCompile Include="src\ListenerManager.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="src\Listeners\DOM\ContentScript\DOMEventRecorder.ts" />
     <TypeScriptCompile Include="src\Listeners\DOM\DOMEvents.ts" />
     <TypeScriptCompile Include="src\Listeners\DOM\DOMListener.ts" />
