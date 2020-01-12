@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Composition;
 using System.IO;
-using System.Runtime.Serialization;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using MORR.Core.Configuration;
 using MORR.Shared.Configuration;
 using MORR.Shared.Utility;
@@ -34,13 +31,15 @@ namespace MORR.Core
 
             if (document == null)
             {
-                throw new InvalidConfigurationException();
+                throw new InvalidConfigurationException("Invalid configuration file path!");
             }
             
             var saveLocation = new FilePath(document.RootElement.GetProperty("SaveLocation").GetString());
             var saveName = document.RootElement.GetProperty("SaveName").GetString();
 
             AppConfig = new ApplicationConfiguration(saveLocation, saveName);
+
+            CommitConfigurations(document);
         }
 
         private static JsonDocument LoadJsonDocument(FilePath path)
@@ -54,12 +53,35 @@ namespace MORR.Core
             return JsonDocument.Parse(jsonString, options);
         }
 
-        private void CommitToConfigurations(JsonDocument document)
+        private void CommitConfigurations(JsonDocument document)
         {
-            foreach (var configuration in Configurations)
+            var resolvedConfigs = ResolveModuleConfigurations(document);
+
+            foreach (var config in Configurations)
             {
-                configuration.
+                if (!resolvedConfigs.ContainsKey(config.Identifier)) { continue; }
+
+                config.Parse(resolvedConfigs[config.Identifier]);
             }
+        }
+
+        private static Dictionary<string, string> ResolveModuleConfigurations(JsonDocument document)
+        {
+            var resolvedConfigs = new Dictionary<string, string>();
+
+            foreach (var moduleConfig in document.RootElement.GetProperty("ModuleConfiguration").EnumerateArray())
+            {
+                var moduleIdentifier = moduleConfig.GetProperty("ModuleID").GetString();
+
+                if (resolvedConfigs.ContainsKey(moduleIdentifier))
+                {
+                    throw new InvalidConfigurationException($"Ambiguous moduleID: {moduleIdentifier}!");
+                }
+
+                resolvedConfigs[moduleIdentifier] = moduleConfig.ToString();
+            }
+
+            return resolvedConfigs;
         }
     }
 }
