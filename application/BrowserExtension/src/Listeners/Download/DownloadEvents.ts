@@ -36,7 +36,7 @@ export class DownloadEvent extends BrowserEvent {
      * Gets file mime type
      */
     public get mimeType() : string {
-        return this.mimeType;
+        return this._mimeType;
     }
     /**
      * Sets file mime type
