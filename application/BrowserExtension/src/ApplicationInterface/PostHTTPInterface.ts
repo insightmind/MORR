@@ -1,5 +1,4 @@
-import * as jquery from 'jquery';
-import ICommunicationStrategy from './IApplicationInterface';
+import ICommunicationStrategy from './ICommunicationStrategy';
 /**
  * Application Interface using the HTTP-POST. Expects a HTTPListener on the main application side.
  */
