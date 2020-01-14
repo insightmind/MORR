@@ -13,5 +13,9 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: '3.1.100'
-    - name: Build with dotnet
-      run: dotnet build application/MORR.sln --configuration Release
+    - name: Clean
+      run: dotnet clean application/MORR.sln
+    - name: Build
+      run: dotnet build application/MORR.sln --configuration Release -v --nologo
+    - name: Run tests
+      run: dotnet test application/MORR.sln -t
