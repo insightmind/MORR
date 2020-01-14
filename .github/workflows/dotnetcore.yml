@@ -1,4 +1,4 @@
-name: .NET Core
+name: Build + Test
 
 on:
   push:
@@ -9,6 +9,10 @@ on:
     branches: 
       - master
       - develop
+
+env:
+  APP_SOLUTION_PATH: ${{ 'application/MORR.sln' }}
+  BROWSER_EXTENSION_PATH: ${{ 'application/BrowserExtension' }}
 
 jobs:
   dotNET-Core:
@@ -22,17 +26,19 @@ jobs:
       with:
         dotnet-version: '3.1.100'
     - name: Clean
-      run: dotnet clean application/MORR.sln --nologo
+      run: dotnet clean $APP_SOLUTION_PATH --nologo
     - name: Build
-      run: dotnet build application/MORR.sln --configuration Release --nologo
+      run: dotnet build $APP_SOLUTION_PATH --configuration Release --nologo
     - name: Run tests
-      run: dotnet test application/MORR.sln -t
+      run: dotnet test $APP_SOLUTION_PATH -t
 
   TypeScript:
     name: Build Typescript
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v1
+      - name: Go To Application
+        run: cd $BROWSER_EXTENSION_PATH
       - name: Install
         run: npm install
       - name: Build
