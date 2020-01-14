@@ -14,7 +14,7 @@ jobs:
       with:
         dotnet-version: '3.1.100'
     - name: Clean
-      run: dotnet clean application/MORR.sln
+      run: dotnet clean application/MORR.sln --nologo
     - name: Build
       run: dotnet build application/MORR.sln --configuration Release --nologo
     - name: Run tests
