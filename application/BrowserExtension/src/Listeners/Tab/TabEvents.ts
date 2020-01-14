@@ -1,5 +1,7 @@
 import { BrowserEvent, EventType } from '../../Shared/SharedDeclarations'
 
+export const UNKOWN_URL = "url:unknown";
+
 /**
  * Open tab event
  */
@@ -11,7 +13,7 @@ export class OpenTabEvent extends BrowserEvent {
      * @param url empty, as the new tab was just created
      */
     constructor(tabID : number, windowID: number) {
-        super(EventType.OpenTab, tabID, windowID, "");
+        super(EventType.OpenTab, tabID, windowID, UNKOWN_URL);
     }
 }
 
@@ -23,10 +25,10 @@ export class CloseTabEvent extends BrowserEvent {
      * Creates an instance of close tab event.
      * @param tabID The ID of the closed tab
      * @param windowID The ID of the window the tab was associated to
-     * @param url The URL opened in the tab as it was closed
+     * @param [url] The URL opened in the tab as it was closed
      */
-    constructor(tabID : number, windowID: number, url : string) {
-        super(EventType.CloseTab, tabID, windowID, url);
+    constructor(tabID : number, windowID: number, url? : string) {
+        super(EventType.CloseTab, tabID, windowID, url ? url : UNKOWN_URL);
     }
 }
 
@@ -40,7 +42,7 @@ export class SwitchTabEvent extends BrowserEvent {
      * @param tabID The ID of the previous tab
      * @param windowID The ID of the window the active tab changed inside of
      * @param newTabID The ID of the newly focused tab
-     * @param url the URL opened in the newly focused tab
+     * @param url the URL opened in the prevously focused tab
      */
     constructor(tabID : number, windowID: number, newTabID : number, url : string) {
         super(EventType.SwitchTab, tabID, windowID, url);

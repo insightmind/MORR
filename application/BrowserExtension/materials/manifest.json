@@ -2,10 +2,11 @@
   "name": "MORR Browser Extension",
   "version": "0.0.1",
   "description": "The MORR browser extension",
-  "permissions": ["<all_urls>", "activeTab", "storage", "tabs", "webNavigation"],
+  "permissions": ["<all_urls>", "activeTab", "storage", "tabs", "webNavigation", "downloads"],
   "background": {
     "scripts": ["background.js"],
     "persistent": false
   },
+  "options_page": "options.html",
   "manifest_version": 2
 }
