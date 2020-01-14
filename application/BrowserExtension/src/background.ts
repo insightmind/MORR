@@ -1,54 +1,91 @@
-import * as Listeners from './Listeners'
-import { IListener } from './Shared/SharedDeclarations';
+import '@babel/polyfill'
 import { BrowserEvent } from './Shared/SharedDeclarations'
-import { ICommunicationStrategy, WebSocketInterface } from './ApplicationInterface/';
+import { ICommunicationStrategy, PostHTTPInterface } from './ApplicationInterface/';
+import ListenerManager from "./ListenerManager"
+import * as Mock from './__mock__'
 
 /**
  * The "main" class of the webextension
  */
 class BackgroundScript {
     /**
-     * Listeners controlled by background script
+     * ListenerManager controlled by background script
      */
-    listeners: IListener[] = new Array();
+    listenerManager : ListenerManager;
     /**
      * App interface to the MORR application
      */
     appInterface : ICommunicationStrategy;
+
     /**
-     * URI to initialize the appInterface to
+     * Helper variables
      */
-    static receiverURI : string = "ws://127.0.0.1:31337/";
+    private configString : string | undefined;
+    private static readonly RETRYDELAYMS = 5000;
+    private isRunning : boolean;
+
     /**
      * Creates an instance of background script and initializes the listeners.
      */
     constructor() {
-        this.listeners.push(new Listeners.TabListener((event : BrowserEvent) => { this.callback(event);}));
-        this.listeners.push(new Listeners.DOMListener((event : BrowserEvent) => { this.callback(event);}));
-        //etc.
-        this.appInterface = new WebSocketInterface(BackgroundScript.receiverURI);
-        this.appInterface.establishConnection().then(this.requestConfig());
+        this.listenerManager = new ListenerManager(this.callback);
+        this.appInterface = new Mock.CommunicationMock();
+        this.isRunning = false;
+        this.run();
     }
+
     /**
      * Start all listeners
      */
-    public start = () => {
-        this.listeners.forEach(listener => listener.start())
+    public start = () : void => {
+        if (!this.isRunning) {
+            this.isRunning = true;
+            this.listenerManager.startAll();
+        }
     }
     /**
      * Stop all listeners and wait for next start signal
      */
-    public stop = () => {
-        this.listeners.forEach(listener => listener.stop())
-        this.waitForStart();
+    public stop = () : void => {
+        if (this.isRunning) {
+            this.isRunning = false;
+            this.listenerManager.stopAll();
+            this.waitForStart()
+            .then(() => this.start())
+            .catch((e) => {
+                this.reset();
+            });
+        }
+    }
+
+    //completely reset the connection status
+    private reset = () : void => {
+        if (this.isRunning) {
+            this.isRunning = false;
+            this.listenerManager.stopAll();
+            this.run();
+        }
+    }
+
+    private run = () : void => {
+        this.establishConnection(true)
+        .then(() => this.waitForStart())
+        .catch((e) => this.run())
+        .then(() => this.start());
     }
 
     /**
      * Callback to hand over to the listeners
      */
-    public callback = (event : BrowserEvent) => {
+    public callback = (event : BrowserEvent) : void => {
         console.log(`${BackgroundScript.timeStampString(event.timeStamp)}: ${event.type} occured in tab ${event.tabID} in window ${event.windowID}`);
-        this.appInterface.sendData(JSON.stringify(event)).catch(this.stop);
+        this.appInterface.sendData(JSON.stringify(event)).
+        catch((e) => {
+            if (e == "Stop")
+                this.stop();
+            else
+                this.reset();
+        });
     }
 
     /**
@@ -63,24 +100,48 @@ class BackgroundScript {
     /**
      * Wait for start signal of the MORR application
      */
-    private waitForStart = () => {
-        throw new Error("Method not implemented.");
+    private waitForStart = () : Promise<void> => {
+        return this.appInterface.waitForStart();
     }
 
     /**
+     * @deprecated
      * Request config of the MORR application
      */
-    private requestConfig = (response? : string) => {
-        throw new Error("Method not implemented.");
-    }
-    /**
-     * Retry setting up a connection to the main application
-     */
-    private retryConnection = () => {
-        throw new Error("Method not implemented.");
+    private requestConfig = () : void => {
+        this.appInterface.requestConfig();
     }
 
     /**
+     * Set up a connection to the main application using the appInterface.
+     * @param getConfig set to true if a (new) configuration string should be requested, false otherwise
+     */
+    private establishConnection = (getConfig : boolean) : Promise<void> => {
+        return new Promise((resolve, reject) => {
+            this.appInterface.establishConnection()
+            .then(() => {
+                if (getConfig) {
+                    return this.appInterface.requestConfig()
+            } else {
+                return Promise.resolve(undefined);
+            }})
+            .then((configString : string | undefined) => {
+                if (configString)
+                    this.configString = configString;
+                resolve();
+            })
+            .catch((err : string) => {
+                console.error(`Error during initialization: ${err}`);
+                setTimeout(() => {
+                    this.establishConnection(getConfig)
+                    .then(() => resolve());
+                }, BackgroundScript.RETRYDELAYMS);
+            });
+        });
+    }
+
+    /**
+     * @deprecated
      * Parses configuration string and applies the configuration by setting the respective values in the web storage.
      * @param configuration The configuration string (JSON)
      * @returns true if configuration was valid, false otherwise
