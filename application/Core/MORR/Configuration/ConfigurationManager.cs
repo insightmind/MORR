@@ -2,12 +2,11 @@
 using System.Composition;
 using System.IO;
 using System.Text.Json;
-using Windows.Graphics.Display;
 using MORR.Core.Configuration;
 using MORR.Shared.Configuration;
 using MORR.Shared.Utility;
 
-namespace MORR.Core
+namespace MORR.Core.Configuration
 {
     /// <summary>
     ///     Manages the application's configuration
@@ -18,7 +17,7 @@ namespace MORR.Core
         ///     All configuration wrappers
         /// </summary>
         [ImportMany]
-        public IEnumerable<IConfiguration> Configurations { get; private set; }
+        private IEnumerable<IConfiguration> Configurations { get; set; }
 
         internal ApplicationConfiguration AppConfig { get; private set; }
 

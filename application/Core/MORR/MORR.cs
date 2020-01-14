@@ -1,4 +1,5 @@
-﻿using MORR.Core.Data.Transcoding;
+﻿using MORR.Core.Configuration;
+using MORR.Core.Data.Transcoding;
 using MORR.Shared.Modules;
 
 namespace MORR.Core
