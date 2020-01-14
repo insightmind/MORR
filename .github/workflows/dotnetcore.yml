@@ -10,14 +10,15 @@ on:
       - master
       - develop
 
-env:
-  APP_SOLUTION_PATH: ${{ 'application/MORR.sln' }}
-  BROWSER_EXTENSION_PATH: ${{ 'application/BrowserExtension' }}
+
 
 jobs:
   dotNET-Core:
     name: Build .NET Core
     runs-on: windows-latest
+    
+    env:
+      APP_SOLUTION_PATH: ${{ 'application/MORR.sln' }}
 
     steps:
     - uses: actions/checkout@v1
@@ -35,6 +36,9 @@ jobs:
   TypeScript:
     name: Build Typescript
     runs-on: windows-latest
+
+    env:
+      BROWSER_EXTENSION_PATH: ${{ 'application/BrowserExtension' }}
 
     steps:
       - uses: actions/checkout@v1
