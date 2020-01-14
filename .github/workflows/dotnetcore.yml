@@ -14,4 +14,4 @@ jobs:
       with:
         dotnet-version: '3.1.100'
     - name: Build with dotnet
-      run: dotnet build application/MORR --configuration Release
+      run: dotnet build application/MORR.sln --configuration Release
