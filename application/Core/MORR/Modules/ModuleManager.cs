@@ -9,7 +9,6 @@ namespace MORR.Core.Modules
     /// <summary>
     ///     Initializes and manages all modules.
     /// </summary>
-    [Export(typeof(IModuleManager))]
     public class ModuleManager : IModuleManager
     {
         private IEnumerable<IModule> enabledModules;

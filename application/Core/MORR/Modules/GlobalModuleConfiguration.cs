@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Composition;
 using MORR.Shared.Configuration;
 using MORR.Shared.Modules;
 
 namespace MORR.Core.Modules
 {
+    [Export(typeof(GlobalModuleConfiguration))]
+    [Export(typeof(IConfiguration))]
     public class GlobalModuleConfiguration : IConfiguration
     {
         /// <summary>
