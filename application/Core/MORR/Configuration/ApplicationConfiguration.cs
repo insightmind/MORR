@@ -20,16 +20,8 @@ namespace MORR.Core.Configuration
 
         public ApplicationConfiguration(JsonElement rootElement)
         {
-            try
-            {
-                SaveLocation = new FilePath(rootElement.GetProperty(saveLocationKey).GetString());
-                SaveName = rootElement.GetProperty(saveNameKey).GetString();
-            }
-            catch (Exception exception) 
-            {
-                throw new InvalidConfigurationException("Invalid root application configuration!", exception);
-            }
-             
+            SaveLocation = new FilePath(rootElement.GetProperty(saveLocationKey).GetString()); 
+            SaveName = rootElement.GetProperty(saveNameKey).GetString();
         }
     }
 }
