@@ -44,16 +44,16 @@ jobs:
       - name: Install
         working-directory: ./application/BrowserExtension
         run: npm install
+    
+      - name: Clean
+        working-directory: ./application/BrowserExtension
+        run: npm run clean
       
       - name: Build
         working-directory: ./application/BrowserExtension
-        run: npm run build application/BrowserExtension
+        run: npm run build
       
-      - name: Install yarn
+      - name: Test
         working-directory: ./application/BrowserExtension
-        run: yarn install
-      
-      - name: Run tests
-        working-directory: ./application/BrowserExtension
-        run: yarn test
+        run: npm run testcoverage
         
