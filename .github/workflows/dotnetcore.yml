@@ -1,10 +1,18 @@
 name: .NET Core
 
-on: [push]
+on:
+  push:
+    branches: 
+      - master
+      - develop
+  pull_request:
+    branches: 
+      - master
+      - develop
 
 jobs:
-  build:
-
+  dotNET-Core:
+    name: Build .NET Core
     runs-on: windows-latest
 
     steps:
@@ -19,3 +27,13 @@ jobs:
       run: dotnet build application/MORR.sln --configuration Release --nologo
     - name: Run tests
       run: dotnet test application/MORR.sln -t
+
+  TypeScript:
+    name: Build Typescript
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install
+        run: npm install
+      - name: Build
+        run: npm run build
