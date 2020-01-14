@@ -35,11 +35,10 @@ jobs:
   TypeScript:
     name: Build Typescript
     runs-on: windows-latest
+
     steps:
       - uses: actions/checkout@v1
-      - name: Go To Application
-        run: cd $BROWSER_EXTENSION_PATH
       - name: Install
-        run: npm install
+        run: npm install $BROWSER_EXTENSION_PATH
       - name: Build
-        run: npm run build
+        run: npm run build $BROWSER_EXTENSION_PATH
