@@ -10,39 +10,37 @@ on:
       - master
       - develop
 
-
-
 jobs:
   dotNET-Core:
     name: Build .NET Core
     runs-on: windows-latest
-    
-    env:
-      APP_SOLUTION_PATH: ${{ 'application/MORR.sln' }}
 
     steps:
-    - uses: actions/checkout@v1
+    - name: Pull branch
+      uses: actions/checkout@v1
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: '3.1.100'
     - name: Clean
-      run: dotnet clean $APP_SOLUTION_PATH --nologo
+      run: dotnet clean application/MORR.sln --nologo
     - name: Build
-      run: dotnet build $APP_SOLUTION_PATH --configuration Release --nologo
+      run: dotnet build application/MORR.sln --configuration Release --nologo
     - name: Run tests
-      run: dotnet test $APP_SOLUTION_PATH -t
+      run: dotnet test application/MORR.sln -t
 
   TypeScript:
     name: Build Typescript
     runs-on: windows-latest
 
-    env:
-      BROWSER_EXTENSION_PATH: ${{ 'application/BrowserExtension' }}
-
     steps:
-      - uses: actions/checkout@v1
+      - name: Pull branch
+        uses: actions/checkout@v1
       - name: Install
-        run: npm install $BROWSER_EXTENSION_PATH
+        run: npm install application/BrowserExtension
       - name: Build
-        run: npm run build $BROWSER_EXTENSION_PATH
+        run: npm run build application/BrowserExtension
+      - name: Run Jest Test
+        uses: stefanoeb/jest-action@1.0.2
+        with:
+          jestArgs: application/BrowserExtension
