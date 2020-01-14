@@ -16,6 +16,6 @@ jobs:
     - name: Clean
       run: dotnet clean application/MORR.sln
     - name: Build
-      run: dotnet build application/MORR.sln --configuration Release -v d --nologo
+      run: dotnet build application/MORR.sln --configuration Release -v n --nologo
     - name: Run tests
       run: dotnet test application/MORR.sln -t
