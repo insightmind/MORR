@@ -37,8 +37,10 @@ jobs:
       - name: Pull branch
         uses: actions/checkout@v1
       - name: Install
-        run: npm install application/BrowserExtension
+        working-directory: ./application/BrowserExtension
+        run: npm install
       - name: Build
+        working-directory: ./application/BrowserExtension
         run: npm run build application/BrowserExtension
       - name: Run Jest Test
         uses: stefanoeb/jest-action@1.0.2
