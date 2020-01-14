@@ -7,37 +7,48 @@ using MORR.Shared.Modules;
 namespace MORR.Core.Modules
 {
     /// <summary>
-    ///     Manages all modules
+    ///     Initializes and manages all modules.
     /// </summary>
+    [Export(typeof(IModuleManager))]
     public class ModuleManager : IModuleManager
     {
+        private IEnumerable<IModule> enabledModules;
+
         /// <summary>
         ///     All <see cref="IModule" /> instances available through MEF.
         /// </summary>
         [ImportMany]
-        public IEnumerable<IModule> Modules { get; private set; }
-
-        /// <summary>
-        ///     All <see cref="ICollectingModule" /> instances available through MEF.
-        /// </summary>
-        [ImportMany]
-        public IEnumerable<ICollectingModule> CollectingModules { get; private set; }
+        private IEnumerable<IModule> Modules { get; set; }
 
         /// <summary>
         ///     The <see cref="IConfiguration" /> instance specifying configuration options regarding all modules.
         /// </summary>
         [Import]
-        public GlobalModuleConfiguration ModuleConfiguration { get; private set; }
+        private GlobalModuleConfiguration ModuleConfiguration { get; set; }
 
-        /// <summary>
-        ///     Initializes all modules.
-        /// </summary>
         public void InitializeModules()
         {
-            foreach (var module in Modules.Where(x => ModuleConfiguration.EnabledModules.Contains(x.GetType())))
+            enabledModules = Modules.Where(x => ModuleConfiguration.EnabledModules.Contains(x.GetType()));
+
+            foreach (var module in enabledModules)
             {
                 module.Initialize();
-                module.IsEnabled = true;
+            }
+        }
+
+        public void NotifyModulesOnSessionStart()
+        {
+            foreach (var module in enabledModules)
+            {
+                module.IsActive = true;
+            }
+        }
+
+        public void NotifyModulesOnSessionStop()
+        {
+            foreach (var module in enabledModules)
+            {
+                module.IsActive = false;
             }
         }
     }
