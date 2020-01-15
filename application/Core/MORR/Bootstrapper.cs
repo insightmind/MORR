@@ -13,14 +13,14 @@ namespace MORR.Core
     /// </summary>
     public class Bootstrapper : IBootstrapper
     {
-        private CompositionHost container;
-
         private const string moduleSubdirectoryRelativePath = "\\Modules";
         private const string moduleNamePattern = "*.MORR-Module.dll";
+        private CompositionHost container;
 
         public Bootstrapper()
         {
-            LoadFromPath(new FilePath(Directory.GetCurrentDirectory() + moduleSubdirectoryRelativePath));
+            var currentPath = Assembly.GetExecutingAssembly().Location;
+            LoadFromPath(new FilePath(currentPath + moduleSubdirectoryRelativePath));
         }
 
         public void ComposeImports(object @object)
