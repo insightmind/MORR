@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Composition;
 using System.IO;
 using System.Text.Json;
@@ -10,15 +11,13 @@ namespace MORR.Core.Configuration
     /// <summary>
     ///     Manages the application's configuration
     /// </summary>
-    public class ConfigurationManager: IConfigurationManager
+    public class ConfigurationManager : IConfigurationManager
     {
         /// <summary>
         ///     All configuration wrappers
         /// </summary>
         [ImportMany]
         private IEnumerable<IConfiguration> Configurations { get; set; }
-
-        internal ApplicationConfiguration AppConfig { get; private set; }
 
         private const string moduleIdentifierKey = "Identifier";
         private const string moduleConfigKey = "ModuleConfiguration";
@@ -37,7 +36,6 @@ namespace MORR.Core.Configuration
                 throw new InvalidConfigurationException("Invalid configuration file path!");
             }
 
-            AppConfig = new ApplicationConfiguration(document.RootElement);
             CommitConfigurations(document);
         }
 
@@ -46,13 +44,14 @@ namespace MORR.Core.Configuration
 
             if (path == null)
             {
-                throw new InvalidConfigurationException("Internal error occured!");
+                throw new ArgumentNullException(nameof(path), "Invalid file path to configuration file.");
             }
 
             var jsonString = File.ReadAllText(path.ToString());
             var options = new JsonDocumentOptions()
             {
-                AllowTrailingCommas = true
+                AllowTrailingCommas = true,
+                CommentHandling = JsonCommentHandling.Skip
             };
 
             return JsonDocument.Parse(jsonString, options);
@@ -71,10 +70,14 @@ namespace MORR.Core.Configuration
             {
                 if (config.Identifier == null)
                 {
-                    throw new InvalidConfigurationException("Configuration did not offer valid identifier! Please check loaded modules.");
+                    throw new InvalidConfigurationException(
+                        "Configuration did not offer valid identifier! Please check loaded modules.");
                 }
 
-                if (!resolvedConfigs.ContainsKey(config.Identifier)) { continue; }
+                if (!resolvedConfigs.ContainsKey(config.Identifier))
+                {
+                    continue;
+                }
 
                 config.Parse(resolvedConfigs[config.Identifier]);
             }
