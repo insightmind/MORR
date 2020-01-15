@@ -19,8 +19,8 @@ namespace MORR.Core
 
         public Bootstrapper()
         {
-            var currentPath = Assembly.GetExecutingAssembly().Location;
-            LoadFromPath(new FilePath(currentPath + moduleSubdirectoryRelativePath));
+            var currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            LoadFromPath(new FilePath(currentDirectory + moduleSubdirectoryRelativePath));
         }
 
         public void ComposeImports(object @object)
