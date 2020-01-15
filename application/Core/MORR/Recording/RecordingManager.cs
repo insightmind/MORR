@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Composition;
+using System.Linq;
 using MORR.Core.Configuration;
+using MORR.Core.Data.Transcoding;
 using MORR.Core.Modules;
 using MORR.Core.Recording.Exceptions;
 using MORR.Shared.Utility;
@@ -9,6 +12,17 @@ namespace MORR.Core.Recording
     public class RecordingManager : IRecordingManager
     {
         private readonly IModuleManager moduleManager;
+        private readonly IEncoder encoder;
+        private readonly IDecoder decoder;
+
+        [ImportMany]
+        private IEnumerable<IEncoder> Encoders { get; set; }
+
+        [ImportMany]
+        private IEnumerable<IDecoder> Decoders { get; set; }
+
+        [Import]
+        private RecordingConfiguration Configuration { get; set; }
 
         public RecordingManager(FilePath configurationPath) : this(configurationPath, new Bootstrapper(),
                                                                    new ConfigurationManager(), new ModuleManager()) { }
@@ -20,10 +34,15 @@ namespace MORR.Core.Recording
                                 IModuleManager moduleManager)
         {
             this.moduleManager = moduleManager;
-            bootstrapper.ComposeImports(moduleManager);
+            bootstrapper.ComposeImports(this);
             bootstrapper.ComposeImports(configurationManager);
+            bootstrapper.ComposeImports(moduleManager);
 
             configurationManager.LoadConfiguration(configurationPath);
+
+            encoder = Encoders.Single(x => x.GetType() == Configuration.Encoder);
+            decoder = Decoders.Single(x => x.GetType() == Configuration.Decoder);
+
             moduleManager.InitializeModules();
         }
 
@@ -38,6 +57,7 @@ namespace MORR.Core.Recording
 
             IsRecording = true;
 
+            encoder.Encode();
             moduleManager.NotifyModulesOnSessionStart();
         }
 
@@ -55,7 +75,15 @@ namespace MORR.Core.Recording
 
         public void Process(IEnumerable<FilePath> files)
         {
-            // TODO Implement
+            moduleManager.NotifyModulesOnSessionStart();
+
+            foreach (var file in files)
+            {
+                decoder.Decode(file);
+                encoder.Encode();
+            }
+
+            moduleManager.NotifyModulesOnSessionStop();
         }
     }
 }
