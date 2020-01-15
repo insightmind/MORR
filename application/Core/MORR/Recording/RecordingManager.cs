@@ -1,34 +1,30 @@
-﻿using System;
-using MORR.Core.Data.Capture.Video;
-using MORR.Core.Data.Transcoding;
+﻿using System.Collections.Generic;
+using MORR.Core.Configuration;
 using MORR.Core.Modules;
 using MORR.Core.Recording.Exceptions;
+using MORR.Shared.Utility;
 
 namespace MORR.Core.Recording
 {
     public class RecordingManager : IRecordingManager
     {
-        private IDecoder decoder;
-        private IEncoder encoder;
-        private IMetadataCapture metadataCapture;
-        private IMetadataDeserializer metadataDeserializer;
-        private IVideoCapture videoCapture;
+        private readonly IModuleManager moduleManager;
 
-        public RecordingManager()
+        public RecordingManager(FilePath configurationPath) : this(configurationPath, new Bootstrapper(),
+                                                                   new ConfigurationManager(), new ModuleManager()) { }
+
+
+        public RecordingManager(FilePath configurationPath,
+                                IBootstrapper bootstrapper,
+                                IConfigurationManager configurationManager,
+                                IModuleManager moduleManager)
         {
-            var bootstrapper = new Bootstrapper();
-            // TODO Should the concrete types be loaded from configuration?
-            var moduleManager = new ModuleManager();
-            var configurationManager = new ConfigurationManager();
-
+            this.moduleManager = moduleManager;
             bootstrapper.ComposeImports(moduleManager);
             bootstrapper.ComposeImports(configurationManager);
 
-            configurationManager.LoadConfiguration("some/path"); // TODO Decide on path convention
+            configurationManager.LoadConfiguration(configurationPath);
             moduleManager.InitializeModules();
-
-            encoder.MetadataSampleRequested += metadataCapture.NextSample;
-            encoder.VideoSampleRequested += videoCapture.NextSample;
         }
 
         public bool IsRecording { get; private set; }
@@ -42,7 +38,7 @@ namespace MORR.Core.Recording
 
             IsRecording = true;
 
-            encoder.Encode(); // TODO This probably also needs a path
+            moduleManager.NotifyModulesOnSessionStart();
         }
 
         public void StopRecording()
@@ -53,18 +49,13 @@ namespace MORR.Core.Recording
             }
 
             IsRecording = false;
-            // TODO This requires the encoder to be an IModule - having both an Encode method and an IsEnabled field is somewhat convoluted
-            encoder.IsEnabled = false;
+
+            moduleManager.NotifyModulesOnSessionStop();
         }
 
-        public void StartDecoding()
+        public void Process(IEnumerable<FilePath> files)
         {
-            throw new NotImplementedException();
-        }
-
-        public void StopDecoding()
-        {
-            throw new NotImplementedException();
+            // TODO Implement
         }
     }
 }
