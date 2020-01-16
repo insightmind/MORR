@@ -8,10 +8,10 @@ namespace MORR.Shared.Modules
     public interface IModule
     {
         /// <summary>
-        ///     Indicates whether the module is currently enabled. <see langword="true" /> if the module is enabled,
+        ///     Indicates whether the module is currently active. <see langword="true" /> if the modules is active,
         ///     <see langword="false" /> otherwise.
         /// </summary>
-        bool IsEnabled { get; set; }
+        bool IsActive { get; set; }
 
         /// <summary>
         ///     The identifier of the module.
