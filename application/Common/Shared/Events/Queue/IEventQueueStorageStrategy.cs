@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace MORR.Shared.Events.Queue
 {
@@ -8,7 +10,7 @@ namespace MORR.Shared.Events.Queue
         /// Asynchronously gets all events from this storage strategy.
         /// </summary>
         /// <returns>An asynchronous stream of events stored in the event queue</returns>
-        IAsyncEnumerable<T> GetEvents();
+        IAsyncEnumerable<T> GetEvents([EnumeratorCancellation] CancellationToken token = default);
 
         /// <summary>
         /// Enqueues a new event using the specified strategy.

@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using MORR.Core.Configuration;
+using MORR.Shared.Utility;
 
 namespace Morr.Core.CLI.Commands.ValidateConfig
 {
@@ -8,7 +7,13 @@ namespace Morr.Core.CLI.Commands.ValidateConfig
     {
         public int Execute(ValidateConfigOptions options)
         {
-            return 1;
+            var filePath = new FilePath(options.configPath);
+
+            // We probably need to change this over to the session manager, but for now this should be fine.
+            var configurationManager = new ConfigurationManager();
+            configurationManager.LoadConfiguration(filePath);
+
+            return 0;
         }
     }
 }
