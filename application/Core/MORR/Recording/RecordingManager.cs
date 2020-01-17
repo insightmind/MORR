@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Composition;
 using System.Linq;
 using MORR.Core.Configuration;
@@ -26,7 +26,6 @@ namespace MORR.Core.Recording
 
         public RecordingManager(FilePath configurationPath) : this(configurationPath, new Bootstrapper(),
                                                                    new ConfigurationManager(), new ModuleManager()) { }
-
 
         public RecordingManager(FilePath configurationPath,
                                 IBootstrapper bootstrapper,

@@ -1,4 +1,6 @@
-﻿namespace MORR.Core.Configuration
+﻿using MORR.Shared.Utility;
+
+namespace MORR.Core.Configuration
 {
     /// <summary>
     ///     Loads and manages the application's configuration.

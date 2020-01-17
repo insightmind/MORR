@@ -5,6 +5,8 @@
     /// </summary>
     public interface IConfiguration
     {
+        string Identifier { get; }
+
         /// <summary>
         ///     Parses the configuration from the provided value
         /// </summary>
