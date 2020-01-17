@@ -1,4 +1,4 @@
-﻿using System.Windows.Input;
+﻿using System.Windows.Forms;
 
 namespace MORR.Modules.Keyboard.Events
 {
@@ -10,6 +10,21 @@ namespace MORR.Modules.Keyboard.Events
         /// <summary>
         ///     The key that was pressed
         /// </summary>
-        public Key PressedKey { get; set; }
+        public Keys PressedKey { get; set; }
+
+        public KeyboardInteractEvent(Keys key)
+        {
+            this.PressedKey = key;
+        }
+
+        public override string Serialize()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void Deserialize(string serialized)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

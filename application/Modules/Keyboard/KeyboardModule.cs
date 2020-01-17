@@ -10,7 +10,26 @@ namespace MORR.Modules.Keyboard
     /// </summary>
     public class KeyboardModule : ICollectingModule
     {
-        public bool IsEnabled { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        private bool isEnabled;
+       
+        public bool IsEnabled
+        {
+            get
+            {
+                return this.IsEnabled;
+            }
+            set
+            {
+                if (value)
+                {
+                    keyboardInteractEventProducer.HookKeyboard();
+                }
+                else
+                {
+                    keyboardInteractEventProducer.UnhookKeyboard();
+                }
+            }
+        }
 
         public Guid Identifier => throw new NotImplementedException();
 
@@ -18,7 +37,7 @@ namespace MORR.Modules.Keyboard
         /// A single-writer-multiple-reader queue for KeyboardInteractEvent
         /// </summary>
         [Import]
-        public KeyboardInteractEventProducer KeyboardInteractEventProducer { get; private set; }
+        public KeyboardInteractEventProducer keyboardInteractEventProducer { get; private set; }
 
         public void Initialize()
         {

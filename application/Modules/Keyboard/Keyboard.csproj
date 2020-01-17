@@ -17,10 +17,22 @@
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 
   <ItemGroup>
+    <COMReference Include="{215d64d2-031c-33c7-96e3-61794cd1ee61}">
+      <Guid>215d64d2-031c-33c7-96e3-61794cd1ee61</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>4</VersionMinor>
+      <WrapperTool>tlbimp</WrapperTool>
+    </COMReference>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\Core\MORR\MORR.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="System.Windows.Forms">
+      <HintPath>C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System.Windows.Forms.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase">
       <HintPath>C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\3.1.0\WindowsBase.dll</HintPath>
     </Reference>

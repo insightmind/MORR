@@ -1,4 +1,5 @@
 ﻿using MORR.Shared;
+using MORR.Shared.Events;
 
 namespace MORR.Modules.Keyboard.Events
 {
@@ -7,6 +8,5 @@ namespace MORR.Modules.Keyboard.Events
     /// </summary>
     public abstract class KeyboardEvent : Event
     {
-        // TODO: Specify
     }
 }
