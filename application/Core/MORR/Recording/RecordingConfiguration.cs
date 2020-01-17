@@ -12,6 +12,8 @@ namespace MORR.Core.Recording
 
         public Type Decoder { get; private set; }
 
+        public string Identifier => "Recording";
+
         public void Parse(string configuration)
         {
             throw new System.NotImplementedException();

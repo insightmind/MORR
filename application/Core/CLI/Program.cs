@@ -1,19 +1,19 @@
-﻿using System;
-using CommandLine;
-using Morr.Core.CLI.CLI;
-using Morr.Core.CLI.Execution;
+﻿using CommandLine;
+using Morr.Core.CLI.Commands.ValidateConfig;
 
 namespace MORR.Core.CLI
 {
     /// <summary>
     /// Command line tool entry point
     /// </summary>
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public int Main(string[] args)
         {
-            Parser.Default.ParseArguments<Options>(args)
-                  .WithParsed<Options>(new Executor().Execute);
+            return Parser.Default.ParseArguments<ValidateConfigOptions>(args)
+                       .MapResult(
+                           (ValidateConfigOptions opts) => new ValidateConfigCommand().Execute(opts),
+                           errs => 1);
         }
     }
 }
