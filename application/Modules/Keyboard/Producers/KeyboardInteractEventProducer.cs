@@ -64,7 +64,7 @@ namespace MORR.Modules.Keyboard.Producers
             ProcessModule currentModule = currentProcess.MainModule;
             String moduleName = currentModule.ModuleName;
             IntPtr moduleHandle = GetModuleHandle(moduleName);
-            hook = SetWindowsHookEx(WH_KEYBOARD_LL, HookProc, moduleHandle, 0);
+            hook = SetWindowsHookEx(WH_KEYBOARD_LL, HookProc, moduleHandle, GetCurrentThreadId());
         }
 
         /// <summary>
@@ -169,6 +169,9 @@ namespace MORR.Modules.Keyboard.Producers
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true, CallingConvention = CallingConvention.Winapi)]
         public static extern short GetKeyState(int keyCode);
+
+        [DllImport("kernel32.dll")]
+        public static extern uint GetCurrentThreadId();
         #endregion
     }
 }
