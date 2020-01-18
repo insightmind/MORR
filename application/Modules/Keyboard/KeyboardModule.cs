@@ -1,59 +1,46 @@
 ﻿using System;
-using MORR.Shared.Modules;
-using MORR.Modules.Keyboard.Producers;
 using System.Composition;
+using MORR.Modules.Keyboard.Producers;
+using MORR.Shared.Modules;
 
 namespace MORR.Modules.Keyboard
 {
     /// <summary>
-    /// The <see cref="KeyboardModule"/> is responsible for recording all keyboard related user interactions
+    ///     The <see cref="KeyboardModule" /> is responsible for recording all keyboard related user interactions
     /// </summary>
     public class KeyboardModule : ICollectingModule
     {
         private bool isEnabled;
+
         /// <summary>
-        /// if the module is enabled or not.
-        /// When a module is being enabled, the keyboard hook will be set.
-        /// When a module is being disabled, the keyboard hook will be released.
+        ///     A single-writer-multiple-reader queue for KeyboardInteractEvent
+        /// </summary>
+        [Import]
+        private KeyboardInteractEventProducer KeyboardInteractEventProducer { get; set; }
+
+        /// <summary>
+        ///     if the module is enabled or not.
+        ///     When a module is being enabled, the keyboard hook will be set.
+        ///     When a module is being disabled, the keyboard hook will be released.
         /// </summary>
         public bool IsEnabled
         {
-            get
-            {
-                return this.isEnabled;
-            }
+            get => isEnabled;
             set
             {
                 isEnabled = value;
                 if (value)
                 {
-                    keyboardInteractEventProducer.HookKeyboard();
+                    KeyboardInteractEventProducer.HookKeyboard();
                 }
                 else
                 {
-                    keyboardInteractEventProducer.UnhookKeyboard();
+                    KeyboardInteractEventProducer.UnhookKeyboard();
                 }
             }
         }
 
-        private KeyboardInteractEventProducer keyboardInteractEventProducer;
-        /// <summary>
-        /// A single-writer-multiple-reader queue for KeyboardInteractEvent
-        /// </summary>
-        [Import]
-        public KeyboardInteractEventProducer KeyboardInteractEventProducer 
-        {
-            get 
-            {
-                return this.keyboardInteractEventProducer;
-            }
-            private set
-            {
-                this.keyboardInteractEventProducer = value;
-            }
-        }
-
-        public Guid Identifier => throw new NotImplementedException();
+        public Guid Identifier => new Guid("99F679D6 - 0D20 - 40EE - 8604 - F128F0E5AE3B");
 
 
         /// <summary>
@@ -61,8 +48,8 @@ namespace MORR.Modules.Keyboard
         /// </summary>
         public void Initialize()
         {
-            this.keyboardInteractEventProducer = new KeyboardInteractEventProducer();
-            this.isEnabled = false;
+            KeyboardInteractEventProducer = new KeyboardInteractEventProducer();
+            isEnabled = false;
         }
     }
 }

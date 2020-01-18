@@ -3,9 +3,7 @@
 namespace MORR.Modules.Keyboard.Events
 {
     /// <summary>
-    /// A generic keyboard event which all specific KeyboardEvents inherit from.
+    ///     A generic keyboard event which all specific KeyboardEvents inherit from.
     /// </summary>
-    public abstract class KeyboardEvent : Event
-    {
-    }
+    public abstract class KeyboardEvent : Event { }
 }
