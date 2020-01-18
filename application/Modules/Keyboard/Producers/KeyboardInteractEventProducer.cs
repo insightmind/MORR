@@ -4,8 +4,6 @@ using MORR.Modules.Keyboard.Events;
 using MORR.Shared.Events;
 using System.Composition;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
-using System.Windows.Forms;
 using System.Windows.Input;
 
 
@@ -39,11 +37,7 @@ namespace MORR.Modules.Keyboard.Producers
         /// </summary>
         public void HookKeyboard()
         {
-            Process currentProcess = Process.GetCurrentProcess();
-            ProcessModule currentModule = currentProcess.MainModule;
-            String moduleName = currentModule.ModuleName;
-            IntPtr moduleHandle = NativeMethods.GetModuleHandle(moduleName);
-            hook = NativeMethods.SetWindowsHookEx((int)NativeMethods.HookType.WH_KEYBOARD_LL, HookProc, moduleHandle, NativeMethods.GetCurrentThreadId());
+            hook = NativeMethods.SetWindowsHookEx((int)NativeMethods.HookType.WH_KEYBOARD_LL, HookProc, IntPtr.Zero, NativeMethods.GetCurrentThreadId());
         }
 
         /// <summary>
@@ -67,51 +61,85 @@ namespace MORR.Modules.Keyboard.Producers
         {
             if (nCode >= 0 && wParam == (int)NativeMethods.MessageType.WM_KEYDOWN)
             {
-                // read the virtual key code from the IParam
-                Keys key = (Keys)lParam.vkCode;
+                // get the key enum element from the lParam 
+                int vkCode = lParam.vkCode;
 
-                // add modifiers for the keys
-                key = AddModifiers(key);
+                //get both the pressed key and the modifierKeys
+                ModifierKeys modifierKeys = GetModifierKeys();
+                Key pressedkey = KeyInterop.KeyFromVirtualKey(vkCode);
 
-                // converts the Win32 Virtual-Key into WPF Key.
-                Key wpfkey = KeyInterop.KeyFromVirtualKey((int)key);
-
-                //create corresponding new Event
+                //create the corresponding new Event
                 KeyboardInteractEvent @event = new KeyboardInteractEvent();
-                @event.PressedKey = wpfkey;
+                @event.ModifierKeys = modifierKeys;
+                @event.PressedKey = pressedkey;
 
-                //enque it
+                //enqueue the new event.
                 this.Enqueue(@event);
     }
             return NativeMethods.CallNextHookEx(IntPtr.Zero, nCode, wParam, ref lParam);
         }
 
         /// <summary>
-        /// Checks whether Alt, Shift, Control or CapsLock
-        /// is pressed at the same time as the hooked key.
-        /// Modifies the keyCode to include the pressed keys.
+        ///     Checks whether Alt, Shift, Control or CapsLock
+        ///     is pressed at the same time as the hooked key
+        ///     and get all these modifier keys as ModifierKeys.
         /// </summary>
-        private Keys AddModifiers(Keys key)
+        /// <returns>the modifier keys</returns>
+        private ModifierKeys GetModifierKeys()
         {
-            //CapsLock
-            if ((GetKeyState(VK_CAPITAL) & 0x0001) != 0) key = key | Keys.CapsLock;
-
-            //Shift
-            if ((GetKeyState(VK_SHIFT) & 0x8000) != 0) key = key | Keys.Shift;
-
-            //Ctrl
-            if ((GetKeyState(VK_CONTROL) & 0x8000) != 0) key = key | Keys.Control;
+            int modifierKeys = 0;
 
             //Alt
-            if ((GetKeyState(VK_MENU) & 0x8000) != 0) key = key | Keys.Alt;
+            if (isPressed((int)NativeMethods.VirtualKeyCode.VK_MENU))
+            {
+                modifierKeys += (int)ModifierKeys.Alt;
+            }
 
-            return key;
+            //Control
+            if (isPressed((int)NativeMethods.VirtualKeyCode.VK_CONTROL))
+            {
+                modifierKeys += (int)ModifierKeys.Control;
+            }
+
+            //Shift
+            if (isPressed((int)NativeMethods.VirtualKeyCode.VK_SHIFT))
+            {
+                modifierKeys += (int)ModifierKeys.Shift;
+            }
+
+            //Windows
+            if (isPressed((int)NativeMethods.VirtualKeyCode.VK_LWIN) || isPressed((int)NativeMethods.VirtualKeyCode.VK_RWIN))
+            {
+                modifierKeys += (int)ModifierKeys.Windows;
+            }
+
+            return (ModifierKeys)modifierKeys;
+        }
+
+        /// <summary>
+        /// Return true if a key is being pressed.
+        /// </summary>
+        /// <param name="vkCode"></param>
+        /// <returns>true if a key is being pressed</returns>
+        private bool isPressed(int vkCode)
+        { 
+            return getLowOrderBit(NativeMethods.GetKeyState(vkCode)) != 0 ;
+        }
+
+        /// <summary>
+        /// Get the low-order bit of a Int32 number
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns>the low-order bit of a Int32 number</returns>
+        private int getLowOrderBit(Int32 number)
+        {
+            return number & 0x0001;
         }
         #endregion
 
 
 
-        
+
 
         private static class NativeMethods
         {
@@ -136,12 +164,14 @@ namespace MORR.Modules.Keyboard.Producers
               WM_KEYDOWN = 0x100
             }
 
-            public enum VirtualCode
+            public enum VirtualKeyCode
             {
               VK_SHIFT = 0x10,
               VK_CONTROL = 0x11,
               VK_MENU = 0x12,
-              VK_CAPITAL = 0x14
+              VK_LWIN = 0x5B,
+              VK_RWIN = 0x5C
+
             }
 
             public delegate int LowLevelKeyboardProc(int code, int wParam, ref KeyboardHookStruct lParam);
@@ -189,7 +219,6 @@ namespace MORR.Modules.Keyboard.Producers
 
             [DllImport("kernel32.dll")]
             public static extern uint GetCurrentThreadId();
-
             #endregion
         }
     }

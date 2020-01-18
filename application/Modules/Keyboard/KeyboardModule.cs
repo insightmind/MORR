@@ -11,6 +11,11 @@ namespace MORR.Modules.Keyboard
     public class KeyboardModule : ICollectingModule
     {
         private bool isEnabled;
+        /// <summary>
+        /// if the module is enabled or not.
+        /// When a module is being enabled, the keyboard hook will be set.
+        /// When a module is being disabled, the keyboard hook will be released.
+        /// </summary>
         public bool IsEnabled
         {
             get
