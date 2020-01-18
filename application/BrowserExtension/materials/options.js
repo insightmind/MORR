@@ -15,8 +15,8 @@ function constructTextField() {
             setStatus(false, "invalid address");
         } else {
             let value = portRegex.exec(address)[1];
-            if (Number(value) < 80 && Number(value) > 65536)
-            setStatus(false, "Portnumber out of range: ", value);
+            if (Number(value) < 80 || Number(value) > 65536)
+            setStatus(false, "Portnumber out of range: " + value);
             else {
                 chrome.storage.local.set({"port": address}, function() {
                     setStatus(true, "Saved");
