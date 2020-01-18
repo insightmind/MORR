@@ -66,6 +66,10 @@ class BackgroundScript {
         }
     }
 
+
+    /**
+     * Connect to the main application and start recording when receiving the corresponding signal from the main application.
+     */
     public run = () : void => {
         this.establishConnection(true)
         .then(() => this.appInterface.waitForStart())
@@ -78,8 +82,8 @@ class BackgroundScript {
      */
     public callback = (event : BrowserEvent) : void => {
         console.log(`${BackgroundScript.timeStampString(event.timeStamp)}: ${event.type} occured in tab ${event.tabID} in window ${event.windowID}`);
-        this.appInterface.sendData(JSON.stringify(event)).
-        catch((e) => {
+        this.appInterface.sendData(event.serialize(true))
+        .catch((e) => {
             if (e == "Stop")
                 this.stop();
             else

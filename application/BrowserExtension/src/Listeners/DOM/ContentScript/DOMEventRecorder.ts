@@ -57,7 +57,6 @@ class DOMEventRecorder {
 	}
 
 	private handleEvent = (domEvent : Event) : void => {
-		console.log(domEvent); //TODO: remove, debug-use only
 		if (!domEvent.isTrusted) //events are trused if invoked by the user, untrusted if invoked by a script
 			return;
 		this.factory.createEvent(domEvent)
