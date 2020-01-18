@@ -31,13 +31,12 @@ class BackgroundScript {
         this.listenerManager = new ListenerManager(this.callback);
         this.appInterface = new Mock.CommunicationMock();
         this.isRunning = false;
-        this.run();
     }
 
     /**
      * Start all listeners
      */
-    public start = () : void => {
+    private start = () : void => {
         if (!this.isRunning) {
             this.isRunning = true;
             this.listenerManager.startAll();
@@ -46,11 +45,11 @@ class BackgroundScript {
     /**
      * Stop all listeners and wait for next start signal
      */
-    public stop = () : void => {
+    private stop = () : void => {
         if (this.isRunning) {
             this.isRunning = false;
             this.listenerManager.stopAll();
-            this.waitForStart()
+            this.appInterface.waitForStart()
             .then(() => this.start())
             .catch((e) => {
                 this.reset();
@@ -67,9 +66,9 @@ class BackgroundScript {
         }
     }
 
-    private run = () : void => {
+    public run = () : void => {
         this.establishConnection(true)
-        .then(() => this.waitForStart())
+        .then(() => this.appInterface.waitForStart())
         .catch((e) => this.run())
         .then(() => this.start());
     }
@@ -95,21 +94,6 @@ class BackgroundScript {
      */
     private static timeStampString(date : Date) : string {
         return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}:${date.getMilliseconds()}`;
-    }
-
-    /**
-     * Wait for start signal of the MORR application
-     */
-    private waitForStart = () : Promise<void> => {
-        return this.appInterface.waitForStart();
-    }
-
-    /**
-     * @deprecated
-     * Request config of the MORR application
-     */
-    private requestConfig = () : void => {
-        this.appInterface.requestConfig();
     }
 
     /**
@@ -153,3 +137,4 @@ class BackgroundScript {
 
 //entry point
 let main = new BackgroundScript()
+main.run();

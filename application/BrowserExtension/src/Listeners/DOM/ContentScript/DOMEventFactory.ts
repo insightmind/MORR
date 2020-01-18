@@ -5,6 +5,8 @@ interface ParsedEvent {
 }
 
 export default class DOMEventFactory {
+    //maximum length for target string. set to zero to remove limit
+    private static readonly TARGETMAXLENGTH = 256;
     //matcher to filter out password inputs
     private static readonly passwordMatcher = new RegExp('password', 'i');
     //matcher to check if a string contains only whitespaces
@@ -152,6 +154,8 @@ export default class DOMEventFactory {
      */
     private static extractTargetAsString(target : HTMLElement) : string {
         let targetString : string;
+        if((<HTMLButtonElement>target).name && (<HTMLButtonElement>target).name.length > 0)
+            return (<HTMLButtonElement>target).name;
         if (target.title && target.title.length > 0)
             return target.title;
         else if (target.hasAttribute("aria-label")) {
@@ -168,21 +172,16 @@ export default class DOMEventFactory {
         }
         if (targetString.length == 0)
             targetString = target.outerHTML; //fallback if everything else fails
+        if (DOMEventFactory.TARGETMAXLENGTH > 0 && targetString.length > DOMEventFactory.TARGETMAXLENGTH) //truncate if set
+            targetString = targetString.substr(0, DOMEventFactory.TARGETMAXLENGTH) + "...<trunc>";
         return targetString;
     }
-    //TODO: replace this copy-paste with a better method of extracting a target description from the HTML
+
+    //try to get retrive a meaningful name from the (outer)HTML of the element
     private static extractContent(s : any, space : boolean = true) : string {
         var span= document.createElement('span');
         span.innerHTML= s;
-        if(space) {
-          var children : any = span.querySelectorAll('*');
-          for(var i = 0 ; i < children.length ; i++) {
-            if(children[i].textContent)
-              children[i].textContent+= ' ';
-            else
-              children[i].innerText+= ' ';
-          }
-        }
-        return [span.textContent || span.innerText].toString().replace(/ +/g,' ').replace(/\ *$/, '').replace(/(\n\ *\t*)+/g, '\n');
-      };
+        //replace excessive whitespaces and newlines before returning
+        return span.innerText.toString().replace(/ +/g,' ').replace(/\ *$/, '').replace(/(\n\ *\t*)+/g, '\n');
+    };
 }
