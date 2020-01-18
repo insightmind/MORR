@@ -26,5 +26,5 @@ export default interface ICommunicationStrategy {
      * @param data The serialized data to send
      * @returns a Promise which fill be resolved when the data was successfully sent
      */
-    sendData(data : string) : Promise<void>;
+    sendData(data : string) : Promise<string>;
 }

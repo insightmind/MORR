@@ -28,7 +28,7 @@ export default class CommunicationMock implements ICommunicationStrategy {
             setTimeout(() => {console.log("CommMock: Start signal received."); resolve()}, this.STARTDELAYMS);
         });
     }
-    sendData(data: string): Promise<void> {
+    sendData(data: string): Promise<string> {
         return new Promise((resolve, reject) => {
             setTimeout(() => {console.log(`CommMock: Sent data: ${data}`); resolve()}, this.SENDDELAYMS);
         });

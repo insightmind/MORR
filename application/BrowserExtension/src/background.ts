@@ -22,23 +22,23 @@ class BackgroundScript {
      */
     private configString : string | undefined;
     private static readonly RETRYDELAYMS = 5000;
-    private isRunning : boolean;
+    private isRecording : boolean;
 
     /**
      * Creates an instance of background script and initializes the listeners.
      */
     constructor() {
         this.listenerManager = new ListenerManager(this.callback);
-        this.appInterface = new Mock.CommunicationMock();
-        this.isRunning = false;
+        this.appInterface = new Mock.CommunicationMock;
+        this.isRecording = false;
     }
 
     /**
      * Start all listeners
      */
     private start = () : void => {
-        if (!this.isRunning) {
-            this.isRunning = true;
+        if (!this.isRecording) {
+            this.isRecording = true;
             this.listenerManager.startAll();
         }
     }
@@ -46,8 +46,8 @@ class BackgroundScript {
      * Stop all listeners and wait for next start signal
      */
     private stop = () : void => {
-        if (this.isRunning) {
-            this.isRunning = false;
+        if (this.isRecording) {
+            this.isRecording = false;
             this.listenerManager.stopAll();
             this.appInterface.waitForStart()
             .then(() => this.start())
@@ -59,11 +59,11 @@ class BackgroundScript {
 
     //completely reset the connection status
     private reset = () : void => {
-        if (this.isRunning) {
-            this.isRunning = false;
+        if (this.isRecording) {
+            this.isRecording = false;
             this.listenerManager.stopAll();
-            this.run();
         }
+        this.run();
     }
 
 
@@ -83,6 +83,12 @@ class BackgroundScript {
     public callback = (event : BrowserEvent) : void => {
         console.log(`${BackgroundScript.timeStampString(event.timeStamp)}: ${event.type} occured in tab ${event.tabID} in window ${event.windowID}`);
         this.appInterface.sendData(event.serialize(true))
+        .then((response : string) => {
+            if (response == "Stop") {
+                this.stop();
+                console.log("BackgroundScript stopped.");
+            }
+        })
         .catch((e) => {
             if (e == "Stop")
                 this.stop();

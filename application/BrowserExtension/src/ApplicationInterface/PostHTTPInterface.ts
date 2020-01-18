@@ -133,7 +133,7 @@ lished successfully or rejected upon connection failure or unexpected response
      * @returns A Promise which will be resolved when the data is sent successfully
      * or rejected upon connection failure or unexpected response.
      */
-    public sendData(data: string): Promise<void> {
+    public sendData(data: string): Promise<string> {
         return new Promise ((resolve, reject) => {
             fetch(this.listenerURL, {
                 method : "POST",
@@ -142,7 +142,9 @@ lished successfully or rejected upon connection failure or unexpected response
                 response => response.json()
             ).then((response) => {
                 if (response.response == "MORR") {
-                    resolve();
+                    resolve("Ok");
+                } else if (response.response == "Stop") {
+                    resolve("Stop");
                 } else {
                     throw("Unexpected answer");
                 }
