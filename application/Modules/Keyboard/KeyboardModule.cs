@@ -11,7 +11,9 @@ namespace MORR.Modules.Keyboard
     public class KeyboardModule : ICollectingModule
     {
         private bool isEnabled;
-       
+        private KeyboardInteractEventProducer keyboardInteractEventProducer;
+
+
         public bool IsEnabled
         {
             get
@@ -20,6 +22,7 @@ namespace MORR.Modules.Keyboard
             }
             set
             {
+                isEnabled = value;
                 if (value)
                 {
                     keyboardInteractEventProducer.HookKeyboard();
@@ -37,11 +40,11 @@ namespace MORR.Modules.Keyboard
         /// A single-writer-multiple-reader queue for KeyboardInteractEvent
         /// </summary>
         [Import]
-        public KeyboardInteractEventProducer keyboardInteractEventProducer { get; private set; }
+        public KeyboardInteractEventProducer KeyboardInteractEventProducer { get; private set; }
 
         public void Initialize()
         {
-            throw new NotImplementedException();
+            this.keyboardInteractEventProducer = new KeyboardInteractEventProducer;
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using MORR.Shared;
-using MORR.Shared.Events;
+﻿using MORR.Shared.Events;
 
 namespace MORR.Modules.Keyboard.Events
 {

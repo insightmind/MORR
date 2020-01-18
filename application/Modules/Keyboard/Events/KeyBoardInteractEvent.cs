@@ -12,10 +12,10 @@ namespace MORR.Modules.Keyboard.Events
         /// </summary>
         public Key PressedKey { get; set; }
 
-        public KeyboardInteractEvent(Key key)
-        {
-            this.PressedKey = key;
-        }
+        /// <summary>
+        ///     The modifier keys to the key pressed
+        /// </summary>
+        public ModifierKeys ModifierKeys { get; set; }
 
         public override string Serialize()
         {

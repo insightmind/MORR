@@ -30,10 +30,10 @@ namespace MORR.Modules.Keyboard.Producers
         private const int VK_MENU = 0x12;
         private const int VK_CAPITAL = 0x14;
 
-        private static IntPtr hook = IntPtr.Zero;
+        private IntPtr hook = IntPtr.Zero;
 
-        public delegate int LowLevelKeyboardProc(int code, int wParam, ref keyboardHookStruct lParam);
-        public struct keyboardHookStruct
+        private delegate int LowLevelKeyboardProc(int code, int wParam, ref KeyboardHookStruct lParam);
+        private struct KeyboardHookStruct
         {
             public int vkCode;
             public int scanCode;
@@ -48,7 +48,7 @@ namespace MORR.Modules.Keyboard.Producers
         /// Construct a KeyboardInteractEventProducer with a certain strategy.
         /// </summary>
         /// <param name="storageStrategy"></param>
-        public KeyboardInteractEventProducer(IEventQueueStorageStrategy<KeyboardInteractEvent> storageStrategy) : base(storageStrategy)
+        public KeyboardInteractEventProducer() : base(new KeepAllStorageStrategy())
         {
         }
         #endregion
@@ -65,7 +65,6 @@ namespace MORR.Modules.Keyboard.Producers
             String moduleName = currentModule.ModuleName;
             IntPtr moduleHandle = GetModuleHandle(moduleName);
             hook = SetWindowsHookEx(WH_KEYBOARD_LL, HookProc, moduleHandle, 0);
-            Application.Run();
         }
 
         /// <summary>
@@ -85,7 +84,7 @@ namespace MORR.Modules.Keyboard.Producers
         /// <param name="wParam">The event type</param>
         /// <param name="lParam">The keyhook event information</param>
         /// <returns></returns>
-        private int HookProc(int nCode, int wParam, ref keyboardHookStruct lParam)
+        private int HookProc(int nCode, int wParam, ref KeyboardHookStruct lParam)
         {
             if (nCode >= 0 && wParam == WM_KEYDOWN)
             {
@@ -99,7 +98,8 @@ namespace MORR.Modules.Keyboard.Producers
                 Key wpfkey = KeyInterop.KeyFromVirtualKey((int)key);
 
                 //create corresponding new Event
-                KeyboardInteractEvent @event = new KeyboardInteractEvent(wpfkey);
+                KeyboardInteractEvent @event = new KeyboardInteractEvent();
+                @event.PressedKey = wpfkey;
 
                 //enque it
                 this.Enqueue(@event);
@@ -137,9 +137,9 @@ namespace MORR.Modules.Keyboard.Producers
         /// Sets the windows hook, do the desired event, one of hInstance or threadId must be non-null
         /// </summary>
         /// <param name="idHook">The id of the event you want to hook</param>
-        /// <param name="callback">The callback.</param>
-        /// <param name="hInstance">The handle you want to attach the event to, can be null</param>
-        /// <param name="threadId">The thread you want to attach the event to, can be null</param>
+        /// <param name="lpfn">The low level keyboard procedure callback.</param>
+        /// <param name="hMod">The handle you want to attach the event to, can be null</param>
+        /// <param name="dwThreadId">The thread you want to attach the event to, can be null</param>
         /// <returns>a handle to the desired hook</returns>
         [DllImport("user32.dll")]
         private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
@@ -147,7 +147,7 @@ namespace MORR.Modules.Keyboard.Producers
         /// <summary>
         /// Unhooks the windows hook.
         /// </summary>
-        /// <param name="hInstance">The hook handle that was returned from SetWindowsHookEx</param>
+        /// <param name="hhk">The hook handle that was returned from SetWindowsHookEx</param>
         /// <returns>True if successful, false otherwise</returns>
         [DllImport("user32.dll")]
         private static extern bool UnhookWindowsHookEx(IntPtr hhk);
@@ -161,7 +161,7 @@ namespace MORR.Modules.Keyboard.Producers
         /// <param name="lParam">The lparam.</param>
         /// <returns></returns>
         [DllImport("user32.dll")]
-        static extern int CallNextHookEx(IntPtr idHook, int nCode, int wParam, ref keyboardHookStruct lParam);
+        static extern int CallNextHookEx(IntPtr idHook, int nCode, int wParam, ref KeyboardHookStruct lParam);
 
 
         [DllImport("kernel32.dll")]
