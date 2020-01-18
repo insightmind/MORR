@@ -11,14 +11,11 @@ namespace MORR.Modules.Keyboard
     public class KeyboardModule : ICollectingModule
     {
         private bool isEnabled;
-        private KeyboardInteractEventProducer keyboardInteractEventProducer;
-
-
         public bool IsEnabled
         {
             get
             {
-                return this.IsEnabled;
+                return this.isEnabled;
             }
             set
             {
@@ -34,17 +31,33 @@ namespace MORR.Modules.Keyboard
             }
         }
 
-        public Guid Identifier => throw new NotImplementedException();
-
+        private KeyboardInteractEventProducer keyboardInteractEventProducer;
         /// <summary>
         /// A single-writer-multiple-reader queue for KeyboardInteractEvent
         /// </summary>
         [Import]
-        public KeyboardInteractEventProducer KeyboardInteractEventProducer { get; private set; }
+        public KeyboardInteractEventProducer KeyboardInteractEventProducer 
+        {
+            get 
+            {
+                return this.keyboardInteractEventProducer;
+            }
+            private set
+            {
+                this.keyboardInteractEventProducer = value;
+            }
+        }
 
+        public Guid Identifier => throw new NotImplementedException();
+
+
+        /// <summary>
+        ///     Initialize the module unenabled with KeyboardInteractEventProducer.
+        /// </summary>
         public void Initialize()
         {
-            this.keyboardInteractEventProducer = new KeyboardInteractEventProducer;
+            this.keyboardInteractEventProducer = new KeyboardInteractEventProducer();
+            this.isEnabled = false;
         }
     }
 }

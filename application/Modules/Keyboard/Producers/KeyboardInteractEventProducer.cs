@@ -20,28 +20,7 @@ namespace MORR.Modules.Keyboard.Producers
     [Export(typeof(EventQueue<Event>))]
     public class KeyboardInteractEventProducer : EventQueue<KeyboardInteractEvent>
     {
-        #region Constant, Structure and Delegate Definitions
-
-        private const int WH_KEYBOARD_LL = 13;
-        private const int WM_KEYDOWN = 0x100;
-
-        private const int VK_SHIFT = 0x10;
-        private const int VK_CONTROL = 0x11;
-        private const int VK_MENU = 0x12;
-        private const int VK_CAPITAL = 0x14;
-
         private IntPtr hook = IntPtr.Zero;
-
-        private delegate int LowLevelKeyboardProc(int code, int wParam, ref KeyboardHookStruct lParam);
-        private struct KeyboardHookStruct
-        {
-            public int vkCode;
-            public int scanCode;
-            public int flags;
-            public int time;
-            public int dwExtraInfo;
-        }
-        #endregion
 
         #region constructor
         /// <summary>
@@ -63,8 +42,8 @@ namespace MORR.Modules.Keyboard.Producers
             Process currentProcess = Process.GetCurrentProcess();
             ProcessModule currentModule = currentProcess.MainModule;
             String moduleName = currentModule.ModuleName;
-            IntPtr moduleHandle = GetModuleHandle(moduleName);
-            hook = SetWindowsHookEx(WH_KEYBOARD_LL, HookProc, moduleHandle, GetCurrentThreadId());
+            IntPtr moduleHandle = NativeMethods.GetModuleHandle(moduleName);
+            hook = NativeMethods.SetWindowsHookEx((int)NativeMethods.HookType.WH_KEYBOARD_LL, HookProc, moduleHandle, NativeMethods.GetCurrentThreadId());
         }
 
         /// <summary>
@@ -72,7 +51,7 @@ namespace MORR.Modules.Keyboard.Producers
         /// </summary>
         public void UnhookKeyboard()
         {
-            UnhookWindowsHookEx(hook);
+            NativeMethods.UnhookWindowsHookEx(hook);
         }
         #endregion
 
@@ -84,9 +63,9 @@ namespace MORR.Modules.Keyboard.Producers
         /// <param name="wParam">The event type</param>
         /// <param name="lParam">The keyhook event information</param>
         /// <returns></returns>
-        private int HookProc(int nCode, int wParam, ref KeyboardHookStruct lParam)
+        private int HookProc(int nCode, int wParam, ref NativeMethods.KeyboardHookStruct lParam)
         {
-            if (nCode >= 0 && wParam == WM_KEYDOWN)
+            if (nCode >= 0 && wParam == (int)NativeMethods.MessageType.WM_KEYDOWN)
             {
                 // read the virtual key code from the IParam
                 Keys key = (Keys)lParam.vkCode;
@@ -104,7 +83,7 @@ namespace MORR.Modules.Keyboard.Producers
                 //enque it
                 this.Enqueue(@event);
     }
-            return CallNextHookEx(IntPtr.Zero, nCode, wParam, ref lParam);
+            return NativeMethods.CallNextHookEx(IntPtr.Zero, nCode, wParam, ref lParam);
         }
 
         /// <summary>
@@ -132,46 +111,86 @@ namespace MORR.Modules.Keyboard.Producers
 
 
 
-        #region DLL imports
-        /// <summary>
-        /// Sets the windows hook, do the desired event, one of hInstance or threadId must be non-null
-        /// </summary>
-        /// <param name="idHook">The id of the event you want to hook</param>
-        /// <param name="lpfn">The low level keyboard procedure callback.</param>
-        /// <param name="hMod">The handle you want to attach the event to, can be null</param>
-        /// <param name="dwThreadId">The thread you want to attach the event to, can be null</param>
-        /// <returns>a handle to the desired hook</returns>
-        [DllImport("user32.dll")]
-        private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
+        
 
-        /// <summary>
-        /// Unhooks the windows hook.
-        /// </summary>
-        /// <param name="hhk">The hook handle that was returned from SetWindowsHookEx</param>
-        /// <returns>True if successful, false otherwise</returns>
-        [DllImport("user32.dll")]
-        private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+        private static class NativeMethods
+        {
+            #region Constant, Structure and Delegate Definitions
+            public struct KeyboardHookStruct
+            {
+                public int vkCode;
+                public int scanCode;
+                public int flags;
+                public int time;
+                public int dwExtraInfo;
+            }
 
-        /// <summary>
-        /// Calls the next hook.
-        /// </summary>
-        /// <param name="idHook">The hook id</param>
-        /// <param name="nCode">The hook code</param>
-        /// <param name="wParam">The wparam.</param>
-        /// <param name="lParam">The lparam.</param>
-        /// <returns></returns>
-        [DllImport("user32.dll")]
-        static extern int CallNextHookEx(IntPtr idHook, int nCode, int wParam, ref KeyboardHookStruct lParam);
+            
+            public enum HookType 
+            {
+              WH_KEYBOARD_LL = 13
+            }
+
+            public enum MessageType
+            {
+              WM_KEYDOWN = 0x100
+            }
+
+            public enum VirtualCode
+            {
+              VK_SHIFT = 0x10,
+              VK_CONTROL = 0x11,
+              VK_MENU = 0x12,
+              VK_CAPITAL = 0x14
+            }
+
+            public delegate int LowLevelKeyboardProc(int code, int wParam, ref KeyboardHookStruct lParam);
+
+            #endregion
+
+            #region DLL imports
+
+            /// <summary>
+            /// Sets the windows hook, do the desired event, one of hInstance or threadId must be non-null
+            /// </summary>
+            /// <param name="idHook">The id of the event you want to hook</param>
+            /// <param name="lpfn">The low level keyboard procedure callback.</param>
+            /// <param name="hMod">The handle you want to attach the event to, can be null</param>
+            /// <param name="dwThreadId">The thread you want to attach the event to, can be null</param>
+            /// <returns>a handle to the desired hook</returns>
+            [DllImport("user32.dll")]
+            public static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
+
+            /// <summary>
+            /// Unhooks the windows hook.
+            /// </summary>
+            /// <param name="hhk">The hook handle that was returned from SetWindowsHookEx</param>
+            /// <returns>True if successful, false otherwise</returns>
+            [DllImport("user32.dll")]
+            public static extern bool UnhookWindowsHookEx(IntPtr hhk);
+
+            /// <summary>
+            /// Calls the next hook.
+            /// </summary>
+            /// <param name="idHook">The hook id</param>
+            /// <param name="nCode">The hook code</param>
+            /// <param name="wParam">The wparam.</param>
+            /// <param name="lParam">The lparam.</param>
+            /// <returns></returns>
+            [DllImport("user32.dll")]
+            public static extern int CallNextHookEx(IntPtr idHook, int nCode, int wParam, ref KeyboardHookStruct lParam);
 
 
-        [DllImport("kernel32.dll")]
-        private static extern IntPtr GetModuleHandle(String lpModuleName);
+            [DllImport("kernel32.dll")]
+            public static extern IntPtr GetModuleHandle(String lpModuleName);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true, CallingConvention = CallingConvention.Winapi)]
-        public static extern short GetKeyState(int keyCode);
+            [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true, CallingConvention = CallingConvention.Winapi)]
+            public static extern short GetKeyState(int keyCode);
 
-        [DllImport("kernel32.dll")]
-        public static extern uint GetCurrentThreadId();
-        #endregion
+            [DllImport("kernel32.dll")]
+            public static extern uint GetCurrentThreadId();
+
+            #endregion
+        }
     }
 }
