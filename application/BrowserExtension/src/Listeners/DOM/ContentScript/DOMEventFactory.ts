@@ -21,7 +21,7 @@ export default class DOMEventFactory {
     //a (href) and button elements are the common tags for button-like objects, but also input-type:submit.
     private static readonly targetWhiteListFilter = new RegExp('^(a|button|input)$', 'i');
     private static readonly inputTypeWhiteListFilter = new RegExp('^(submit|checkbox|button)$', 'i');
-    private static readonly hoverBlackListFilter = new RegExp('^(p|body|head|div|html|ul|span)$', 'i');
+    private static readonly hoverBlackListFilter = new RegExp('^(p|body|head|div|html|ul)$', 'i');
     //helper variable to prevent misfires of textselection-events. It declared here since there are no static method variables.
     lastTextSelection : string = "";
 
