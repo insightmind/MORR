@@ -29,7 +29,10 @@ class BackgroundScript {
      */
     constructor() {
         this.listenerManager = new ListenerManager(this.callback);
-        this.appInterface = new Mock.CommunicationMock;
+        this.appInterface = new PostHTTPInterface();
+        this.appInterface.addOnStopListener(() => {
+            this.stop();
+        })
         this.isRecording = false;
     }
 
@@ -40,6 +43,7 @@ class BackgroundScript {
         if (!this.isRecording) {
             this.isRecording = true;
             this.listenerManager.startAll();
+            console.log("BackgroundScript started.");
         }
     }
     /**
@@ -54,6 +58,7 @@ class BackgroundScript {
             .catch((e) => {
                 this.reset();
             });
+            console.log("BackgroundScript stopped.");
         }
     }
 
@@ -83,17 +88,8 @@ class BackgroundScript {
     public callback = (event : BrowserEvent) : void => {
         console.log(`${BackgroundScript.timeStampString(event.timeStamp)}: ${event.type} occured in tab ${event.tabID} in window ${event.windowID}`);
         this.appInterface.sendData(event.serialize(true))
-        .then((response : string) => {
-            if (response == "Stop") {
-                this.stop();
-                console.log("BackgroundScript stopped.");
-            }
-        })
         .catch((e) => {
-            if (e == "Stop")
-                this.stop();
-            else
-                this.reset();
+            this.reset();
         });
     }
 
@@ -125,7 +121,7 @@ class BackgroundScript {
                 resolve();
             })
             .catch((err : string) => {
-                console.error(`Error during initialization: ${err}`);
+                console.log(`Error during initialization: ${err}. Retrying in ${BackgroundScript.RETRYDELAYMS} ms.`);
                 setTimeout(() => {
                     this.establishConnection(getConfig)
                     .then(() => resolve());

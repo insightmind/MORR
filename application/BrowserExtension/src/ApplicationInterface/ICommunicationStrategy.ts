@@ -27,4 +27,6 @@ export default interface ICommunicationStrategy {
      * @returns a Promise which fill be resolved when the data was successfully sent
      */
     sendData(data : string) : Promise<string>;
+
+    addOnStopListener(callback: () => void) : void;
 }
