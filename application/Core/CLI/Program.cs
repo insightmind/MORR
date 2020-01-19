@@ -35,7 +35,7 @@ namespace MORR.Core.CLI
 
         private static async Task Listen()
         {
-            var queue = new EventQueue<TestEvent>(new RefCountedUnboundedStrategy<TestEvent>());
+            var queue = new EventQueue<TestEvent>(new UnboundedMultiConsumerChannelStrategy<TestEvent>());
 
             var producers = new List<Producer>();
             var consumers = new List<Consumer>();
@@ -43,7 +43,7 @@ namespace MORR.Core.CLI
             var consumingTasks = new List<Task>();
             var producingTasks = new List<Task>();
 
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < 2; i++)
             {
                 producers.Add(new Producer(queue, i, 10));
                 consumers.Add(new Consumer(queue, i, 0));
@@ -103,7 +103,7 @@ namespace MORR.Core.CLI
 
                 var msg = $"P{_identifier} - {DateTime.UtcNow:G}";
 
-                // Console.WriteLine($"PRODUCER ({_identifier}): Creating {msg}");
+                Console.WriteLine($"PRODUCER ({_identifier}): Creating {msg}");
 
                 _queue.Enqueue(new TestEvent(_identifier, msg, i));
             }
@@ -135,7 +135,7 @@ namespace MORR.Core.CLI
             {
                 await Task.Delay(_delay); // simulate processing time
                 i++;
-                // Console.WriteLine($"CONSUMER ({_identifier}, processed: {i}): Consuming {@event._msg} from {@event._identifier} num: {@event._num}");
+                Console.WriteLine($"CONSUMER ({_identifier}, processed: {i}): Consuming {@event._msg} from {@event._identifier} num: {@event._num}");
             }
 
             Console.WriteLine($"CONSUMER ({_identifier}): Completed");
