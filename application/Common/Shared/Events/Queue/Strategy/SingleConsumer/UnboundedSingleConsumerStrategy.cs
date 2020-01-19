@@ -15,6 +15,9 @@ namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
     {
         private readonly UnboundedChannelOptions options;
 
+        /// <summary>
+        /// Creates a new UnboundedSingleConsumerChannelStrategy.
+        /// </summary>
         public UnboundedSingleConsumerChannelStrategy()
         {
             options = new UnboundedChannelOptions()

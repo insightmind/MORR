@@ -19,7 +19,7 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
         private readonly UnboundedChannelOptions receivingOptions;
 
         /// <summary>
-        /// Creates a new BoundedMultiConsumerChannelStrategy with a given capacity.
+        /// Creates a new UnboundedMultiConsumerChannelStrategy.
         /// </summary>
         /// <param name="maxChannelConsumers">Maximum number of consumers allowed or null if unbound. Defaults: null</param>
         public UnboundedMultiConsumerChannelStrategy(uint? maxChannelConsumers = null)
