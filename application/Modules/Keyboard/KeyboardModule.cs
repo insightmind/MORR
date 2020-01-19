@@ -40,7 +40,7 @@ namespace MORR.Modules.Keyboard
             }
         }
 
-        public Guid Identifier => new Guid("99F679D6 - 0D20 - 40EE - 8604 - F128F0E5AE3B");
+        public Guid Identifier => new Guid("99F679D6-0D20-40EE-8604-F128F0E5AE3B");
 
 
         /// <summary>

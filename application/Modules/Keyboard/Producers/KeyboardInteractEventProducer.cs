@@ -150,7 +150,7 @@ namespace MORR.Modules.Keyboard.Producers
                 // get the key enum element from the lParam 
                 var vkCode = lParam.vkCode;
 
-                //get both the pressed key and the modifierKeys
+                //get both the pressedkey and the modifierKeys
                 var modifierKeys = GetModifierKeys();
                 var pressedkey = KeyInterop.KeyFromVirtualKey(vkCode);
 
@@ -175,27 +175,27 @@ namespace MORR.Modules.Keyboard.Producers
             var modifierKeys = ModifierKeys.None;
 
             //Alt
-            if (isPressed(NativeMethods.VirtualKeyCode.VK_MENU))
+            if (IsPressed(NativeMethods.VirtualKeyCode.VK_MENU))
             {
-                modifierKeys += (int) ModifierKeys.Alt;
+                modifierKeys |= ModifierKeys.Alt;
             }
 
             //Control
-            if (isPressed(NativeMethods.VirtualKeyCode.VK_CONTROL))
+            if (IsPressed(NativeMethods.VirtualKeyCode.VK_CONTROL))
             {
-                modifierKeys += (int) ModifierKeys.Control;
+                modifierKeys |= ModifierKeys.Control;
             }
 
             //Shift
-            if (isPressed(NativeMethods.VirtualKeyCode.VK_SHIFT))
+            if (IsPressed(NativeMethods.VirtualKeyCode.VK_SHIFT))
             {
-                modifierKeys += (int) ModifierKeys.Shift;
+                modifierKeys |= ModifierKeys.Shift;
             }
 
             //Windows
-            if (isPressed(NativeMethods.VirtualKeyCode.VK_LWIN) || isPressed(NativeMethods.VirtualKeyCode.VK_RWIN))
+            if (IsPressed(NativeMethods.VirtualKeyCode.VK_LWIN) || IsPressed(NativeMethods.VirtualKeyCode.VK_RWIN))
             {
-                modifierKeys += (int) ModifierKeys.Windows;
+                modifierKeys |= ModifierKeys.Windows;
             }
 
             return modifierKeys;
@@ -206,9 +206,9 @@ namespace MORR.Modules.Keyboard.Producers
         /// </summary>
         /// <param name="vkCode"></param>
         /// <returns>true if a key is being pressed</returns>
-        private bool isPressed(NativeMethods.VirtualKeyCode vkCode)
+        private bool IsPressed(NativeMethods.VirtualKeyCode vkCode)
         {
-            return GetLowOrderBit((int) vkCode) != 0;
+            return GetLowOrderBit(NativeMethods.GetKeyState((int)vkCode)) != 0;
         }
 
         /// <summary>
