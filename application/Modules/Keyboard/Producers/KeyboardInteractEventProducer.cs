@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Composition;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
 using MORR.Modules.Keyboard.Events;
@@ -107,7 +108,7 @@ namespace MORR.Modules.Keyboard.Producers
             public static extern short GetKeyState(int keyCode);
 
             [DllImport("kernel32.dll")]
-            public static extern uint GetCurrentThreadId();
+            public static extern IntPtr GetModuleHandle(string lpModuleName);
 
             #endregion
         }
@@ -120,8 +121,12 @@ namespace MORR.Modules.Keyboard.Producers
         /// </summary>
         public void HookKeyboard()
         {
-            hook = NativeMethods.SetWindowsHookEx((int) NativeMethods.HookType.WH_KEYBOARD_LL, HookProc, IntPtr.Zero,
-                                                  NativeMethods.GetCurrentThreadId());
+            var currentProcess = Process.GetCurrentProcess();
+            var currentModule = currentProcess.MainModule;
+            var moduleName = currentModule.ModuleName;
+            var moduleHandle = NativeMethods.GetModuleHandle(moduleName);
+            hook = NativeMethods.SetWindowsHookEx((int) NativeMethods.HookType.WH_KEYBOARD_LL, HookProc, moduleHandle,
+                                                  0);
         }
 
         /// <summary>
@@ -208,7 +213,7 @@ namespace MORR.Modules.Keyboard.Producers
         /// <returns>true if a key is being pressed</returns>
         private bool IsPressed(NativeMethods.VirtualKeyCode vkCode)
         {
-            return GetLowOrderBit(NativeMethods.GetKeyState((int)vkCode)) != 0;
+            return GetLowOrderBit(NativeMethods.GetKeyState((int) vkCode)) != 0;
         }
 
         /// <summary>
