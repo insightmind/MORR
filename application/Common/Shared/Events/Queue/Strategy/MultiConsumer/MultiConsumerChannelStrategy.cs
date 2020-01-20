@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Channels;
@@ -22,10 +21,8 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
         {
             if (maxChannelConsumers == 1)
             {
-#if DEBUG
-                Console.WriteLine("WARNING: You are using MultiConsumerChannel with a max consumer of 1. " +
-                                  "Please change to a SingleConsumerChannel for maximum performance!");
-#endif
+                throw new ChannelConsumingException("ERROR: You are using MultiConsumerChannel with a max consumer of 1. " +
+                                                    "Please change to a SingleConsumerChannel for maximum performance!");
             }
             else if (maxChannelConsumers == 0)
             {
