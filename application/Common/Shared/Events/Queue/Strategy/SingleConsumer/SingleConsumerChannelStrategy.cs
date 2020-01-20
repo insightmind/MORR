@@ -15,7 +15,7 @@ namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
     public abstract class SingleConsumerChannelStrategy<TEvent> : IEventQueueStorageStrategy<TEvent> where TEvent : Event
     {
         private Channel<TEvent> eventChannel;
-        private bool _isOccupied = false;
+        private bool isOccupied = false;
 
         protected void StartReceiving()
         {
@@ -28,12 +28,12 @@ namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
         /// <returns>A stream of <typeparamref name="T" /></returns>
         public IAsyncEnumerable<TEvent> GetEvents([EnumeratorCancellation] CancellationToken token = default)
         {
-            if (_isOccupied)
+            if (isOccupied)
             {
                 throw new ChannelConsumingException("Channel already occupied!");
             }
 
-            _isOccupied = true;
+            isOccupied = true;
             token.Register(FreeReading);
             return eventChannel.Reader.ReadAllAsync(token);
         }
@@ -59,7 +59,7 @@ namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
 
         private void FreeReading()
         {
-            _isOccupied = false;
+            isOccupied = false;
         }
 
         protected abstract Channel<TEvent> CreateChannel();
