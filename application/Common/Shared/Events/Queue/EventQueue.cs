@@ -6,9 +6,9 @@ namespace MORR.Shared.Events.Queue
     ///     Provides a single-writer-multiple-reader queue for <see cref="Event" /> types.
     /// </summary>
     /// <typeparam name="T">The type of the event</typeparam>
-    public class EventQueue<T> : IReadOnlyEventQueue<T> where T : Event
+    public abstract class EventQueue<T> : IReadOnlyEventQueue<T> where T : Event
     {
-        public EventQueue(IEventQueueStorageStrategy<T> storageStrategy)
+        protected EventQueue(IEventQueueStorageStrategy<T> storageStrategy)
         {
             this.storageStrategy = storageStrategy;
         }
