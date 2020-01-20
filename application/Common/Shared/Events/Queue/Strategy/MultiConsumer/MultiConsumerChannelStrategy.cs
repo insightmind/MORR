@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Channels;
@@ -47,6 +48,7 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
 
             var channel = CreateOfferingChannel();
             offeringChannels.Add(channel);
+            token.Register(channel => FreeChannel(channel), channel);
             return channel.Reader.ReadAllAsync(token);
         }
 
@@ -79,6 +81,17 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
                 }
             }
         }
+
+        private void FreeChannel(object? channelObject)
+        {
+            if (!(channelObject is Channel<TEvent> channel))
+            {
+                return;
+            }
+
+            offeringChannels.Remove(channel);
+        }
+
         protected abstract Channel<TEvent> CreateOfferingChannel();
         protected abstract Channel<TEvent> CreateReceivingChannel();
     }
