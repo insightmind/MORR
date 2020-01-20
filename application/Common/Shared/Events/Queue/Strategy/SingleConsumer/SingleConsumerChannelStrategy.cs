@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Channels;
@@ -13,7 +12,7 @@ namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
     /// Please make sure only a single consumer will request. Otherwise an exception is thrown.
     /// </summary>
     /// <typeparam name="TEvent">The type of event which is queued by the channel</typeparam>
-    public abstract class SingleConsumerChannelStrategy<TEvent>: IEventQueueStorageStrategy<TEvent> where TEvent: Event
+    public abstract class SingleConsumerChannelStrategy<TEvent> : IEventQueueStorageStrategy<TEvent> where TEvent : Event
     {
         private Channel<TEvent> eventChannel;
         private bool _isOccupied = false;

@@ -12,7 +12,7 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
     /// However every event is propagated to each consumer once.
     /// </summary>
     /// <typeparam name="TEvent">The type of event which is queued by the channel</typeparam>
-    public abstract class MultiConsumerChannelStrategy<TEvent>: IEventQueueStorageStrategy<TEvent> where TEvent: Event
+    public abstract class MultiConsumerChannelStrategy<TEvent> : IEventQueueStorageStrategy<TEvent> where TEvent : Event
     {
         private uint? maxChannelConsumers = null;
         private Channel<TEvent> receivingChannel;
@@ -21,10 +21,13 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
         protected async void StartReceiving(uint? maxChannelConsumers)
         {
             if (maxChannelConsumers == 1)
-            { 
+            {
+#if DEBUG
                 Console.WriteLine("WARNING: You are using MultiConsumerChannel with a max consumer of 1. " +
-                                "Please change to a SingleConsumerChannel for maximum performance!");
-            } else if (maxChannelConsumers == 0)
+                                  "Please change to a SingleConsumerChannel for maximum performance!");
+#endif
+            }
+            else if (maxChannelConsumers == 0)
             {
                 throw new ChannelConsumingException("ERROR: You are using a channel strategy that disallows consuming. This is invalid!");
             }
@@ -40,6 +43,11 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
         /// <returns>A stream of <typeparamref name="T" /></returns>
         public IAsyncEnumerable<TEvent> GetEvents([EnumeratorCancellation] CancellationToken token = default)
         {
+            if ((maxChannelConsumers != null) && (offeringChannels.Count >= maxChannelConsumers))
+            {
+                throw new ChannelConsumingException($"Maximum number ({maxChannelConsumers}}) of consumers reached!");
+            }
+
             var channel = CreateOfferingChannel();
             offeringChannels.Add(channel);
             return channel.Reader.ReadAllAsync(token);
