@@ -13,7 +13,7 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
     /// <typeparam name="TEvent">The type of event which is queued by the channel</typeparam>
     public abstract class MultiConsumerChannelStrategy<TEvent> : IEventQueueStorageStrategy<TEvent> where TEvent : Event
     {
-        private uint? maxChannelConsumers = null;
+        private uint? maxChannelConsumers;
         private Channel<TEvent> receivingChannel;
         private readonly List<Channel<TEvent>> offeringChannels = new List<Channel<TEvent>>();
 
