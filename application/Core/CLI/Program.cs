@@ -10,10 +10,10 @@ namespace MORR.Core.CLI
     {
         public static int Main(string[] args)
         {
-             return Parser.Default.ParseArguments<ValidateConfigOptions>(args)
-                        .MapResult(
-                            (ValidateConfigOptions opts) => new ValidateConfigCommand().Execute(opts),
-                            errs => 1);
+            return Parser.Default.ParseArguments<ValidateConfigOptions>(args)
+                       .MapResult(
+                           (ValidateConfigOptions opts) => new ValidateConfigCommand().Execute(opts),
+                           errs => 1);
         }
     }
 }
