@@ -18,8 +18,8 @@ namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
         /// <summary>
         /// Creates a new BoundedSingleConsumerChannelStrategy with a given capacity.
         /// </summary>
-        /// <param name="bufferCapacity">Capacity of the queue. Defaults: 1024</param>
-        public BoundedSingleConsumerChannelStrategy(int bufferCapacity = 1024)
+        /// <param name="bufferCapacity">Capacity of the queue.</param>
+        public BoundedSingleConsumerChannelStrategy(int bufferCapacity)
         {
             options = new BoundedChannelOptions(bufferCapacity)
             {

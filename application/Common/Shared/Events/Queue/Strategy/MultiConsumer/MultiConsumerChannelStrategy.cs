@@ -42,7 +42,7 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
         {
             if ((maxChannelConsumers != null) && (offeringChannels.Count >= maxChannelConsumers))
             {
-                throw new ChannelConsumingException($"Maximum number ({maxChannelConsumers}}) of consumers reached!");
+                throw new ChannelConsumingException($"Maximum number ({maxChannelConsumers}) of consumers reached!");
             }
 
             var channel = CreateOfferingChannel();

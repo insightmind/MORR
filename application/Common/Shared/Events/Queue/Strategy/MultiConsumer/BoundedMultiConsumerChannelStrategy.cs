@@ -23,9 +23,9 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
         /// <summary>
         /// Creates a new BoundedMultiConsumerChannelStrategy with a given capacity.
         /// </summary>
-        /// <param name="bufferCapacity">Capacity of the queue. Defaults: 1024</param>
-        /// <param name="maxChannelConsumers">Maximum number of consumers allowed or null if unbound. Defaults: null</param>
-        public BoundedMultiConsumerChannelStrategy(int bufferCapacity = 1024, uint? maxChannelConsumers = null)
+        /// <param name="bufferCapacity">Capacity of the queue.</param>
+        /// <param name="maxChannelConsumers">Maximum number of consumers allowed or null if unbound.</param>
+        public BoundedMultiConsumerChannelStrategy(int bufferCapacity, uint? maxChannelConsumers)
         {
             offeringOptions = new BoundedChannelOptions(bufferCapacity)
             {
