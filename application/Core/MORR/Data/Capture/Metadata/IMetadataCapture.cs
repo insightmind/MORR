@@ -2,8 +2,5 @@
 
 namespace MORR.Core.Data.Capture.Metadata
 {
-    public interface IMetadataCapture : ITransformingModule
-    {
-        
-    }
+    public interface IMetadataCapture : ITransformingModule { }
 }

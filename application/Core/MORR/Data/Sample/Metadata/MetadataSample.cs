@@ -4,7 +4,7 @@ using MORR.Shared.Events;
 namespace MORR.Core.Data.Sample.Metadata
 {
     /// <summary>
-    ///     A single metadata capture sample
+    ///     A single metadata capture sample.
     /// </summary>
     public class MetadataSample : Event
     {

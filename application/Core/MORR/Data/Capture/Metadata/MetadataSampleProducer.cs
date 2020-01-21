@@ -5,19 +5,18 @@ using System.Threading.Tasks;
 using MORR.Core.Data.Sample.Metadata;
 using MORR.Shared.Events;
 using MORR.Shared.Events.Queue;
+using MORR.Shared.Events.Queue.Strategy.SingleConsumer;
 
 namespace MORR.Core.Data.Capture.Metadata
 {
-    public class MetadataSampleProducer : EventQueue<MetadataSample>
+    [Export(typeof(IReadOnlyEventQueue<MetadataSample>))]
+    public class MetadataSampleProducer : BoundedSingleConsumerEventQueue<MetadataSample>
     {
-        // TODO We should probably move the strategies to a generic argument
-        public MetadataSampleProducer() : base(new KeepAllStorageStrategy<MetadataSample>()) { }
-
         [ImportMany]
         private IEnumerable<IReadOnlyEventQueue<Event>> EventQueues { get; set; }
 
         /// <summary>
-        ///     Creates <see cref="MetadataSample" /> instances from <see cref="Event" /> instances using serialization to JSON
+        ///     Creates <see cref="MetadataSample" /> instances from <see cref="Event" /> instances using serialization to JSON.
         /// </summary>
         /// <param name="event">The <see cref="Event" /> instance to convert</param>
         /// <returns>The <see cref="MetadataSample" /> that the event was converted to</returns>
@@ -46,7 +45,7 @@ namespace MORR.Core.Data.Capture.Metadata
         }
 
         /// <summary>
-        ///     Initializes the producer
+        ///     Initializes the producer.
         /// </summary>
         public void Initialize()
         {

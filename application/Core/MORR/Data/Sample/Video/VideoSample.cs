@@ -4,7 +4,7 @@ using MORR.Shared.Events;
 namespace MORR.Core.Data.Sample.Video
 {
     /// <summary>
-    ///     A single video capture sample
+    ///     A single video capture sample.
     /// </summary>
     public class VideoSample : Event
     {

@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using MORR.Core.Data.Sample.Metadata;
 using MORR.Shared.Events;
 using MORR.Shared.Events.Queue;
+using MORR.Shared.Modules;
 
 namespace MORR.Core.Data.Transcoding.Metadata
 {
+    [Export(typeof(IModule))]
     public class MetadataDeserializer : IMetadataDeserializer
     {
         [ImportMany]
@@ -17,8 +19,8 @@ namespace MORR.Core.Data.Transcoding.Metadata
         [Import]
         private IReadOnlyEventQueue<MetadataSample> MetadataSampleQueue { get; set; }
 
-        public bool IsEnabled { get; set; }
-        public Guid Identifier { get; }
+        public bool IsActive { get; set; }
+        public Guid Identifier { get; } = new Guid("03496342-BBAE-46A7-BCBE-98FACA083B74");
 
         public void Initialize()
         {
