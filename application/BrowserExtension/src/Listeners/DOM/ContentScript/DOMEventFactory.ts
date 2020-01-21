@@ -189,7 +189,9 @@ export default class DOMEventFactory {
     //try to get retrive a meaningful name from the (outer)HTML of the element
     private static extractContent(s : any, space : boolean = true) : string {
         var span= document.createElement('span');
-        span.innerHTML= s;
+        span.innerHTML = s;
+        if (!span || !span.innerText) //check if creating span failed
+            return "";
         //replace excessive whitespaces and newlines before returning
         return span.innerText.toString().replace(/ +/g,' ').replace(/\ *$/, '').replace(/(\n\ *\t*)+/g, '\n');
     };

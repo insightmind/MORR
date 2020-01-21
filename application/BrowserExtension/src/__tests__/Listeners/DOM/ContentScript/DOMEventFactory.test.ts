@@ -4,7 +4,8 @@ import { HoverEvent, TextInputEvent, TextSelectionEvent, ButtonClickEvent, DOMEv
 import {sampleDocument} from '../../../../__mock__/client'
 const sampleTarget = {tagName : "BUTTON", title : "sample target", value : "sampleinput", type : "text",
 getAttribute : function(attr : string) {return (attr == "href") ? "https://sample.com/redirect" : null;}};
-
+const sampleTextTarget = {tagName : "INPUT", type : "text", title : "sample target", value : "sampleinput",
+getAttribute : function(attr : string) {return (attr == "href") ? "https://sample.com/redirect" : null;}};
 const WAITTIME = 30; //how long to wait before counting callback-invocations
 
 let factory : DOMEventFactory;
@@ -38,12 +39,12 @@ test("Create ButtonClickEvent (success, type button)", done => {
             expect(sEvent.buttonHref).toBe("https://sample.com/redirect");
             done();
         } else {
-            fail("event is undefined or of unepxtected type");
+            fail("event is undefined or of unexpected type");
             done();
         }
     })
     .catch((e : Error) => {
-        fail(e.message);
+        fail(e);
         done();
     });
 });
@@ -69,7 +70,7 @@ test("Create TextSelectionEvent (success, type mouseup)", done => {
 
 //create a TextInputEvent (base scenario)
 test("Create TextInputEvent (success)", done => {
-    factory.createEvent(<Event>(<any>{type : DOMEventTypes.CHANGE, target : sampleTarget}))
+    factory.createEvent(<Event>(<any>{type : DOMEventTypes.CHANGE, target : sampleTextTarget}))
     .then((event? : BrowserEvent) => {
         expect(event).not.toBeUndefined;
         expect(event).toBeInstanceOf(TextInputEvent);
