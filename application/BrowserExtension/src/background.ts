@@ -36,11 +36,14 @@ class BackgroundScript {
     constructor() {
         this.listenerManager = new ListenerManager(this.callback);
         this.appInterface = new PostHTTPInterface();
-        this.appInterface.addOnStopListener(() => {
-            this.stop();
-        })
+        this.appInterface.addOnStopListener((error? : boolean) => {
+            if (!error)
+                this.stop();
+            else
+                this.reset();
+        });
         this.isRecording = false;
-        this.setStatus(ExtensionState.Disconnected);
+        this.setStatusIcon(ExtensionState.Disconnected);
     }
 
     /**
@@ -51,7 +54,7 @@ class BackgroundScript {
             this.isRecording = true;
             this.listenerManager.startAll();
             console.log("BackgroundScript started.");
-            this.setStatus(ExtensionState.Recording);
+            this.setStatusIcon(ExtensionState.Recording);
         }
     }
     /**
@@ -59,7 +62,7 @@ class BackgroundScript {
      */
     private stop = () : void => {
         if (this.isRecording) {
-            this.setStatus(ExtensionState.Ready);
+            this.setStatusIcon(ExtensionState.Ready);
             this.isRecording = false;
             this.listenerManager.stopAll();
             this.appInterface.waitForStart()
@@ -77,7 +80,6 @@ class BackgroundScript {
             this.isRecording = false;
             this.listenerManager.stopAll();
         }
-        this.setStatus(ExtensionState.Disconnected);
         this.run();
     }
 
@@ -86,13 +88,13 @@ class BackgroundScript {
      * Connect to the main application and start recording when receiving the corresponding signal from the main application.
      */
     public run = () : void => {
+        this.setStatusIcon(ExtensionState.Disconnected);
         this.establishConnection(true)
         .then(() => {
-            this.setStatus(ExtensionState.Ready);
+            this.setStatusIcon(ExtensionState.Ready);
             return this.appInterface.waitForStart();
-        })
-        .catch((e) => this.run())
-        .then(() => this.start());
+        }).then(() => this.start())
+        .catch((e) => this.run());
     }
 
     /**
@@ -158,7 +160,7 @@ class BackgroundScript {
      * Sets the badge in the browser tray
      * @param status the current status
      */
-    private setStatus(status : ExtensionState) : void {
+    private setStatusIcon(status : ExtensionState) : void {
         let label : string;
         let color : string;
         switch(status) {

@@ -10,7 +10,7 @@ chrome.runtime.onInstalled.addListener((details : chrome.runtime.InstalledDetail
  * Application Interface using the HTTP-POST. Expects a HTTPListener on the main application side.
  */
 export default class PostHTTPInterface implements ICommunicationStrategy {
-    private _onStopCallback: () => void = () => {};
+    private _onStopCallback: (error? : boolean) => void = () => {};
     /**
      * URL of the HTTPListener attached to the main application.
      */
@@ -60,7 +60,7 @@ lished successfully or rejected upon connection failure or unexpected response
                 }).then(
                     response => response.json()
                 ).then((response) => {
-                    if (response.response == "MORR") {
+                    if (response.application == "MORR" && response.response == "Ok") {
                         console.log("Connection established");
                         resolve();
                     } else {
@@ -88,7 +88,7 @@ lished successfully or rejected upon connection failure or unexpected response
             }).then(
                 response => response.json()
             ).then((response) => {
-                if (response.response == "MORR" && response.config) {
+                if (response.application == "MORR" && response.config) {
                     console.log("Got config");
                     resolve(<string>response.config);
                 } else {
@@ -114,7 +114,7 @@ lished successfully or rejected upon connection failure or unexpected response
             }).then(
                 response => response.json()
             ).then((response) => {
-                if (response.response == "MORR") {
+                if (response.application == "MORR" && response.response == "Start") {
                     this.enqueueStop();
                     resolve();
                 } else {
@@ -141,10 +141,10 @@ lished successfully or rejected upon connection failure or unexpected response
             }).then(
                 response => response.json()
             ).then((response) => {
-                if (response.response == "MORR") {
+                if (response.application == "MORR" && response.response == "Ok") {
                     resolve("Ok");
-                } else if (response.response == "Stop") {
-                    this._onStopCallback();
+                } else if (response.application == "MORR" && response.response == "Stop") {
+                    this._onStopCallback(false);
                     resolve("Stop");
                 } else {
                     throw("Unexpected answer");
@@ -156,7 +156,7 @@ lished successfully or rejected upon connection failure or unexpected response
         });
     }
 
-    public addOnStopListener(callback: () => void) : void {
+    public addOnStopListener(callback: (error? : boolean) => void) : void {
         this._onStopCallback = callback;
     }
 
@@ -169,11 +169,14 @@ lished successfully or rejected upon connection failure or unexpected response
             response => response.json()
         )
         .then((response) => {
-            if (response.response == "Stop") {
-                this._onStopCallback();
+            if (response.application == "MORR" && response.response == "Stop") {
+                this._onStopCallback(false);
             } else {
                 setTimeout(() => {this.enqueueStop}, 1000);
             }
+        })
+        .catch((e) => {
+            this._onStopCallback(true);
         });
     }
 }

@@ -28,5 +28,9 @@ export default interface ICommunicationStrategy {
      */
     sendData(data : string) : Promise<string>;
 
-    addOnStopListener(callback: () => void) : void;
+    /**
+     * Add a listener to be called when the communication interface gets a stop signal from the MORR application.
+     * @param callback the callback to be invoked when receiving a stop-signal
+     */
+    addOnStopListener(callback: (error? : boolean) => void) : void;
 }
