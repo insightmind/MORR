@@ -64,7 +64,7 @@ lished successfully or rejected upon connection failure or unexpected response
                         console.log("Connection established");
                         resolve();
                     } else {
-                        throw("Unexpected Listener");
+                        throw("Unexpected Answer");
                     }
                 }).catch((e) => {
                     reject(e);
@@ -172,7 +172,7 @@ lished successfully or rejected upon connection failure or unexpected response
             if (response.application == "MORR" && response.response == "Stop") {
                 this._onStopCallback(false);
             } else {
-                setTimeout(() => {this.enqueueStop}, 1000);
+                throw("Unexpected answer");
             }
         })
         .catch((e) => {
