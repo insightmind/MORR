@@ -144,7 +144,7 @@ namespace MORR.Modules.Keyboard.Producers
         /// <summary>
         ///     The callback for the keyboard hook
         /// </summary>
-        /// <param name="code">The hook code, if it isn't >= 0, the function shouldn't do anyting</param>
+        /// <param name="nCode">The hook code, if it isn't >= 0, the function shouldn't do anyting</param>
         /// <param name="wParam">The event type</param>
         /// <param name="lParam">The keyhook event information</param>
         /// <returns></returns>
@@ -155,12 +155,12 @@ namespace MORR.Modules.Keyboard.Producers
                 // get the key enum element from the lParam 
                 var vkCode = lParam.vkCode;
 
-                //get both the pressedkey and the modifierKeys
+                //get both the pressed key and the modifierKeys
                 var modifierKeys = GetModifierKeys();
-                var pressedkey = KeyInterop.KeyFromVirtualKey(vkCode);
+                var pressedKey = KeyInterop.KeyFromVirtualKey(vkCode);
 
                 //create the corresponding new Event
-                var @event = new KeyboardInteractEvent { ModifierKeys = modifierKeys, PressedKey = pressedkey };
+                var @event = new KeyboardInteractEvent { ModifierKeys = modifierKeys, PressedKey = pressedKey };
 
                 //enqueue the new event.
                 Enqueue(@event);
