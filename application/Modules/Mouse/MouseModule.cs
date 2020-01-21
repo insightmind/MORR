@@ -10,31 +10,59 @@ namespace MORR.Modules.Mouse
     /// </summary>
     public class MouseModule : ICollectingModule
     {
-        public bool IsActive { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        public Guid Identifier => throw new NotImplementedException();
+        private bool isActive;
 
         /// <summary>
         /// A single-writer-multiple-reader queue for MouseClickEvent
         /// </summary>
         [Import]
-        public MouseClickEventProducer MouseClickEventProducer { get; private set; }
+        private MouseClickEventProducer MouseClickEventProducer { get; set; }
 
         /// <summary>
         /// A single-writer-multiple-reader queue for MouseScrollEvent
         /// </summary>
         [Import]
-        public MouseScrollEventProducer MouseScrollEventProducer { get; private set; }
+        private MouseScrollEventProducer MouseScrollEventProducer { get; set; }
 
         /// <summary>
         /// A single-writer-multiple-reader queue for MouseMoveEvent
         /// </summary>
         [Import]
-        public MouseMoveEventProducer MouseMoveEventProducer { get; private set; }
+        private MouseMoveEventProducer MouseMoveEventProducer { get; set; }
 
+        /// <summary>
+        ///     if the module is enabled or not.
+        ///     When a module is being enabled, the keyboard hook will be set.
+        ///     When a module is being disabled, the keyboard hook will be released.
+        /// </summary>
+        public bool IsActive
+        {
+            get => isActive;
+            set
+            {
+                isActive = value;
+                if (value)
+                {
+                    //TODO Set the hooks in all producers
+                }
+                else
+                {
+                    //TODO Release the hooks in all producers
+                }
+            }
+        }
+
+        public Guid Identifier => new Guid("EFF894B3-4DC9-4605-9937-F02F400B4A62");
+
+
+        /// <summary>
+        ///     Initialize the module unenabled with KeyboardInteractEventProducer.
+        /// </summary>
         public void Initialize()
         {
-            throw new NotImplementedException();
+            //TODO initialize all producers with parameters.
+            isActive = false;
         }
     }
+}
 }

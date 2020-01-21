@@ -7,9 +7,14 @@ namespace MORR.Modules.Mouse.Events
     /// </summary>
     public class MouseMoveEvent : MouseEvent
     {
-        /// <summary>
-        ///     The movement of the mouse
-        /// </summary>
-        public Vector2 Movement { get; set; }
+        public override string Serialize()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Deserialize(string serialized)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
