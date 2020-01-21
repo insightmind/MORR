@@ -7,7 +7,7 @@ using MORR.Shared.Modules;
 
 namespace MORR.Core.Data.Capture.Video.WinAPI
 {
-    [Export(typeof(ICollectingModule))]
+    [Export(typeof(IModule))]
     public class DesktopCapture : ICollectingModule
     {
         private bool isActive;

@@ -1,5 +1,5 @@
-﻿using System;
-using System.Composition;
+﻿using System.Composition;
+using System.Text.Json;
 using MORR.Shared.Configuration;
 
 namespace MORR.Core.Data.Capture.Video.WinAPI
@@ -23,8 +23,9 @@ namespace MORR.Core.Data.Capture.Video.WinAPI
 
         public void Parse(string configuration)
         {
-            // TODO Implement once format has been decided
-            throw new NotImplementedException();
+            var instance = JsonSerializer.Deserialize<DesktopCaptureConfiguration>(configuration);
+            MonitorIndex = instance.MonitorIndex;
+            PromptUserForMonitorSelection = instance.PromptUserForMonitorSelection;
         }
     }
 }

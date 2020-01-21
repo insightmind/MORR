@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Composition;
 using System.Threading;
+using System.Threading.Tasks;
 using Windows.Graphics.Capture;
 using Windows.Graphics.DirectX;
 using Windows.Graphics.DirectX.Direct3D11;
 using MORR.Core.Data.Capture.Video.WinAPI.Utility;
 using MORR.Core.Data.Sample.Video;
 using MORR.Shared.Events.Queue;
+using MORR.Shared.Events.Queue.Strategy.SingleConsumer;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.Mathematics.Interop;
@@ -16,7 +18,7 @@ namespace MORR.Core.Data.Capture.Video.WinAPI
 {
     [Export(typeof(VideoSampleProducer))]
     [Export(typeof(IReadOnlyEventQueue<VideoSample>))]
-    public class VideoSampleProducer : EventQueue<VideoSample>
+    public class VideoSampleProducer : BoundedSingleConsumerEventQueue<VideoSample>
     {
         /// <summary>
         ///     Starts a video capture from the provided capture item.
@@ -28,6 +30,8 @@ namespace MORR.Core.Data.Capture.Video.WinAPI
             InitializeFramePool();
             InitializeSession();
             InitializeBlankTexture();
+
+            Task.Run(EnqueueFrames);
         }
 
         /// <summary>
@@ -40,25 +44,33 @@ namespace MORR.Core.Data.Capture.Video.WinAPI
             CleanupSessionResources();
         }
 
-        private VideoSample CaptureNextFrame()
+        private void EnqueueFrames()
         {
-            // TODO This just blocks until the next frame is ready
-            // In order for this to automatically enqueue the samples into the event queue
-            // we need to call this in a loop
-            // There might also be an easier way of doing that, that may require less synchronization
+            var currentSample = GetNextFrame();
 
+            while (currentSample != null)
+            {
+                Enqueue(currentSample);
+                currentSample = GetNextFrame();
+            }
+        }
+
+        private VideoSample? GetNextFrame()
+        {
             currentFrame?.Dispose();
             frameEvent.Reset();
 
             var signaledEvent = events[WaitHandle.WaitAny(events)];
             if (signaledEvent == closedEvent)
             {
+                // Safe to cleanup non-persistent resources as this method will return and the code below no longer references them
                 canCleanupNonPersistentResourcesEvent.Set();
                 return null;
             }
 
             using (new MultithreadLock(multithread))
             {
+                // Copy the captured frame from the framepool to a useable texture
                 using var sourceTexture = Direct3D11Helper.CreateSharpDXTexture2D(currentFrame.Surface);
                 var description = sourceTexture.Description;
                 description.Usage = ResourceUsage.Default;
@@ -153,10 +165,10 @@ namespace MORR.Core.Data.Capture.Video.WinAPI
         private void InitializeCaptureItem(GraphicsCaptureItem item)
         {
             this.item = item;
-            item.Closed += OnClosed;
+            this.item.Closed += OnClosed;
         }
 
-        public VideoSampleProducer() : base(new KeepAllStorageStrategy())
+        public VideoSampleProducer() : base(16)
         {
             InitializeDevices();
             InitializeEvents();
