@@ -8,9 +8,10 @@
     "persistent": false
   },
   "options_ui": {
-    "page": "options.html",
-    "browser_style": false
-
+    "page": "options.html"
+  },
+  "browser_action": {
+    "default_title": "MORR Browser Extension"
   },
   "manifest_version": 2
 }

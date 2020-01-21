@@ -4,6 +4,12 @@ import { ICommunicationStrategy, PostHTTPInterface } from './ApplicationInterfac
 import ListenerManager from "./ListenerManager"
 import * as Mock from './__mock__'
 
+enum ExtensionState {
+    Disconnected,
+    Ready,
+    Recording
+}
+
 /**
  * The "main" class of the webextension
  */
@@ -34,6 +40,7 @@ class BackgroundScript {
             this.stop();
         })
         this.isRecording = false;
+        this.setStatus(ExtensionState.Disconnected);
     }
 
     /**
@@ -44,6 +51,7 @@ class BackgroundScript {
             this.isRecording = true;
             this.listenerManager.startAll();
             console.log("BackgroundScript started.");
+            this.setStatus(ExtensionState.Recording);
         }
     }
     /**
@@ -51,6 +59,7 @@ class BackgroundScript {
      */
     private stop = () : void => {
         if (this.isRecording) {
+            this.setStatus(ExtensionState.Ready);
             this.isRecording = false;
             this.listenerManager.stopAll();
             this.appInterface.waitForStart()
@@ -68,6 +77,7 @@ class BackgroundScript {
             this.isRecording = false;
             this.listenerManager.stopAll();
         }
+        this.setStatus(ExtensionState.Disconnected);
         this.run();
     }
 
@@ -77,7 +87,10 @@ class BackgroundScript {
      */
     public run = () : void => {
         this.establishConnection(true)
-        .then(() => this.appInterface.waitForStart())
+        .then(() => {
+            this.setStatus(ExtensionState.Ready);
+            return this.appInterface.waitForStart();
+        })
         .catch((e) => this.run())
         .then(() => this.start());
     }
@@ -138,6 +151,35 @@ class BackgroundScript {
      */
     private parseAndApplyConfiguration(configuration : string) : boolean {
         throw new Error("Method not implemented.");
+    }
+
+
+    /**
+     * Sets the badge in the browser tray
+     * @param status the current status
+     */
+    private setStatus(status : ExtensionState) : void {
+        let label : string;
+        let color : string;
+        switch(status) {
+            case(ExtensionState.Disconnected):
+                label = "DC";
+                color = "#333333"
+                break;
+            case(ExtensionState.Ready):
+                label = "RDY";
+                color = "#00AA00";
+                break;
+            case(ExtensionState.Recording):
+                label = "REC";
+                color = "#AA0000";
+                break;
+            default:
+                label = "ERR";
+                color = "#000000";
+        }
+        chrome.browserAction.setBadgeText({text : label});
+        chrome.browserAction.setBadgeBackgroundColor({color : color});
     }
 }
 
