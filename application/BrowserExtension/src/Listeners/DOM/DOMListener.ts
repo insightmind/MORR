@@ -15,12 +15,12 @@ export default class DOMListener implements IListener {
      * which could done before shipping (i would add this to the buildscript, if there was an operating-system-independent way to do so).
      * see https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/executeScript#Return_value
      */
-    private static readonly injectionErrorIgnorePattern = new RegExp('(non-structured-clonable data)', 'i');
+    private static readonly INJECTIONERROR_IGNOREPATTERN = new RegExp('(non-structured-clonable data)', 'i');
 
     /**
      * Do not attempt injecting scripts into priviledged sites
      */
-    private static readonly priviledgedSitesPattern = new RegExp('^(chrome://|about:)', 'i');
+    private static readonly PRIVILEDGEDSITES_PATTERN = new RegExp('^(chrome://|about:)', 'i');
 
     private _callBack: (event: BrowserEvent) => void;
     constructor(callback: (event: BrowserEvent) => void) {
@@ -29,7 +29,7 @@ export default class DOMListener implements IListener {
     public start(): void {
         chrome.tabs.query({}, (result : chrome.tabs.Tab[]) => {
             for (let tab of result) {
-                if (tab.id && tab.url && !DOMListener.priviledgedSitesPattern.test(tab.url))
+                if (tab.id && tab.url && !DOMListener.PRIVILEDGEDSITES_PATTERN.test(tab.url))
                     this.executeScript(tab.id);
             }
             chrome.runtime.onMessage.addListener(this.onDOMEventReceived);
@@ -42,7 +42,7 @@ export default class DOMListener implements IListener {
         chrome.webNavigation.onDOMContentLoaded.removeListener(this.injectEventRecorder);
         chrome.tabs.query({}, (result : chrome.tabs.Tab[]) => {
             for (let tab of result)
-                if (tab.id && tab.url && !DOMListener.priviledgedSitesPattern.test(tab.url))
+                if (tab.id && tab.url && !DOMListener.PRIVILEDGEDSITES_PATTERN.test(tab.url))
                     chrome.tabs.sendMessage(tab.id, "Stop");
         });
     }
@@ -50,7 +50,7 @@ export default class DOMListener implements IListener {
      * Inject event recorder into a website.
      */
     private injectEventRecorder = (details? : chrome.webNavigation.WebNavigationFramedCallbackDetails) => {
-        if (details && !DOMListener.priviledgedSitesPattern.test(details.url) && details.frameId === 0) {
+        if (details && !DOMListener.PRIVILEDGEDSITES_PATTERN.test(details.url) && details.frameId === 0) {
             this.executeScript(details.tabId);
         };
     }
@@ -62,7 +62,7 @@ export default class DOMListener implements IListener {
     private executeScript(tabID : number) : void {
         chrome.tabs.executeScript(tabID, { file: 'Listeners/DOM/ContentScript/DOMEventRecorder.js' }, () => {
             if (chrome.runtime.lastError) {
-                if (!DOMListener.injectionErrorIgnorePattern.test(chrome.runtime.lastError.message!))
+                if (!DOMListener.INJECTIONERROR_IGNOREPATTERN.test(chrome.runtime.lastError.message!))
                     console.error("Could not inject contentscript: " + chrome.runtime.lastError.message);
             }
         });

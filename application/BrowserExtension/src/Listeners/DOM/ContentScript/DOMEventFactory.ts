@@ -1,27 +1,25 @@
 import * as Shared from '../../../Shared/SharedDeclarations'
 import * as DOM from '../DOMEvents'
-interface ParsedEvent {
-    type : Shared.EventType
-}
 
 export default class DOMEventFactory {
     //maximum length for target string. set to zero to remove limit
     private static readonly TARGETMAXLENGTH = 256;
-    //matcher to filter out password inputs
-    private static readonly passwordMatcher = new RegExp('password', 'i');
     //matcher to check if a string contains only whitespaces
-    private static readonly emptyMatcher = new RegExp('^\ *$');
+    private static readonly EMPTYMATCHER = new RegExp('^\ *$');
     /*
      * Filters for ButtonClickEvent (attempting to avoid event spam when clicking on textareas).
      * There seems to be no elegant solution to this problem, as there is no way of telling if something is a button
      * or if something has an onclick-listener attached to it.
      */
-    //p, span and div are usually not used as buttons.
-    private static readonly targetBlackListFilter = new RegExp('^(p|span|div)$', 'i');
     //a (href) and button elements are the common tags for button-like objects, but also input-type:submit.
-    private static readonly targetWhiteListFilter = new RegExp('^(a|button|input)$', 'i');
-    private static readonly inputTypeWhiteListFilter = new RegExp('^(submit|checkbox|button)$', 'i');
-    private static readonly hoverBlackListFilter = new RegExp('^(p|body|head|div|html|ul)$', 'i');
+    private static readonly BUTTONCLICK_WHITELISTFILTER = new RegExp('^(a|button|input)$', 'i');
+    private static readonly BUTTONCLICK_INPUTTYPEWHITELISTFILTER = new RegExp('^(submit|checkbox|button|radio)$', 'i');
+    //define for which elements hover-events shall be suppressed (e.g. hovering over a whole paragraph usually does not matter)
+    private static readonly HOVER_BLACKLISTFILTER = new RegExp('^(p|body|head|div|html|ul)$', 'i');
+    //textinput causes the 'change' event, which generally appears on 'input' elements, which can have many different types
+    private static readonly TEXTINPUT_WHITELISTFILTER = new RegExp('^(textarea|input)$', 'i');
+    private static readonly TEXTINPUT_ELEMENTTYPEWHITELISTFILTER = new RegExp('^(text)$', 'i');
+
     //helper variable to prevent misfires of textselection-events. It declared here since there are no static method variables.
     lastTextSelection : string = "";
 
@@ -65,11 +63,19 @@ export default class DOMEventFactory {
         let target : HTMLElement | null = <HTMLElement>domEvent.target;
         //search the hierarchy upwards to see if the target is part of a whitelisted element
         while (target) {
-            if (DOMEventFactory.targetWhiteListFilter.test(target.tagName)) {
-                if (target.tagName.toLowerCase() == "input" && !DOMEventFactory.inputTypeWhiteListFilter.test((<HTMLInputElement>target).type))
+            if (DOMEventFactory.BUTTONCLICK_WHITELISTFILTER.test(target.tagName)) {
+                if (target.tagName.toLowerCase() == "input" && !DOMEventFactory.BUTTONCLICK_INPUTTYPEWHITELISTFILTER.test((<HTMLInputElement>target).type))
                     return undefined;
                 let buttonHref : string | null = target.getAttribute("href");
-                return new DOM.ButtonClickEvent(0, 0, DOMEventFactory.extractTargetAsString(target), window.location.href,
+                //unlike in other event types, honor the innertext of the button should have priority over its ID etc
+                let buttonTitle = DOMEventFactory.extractContent(target.outerHTML);
+                if (DOMEventFactory.EMPTYMATCHER.test(buttonTitle)) {
+                    if (target.tagName.toLowerCase() == "input" && (<HTMLInputElement>target).value.length > 0)
+                        buttonTitle = (<HTMLInputElement>target).value;
+                    else
+                        buttonTitle = DOMEventFactory.extractTargetAsString(target);
+                }
+                return new DOM.ButtonClickEvent(0, 0, buttonTitle, window.location.href,
                                                 buttonHref ? buttonHref : undefined);
             }
             target = target.parentElement;
@@ -84,15 +90,13 @@ export default class DOMEventFactory {
      * @returns text input event 
      */
     private createTextInputEvent(domEvent : Event) : DOM.TextInputEvent | undefined {
-        if (domEvent.target) {
+        if (domEvent.target && DOMEventFactory.TEXTINPUT_WHITELISTFILTER.test((<HTMLElement>domEvent.target).tagName)) {
             const target = domEvent.target as HTMLInputElement;
-            let inputText : string;
-            let targetString = DOMEventFactory.extractTargetAsString(target);
-            if (DOMEventFactory.passwordMatcher.test(target.type) || DOMEventFactory.passwordMatcher.test(targetString))
-                inputText = "<password>";
-            else {
-                inputText = target.value;
-            }
+            //input-elements could also have type radio, button etc...
+            //only allowing text also effectively also filters out password-inputs, as those fields have type 'password'
+            if (target.tagName.toLowerCase() == "input" && !DOMEventFactory.TEXTINPUT_ELEMENTTYPEWHITELISTFILTER.test(target.type))
+                return undefined;
+            let inputText : string = target.value;
             return new DOM.TextInputEvent(0, 0, inputText, DOMEventFactory.extractTargetAsString(target), window.location.href);
         }
         return undefined;
@@ -128,7 +132,7 @@ export default class DOMEventFactory {
         return new Promise((resolve) => {
             let url : string = window.location.href;
             //apply blacklist filtering
-            if (!domEvent.target || DOMEventFactory.hoverBlackListFilter.test((<HTMLElement>domEvent.target).tagName))
+            if (!domEvent.target || DOMEventFactory.HOVER_BLACKLISTFILTER.test((<HTMLElement>domEvent.target).tagName))
                 resolve(undefined);
             let valid : boolean = true;
             let invalidate = () => {valid = false;}
@@ -153,26 +157,31 @@ export default class DOMEventFactory {
      * @returns string describing the target (label of button, etc.)
      */
     private static extractTargetAsString(target : HTMLElement) : string {
-        let targetString : string;
-        if((<HTMLButtonElement>target).name && (<HTMLButtonElement>target).name.length > 0)
-            return (<HTMLButtonElement>target).name;
-        if (target.title && target.title.length > 0)
-            return target.title;
-        else if (target.hasAttribute("aria-label")) {
-            let ariaLabel = target.getAttribute("aria-label");
-            if (ariaLabel && ariaLabel.length > 0)
-                return ariaLabel;
-        }
-        targetString = DOMEventFactory.extractContent(target.outerHTML);
-        if (DOMEventFactory.emptyMatcher.test(targetString)) {
-            if ((<HTMLButtonElement>target).name)
+        let targetString : string = "";
+        /**
+         * Use the first value that's available from list:
+         * [id, name, title, aria-label, innertext, value, outerHTML]
+         */
+        if (target.id && target.id.length > 0)
+            targetString = target.id;
+        else if((<HTMLButtonElement>target).name && (<HTMLButtonElement>target).name.length > 0)
             targetString = (<HTMLButtonElement>target).name;
-            else if ((<HTMLButtonElement>target).value)
-                targetString = (<HTMLButtonElement>target).value;
+        else if (target.title && target.title.length > 0)
+            targetString = target.title;
+        else if (target.hasAttribute("aria-label") && target.getAttribute("aria-label") && target.getAttribute("aria-label")!.length > 0) {
+               targetString = target.getAttribute("aria-label")!;
+        } else {
+            targetString = DOMEventFactory.extractContent(target.outerHTML);
+            if (DOMEventFactory.EMPTYMATCHER.test(targetString)) {
+                if ((<HTMLButtonElement>target).value && (<HTMLButtonElement>target).value.length > 0)
+                    targetString = (<HTMLButtonElement>target).value;
+                else
+                    targetString = target.outerHTML; //fallback if everything else fails
+            }
         }
-        if (targetString.length == 0)
-            targetString = target.outerHTML; //fallback if everything else fails
-        if (DOMEventFactory.TARGETMAXLENGTH > 0 && targetString.length > DOMEventFactory.TARGETMAXLENGTH) //truncate if set
+
+        //truncate if set
+        if (DOMEventFactory.TARGETMAXLENGTH > 0 && targetString.length > DOMEventFactory.TARGETMAXLENGTH)
             targetString = targetString.substr(0, DOMEventFactory.TARGETMAXLENGTH) + "...<trunc>";
         return targetString;
     }
