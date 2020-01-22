@@ -3,7 +3,7 @@
 namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
 {
     /// <summary>
-    /// A BoundedMultiConsumerChannelStrategies is a Distributive-FIFO Queue which allows multiple producers and multiple consumers.
+    /// An UnboundedMultiConsumerChannelStrategy is a Distributive-FIFO Queue which allows multiple producers and multiple consumers.
     /// However every event is propagated to each consumer once.
     /// 
     /// This queue is unbound, which means that an event is never dismissed.
