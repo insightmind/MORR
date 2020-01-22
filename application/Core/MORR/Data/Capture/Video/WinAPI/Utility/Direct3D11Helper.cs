@@ -43,11 +43,11 @@ namespace MORR.Core.Data.Capture.Video.WinAPI.Utility
         ///     if the device should use WARP, <see langword="false" /> otherwise.
         /// </param>
         /// <returns>The new Direct3D device.</returns>
-        internal static IDirect3DDevice CreateDevice(bool useWARP = false)
+        internal static IDirect3DDevice? CreateDevice(bool useWARP = false)
         {
             using var d3dDevice = new Device(useWARP ? DriverType.Software : DriverType.Hardware,
                                              DeviceCreationFlags.BgraSupport);
-            IDirect3DDevice device = null;
+            IDirect3DDevice? device = null;
 
             // Acquire the DXGI interface for the Direct3D device.
             using (var dxgiDevice = d3dDevice.QueryInterface<Device3>())
@@ -70,9 +70,9 @@ namespace MORR.Core.Data.Capture.Video.WinAPI.Utility
         /// </summary>
         /// <param name="texture">The texture to create a Direct3D surface for.</param>
         /// <returns>The created Direct3D surface.</returns>
-        internal static IDirect3DSurface CreateDirect3DSurfaceFromSharpDXTexture(Texture2D texture)
+        internal static IDirect3DSurface? CreateDirect3DSurfaceFromSharpDXTexture(Texture2D texture)
         {
-            IDirect3DSurface surface = null;
+            IDirect3DSurface? surface = null;
 
             // Acquire the DXGI interface for the Direct3D surface.
             using (var dxgiSurface = texture.QueryInterface<Surface>())
@@ -95,12 +95,18 @@ namespace MORR.Core.Data.Capture.Video.WinAPI.Utility
         /// </summary>
         /// <param name="device">The device to create the SharpDX device from.</param>
         /// <returns>The created SharpDX device.</returns>
-        internal static Device CreateSharpDXDevice(IDirect3DDevice device)
+        internal static Device? CreateSharpDXDevice(IDirect3DDevice device)
         {
-            var access = (IDirect3DDxgiInterfaceAccess) device;
-            var d3dPointer = access.GetInterface(ID3D11Device);
-            var d3dDevice = new Device(d3dPointer);
-            return d3dDevice;
+            var access = device as IDirect3DDxgiInterfaceAccess;
+            var d3dPointer = access?.GetInterface(ID3D11Device);
+
+            if (d3dPointer != null)
+            {
+                var d3dDevice = new Device(d3dPointer.Value);
+                return d3dDevice;
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -108,12 +114,18 @@ namespace MORR.Core.Data.Capture.Video.WinAPI.Utility
         /// </summary>
         /// <param name="surface">The surface to create the SharpDX texture from.</param>
         /// <returns>The created SharpDX texture.</returns>
-        internal static Texture2D CreateSharpDXTexture2D(IDirect3DSurface surface)
+        internal static Texture2D? CreateSharpDXTexture2D(IDirect3DSurface surface)
         {
-            var access = (IDirect3DDxgiInterfaceAccess) surface;
-            var d3dPointer = access.GetInterface(ID3D11Texture2D);
-            var d3dSurface = new Texture2D(d3dPointer);
-            return d3dSurface;
+            var access = surface as IDirect3DDxgiInterfaceAccess;
+            var d3dPointer = access?.GetInterface(ID3D11Texture2D);
+
+            if (d3dPointer != null)
+            {
+                var d3dSurface = new Texture2D(d3dPointer.Value);
+                return d3dSurface;
+            }
+
+            return null;
         }
     }
 }

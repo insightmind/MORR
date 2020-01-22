@@ -21,23 +21,7 @@ namespace MORR.Core.Data.Capture.Video.WinAPI
         public bool IsActive
         {
             get => isActive;
-            // TODO This appears to be a common pattern that could be simplified
-            // We should either get rid of the property and use explicit methods
-            // or (preferably) provide a utility method for this
-            // that allows something like this:
-            // set => Utility.SetPropertyAndDispatch(ref isActive, value, StartCapture, StopCapture);
-            set
-            {
-                isActive = value;
-                if (isActive)
-                {
-                    StartCapture();
-                }
-                else
-                {
-                    StopCapture();
-                }
-            }
+            set => Shared.Utility.Utility.SetAndDispatch(ref isActive, value, StartCapture, StopCapture);
         }
 
         public Guid Identifier { get; } = new Guid("9F1D496E-9939-4BE1-9117-6DE21A3D1CFE");

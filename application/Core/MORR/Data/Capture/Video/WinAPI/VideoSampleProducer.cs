@@ -16,8 +16,7 @@ using Device = SharpDX.Direct3D11.Device;
 
 namespace MORR.Core.Data.Capture.Video.WinAPI
 {
-    [Export(typeof(VideoSampleProducer))]
-    [Export(typeof(IReadOnlyEventQueue<VideoSample>))]
+    [Export(typeof(VideoSampleProducer)), Export(typeof(IReadOnlyEventQueue<VideoSample>))]
     public class VideoSampleProducer : BoundedSingleConsumerEventQueue<VideoSample>
     {
         /// <summary>
@@ -70,8 +69,18 @@ namespace MORR.Core.Data.Capture.Video.WinAPI
 
             using (new MultithreadLock(multithread))
             {
+                if (currentFrame == null)
+                {
+                    return null;
+                }
+
                 // Copy the captured frame from the framepool to a useable texture
                 using var sourceTexture = Direct3D11Helper.CreateSharpDXTexture2D(currentFrame.Surface);
+                if (sourceTexture == null)
+                {
+                    return null;
+                }
+
                 var description = sourceTexture.Description;
                 description.Usage = ResourceUsage.Default;
                 description.BindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget;
@@ -87,9 +96,15 @@ namespace MORR.Core.Data.Capture.Video.WinAPI
                 sharpDXDevice.ImmediateContext.CopyResource(blankTexture, copyTexture);
                 sharpDXDevice.ImmediateContext.CopySubresourceRegion(sourceTexture, 0, region, copyTexture, 0);
 
+                var surface = Direct3D11Helper.CreateDirect3DSurfaceFromSharpDXTexture(copyTexture);
+                if (surface == null)
+                {
+                    return null;
+                }
+
                 return new VideoSample
                 {
-                    Surface = Direct3D11Helper.CreateDirect3DSurfaceFromSharpDXTexture(copyTexture)
+                    Surface = surface
                 };
             }
         }
@@ -135,8 +150,12 @@ namespace MORR.Core.Data.Capture.Video.WinAPI
 
         private void InitializeDevices()
         {
-            device = Direct3D11Helper.CreateDevice();
-            sharpDXDevice = Direct3D11Helper.CreateSharpDXDevice(device);
+            var createdDevice = Direct3D11Helper.CreateDevice();
+            device = createdDevice ?? throw new Exception("Failed to create Direct3D device.");
+
+            var createdSharpDXDevice = Direct3D11Helper.CreateSharpDXDevice(device);
+            sharpDXDevice = createdSharpDXDevice ?? throw new Exception("Failed to create SharpDX device.");
+
             multithread = sharpDXDevice.QueryInterface<Multithread>();
             multithread.SetMultithreadProtected(true);
         }

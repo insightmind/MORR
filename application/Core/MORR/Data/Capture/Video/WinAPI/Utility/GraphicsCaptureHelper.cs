@@ -40,11 +40,18 @@ namespace MORR.Core.Data.Capture.Video.WinAPI.Utility
 
         /// <summary>
         ///     Indicates whether the device supports creating a <see cref="GraphicsCaptureItem" /> by API instead of by using the
-        ///     <see cref="GraphicsCapturePicker" />. <see langword="true" /> if creation by API is supported, <see langword="false" />
+        ///     <see cref="GraphicsCapturePicker" />. <see langword="true" /> if creation by API is supported,
+        ///     <see langword="false" />
         ///     otherwise.
         /// </summary>
-        internal static bool CanCreateItemWithoutPicker =>
-            ApiInformation.IsApiContractPresent(typeof(UniversalApiContract).FullName, 8);
+        internal static bool CanCreateItemWithoutPicker
+        {
+            get
+            {
+                var contractName = typeof(UniversalApiContract).FullName;
+                return contractName != null && ApiInformation.IsApiContractPresent(contractName, 8);
+            }
+        }
 
         /// <summary>
         ///     Creates a <see cref="GraphicsCaptureItem" /> for a provided monitor. This requires
@@ -52,15 +59,21 @@ namespace MORR.Core.Data.Capture.Video.WinAPI.Utility
         /// </summary>
         /// <param name="hMon">The handle of the monitor to create the item for.</param>
         /// <returns>The created <see cref="GraphicsCaptureItem" />.</returns>
-        internal static GraphicsCaptureItem CreateItemForMonitor(IntPtr hMon)
+        internal static GraphicsCaptureItem? CreateItemForMonitor(IntPtr hMon)
         {
             var factory = WindowsRuntimeMarshal.GetActivationFactory(typeof(GraphicsCaptureItem));
-            var interop = (IGraphicsCaptureItemInterop) factory;
-            var itemPointer = interop.CreateForMonitor(hMon, GraphicsCaptureItemGuid);
-            var item = Marshal.GetObjectForIUnknown(itemPointer) as GraphicsCaptureItem;
-            Marshal.Release(itemPointer);
+            var interop = factory as IGraphicsCaptureItemInterop;
 
-            return item;
+            var itemPointer = interop?.CreateForMonitor(hMon, GraphicsCaptureItemGuid);
+
+            if (itemPointer != null)
+            {
+                var item = Marshal.GetObjectForIUnknown(itemPointer.Value) as GraphicsCaptureItem;
+                Marshal.Release(itemPointer.Value);
+                return item;
+            }
+
+            return null;
         }
 
         [ComImport]
