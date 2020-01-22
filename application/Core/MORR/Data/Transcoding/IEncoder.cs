@@ -1,37 +1,14 @@
-﻿using MORR.Core.Data.Transcoding.Audio.EventHandlers;
-using MORR.Core.Data.Transcoding.Metadata.EventHandlers;
-using MORR.Core.Data.Transcoding.Video.EventHandlers;
-
-namespace MORR.Core.Data.Transcoding
+﻿namespace MORR.Core.Data.Transcoding
 {
     /// <summary>
-    ///     Encodes provided samples to a path
+    ///     Encodes provided samples to a file.
     /// </summary>
     public interface IEncoder
     {
         /// <summary>
-        ///     <see langword="true" /> if the encoder is encoding, <see langword="false" /> otherwise
+        ///     Encodes the provided samples to a file.
+        ///     <remarks>This method will not return before the encoding is finished.</remarks>
         /// </summary>
-        bool IsEncoding { get; set; }
-
-        /// <summary>
-        ///     The path the encoder is encoding to
-        /// </summary>
-        string EncodingPath { get; set; }
-
-        /// <summary>
-        ///     Event raised when the next <see cref="Sample.Audio.AudioSample" /> may be added
-        /// </summary>
-        event AudioSampleRequestedEventHandler AudioSampleRequested;
-
-        /// <summary>
-        ///     Event raised when the next <see cref="Sample.Video.VideoSample" /> may be added
-        /// </summary>
-        event VideoSampleRequestedEventHandler VideoSampleRequested;
-
-        /// <summary>
-        ///     Event raised when the next <see cref="Sample.Metadata.MetadataSample" /> may be added
-        /// </summary>
-        event MetadataSampleRequestedEventHandler MetadataSampleRequested;
+        void Encode();
     }
 }

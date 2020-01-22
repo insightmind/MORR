@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace MORR.Shared.Events.Queue
 {
@@ -32,5 +33,7 @@ namespace MORR.Shared.Events.Queue
         {
             storageStrategy.Enqueue(@event);
         }
+
+        public Type EventType => typeof(T);
     }
 }

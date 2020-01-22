@@ -1,37 +1,17 @@
-﻿using MORR.Core.Data.Transcoding.Audio.EventHandlers;
-using MORR.Core.Data.Transcoding.Metadata.EventHandlers;
-using MORR.Core.Data.Transcoding.Video.EventHandlers;
+﻿using MORR.Shared.Utility;
 
 namespace MORR.Core.Data.Transcoding
 {
     /// <summary>
-    ///     Decodes samples from a path and provides the decoded samples
+    ///     Decodes samples from a file and provides the decoded samples.
     /// </summary>
     public interface IDecoder
     {
         /// <summary>
-        ///     <see langword="true" /> when the decoder is decoding, <see langword="false" /> otherwise
+        ///     Decodes the file and provides the decoded samples.
+        ///     <remarks>This method will not return before the decoding is finished.</remarks>
         /// </summary>
-        bool IsDecoding { get; set; }
-
-        /// <summary>
-        ///     The path the decoder is decoding to
-        /// </summary>
-        string DecodingPath { get; set; }
-
-        /// <summary>
-        ///     Event raised when a <see cref="Sample.Audio.AudioSample" /> gets decoded
-        /// </summary>
-        event AudioSampleDecodedEventHandler AudioSampleDecoded;
-
-        /// <summary>
-        ///     Event raised when a <see cref="Sample.Video.VideoSample" /> get decoded
-        /// </summary>
-        event VideoSampleDecodedEventHandler VideoSampleDecoded;
-
-        /// <summary>
-        ///     Event raised when a <see cref="Sample.Metadata.MetadataSample" /> gets decoded
-        /// </summary>
-        event MetadataSampleDecodedEventHandler MetadataSampleDecoded;
+        /// <param name="path">The <see cref="FilePath" /> of the file to decode from.</param>
+        void Decode(FilePath path);
     }
 }
