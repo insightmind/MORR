@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MORR.Core.Data.Transcoding.WinAPI
+﻿namespace MORR.Core.Data.Transcoding.WinAPI
 {
     /// <summary>
     ///     Encodes events into an MPEG-Stream using the Windows API
@@ -9,7 +7,7 @@ namespace MORR.Core.Data.Transcoding.WinAPI
     {
         public void Encode()
         {
-            throw new NotImplementedException();
+            throw new System.NotImplementedException();
         }
     }
 }

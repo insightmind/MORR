@@ -5,6 +5,7 @@ using MORR.Shared.Events.Queue;
 using MORR.Modules.WindowManagement.Events;
 using MORR.Shared.Events;
 using System.Composition;
+using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
 
 namespace MORR.Modules.WindowManagement.Producers
 {
@@ -14,24 +15,8 @@ namespace MORR.Modules.WindowManagement.Producers
     [Export(typeof(WindowResizingEventProducer))]
     [Export(typeof(EventQueue<WindowResizingEvent>))]
     [Export(typeof(EventQueue<Event>))]
-    public class WindowResizingEventProducer : EventQueue<WindowResizingEvent>
+    public class WindowResizingEventProducer : BoundedMultiConsumerEventQueue<WindowResizingEvent>
     {
-        /// <summary>
-        ///     Asynchronously gets all window resizing events as WindowResizingEvent type
-        /// </summary>
-        /// <returns>A stream of WindowResiznigEvent</returns>
-        public override IAsyncEnumerable<WindowResizingEvent> GetEvents()
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        ///     Asynchronously enqueues a new window resizing event
-        /// </summary>
-        /// <param name="event">The window resizing event to enqueue</param>
-        protected override void Enqueue(WindowResizingEvent @event)
-        {
-            throw new NotImplementedException();
-        }
+        // TODO: Implement this
     }
 }

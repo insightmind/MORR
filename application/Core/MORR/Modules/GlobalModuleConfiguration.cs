@@ -14,6 +14,8 @@ namespace MORR.Core.Modules
     [Shared]
     public class GlobalModuleConfiguration : IConfiguration
     {
+        public string Identifier => "Global";
+
         /// <summary>
         ///     The types of all <see cref="IModule" /> instances that should be enabled.
         /// </summary>

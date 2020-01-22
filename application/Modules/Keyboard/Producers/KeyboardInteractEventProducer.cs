@@ -6,6 +6,7 @@ using System.Windows.Input;
 using MORR.Modules.Keyboard.Events;
 using MORR.Shared.Events;
 using MORR.Shared.Events.Queue;
+using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
 
 namespace MORR.Modules.Keyboard.Producers
 {
@@ -15,20 +16,9 @@ namespace MORR.Modules.Keyboard.Producers
     [Export(typeof(KeyboardInteractEventProducer))]
     [Export(typeof(EventQueue<KeyboardInteractEvent>))]
     [Export(typeof(EventQueue<Event>))]
-    public class KeyboardInteractEventProducer : EventQueue<KeyboardInteractEvent>
+    public class KeyboardInteractEventProducer : BoundedMultiConsumerEventQueue<KeyboardInteractEvent>
     {
         private IntPtr hook = IntPtr.Zero;
-
-        #region constructor
-
-        /// <summary>
-        ///     Construct a KeyboardInteractEventProducer with a certain strategy.
-        /// </summary>
-        /// <param name="storageStrategy"></param>
-        public KeyboardInteractEventProducer() : base(new KeepAllStorageStrategy()) { }
-
-        #endregion
-
 
         private static class NativeMethods
         {

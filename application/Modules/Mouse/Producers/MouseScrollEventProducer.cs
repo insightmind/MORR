@@ -5,6 +5,7 @@ using MORR.Shared.Events.Queue;
 using MORR.Modules.Mouse.Events;
 using MORR.Shared.Events;
 using System.Composition;
+using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
 
 namespace MORR.Modules.Mouse.Producers
 {
@@ -14,24 +15,8 @@ namespace MORR.Modules.Mouse.Producers
     [Export(typeof(MouseScrollEventProducer))]
     [Export(typeof(EventQueue<MouseScrollEvent>))]
     [Export(typeof(EventQueue<Event>))]
-    public class MouseScrollEventProducer : EventQueue<MouseScrollEvent>
+    public class MouseScrollEventProducer : BoundedMultiConsumerEventQueue<MouseScrollEvent>
     {
-        /// <summary>
-        ///     Asynchronously gets all mouse scroll events as MouseScrollEvent type
-        /// </summary>
-        /// <returns>A stream of MouseScrollEvent</returns>
-        public override IAsyncEnumerable<MouseScrollEvent> GetEvents()
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        ///     Asynchronously enqueues a new mouse scroll event
-        /// </summary>
-        /// <param name="event">The mouse scroll event to enqueue</param>
-        protected override void Enqueue(MouseScrollEvent @event)
-        {
-            throw new NotImplementedException();
-        }
+        // TODO: Implement this
     }
 }

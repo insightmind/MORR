@@ -5,6 +5,7 @@ using MORR.Shared.Events.Queue;
 using MORR.Modules.WindowManagement.Events;
 using MORR.Shared.Events;
 using System.Composition;
+using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
 
 namespace MORR.Modules.WindowManagement.Producers
 {
@@ -14,24 +15,8 @@ namespace MORR.Modules.WindowManagement.Producers
     [Export(typeof(WindowFocusEventProducer))]
     [Export(typeof(EventQueue<WindowFocusEvent>))]
     [Export(typeof(EventQueue<Event>))]
-    public class WindowFocusEventProducer : EventQueue<WindowFocusEvent>
+    public class WindowFocusEventProducer : BoundedMultiConsumerEventQueue<WindowFocusEvent>
     {
-        /// <summary>
-        ///     Asynchronously gets all window focus events as WindowFocusEvent type
-        /// </summary>
-        /// <returns>A stream of WindowFocusEvent</returns>
-        public override IAsyncEnumerable<WindowFocusEvent> GetEvents()
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        ///     Asynchronously enqueues a new window focus event
-        /// </summary>
-        /// <param name="event">The window focus event to enqueue</param>
-        protected override void Enqueue(WindowFocusEvent @event)
-        {
-            throw new NotImplementedException();
-        }
+        // TODO: Implement this
     }
 }

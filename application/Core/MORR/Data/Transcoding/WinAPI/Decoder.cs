@@ -1,5 +1,4 @@
-﻿using System;
-using MORR.Shared.Utility;
+﻿﻿using MORR.Shared.Utility;
 
 namespace MORR.Core.Data.Transcoding.WinAPI
 {
@@ -10,7 +9,7 @@ namespace MORR.Core.Data.Transcoding.WinAPI
     {
         public void Decode(FilePath path)
         {
-            throw new NotImplementedException();
+            throw new System.NotImplementedException();
         }
     }
 }
