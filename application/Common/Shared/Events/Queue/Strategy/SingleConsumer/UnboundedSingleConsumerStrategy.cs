@@ -3,7 +3,7 @@
 namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
 {
     /// <summary>
-    /// A BoundedSingleConsumerChannelStrategy is a Distributive-FIFO Queue which allows multiple producers and a single consumer.
+    /// An UnboundedSingleConsumerChannelStrategy is a Distributive-FIFO Queue which allows multiple producers and a single consumer.
     /// This queue is performance optimized for a single consumer and should be preferred in this case.
     /// Please make sure only a single consumer will request. Otherwise an exception is thrown.
     ///
