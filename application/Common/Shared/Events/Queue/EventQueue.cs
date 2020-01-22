@@ -28,7 +28,7 @@ namespace MORR.Shared.Events.Queue
         ///     Asynchronously enqueues a new event.
         /// </summary>
         /// <param name="event">The event to enqueue</param>
-        protected void Enqueue(T @event)
+        public void Enqueue(T @event)
         {
             storageStrategy.Enqueue(@event);
         }

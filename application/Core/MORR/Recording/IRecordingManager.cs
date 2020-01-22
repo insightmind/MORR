@@ -1,4 +1,7 @@
-﻿namespace MORR.Core.Recording
+﻿using System.Collections.Generic;
+using MORR.Shared.Utility;
+
+namespace MORR.Core.Recording
 {
     /// <summary>
     ///     A manager responsible for all aspects of recording.
@@ -24,11 +27,6 @@
         /// <summary>
         ///     Starts the decoding process.
         /// </summary>
-        void StartDecoding(); // TODO This probably requires one or more paths
-
-        /// <summary>
-        ///     Stops the decoding process.
-        /// </summary>
-        void StopDecoding();
+        void Process(IEnumerable<FilePath> files);
     }
 }
