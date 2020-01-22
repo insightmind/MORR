@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using Morr.Core.CLI.Commands.Record;
 using Morr.Core.CLI.Commands.ValidateConfig;
 
 namespace MORR.Core.CLI
@@ -10,9 +11,10 @@ namespace MORR.Core.CLI
     {
         public static int Main(string[] args)
         {
-            return Parser.Default.ParseArguments<ValidateConfigOptions>(args)
+            return Parser.Default.ParseArguments<ValidateConfigOptions, RecordOptions>(args)
                        .MapResult(
                            (ValidateConfigOptions opts) => new ValidateConfigCommand().Execute(opts),
+                           (RecordOptions opts) => new RecordCommand().Execute(opts),
                            errs => 1);
         }
     }
