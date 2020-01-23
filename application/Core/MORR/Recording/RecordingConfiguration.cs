@@ -15,12 +15,12 @@ namespace MORR.Core.Recording
         /// <summary>
         ///     The type of the encoder to use.
         /// </summary>
-        public Type Encoder { get; set; }
+        public Type Encoder { get; private set; }
 
         /// <summary>
         ///     The type of the decoder to use.
         /// </summary>
-        public Type Decoder { get; set; }
+        public Type Decoder { get; private set; }
 
         public string Identifier => "Recording";
 
