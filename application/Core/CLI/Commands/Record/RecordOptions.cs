@@ -2,9 +2,10 @@
 
 namespace Morr.Core.CLI.Commands.Record
 {
-    [Verb("record", HelpText = "Starts a new recording")]
-    public class RecordOptions : ICommandOptions
+    [Verb("record", HelpText = "Starts a new recording with the give configuration")]
+    internal class RecordOptions : ICommandOptions
     {
-        // TODO: Add parameters such as debug and recording file location and run config location
+        [Option('c', "config", Required = true, HelpText = "Path to configuration file")]
+        internal string ConfigPath { get; set; }
     }
 }
