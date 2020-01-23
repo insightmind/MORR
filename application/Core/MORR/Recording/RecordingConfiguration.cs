@@ -5,8 +5,7 @@ using MORR.Shared.Configuration;
 
 namespace MORR.Core.Recording
 {
-    [Export(typeof(RecordingConfiguration))]
-    [Export(typeof(IConfiguration))]
+    [Export(typeof(RecordingConfiguration)), Export(typeof(IConfiguration)), Shared]
     public class RecordingConfiguration : IConfiguration
     {
         /// <summary>

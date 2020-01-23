@@ -7,8 +7,7 @@ using MORR.Shared.Modules;
 
 namespace MORR.Core.Modules
 {
-    [Export(typeof(GlobalModuleConfiguration))]
-    [Export(typeof(IConfiguration))]
+    [Export(typeof(GlobalModuleConfiguration)), Export(typeof(IConfiguration)), Shared]
     public class GlobalModuleConfiguration : IConfiguration
     {
         /// <summary>
