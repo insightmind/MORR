@@ -17,7 +17,7 @@ namespace MORR.Core.Configuration
         ///     All configuration wrappers
         /// </summary>
         [ImportMany]
-        private IEnumerable<IConfiguration> Configurations { get; set; }
+        private IEnumerable<IConfiguration>? Configurations { get; set; }
 
         /// <summary>
         ///     Loads the configuration from the specified path
@@ -77,21 +77,21 @@ namespace MORR.Core.Configuration
                     var element = document.RootElement.GetProperty(config.GetIdentifier());
                     config.Parse(new RawConfiguration(element.GetRawText()));
                 }
-                catch (KeyNotFoundException)
+                catch (KeyNotFoundException exception)
                 {
-                    throw new InvalidConfigurationException("Could not find configuration for key: " + config.GetIdentifier());
+                    throw new InvalidConfigurationException("Could not find configuration for key: " + config.GetIdentifier(), exception);
                 }
-                catch (ArgumentNullException)
+                catch (ArgumentNullException exception)
                 {
-                    throw new InvalidConfigurationException("Configuration did not offer valid identifier! Please check loaded modules.");
+                    throw new InvalidConfigurationException("Configuration did not offer valid identifier! Please check loaded modules.", exception);
                 }
-                catch (ObjectDisposedException)
+                catch (ObjectDisposedException exception)
                 {
-                    throw new InvalidConfigurationException("An Internal Error occurred while resolving the configuration. Please try again!");
+                    throw new InvalidConfigurationException("An Internal Error occurred while resolving the configuration. Please try again!", exception);
                 }
-                catch (InvalidOperationException)
+                catch (InvalidOperationException exception)
                 {
-                    throw new InvalidConfigurationException("Invalid subtype for key: " + config.GetIdentifier() + " found!");
+                    throw new InvalidConfigurationException("Invalid subtype for key: " + config.GetIdentifier() + " found!", exception);
                 }
             }
         }
