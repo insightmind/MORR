@@ -11,7 +11,7 @@ namespace MORR.Modules.WebBrowser
     /// </summary>
     public class WebBrowserModule : ICollectingModule
     {
-        private bool isActive = false;
+        private bool isActive;
         public bool IsActive
         {
             get => isActive;
