@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Composition;
+using System.Text.Json;
 using MORR.Shared.Configuration;
 using MORR.Shared.Modules;
 
@@ -15,10 +16,12 @@ namespace MORR.Core.Modules
         /// </summary>
         public IEnumerable<Type> EnabledModules { get; private set; }
 
+        public string Identifier { get; } = "Global";
+
         public void Parse(string configuration)
         {
-            // TODO Implement mechanism to read this once a format has been decided
-            throw new NotImplementedException();
+            var instance = JsonSerializer.Deserialize<GlobalModuleConfiguration>(configuration);
+            EnabledModules = instance.EnabledModules;
         }
     }
 }
