@@ -1,0 +1,21 @@
+{
+  "profiles": {
+    "Validate": {
+      "commandName": "Project",
+      "commandLineArgs": "validate --config \"config.morr\"",
+      "workingDirectory": "$(SolutionDir)"
+    },
+    "Record": {
+      "commandName": "Project",
+      "commandLineArgs": "record --config config.morr"
+    },
+    "Version": {
+      "commandName": "Project",
+      "commandLineArgs": "version"
+    },
+    "Help": {
+      "commandName": "Project",
+      "commandLineArgs": "help"
+    }
+  }
+}

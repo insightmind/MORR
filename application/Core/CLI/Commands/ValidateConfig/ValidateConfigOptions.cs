@@ -6,6 +6,6 @@ namespace Morr.Core.CLI.Commands.ValidateConfig
     internal class ValidateConfigOptions : ICommandOptions
     {
         [Option('c', "config", Required = true, HelpText = "Path to configuration file")]
-        internal string ConfigPath { get; set; }
+        public string ConfigPath { get; set; }
     }
 }

@@ -19,10 +19,6 @@ namespace MORR.Core.Configuration
         [ImportMany]
         private IEnumerable<IConfiguration> Configurations { get; set; }
 
-        private const string moduleIdentifierKey = "Identifier";
-        private const string moduleConfigKey = "ModuleConfiguration";
-
-
         /// <summary>
         ///     Loads the configuration from the specified path
         /// </summary>
@@ -59,52 +55,31 @@ namespace MORR.Core.Configuration
 
         private void CommitConfigurations(JsonDocument document)
         {
-            var resolvedConfigs = ResolveModuleConfigurations(document);
-
-            if ((resolvedConfigs == null) || (Configurations == null))
+            if (Configurations == null)
             {
-                throw new InvalidConfigurationException("Could not resolve configuration!");
+                return; // We simply return as we do not need to commit any configs.
+            }
+
+            if (document == null)
+            {
+                throw new InvalidConfigurationException("Invalid configuration file path!");
             }
 
             foreach (var config in Configurations)
             {
-                if (config.Identifier == null)
+                if (config?.GetIdentifier() == null)
                 {
                     throw new InvalidConfigurationException(
                         "Configuration did not offer valid identifier! Please check loaded modules.");
                 }
 
-                if (!resolvedConfigs.ContainsKey(config.Identifier))
+                if (document.RootElement.TryGetProperty(config.GetIdentifier(), out var element))
                 {
                     continue;
                 }
 
-                config.Parse(resolvedConfigs[config.Identifier]);
+                config.Parse(element);
             }
-        }
-
-        private static Dictionary<string, string> ResolveModuleConfigurations(JsonDocument document)
-        {
-            if (document == null)
-            {
-                throw new InvalidConfigurationException("Internal error occured!");
-            }
-
-            var resolvedConfigs = new Dictionary<string, string>();
-
-            foreach (var moduleConfig in document.RootElement.GetProperty(moduleConfigKey).EnumerateArray())
-            {
-                var moduleIdentifier = moduleConfig.GetProperty(moduleIdentifierKey).GetString();
-
-                if ((moduleIdentifier == null) || (resolvedConfigs.ContainsKey(moduleIdentifier)))
-                {
-                    throw new InvalidConfigurationException($"Ambiguous moduleID: {moduleIdentifier}!");
-                }
-
-                resolvedConfigs[moduleIdentifier] = moduleConfig.ToString();
-            }
-
-            return resolvedConfigs;
         }
     }
 }

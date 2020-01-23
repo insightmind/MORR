@@ -1,4 +1,6 @@
-﻿using MORR.Core.Recording;
+﻿using System;
+using System.IO;
+using MORR.Core.Recording;
 using MORR.Shared.Utility;
 
 namespace Morr.Core.CLI.Commands.Record
@@ -10,15 +12,23 @@ namespace Morr.Core.CLI.Commands.Record
             if (options == null)
             {
                 return -1;
-            }    
+            }
 
-            var configPath = new FilePath(options.ConfigPath);
-            IRecordingManager recordingManager = new RecordingManager(configPath);
+            try
+            {
+                var configPath = new FilePath(Path.GetFullPath(options.ConfigPath));
 
-            recordingManager.StartRecording();
+                IRecordingManager recordingManager = new RecordingManager(configPath);
+                recordingManager.StartRecording();
 
-            // We probably do not want return immediately as the recording is still running.
-            return 0;
+                // We probably do not want return immediately as the recording is still running.
+                return 0;
+            }
+            catch (ArgumentException exception)
+            {
+                Console.WriteLine("ERROR: " + exception.Message);
+                return -1;
+            }
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿using MORR.Core.Configuration;
+﻿using System;
+using System.IO;
+using MORR.Core;
+using MORR.Core.Configuration;
 using MORR.Shared.Utility;
 
 namespace Morr.Core.CLI.Commands.ValidateConfig
@@ -12,13 +15,30 @@ namespace Morr.Core.CLI.Commands.ValidateConfig
                 return -1;
             }
 
-            var filePath = new FilePath(options.ConfigPath);
+            try
+            {
+                var filePath = new FilePath(Path.GetFullPath(options.ConfigPath));
 
-            // We probably need to change this over to the session manager, but for now this should be fine.
-            IConfigurationManager configurationManager = new ConfigurationManager();
-            configurationManager.LoadConfiguration(filePath);
+                // We probably need to change this over to the session manager, but for now this should be fine.
+                IConfigurationManager configurationManager = new ConfigurationManager();
+                configurationManager.LoadConfiguration(filePath);
 
-            return 0;
+                IBootstrapper bootstrapper = new Bootstrapper();
+                bootstrapper.ComposeImports(configurationManager);
+
+                Console.WriteLine("The configuration file is valid!");
+                return 0;
+            }
+            catch (ArgumentException exception)
+            {
+                Console.WriteLine("ERROR: " + exception.Message);
+                return -1;
+            }
+            catch (InvalidConfigurationException exception)
+            {
+                Console.WriteLine("ERROR: Unable to parse config file (" + exception.Message + ")" );
+                return -1;
+            }
         }
     }
 }

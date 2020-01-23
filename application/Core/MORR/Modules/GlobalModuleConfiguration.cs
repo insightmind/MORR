@@ -14,16 +14,12 @@ namespace MORR.Core.Modules
     [Shared]
     public class GlobalModuleConfiguration : IConfiguration
     {
-        public string Identifier => "Global";
-
         /// <summary>
         ///     The types of all <see cref="IModule" /> instances that should be enabled.
         /// </summary>
         public IEnumerable<Type> EnabledModules { get; private set; }
 
-        public string Identifier { get; } = "Global";
-
-        public void Parse(string configuration)
+        public void Parse(JsonElement configuration)
         {
             var element = JsonDocument.Parse(configuration).RootElement;
 
