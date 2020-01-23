@@ -18,6 +18,7 @@ namespace MORR.Modules.Mouse.Events
         /// <summary>
         ///     The current position of the mouse
         /// </summary>
-        private Point MousePosition;
+        public Point MousePosition { get; set; }
+    };
     }
 }

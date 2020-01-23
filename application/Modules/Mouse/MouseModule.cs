@@ -31,6 +31,12 @@ namespace MORR.Modules.Mouse
         private MouseMoveEventProducer MouseMoveEventProducer { get; set; }
 
         /// <summary>
+        ///     Configuration of the MouseModule.
+        /// </summary>
+        [Import]
+        private MouseModuleConfiguration MouseModuleConfiguration { get; set; }
+
+        /// <summary>
         ///     if the module is enabled or not.
         ///     When a module is being enabled, the keyboard hook will be set.
         ///     When a module is being disabled, the keyboard hook will be released.
@@ -44,10 +50,12 @@ namespace MORR.Modules.Mouse
                 if (value)
                 {
                     //TODO Set the hooks in all producers
+                    MouseMoveEventProducer.StartTimer();
                 }
                 else
                 {
                     //TODO Release the hooks in all producers
+                    MouseMoveEventProducer.DisposeTimer();
                 }
             }
         }
@@ -60,9 +68,13 @@ namespace MORR.Modules.Mouse
         /// </summary>
         public void Initialize()
         {
-            //TODO initialize all producers with parameters.
+            //TODO extract the configuration value from the IConfiguration instances.
+            Int32 period = MouseModuleConfiguration.period;
+            double threshold = MouseModuleConfiguration.threshold;
+
+            //TODO initialize all producers with parameters from MouseModuleConfiguration.
+            MouseMoveEventProducer = new MouseMoveEventProducer(period,threshold);
             isActive = false;
         }
     }
-}
 }
