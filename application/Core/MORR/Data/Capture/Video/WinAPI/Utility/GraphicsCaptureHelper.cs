@@ -29,56 +29,51 @@ using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.Graphics.Capture;
 
-// TODO This is mostly just copied from the reference project and needs to be cleaned up
 namespace MORR.Core.Data.Capture.Video.WinAPI.Utility
 {
     /// <summary>
-    ///     Provides utility methods for creating graphics capture items
+    ///     Provides utility methods for interacting with GraphicsCapture objects.
     /// </summary>
-    public static class CaptureHelper
+    internal static class GraphicsCaptureHelper
     {
         private static readonly Guid GraphicsCaptureItemGuid = new Guid("79C3F95B-31F7-4EC2-A464-632EF5D30760");
 
-        public static bool CanCreateItemWithoutPicker =>
-            ApiInformation.IsApiContractPresent(typeof(UniversalApiContract).FullName, 8);
-
-        // TODO Remove this?
-        public static void SetWindow(this GraphicsCapturePicker picker, IntPtr hwnd)
+        /// <summary>
+        ///     Indicates whether the device supports creating a <see cref="GraphicsCaptureItem" /> by API instead of by using the
+        ///     <see cref="GraphicsCapturePicker" />. <see langword="true" /> if creation by API is supported,
+        ///     <see langword="false" />
+        ///     otherwise.
+        /// </summary>
+        internal static bool CanCreateItemWithoutPicker
         {
-            var interop = (IInitializeWithWindow) (object) picker;
-            interop.Initialize(hwnd);
+            get
+            {
+                var contractName = typeof(UniversalApiContract).FullName;
+                return contractName != null && ApiInformation.IsApiContractPresent(contractName, 8);
+            }
         }
 
-        // TODO Remove this?
-        public static GraphicsCaptureItem CreateItemForWindow(IntPtr hwnd)
+        /// <summary>
+        ///     Creates a <see cref="GraphicsCaptureItem" /> for a provided monitor. This requires
+        ///     <see cref="CanCreateItemWithoutPicker" /> to be <see langword="true" />.
+        /// </summary>
+        /// <param name="hMon">The handle of the monitor to create the item for.</param>
+        /// <returns>The created <see cref="GraphicsCaptureItem" />.</returns>
+        internal static GraphicsCaptureItem? CreateItemForMonitor(IntPtr hMon)
         {
             var factory = WindowsRuntimeMarshal.GetActivationFactory(typeof(GraphicsCaptureItem));
-            var interop = (IGraphicsCaptureItemInterop) factory;
-            var itemPointer = interop.CreateForWindow(hwnd, GraphicsCaptureItemGuid);
-            var item = Marshal.GetObjectForIUnknown(itemPointer) as GraphicsCaptureItem;
-            Marshal.Release(itemPointer);
+            var interop = factory as IGraphicsCaptureItemInterop;
 
-            return item;
-        }
+            var itemPointer = interop?.CreateForMonitor(hMon, GraphicsCaptureItemGuid);
 
-        public static GraphicsCaptureItem CreateItemForMonitor(IntPtr hmon)
-        {
-            var factory = WindowsRuntimeMarshal.GetActivationFactory(typeof(GraphicsCaptureItem));
-            var interop = (IGraphicsCaptureItemInterop) factory;
-            var itemPointer = interop.CreateForMonitor(hmon, GraphicsCaptureItemGuid);
-            var item = Marshal.GetObjectForIUnknown(itemPointer) as GraphicsCaptureItem;
-            Marshal.Release(itemPointer);
+            if (itemPointer != null)
+            {
+                var item = Marshal.GetObjectForIUnknown(itemPointer.Value) as GraphicsCaptureItem;
+                Marshal.Release(itemPointer.Value);
+                return item;
+            }
 
-            return item;
-        }
-
-        [ComImport]
-        [System.Runtime.InteropServices.Guid("3E68D4BD-7135-4D10-8018-9FB6D9F33FA1")]
-        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-        [ComVisible(true)]
-        private interface IInitializeWithWindow
-        {
-            void Initialize(IntPtr hwnd);
+            return null;
         }
 
         [ComImport]

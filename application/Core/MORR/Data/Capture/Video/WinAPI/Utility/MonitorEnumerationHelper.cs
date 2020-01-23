@@ -28,21 +28,47 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using Windows.Foundation;
 
-// TODO This is mostly copied from the reference project and needs to be cleaned up
 namespace MORR.Core.Data.Capture.Video.WinAPI.Utility
 {
+    /// <summary>
+    ///     Encapsulates information about a monitor.
+    /// </summary>
     internal class MonitorInfo
     {
+        /// <summary>
+        ///     Indicates whether the monitor is the primary monitor. <see langword="true" /> if the monitor is the primary
+        ///     monitor, <see langword="false" /> otherwise.
+        /// </summary>
         public bool IsPrimary { get; set; }
+
+        /// <summary>
+        ///     The size of the screen.
+        /// </summary>
         public Vector2 ScreenSize { get; set; }
+
+        /// <summary>
+        ///     The area of the monitor.
+        /// </summary>
         public Rect MonitorArea { get; set; }
+
+        /// <summary>
+        ///     The work area of the monitor (excludes taskbar etc.)
+        /// </summary>
         public Rect WorkArea { get; set; }
+
+        /// <summary>
+        ///     The name of the device.
+        /// </summary>
         public string DeviceName { get; set; }
+
+        /// <summary>
+        ///     The handle of the monitor.
+        /// </summary>
         public IntPtr Hmon { get; set; }
     }
 
     /// <summary>
-    ///     Provides utility methods for enumerating monitors
+    ///     Provides utility methods for enumerating monitors.
     /// </summary>
     internal static class MonitorEnumerationHelper
     {
@@ -57,38 +83,58 @@ namespace MORR.Core.Data.Capture.Video.WinAPI.Utility
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern bool GetMonitorInfo(IntPtr hMonitor, ref MonitorInfoEx lpmi);
 
+        /// <summary>
+        ///     Enumerates all monitors connected to the system.
+        /// </summary>
+        /// <returns>A list of objects describing all monitors connected to the system.</returns>
         public static IEnumerable<MonitorInfo> GetMonitors()
         {
             var result = new List<MonitorInfo>();
 
-            EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero,
-                                (IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData) =>
-                                {
-                                    var monitor = new MonitorInfoEx();
-                                    monitor.Size = Marshal.SizeOf(monitor);
+            bool CreateMonitorInfoItem(IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData)
+            {
+                var monitor = new MonitorInfoEx();
+                monitor.Size = Marshal.SizeOf(monitor);
 
-                                    if (GetMonitorInfo(hMonitor, ref monitor))
-                                    {
-                                        result.Add(new MonitorInfo
-                                        {
-                                            ScreenSize = new Vector2(monitor.Monitor.right - monitor.Monitor.left,
-                                                                     monitor.Monitor.bottom - monitor.Monitor.top),
-                                            MonitorArea = new Rect(monitor.Monitor.left, monitor.Monitor.top,
-                                                                   monitor.Monitor.right - monitor.Monitor.left,
-                                                                   monitor.Monitor.bottom -
-                                                                   monitor.Monitor.top),
-                                            WorkArea = new Rect(monitor.WorkArea.left, monitor.WorkArea.top,
-                                                                monitor.WorkArea.right - monitor.WorkArea.left,
-                                                                monitor.WorkArea.bottom - monitor.WorkArea.top),
-                                            IsPrimary = monitor.Flags > 0,
-                                            Hmon = hMonitor,
-                                            DeviceName = monitor.DeviceName
-                                        });
-                                    }
+                if (GetMonitorInfo(hMonitor, ref monitor))
+                {
+                    result.Add(new MonitorInfo
+                    {
+                        ScreenSize = new Vector2(monitor.Monitor.right - monitor.Monitor.left,
+                                                 monitor.Monitor.bottom - monitor.Monitor.top),
+                        MonitorArea = new Rect(monitor.Monitor.left, monitor.Monitor.top,
+                                               monitor.Monitor.right - monitor.Monitor.left,
+                                               monitor.Monitor.bottom - monitor.Monitor.top),
+                        WorkArea = new Rect(monitor.WorkArea.left, monitor.WorkArea.top,
+                                            monitor.WorkArea.right - monitor.WorkArea.left,
+                                            monitor.WorkArea.bottom - monitor.WorkArea.top),
+                        IsPrimary = monitor.Flags > 0,
+                        Hmon = hMonitor,
+                        DeviceName = monitor.DeviceName
+                    });
+                }
 
-                                    return true;
-                                },
-                                IntPtr.Zero);
+                return true;
+            }
+
+            EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, CreateMonitorInfoItem, IntPtr.Zero);
+
+            // Sorting to make primary monitors be in front
+            result.Sort((x, y) =>
+            {
+                if (x != null && x.IsPrimary)
+                {
+                    return -1;
+                }
+
+                if (y != null && y.IsPrimary)
+                {
+                    return 1;
+                }
+
+                return 0;
+            });
+
             return result;
         }
 
@@ -98,24 +144,24 @@ namespace MORR.Core.Data.Capture.Video.WinAPI.Utility
                                                    IntPtr dwData);
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct RECT
+        private struct RECT
         {
-            public int left;
-            public int top;
-            public int right;
-            public int bottom;
+            public readonly int left;
+            public readonly int top;
+            public readonly int right;
+            public readonly int bottom;
         }
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        internal struct MonitorInfoEx
+        private struct MonitorInfoEx
         {
             public int Size;
-            public RECT Monitor;
-            public RECT WorkArea;
-            public uint Flags;
+            public readonly RECT Monitor;
+            public readonly RECT WorkArea;
+            public readonly uint Flags;
 
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = CCHDEVICENAME)]
-            public string DeviceName;
+            public readonly string DeviceName;
         }
     }
 }
