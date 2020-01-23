@@ -69,16 +69,30 @@ namespace MORR.Core.Configuration
             {
                 if (config?.GetIdentifier() == null)
                 {
-                    throw new InvalidConfigurationException(
-                        "Configuration did not offer valid identifier! Please check loaded modules.");
+                    throw new InvalidConfigurationException("Configuration did not offer valid identifier! Please check loaded modules.");
                 }
 
-                if (document.RootElement.TryGetProperty(config.GetIdentifier(), out var element))
+                try
                 {
-                    continue;
+                    var element = document.RootElement.GetProperty(config.GetIdentifier());
+                    config.Parse(new RawConfiguration(element.GetRawText()));
                 }
-
-                config.Parse(element);
+                catch (KeyNotFoundException)
+                {
+                    throw new InvalidConfigurationException("Could not find configuration for key: " + config.GetIdentifier());
+                }
+                catch (ArgumentNullException)
+                {
+                    throw new InvalidConfigurationException("Configuration did not offer valid identifier! Please check loaded modules.");
+                }
+                catch (ObjectDisposedException)
+                {
+                    throw new InvalidConfigurationException("An Internal Error occurred while resolving the configuration. Please try again!");
+                }
+                catch (InvalidOperationException)
+                {
+                    throw new InvalidConfigurationException("Invalid subtype for key: " + config.GetIdentifier() + " found!");
+                }
             }
         }
     }

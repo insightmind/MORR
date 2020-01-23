@@ -1,10 +1,9 @@
 ﻿using System;
 using System.IO;
-using MORR.Core;
 using MORR.Core.Configuration;
 using MORR.Shared.Utility;
 
-namespace Morr.Core.CLI.Commands.Validate
+namespace MORR.Core.CLI.Commands.Validate
 {
     internal class ValidateCommand : ICLICommand<ValidateOptions>
     {
@@ -19,12 +18,12 @@ namespace Morr.Core.CLI.Commands.Validate
             {
                 var filePath = new FilePath(Path.GetFullPath(options.ConfigPath));
 
-                // We probably need to change this over to the session manager, but for now this should be fine.
                 IConfigurationManager configurationManager = new ConfigurationManager();
-                configurationManager.LoadConfiguration(filePath);
 
                 IBootstrapper bootstrapper = new Bootstrapper();
                 bootstrapper.ComposeImports(configurationManager);
+
+                configurationManager.LoadConfiguration(filePath);
 
                 Console.WriteLine("The configuration file is valid!");
                 return 0;

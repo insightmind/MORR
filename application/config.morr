@@ -11,7 +11,7 @@
             "MORR.Modules.WebBrowser.WebBrowserModule"
         ]
     },
-    "MORR.Core.Session.SessionConfiguration": {
+    "MORR.Core.Recording.RecordingConfiguration": {
         "Encoder": "MORR.Core.CLI.Output.OutputFormatter",
         "Decoder": ""
     },

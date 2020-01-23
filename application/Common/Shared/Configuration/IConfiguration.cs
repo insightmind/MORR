@@ -13,6 +13,6 @@ namespace MORR.Shared.Configuration
         ///     Parses the configuration from the provided value
         /// </summary>
         /// <param name="configuration">The configuration <see cref="JsonElement" /> to parse from</param>
-        void Parse(JsonElement configuration);
+        void Parse(RawConfiguration configuration);
     }
 }

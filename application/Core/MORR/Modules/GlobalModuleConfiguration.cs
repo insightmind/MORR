@@ -19,8 +19,9 @@ namespace MORR.Core.Modules
         /// </summary>
         public IEnumerable<Type> EnabledModules { get; private set; }
 
-        public void Parse(JsonElement configuration)
+        public void Parse(RawConfiguration configuration)
         {
+<<<<<<< HEAD
             var element = JsonDocument.Parse(configuration).RootElement;
 
             if (!element.TryGetProperty(nameof(EnabledModules), out var enabledModulesElement))
@@ -43,6 +44,10 @@ namespace MORR.Core.Modules
             }
 
             EnabledModules = enabledModules;
+=======
+            var instance = JsonSerializer.Deserialize<GlobalModuleConfiguration>(configuration.RawValue);
+            EnabledModules = instance.EnabledModules;
+>>>>>>> Fix ConfigurationManager as TryGetProperty does not work as documented
         }
     }
 }

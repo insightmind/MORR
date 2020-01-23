@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-namespace Morr.Core.CLI.Commands.Record
+namespace MORR.Core.CLI.Commands.Record
 {
     [Verb("record", HelpText = "Starts a new recording with the give configuration")]
     internal class RecordOptions : ICommandOptions

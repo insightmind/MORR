@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-namespace Morr.Core.CLI.Commands.Validate
+namespace MORR.Core.CLI.Commands.Validate
 {
     [Verb("validate", HelpText = "Validates if a given config.")]
     internal class ValidateOptions : ICommandOptions

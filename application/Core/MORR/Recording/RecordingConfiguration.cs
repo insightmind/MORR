@@ -22,7 +22,7 @@ namespace MORR.Core.Recording
         /// </summary>
         public Type? Decoder { get; private set; }
 
-        public void Parse(JsonElement configuration)
+        public void Parse(RawConfiguration configuration)
         {
             var element = JsonDocument.Parse(configuration).RootElement;
 

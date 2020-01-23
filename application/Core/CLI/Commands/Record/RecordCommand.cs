@@ -3,7 +3,7 @@ using System.IO;
 using MORR.Core.Recording;
 using MORR.Shared.Utility;
 
-namespace Morr.Core.CLI.Commands.Record
+namespace MORR.Core.CLI.Commands.Record
 {
     internal class RecordCommand : ICLICommand<RecordOptions>
     {

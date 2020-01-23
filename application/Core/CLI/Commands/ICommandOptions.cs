@@ -1,4 +1,4 @@
-﻿namespace Morr.Core.CLI.Commands
+﻿namespace MORR.Core.CLI.Commands
 {
     internal interface ICommandOptions
     {
