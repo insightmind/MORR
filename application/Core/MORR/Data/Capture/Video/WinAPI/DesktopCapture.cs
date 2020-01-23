@@ -38,7 +38,7 @@ namespace MORR.Core.Data.Capture.Video.WinAPI
             }
 
             var monitors = MonitorEnumerationHelper.GetMonitors();
-            var monitor = monitors.ElementAtOrDefault(Configuration.MonitorIndex);
+            var monitor = monitors.ElementAtOrDefault(Configuration.MonitorIndex.Value);
 
             return monitor != null ? GraphicsCaptureHelper.CreateItemForMonitor(monitor.Hmon) : null;
         }
