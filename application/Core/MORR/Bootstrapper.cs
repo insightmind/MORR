@@ -27,7 +27,7 @@ namespace MORR.Core
                 throw new Exception("Failed to get directory to current assembly.");
             }
 
-            LoadFromPath(new FilePath(Path.Combine(currentDirectory, moduleSubdirectory)));
+            LoadFromPath(new DirectoryPath(Path.Combine(currentDirectory, moduleSubdirectory)));
         }
 
         public void ComposeImports(object @object)
@@ -35,7 +35,7 @@ namespace MORR.Core
             container.SatisfyImports(@object);
         }
 
-        private void LoadFromPath(FilePath path)
+        private void LoadFromPath(DirectoryPath path)
         {
             var assemblies = Directory.GetFiles(path.ToString(), moduleNamePattern)
                                       .Select(AssemblyLoadContext.Default.LoadFromAssemblyPath);
