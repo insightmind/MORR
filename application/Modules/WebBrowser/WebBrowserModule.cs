@@ -2,6 +2,7 @@
 using MORR.Shared.Modules;
 using System.Composition;
 using MORR.Modules.WebBrowser.Producers;
+using MORR.Shared.Utility;
 
 namespace MORR.Modules.WebBrowser
 {
@@ -10,7 +11,13 @@ namespace MORR.Modules.WebBrowser
     /// </summary>
     public class WebBrowserModule : ICollectingModule
     {
-        public bool IsEnabled { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        private bool isActive = false;
+        public bool IsActive
+        {
+            get => isActive;
+            set => Utility.SetAndDispatch(ref isActive, value, () =>throw new NotImplementedException(),
+                                          () => throw new NotImplementedException());
+        }
 
         public Guid Identifier => throw new NotImplementedException();
 
