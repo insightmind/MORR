@@ -6,7 +6,7 @@ using MORR.Core.Data.Transcoding.Exceptions;
 using MORR.Shared.Events;
 using MORR.Shared.Events.Queue;
 
-namespace Morr.Core.CLI.Output
+namespace MORR.Core.CLI.Output
 {
     public class OutputFormatter : IOutputFormatter
     {

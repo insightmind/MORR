@@ -21,8 +21,7 @@ namespace Morr.Core.CLI.Commands.Record
                 IRecordingManager recordingManager = new RecordingManager(configPath);
                 recordingManager.StartRecording();
 
-                // We probably do not want return immediately as the recording is still running.
-                return 0;
+                while (true) { }
             }
             catch (ArgumentException exception)
             {

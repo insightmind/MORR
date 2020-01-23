@@ -12,8 +12,8 @@
         ]
     },
     "MORR.Core.Session.SessionConfiguration": {
-        "Encoder": "MORR.Core.Data.Transcoding.WinAPI.MPEGEncoder",
-        "Decoder": "MORR.Core.Data.Transcoding.WinAPI.MPEGDecoder"
+        "Encoder": "MORR.Core.CLI.Output.OutputFormatter",
+        "Decoder": ""
     },
     "MORR.Core.Data.Capture.Video.WinAPI.DesktopCaptureConfiguration": {
         "MonitorIndex": 0,

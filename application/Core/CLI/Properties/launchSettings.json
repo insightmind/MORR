@@ -7,7 +7,8 @@
     },
     "Record": {
       "commandName": "Project",
-      "commandLineArgs": "record --config config.morr"
+      "commandLineArgs": "record --config config.morr",
+      "workingDirectory": "$(SolutionDir)"
     },
     "Version": {
       "commandName": "Project",

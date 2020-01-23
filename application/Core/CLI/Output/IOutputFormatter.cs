@@ -1,6 +1,6 @@
 ﻿using MORR.Core.Data.Transcoding;
 
-namespace Morr.Core.CLI.Output
+namespace MORR.Core.CLI.Output
 {
     public interface IOutputFormatter : IEncoder
     {

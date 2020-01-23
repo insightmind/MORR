@@ -11,9 +11,9 @@ namespace MORR.Core.CLI
     {
         public static int Main(string[] args)
         {
-            return Parser.Default.ParseArguments<ValidateConfigOptions, RecordOptions>(args)
+            return Parser.Default.ParseArguments<ValidateOptions, RecordOptions>(args)
                        .MapResult(
-                           (ValidateConfigOptions opts) => new ValidateConfigCommand().Execute(opts),
+                           (ValidateOptions opts) => new ValidateConfigCommand().Execute(opts),
                            (RecordOptions opts) => new RecordCommand().Execute(opts),
                            errs => 1);
         }

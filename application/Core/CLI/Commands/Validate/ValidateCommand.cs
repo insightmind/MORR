@@ -4,11 +4,11 @@ using MORR.Core;
 using MORR.Core.Configuration;
 using MORR.Shared.Utility;
 
-namespace Morr.Core.CLI.Commands.ValidateConfig
+namespace Morr.Core.CLI.Commands.Validate
 {
-    internal class ValidateConfigCommand : ICLICommand<ValidateConfigOptions>
+    internal class ValidateCommand : ICLICommand<ValidateOptions>
     {
-        public int Execute(ValidateConfigOptions options)
+        public int Execute(ValidateOptions options)
         {
             if (options == null)
             {
