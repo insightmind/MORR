@@ -35,8 +35,8 @@ namespace MORR.Core.CLI.Commands.Validate
             }
             catch (InvalidConfigurationException exception)
             {
-                Console.WriteLine("ERROR: Unable to parse config file (" + exception.Message + ")" );
-                return -1;
+                Console.WriteLine("The configuration file is invalid: " + exception.Message);
+                return 1;
             }
         }
     }
