@@ -20,7 +20,7 @@ namespace MORR.Core.Recording
         /// <summary>
         ///     The type of the decoder to use.
         /// </summary>
-        public Type Decoder { get; private set; }
+        public Type? Decoder { get; private set; }
 
         public string Identifier => "Recording";
 
@@ -28,14 +28,19 @@ namespace MORR.Core.Recording
         {
             var element = JsonDocument.Parse(configuration).RootElement;
 
-            if (!TryGetTypeFromProperty(element, nameof(Encoder), out var encoder))
+            if (!element.TryGetProperty(nameof(Encoder), out var encoderElement) ||
+                !TryGetType(encoderElement, out var encoder))
             {
                 throw new InvalidConfigurationException("Failed to parse encoder type.");
             }
 
             Encoder = encoder;
 
-            if (!TryGetTypeFromProperty(element, nameof(Decoder), out var decoder))
+            Type? decoder = null;
+
+            // Specifying a decoder is optional; only thrown an error if a value was specified but could not be parsed
+            if (element.TryGetProperty(nameof(Decoder), out var decoderElement) &&
+                !TryGetType(decoderElement, out decoder))
             {
                 throw new InvalidConfigurationException("Failed to parse decoder type.");
             }
@@ -43,17 +48,9 @@ namespace MORR.Core.Recording
             Decoder = decoder;
         }
 
-        private static bool TryGetTypeFromProperty(JsonElement element,
-                                                   string propertyName,
-                                                   [NotNullWhen(true)] out Type? value)
+        private static bool TryGetType(JsonElement element, [NotNullWhen(true)] out Type? value)
         {
-            if (!element.TryGetProperty(propertyName, out var propertyElement))
-            {
-                value = null;
-                return false;
-            }
-
-            value = Type.GetType(propertyElement.GetString());
+            value = Type.GetType(element.ToString());
             return value != null;
         }
     }

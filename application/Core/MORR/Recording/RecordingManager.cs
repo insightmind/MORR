@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Composition;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace MORR.Core.Recording
     {
         private readonly IModuleManager moduleManager;
         private readonly IEncoder encoder;
-        private readonly IDecoder decoder;
+        private readonly IDecoder? decoder;
 
         [ImportMany]
         private IEnumerable<IEncoder> Encoders { get; set; }
@@ -40,7 +41,7 @@ namespace MORR.Core.Recording
             configurationManager.LoadConfiguration(configurationPath);
 
             encoder = Encoders.Single(x => x.GetType() == Configuration.Encoder);
-            decoder = Decoders.Single(x => x.GetType() == Configuration.Decoder);
+            decoder = Decoders.SingleOrDefault(x => x.GetType() == Configuration.Decoder);
 
             moduleManager.InitializeModules();
         }
@@ -74,6 +75,11 @@ namespace MORR.Core.Recording
 
         public void Process(IEnumerable<FilePath> files)
         {
+            if (decoder == null)
+            {
+                throw new InvalidConfigurationException("No decoder specified for processing operation.");
+            }
+
             moduleManager.NotifyModulesOnSessionStart();
 
             foreach (var file in files)
