@@ -24,7 +24,7 @@ namespace MORR.Core.Recording
 
         public void Parse(RawConfiguration configuration)
         {
-            var element = JsonDocument.Parse(configuration).RootElement;
+            var element = JsonDocument.Parse(configuration.RawValue).RootElement;
 
             if (!element.TryGetProperty(nameof(Encoder), out var encoderElement) ||
                 !TryGetType(encoderElement, out var encoder))
