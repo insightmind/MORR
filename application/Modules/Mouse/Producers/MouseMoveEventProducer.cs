@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MORR.Shared.Events.Queue;
+﻿using MORR.Shared.Events.Queue;
 using MORR.Modules.Mouse.Events;
-using MORR.Shared.Events;
 using System.Composition;
 using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
 
@@ -13,8 +9,8 @@ namespace MORR.Modules.Mouse.Producers
     ///     Provides a single-writer-multiple-reader queue for MouseMoveEvent
     /// </summary>
     [Export(typeof(MouseMoveEventProducer))]
-    [Export(typeof(EventQueue<MouseMoveEvent>))]
-    [Export(typeof(EventQueue<Event>))]
+    [Export(typeof(IReadOnlyEventQueue<MouseMoveEvent>))]
+    [Shared]
     public class MouseMoveEventProducer : BoundedMultiConsumerEventQueue<MouseMoveEvent>
     {
         // TODO: Implement this

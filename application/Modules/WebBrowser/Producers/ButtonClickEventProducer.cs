@@ -13,8 +13,8 @@ namespace MORR.Modules.WebBrowser.Producers
     ///     Provides a single-writer-multiple-reader queue for ButtonClickEvent
     /// </summary>
     [Export(typeof(ButtonClickEventProducer))]
-    [Export(typeof(EventQueue<ButtonClickEvent>))]
-    [Export(typeof(EventQueue<Event>))]
+    [Export(typeof(IReadOnlyEventQueue<ButtonClickEvent>))]
+    [Shared]
     public class ButtonClickEventProducer : BoundedMultiConsumerEventQueue<ButtonClickEvent>
     {
         // TODO: Implement this

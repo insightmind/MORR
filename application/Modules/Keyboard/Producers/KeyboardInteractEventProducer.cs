@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
 using MORR.Modules.Keyboard.Events;
-using MORR.Shared.Events;
 using MORR.Shared.Events.Queue;
 using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
 
@@ -14,8 +13,8 @@ namespace MORR.Modules.Keyboard.Producers
     ///     Provides a single-writer-multiple-reader queue for KeyboardInteractEvent
     /// </summary>
     [Export(typeof(KeyboardInteractEventProducer))]
-    [Export(typeof(EventQueue<KeyboardInteractEvent>))]
-    [Export(typeof(EventQueue<Event>))]
+    [Export(typeof(IReadOnlyEventQueue<KeyboardInteractEvent>))]
+    [Shared]
     public class KeyboardInteractEventProducer : BoundedMultiConsumerEventQueue<KeyboardInteractEvent>
     {
         private IntPtr hook = IntPtr.Zero;

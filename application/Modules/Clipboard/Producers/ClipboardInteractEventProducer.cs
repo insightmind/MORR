@@ -13,8 +13,8 @@ namespace MORR.Modules.Clipboard.Producers
     ///     Provides a single-writer-multiple-reader queue for ClipboardInteractEvent
     /// </summary>
     [Export(typeof(ClipboardInteractEventProducer))]
-    [Export(typeof(EventQueue<ClipboardInteractEvent>))]
-    [Export(typeof(EventQueue<Event>))]
+    [Export(typeof(IReadOnlyEventQueue<ClipboardInteractEvent>))]
+    [Shared]
     public class ClipboardInteractEventProducer : BoundedMultiConsumerEventQueue<ClipboardInteractEvent>
     {
         // TODO: Implement this

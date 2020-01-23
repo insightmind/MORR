@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MORR.Shared.Events.Queue;
+﻿using MORR.Shared.Events.Queue;
 using MORR.Modules.WebBrowser.Events;
-using MORR.Shared.Events;
 using System.Composition;
 using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
 
@@ -13,8 +9,8 @@ namespace MORR.Modules.WebBrowser.Producers
     ///     Provides a single-writer-multiple-reader queue for FileDownloadEvent
     /// </summary>
     [Export(typeof(FileDownloadEventProducer))]
-    [Export(typeof(EventQueue<FileDownloadEvent>))]
-    [Export(typeof(EventQueue<Event>))]
+    [Export(typeof(IReadOnlyEventQueue<FileDownloadEvent>))]
+    [Shared]
     public class FileDownloadEventProducer : BoundedMultiConsumerEventQueue<FileDownloadEvent>
     {
         // TODO: Implement this

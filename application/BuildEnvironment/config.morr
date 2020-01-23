@@ -4,11 +4,11 @@
       "MORR.Core.Data.Capture.Metadata.MetadataCapture",
       "MORR.Core.Data.Transcoding.Metadata.MetadataDeserializer",
       "MORR.Core.Data.Capture.Video.WinAPI.DesktopCapture",
-      "MORR.Modules.Clipboard.ClipboardModule, Clipboard, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
-      "MORR.Modules.Mouse.MouseModule, Mouse, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
-      "MORR.Modules.Keyboard.KeyboardModule, Keyboard, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
-      "MORR.Modules.WindowManagement.WindowManagementModule, WindowManagement, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
-      "MORR.Modules.WebBrowser.WebBrowserModule, WebBrowser, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+      "MORR.Modules.Mouse.MouseModule, Mouse.MORR-Module, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "MORR.Modules.Clipboard.ClipboardModule, Clipboard.MORR-Module, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "MORR.Modules.Keyboard.KeyboardModule, Keyboard.MORR-Module, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "MORR.Modules.WindowManagement.WindowManagementModule, WindowManagement.MORR-Module, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "MORR.Modules.WebBrowser.WebBrowserModule, WebBrowser.MORR-Module, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
     ]
   },
   "MORR.Core.Recording.RecordingConfiguration": {
@@ -26,7 +26,7 @@
     "RecordingsDirectory": "C:\\Users\\Niklas\\Videos\\Captures",
     "NamePattern": "{TIME}_{GUID}_{USERNAME}"
   },
-  "MORR.Modules.Mouse.MouseModuleConfiguration, Mouse, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": {
+  "MORR.Modules.Mouse.MouseModuleConfiguration, Mouse.MORR-Module, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": {
     "MaxPollingRateInHz": 100,
     "MovementThreshold": 20
   }
