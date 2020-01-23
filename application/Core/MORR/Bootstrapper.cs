@@ -42,7 +42,8 @@ namespace MORR.Core
 
             var containerConfiguration = new ContainerConfiguration();
             containerConfiguration.WithAssemblies(assemblies)
-                                  .WithAssembly(Assembly.GetExecutingAssembly());
+                                  .WithAssembly(Assembly.GetExecutingAssembly())
+                                  .WithAssembly(Assembly.GetEntryAssembly());
 
             container = containerConfiguration.CreateContainer();
         }
