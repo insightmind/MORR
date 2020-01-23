@@ -83,15 +83,7 @@
         \item The \gls{videostream} contained in the recording follows \specref{D40}, where the framerate is 60hz, the bitrate is 4096kpbs (or lower) and the resolution is 1920x1080 pixels.
     \end{itemize}}
 
-    \test{\fmt{FS51}{FS54}{FS70}{FS90}{FS250}{FS340}{FS350}}{Configuring audio recording}{The application is running. The configuration file is valid. The configuration specifies to record audio.}
-    {\begin{enumerate}
-        \item The \gls{user} starts a recording.
-        \item The \gls{user} completes the recording process.
-    \end{enumerate}}
-    {\begin{itemize}
-        \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
-        \item The \gls{videostream} contains the optional audiostream.
-    \end{itemize}}
+    \addtocounter{counterTC}{10} %% removed TC60
 
     \test{\fmt{FS54}{FS70}{FS90}{FS250}{FS340}{FS350}}{Configuring file path}{The application is running. The configuration file is valid. The configuration specifies to store the recording at path "\%userprofile\%\textbackslash documents\textbackslash recordings".}
     {\begin{enumerate}
@@ -241,17 +233,7 @@
         \item The recording contains a "other:ctrl-click" event.
     \end{itemize}}
 
-    \test{\fmt{FS70}{FS90}{FS250}{FS260}}{Context management}{The application is running. The configuration file is valid. The configuration specifies that the \gls{browser} module should be activated. It also specifies that the \gls{browser} module may only be active when the \gls{user} uses the \gls{browser}.}
-    {\begin{enumerate}
-        \item The \gls{user} starts a recording.
-        \item The \gls{user} starts navigating to the civic.genome.wustl.edu webpage.
-        \item The \gls{user} then immediately switches to another application.
-        \item The \gls{user} completes the recording process.
-    \end{enumerate}}
-    {\begin{itemize}
-        \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
-        \item The recording contains a "browser:navigation" \gls{event} but does not contain any \gls{event} connected to the network requests the \gls{browser} made while the \gls{user} did not have the \gls{browser} focused.
-    \end{itemize}}
+    \addtocounter{counterTC}{10} %%removed TC250
 \end{tests}
 
 \newpage
@@ -263,7 +245,7 @@
         \item The \gls{scientist} starts the command-line tool with the path "\%userprofile\%\textbackslash documents\textbackslash recordings\textbackslash" of the recordings and another path "\%userprofile\%\textbackslash documents\textbackslash recordings\textbackslash extracted\textbackslash" to extract the data to.
     \end{enumerate}}
     {\begin{itemize}
-        \item The \gls{event} data contained in the recordings at path "\%userprofile\%\textbackslash documents\textbackslash recordings\textbackslash" is extracted in CSV-format to path "\%userprofile\%\textbackslash documents\textbackslash recordings\textbackslash extracted\textbackslash".
+        \item The \gls{event} data contained in the recordings at path "\%userprofile\%\textbackslash documents\textbackslash recordings\textbackslash" is extracted in JSON-format to path "\%userprofile\%\textbackslash documents\textbackslash recordings\textbackslash extracted\textbackslash".
     \end{itemize}}
 
     \test{\fmt{FS340}}{Tray-Icon}{The application is not running. The configuration file is valid.}
