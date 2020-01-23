@@ -1,9 +1,9 @@
 ﻿using CommandLine;
 
-namespace Morr.Core.CLI.Commands.ValidateConfig
+namespace MORR.Core.CLI.Commands.Validate
 {
     [Verb("validate", HelpText = "Validates if a given config.")]
-    public class ValidateConfigOptions : ICommandOptions
+    internal class ValidateOptions : ICommandOptions
     {
         [Option('c', "config", Required = true, HelpText = "Path to configuration file")]
         public string ConfigPath { get; set; }

@@ -5,6 +5,7 @@ using MORR.Shared.Events.Queue;
 using MORR.Modules.WindowManagement.Events;
 using MORR.Shared.Events;
 using System.Composition;
+using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
 
 namespace MORR.Modules.WindowManagement.Producers
 {
@@ -14,24 +15,8 @@ namespace MORR.Modules.WindowManagement.Producers
     [Export(typeof(WindowStateChangedEventProducer))]
     [Export(typeof(EventQueue<WindowStateChangedEvent>))]
     [Export(typeof(EventQueue<Event>))]
-    public class WindowStateChangedEventProducer : EventQueue<WindowStateChangedEvent>
+    public class WindowStateChangedEventProducer : BoundedMultiConsumerEventQueue<WindowStateChangedEvent>
     {
-        /// <summary>
-        ///     Asynchronously gets all user interaction with changing the state of the window as WindowStateChangedEvent type
-        /// </summary>
-        /// <returns>A stream of WindowStateChangedEvent</returns>
-        public override IAsyncEnumerable<WindowStateChangedEvent> GetEvents()
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        ///     Asynchronously enqueues a new window state changed event
-        /// </summary>
-        /// <param name="event">The window state changed event to enqueue</param>
-        protected override void Enqueue(WindowStateChangedEvent @event)
-        {
-            throw new NotImplementedException();
-        }
+        // TODO: Implement this
     }
 }

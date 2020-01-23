@@ -4,6 +4,8 @@ using System.Text;
 using System.Composition;
 using MORR.Shared.Events.Queue;
 using MORR.Modules.WebBrowser.Events;
+using MORR.Shared.Events;
+using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
 
 namespace MORR.Modules.WebBrowser.Producers
 {
@@ -13,23 +15,8 @@ namespace MORR.Modules.WebBrowser.Producers
     [Export(typeof(SwitchTabEventProducer))]
     [Export(typeof(EventQueue<SwitchTabEvent>))]
     [Export(typeof(EventQueue<Event>))]
-    public class SwitchTabEventProducer : EventQueue<SwitchTabEvent>
+    public class SwitchTabEventProducer : BoundedMultiConsumerEventQueue<SwitchTabEvent>
     {
-        /// <summary>
-        ///     Asynchronously gets all switch tab events as SwitchTabEvent type
-        /// </summary>
-        /// <returns>A stream of SwitchTabEvent</returns>
-        public override IAsyncEnumerable<SwitchTabEvent> GetEvents()
-        {
-            throw new NotImplementedException();
-        }
-        /// <summary>
-        ///     Asynchronously enqueues a new switch tab event
-        /// </summary>
-        /// <param name="event">The switch tab event to enqueue</param>
-        protected override void Enqueue(SwitchTabEvent @event)
-        {
-            throw new NotImplementedException();
-        }
+        // TODO: Implement this
     }
 }

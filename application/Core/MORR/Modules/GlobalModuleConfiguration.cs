@@ -19,11 +19,9 @@ namespace MORR.Core.Modules
         /// </summary>
         public IEnumerable<Type> EnabledModules { get; private set; }
 
-        public string Identifier { get; } = "Global";
-
-        public void Parse(string configuration)
+        public void Parse(RawConfiguration configuration)
         {
-            var element = JsonDocument.Parse(configuration).RootElement;
+            var element = JsonDocument.Parse(configuration.RawValue).RootElement;
 
             if (!element.TryGetProperty(nameof(EnabledModules), out var enabledModulesElement))
             {

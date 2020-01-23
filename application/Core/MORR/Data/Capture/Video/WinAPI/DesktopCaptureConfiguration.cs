@@ -23,9 +23,9 @@ namespace MORR.Core.Data.Capture.Video.WinAPI
 
         public string Identifier { get; } = "DesktopCapture";
 
-        public void Parse(string configuration)
+        public void Parse(RawConfiguration configuration)
         {
-            var element = JsonDocument.Parse(configuration).RootElement;
+            var element = JsonDocument.Parse(configuration.RawValue).RootElement;
 
             if (!element.TryGetProperty(nameof(MonitorIndex), out var indexElement) ||
                 !indexElement.TryGetInt32(out var monitorIndex))

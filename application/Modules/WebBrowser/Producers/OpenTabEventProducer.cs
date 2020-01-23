@@ -5,6 +5,8 @@ using MORR.Shared.Events.Queue;
 using MORR.Modules.WebBrowser.Events;
 using MORR.Shared.Events;
 using System.Composition;
+using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
+
 namespace MORR.Modules.WebBrowser.Producers
 {
     /// <summary>
@@ -13,24 +15,8 @@ namespace MORR.Modules.WebBrowser.Producers
     [Export(typeof (OpenTabEventProducer))]
     [Export(typeof(EventQueue<OpenTabEvent>))]
     [Export(typeof(EventQueue<Event>))]
-    public class OpenTabEventProducer : EventQueue<OpenTabEvent>
+    public class OpenTabEventProducer : BoundedMultiConsumerEventQueue<OpenTabEvent>
     {
-        /// <summary>
-        ///     Asynchronously gets all open tab events as OpenTabEvent type
-        /// </summary>
-        /// <returns>A stream of OpenTabEvent</returns>
-        public override IAsyncEnumerable<OpenTabEvent> GetEvents()
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        ///     Asynchronously enqueues a new open tab event
-        /// </summary>
-        /// <param name="event">The open tab event to enqueue</param>
-        protected override void Enqueue(OpenTabEvent @event)
-        {
-            throw new NotImplementedException();
-        }
+        // TODO: Implement this
     }
 }

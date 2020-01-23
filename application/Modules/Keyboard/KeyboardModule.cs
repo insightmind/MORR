@@ -10,7 +10,7 @@ namespace MORR.Modules.Keyboard
     /// </summary>
     public class KeyboardModule : ICollectingModule
     {
-        private bool isEnabled;
+        private bool IsActive;
 
         /// <summary>
         ///     A single-writer-multiple-reader queue for KeyboardInteractEvent
@@ -25,10 +25,10 @@ namespace MORR.Modules.Keyboard
         /// </summary>
         public bool IsEnabled
         {
-            get => isEnabled;
+            get => IsActive;
             set
             {
-                isEnabled = value;
+                IsActive = value;
                 if (value)
                 {
                     KeyboardInteractEventProducer.HookKeyboard();
@@ -42,6 +42,8 @@ namespace MORR.Modules.Keyboard
 
         public Guid Identifier => new Guid("99F679D6-0D20-40EE-8604-F128F0E5AE3B");
 
+        bool IModule.IsActive { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
 
         /// <summary>
         ///     Initialize the module unenabled with KeyboardInteractEventProducer.
@@ -49,7 +51,7 @@ namespace MORR.Modules.Keyboard
         public void Initialize()
         {
             KeyboardInteractEventProducer = new KeyboardInteractEventProducer();
-            isEnabled = false;
+            IsActive = false;
         }
     }
 }

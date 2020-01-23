@@ -10,7 +10,7 @@ namespace MORR.Modules.Mouse
     /// </summary>
     public class MouseModule : ICollectingModule
     {
-        public bool IsEnabled { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public bool IsActive { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public Guid Identifier => throw new NotImplementedException();
 

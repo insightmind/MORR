@@ -1,16 +1,18 @@
-﻿namespace MORR.Shared.Configuration
+﻿using System.Text.Json;
+
+namespace MORR.Shared.Configuration
 {
     /// <summary>
     ///     A self-contained unit of configuration
     /// </summary>
     public interface IConfiguration
     {
-        string Identifier { get; }
+        string GetIdentifier() => GetType().ToString();
 
         /// <summary>
         ///     Parses the configuration from the provided value
         /// </summary>
-        /// <param name="configuration">The configuration <see cref="string" /> to parse from</param>
-        void Parse(string configuration);
+        /// <param name="configuration">The configuration <see cref="JsonElement" /> to parse from</param>
+        void Parse(RawConfiguration configuration);
     }
 }

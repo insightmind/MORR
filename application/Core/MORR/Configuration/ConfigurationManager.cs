@@ -17,11 +17,7 @@ namespace MORR.Core.Configuration
         ///     All configuration wrappers
         /// </summary>
         [ImportMany]
-        private IEnumerable<IConfiguration> Configurations { get; set; }
-
-        private const string moduleIdentifierKey = "Identifier";
-        private const string moduleConfigKey = "ModuleConfiguration";
-
+        private IEnumerable<IConfiguration>? Configurations { get; set; }
 
         /// <summary>
         ///     Loads the configuration from the specified path
@@ -59,52 +55,45 @@ namespace MORR.Core.Configuration
 
         private void CommitConfigurations(JsonDocument document)
         {
-            var resolvedConfigs = ResolveModuleConfigurations(document);
-
-            if ((resolvedConfigs == null) || (Configurations == null))
+            if (Configurations == null)
             {
-                throw new InvalidConfigurationException("Could not resolve configuration!");
+                return; // We simply return as we do not need to commit any configs.
+            }
+
+            if (document == null)
+            {
+                throw new InvalidConfigurationException("Invalid configuration file path!");
             }
 
             foreach (var config in Configurations)
             {
-                if (config.Identifier == null)
+                if (config?.GetIdentifier() == null)
                 {
-                    throw new InvalidConfigurationException(
-                        "Configuration did not offer valid identifier! Please check loaded modules.");
+                    throw new InvalidConfigurationException("Configuration did not offer valid identifier! Please check loaded modules.");
                 }
 
-                if (!resolvedConfigs.ContainsKey(config.Identifier))
+                try
                 {
-                    continue;
+                    var element = document.RootElement.GetProperty(config.GetIdentifier());
+                    config.Parse(new RawConfiguration(element.GetRawText()));
                 }
-
-                config.Parse(resolvedConfigs[config.Identifier]);
-            }
-        }
-
-        private static Dictionary<string, string> ResolveModuleConfigurations(JsonDocument document)
-        {
-            if (document == null)
-            {
-                throw new InvalidConfigurationException("Internal error occured!");
-            }
-
-            var resolvedConfigs = new Dictionary<string, string>();
-
-            foreach (var moduleConfig in document.RootElement.GetProperty(moduleConfigKey).EnumerateArray())
-            {
-                var moduleIdentifier = moduleConfig.GetProperty(moduleIdentifierKey).GetString();
-
-                if ((moduleIdentifier == null) || (resolvedConfigs.ContainsKey(moduleIdentifier)))
+                catch (KeyNotFoundException exception)
                 {
-                    throw new InvalidConfigurationException($"Ambiguous moduleID: {moduleIdentifier}!");
+                    throw new InvalidConfigurationException("Could not find configuration for key: " + config.GetIdentifier(), exception);
                 }
-
-                resolvedConfigs[moduleIdentifier] = moduleConfig.ToString();
+                catch (ArgumentNullException exception)
+                {
+                    throw new InvalidConfigurationException("Configuration did not offer valid identifier! Please check loaded modules.", exception);
+                }
+                catch (ObjectDisposedException exception)
+                {
+                    throw new InvalidConfigurationException("An Internal Error occurred while resolving the configuration. Please try again!", exception);
+                }
+                catch (InvalidOperationException exception)
+                {
+                    throw new InvalidConfigurationException("Invalid subtype for key: " + config.GetIdentifier() + " found!", exception);
+                }
             }
-
-            return resolvedConfigs;
         }
     }
 }

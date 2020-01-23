@@ -17,15 +17,5 @@ namespace MORR.Modules.Keyboard.Events
         ///     The modifier keys to the key pressed
         /// </summary>
         public ModifierKeys ModifierKeys { get; set; }
-
-        public override string Serialize()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Deserialize(string serialized)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

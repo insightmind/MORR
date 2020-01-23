@@ -2,7 +2,7 @@
 
 namespace MORR.Core.Configuration
 {
-    class InvalidConfigurationException: Exception
+    public class InvalidConfigurationException: Exception
     {
         public InvalidConfigurationException()
         { }

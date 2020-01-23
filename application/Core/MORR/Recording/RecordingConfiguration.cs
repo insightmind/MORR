@@ -22,11 +22,9 @@ namespace MORR.Core.Recording
         /// </summary>
         public Type? Decoder { get; private set; }
 
-        public string Identifier => "Recording";
-
-        public void Parse(string configuration)
+        public void Parse(RawConfiguration configuration)
         {
-            var element = JsonDocument.Parse(configuration).RootElement;
+            var element = JsonDocument.Parse(configuration.RawValue).RootElement;
 
             if (!element.TryGetProperty(nameof(Encoder), out var encoderElement) ||
                 !TryGetType(encoderElement, out var encoder))
