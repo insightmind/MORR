@@ -3,12 +3,12 @@
     "Validate": {
       "commandName": "Project",
       "commandLineArgs": "validate --config \"config.morr\"",
-      "workingDirectory": "$(SolutionDir)"
+      "workingDirectory": "$(SolutionDir)\\Debug"
     },
     "Record": {
       "commandName": "Project",
       "commandLineArgs": "record --config config.morr",
-      "workingDirectory": "$(SolutionDir)"
+      "workingDirectory": "$(SolutionDir)\\Debug"
     },
     "Version": {
       "commandName": "Project",
@@ -21,7 +21,7 @@
     "Process": {
       "commandName": "Project",
       "commandLineArgs": "process --config config.morr --inputFile input.mp4",
-      "workingDirectory": "$(SolutionDir)"
+      "workingDirectory": "$(SolutionDir)\\Debug"
     }
   }
 }
