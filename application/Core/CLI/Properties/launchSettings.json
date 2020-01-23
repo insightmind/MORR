@@ -17,6 +17,11 @@
     "Help": {
       "commandName": "Project",
       "commandLineArgs": "help"
+    },
+    "Process": {
+      "commandName": "Project",
+      "commandLineArgs": "process --config config.morr --inputFile input.mp4",
+      "workingDirectory": "$(SolutionDir)"
     }
   }
 }

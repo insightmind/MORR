@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using MORR.Core.CLI.Commands.Process;
 using MORR.Core.CLI.Commands.Record;
 using MORR.Core.CLI.Commands.Validate;
 
@@ -11,10 +12,11 @@ namespace MORR.Core.CLI
     {
         public static int Main(string[] args)
         {
-            return Parser.Default.ParseArguments<ValidateOptions, RecordOptions>(args)
+            return Parser.Default.ParseArguments<ValidateOptions, RecordOptions, ProcessOptions>(args)
                        .MapResult(
                            (ValidateOptions opts) => new ValidateCommand().Execute(opts),
                            (RecordOptions opts) => new RecordCommand().Execute(opts),
+                           (ProcessOptions opts) => new ProcessCommand().Execute(opts),
                            errs => 1);
         }
     }

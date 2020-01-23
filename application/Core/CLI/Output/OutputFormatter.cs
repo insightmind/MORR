@@ -2,12 +2,14 @@
 using System.Composition;
 using System.Text.Json;
 using MORR.Core.Data.Sample.Metadata;
+using MORR.Core.Data.Transcoding;
 using MORR.Core.Data.Transcoding.Exceptions;
 using MORR.Shared.Events;
 using MORR.Shared.Events.Queue;
 
 namespace MORR.Core.CLI.Output
 {
+    [Export(typeof(IEncoder)), Shared]
     public class OutputFormatter : IOutputFormatter
     {
         [Import] 
