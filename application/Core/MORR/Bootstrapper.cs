@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.ComponentModel.Composition.Primitives;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -38,45 +39,42 @@ namespace MORR.Core
 
         private void LoadFromPath(DirectoryPath path)
         {
-            var moduleAssemblies = Directory.GetFiles(path.ToString(), moduleNamePattern)
-                                            .Select(ModuleLoadContext.Current.LoadModule).Select(x => new AssemblyCatalog(x));
+            var alreadyLoadedAssemblies = AssemblyLoadContext.Default.Assemblies.Select(x => x.FullName).ToList();
+            var moduleFiles = Directory.GetFiles(path.ToString(), moduleNamePattern);
+            var moduleAssemblies = moduleFiles
+                                   .Select(x => LoadWithReferencesIfNotLoaded(x, alreadyLoadedAssemblies))
+                                   .Where(x => x != null)
+                                   .Select(x => new AssemblyCatalog(x)).ToArray();
 
-            var executingAssembly = new AssemblyCatalog(Assembly.GetExecutingAssembly());
-            var entryAssembly = new AssemblyCatalog(Assembly.GetEntryAssembly());
-
-            var catalogs = moduleAssemblies.Append(executingAssembly).Append(entryAssembly);
+            var applicationCatalog = new ApplicationCatalog();
+            var catalogs = moduleAssemblies.Cast<ComposablePartCatalog>().Append(applicationCatalog);
 
             var aggregateCatalog = new AggregateCatalog(catalogs);
 
             container = new CompositionContainer(aggregateCatalog);
         }
 
-        private class ModuleLoadContext : AssemblyLoadContext
+        private static Assembly? LoadWithReferencesIfNotLoaded(string path, IEnumerable<string?> alreadyLoadedAssemblies)
         {
-            private readonly List<AssemblyDependencyResolver> resolvers = new List<AssemblyDependencyResolver>();
+            var resolver = new AssemblyDependencyResolver(path);
+            var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(path);
 
-            public static ModuleLoadContext Current { get; } = new ModuleLoadContext();
-
-            public Assembly LoadModule(string modulePath)
+            if (alreadyLoadedAssemblies.Contains(assembly.FullName))
             {
-                var resolver = new AssemblyDependencyResolver(modulePath);
-                resolvers.Add(resolver);
-
-                Default.LoadFromAssemblyPath(
-                    modulePath); // TODO This is only to make Type.GetType work elsewhere, remove if possible
-
-                return LoadFromAssemblyPath(modulePath);
+                return null;
             }
 
-            protected override Assembly Load(AssemblyName assemblyName)
+            foreach (var referencedAssembly in assembly.GetReferencedAssemblies())
             {
-                var assemblyPath = resolvers.Select(x => x.ResolveAssemblyToPath(assemblyName))
-                                            .FirstOrDefault(x => x != null);
+                var referencedAssemblyPath = resolver.ResolveAssemblyToPath(referencedAssembly);
 
-                // If the path cannot be resolved, do not return anything
-                // TODO This appears to work fine, resolve only fails for library dependencies, but this is not a good solution
-                return assemblyPath != null ? LoadFromAssemblyPath(assemblyPath) : null;
+                if (referencedAssemblyPath != null)
+                {
+                    AssemblyLoadContext.Default.LoadFromAssemblyPath(referencedAssemblyPath);
+                }
             }
+
+            return assembly;
         }
     }
 }
