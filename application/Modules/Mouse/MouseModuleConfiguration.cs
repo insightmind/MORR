@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Composition;
-using System.Text;
 using MORR.Shared.Configuration;
 
 namespace MORR.Modules.Mouse
@@ -11,9 +9,9 @@ namespace MORR.Modules.Mouse
     public class MouseModuleConfiguration : IConfiguration
     {
         /// <summary>
-        ///     The time interval between invocation of method to record mouse position, in milliseconds. 
+        ///     The time interval between invocation of method to record mouse position, in milliseconds.
         /// </summary>
-        public Int32 period { get; set; }
+        public int period { get; set; }
 
         /// <summary>
         ///     The minimal distance a mouse move must reach in a period to be recorded.
@@ -21,7 +19,7 @@ namespace MORR.Modules.Mouse
         ///     in other words, a new MouseMoveEvent will not be generated and
         ///     the mouse position will not be recorded)
         /// </summary>
-        public double threshold{get; set; }
+        public double threshold { get; set; }
 
         public string Identifier { get; } = "MouseModule";
 
@@ -32,4 +30,3 @@ namespace MORR.Modules.Mouse
         }
     }
 }
-    

@@ -8,7 +8,8 @@ namespace MORR.Modules.Mouse.Events
     public class MouseScrollEvent : MouseEvent
     {
         /// <summary>
-        ///     The amount of the wheel being scrolled
+        ///     The amount of the wheel being scrolled.
+        ///     relative standard: One wheel click is defined as WHEEL_DELTA, which is 120.
         /// </summary>
         public short ScrollAmount { get; set; }
 

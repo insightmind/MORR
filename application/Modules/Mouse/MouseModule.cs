@@ -1,31 +1,31 @@
 ﻿using System;
-using MORR.Shared.Modules;
+using System.Composition;
 using MORR.Modules.Mouse.Producers;
-using System.ComponentModel.Composition;
+using MORR.Shared.Modules;
 
 namespace MORR.Modules.Mouse
 {
     /// <summary>
-    /// The <see cref="MouseModule"/> is responsible for recording all mouse related user interactions
+    ///     The <see cref="MouseModule" /> is responsible for recording all mouse related user interactions
     /// </summary>
     public class MouseModule : ICollectingModule
     {
         private bool isActive;
 
         /// <summary>
-        /// A single-writer-multiple-reader queue for MouseClickEvent
+        ///     A single-writer-multiple-reader queue for MouseClickEvent
         /// </summary>
         [Import]
         private MouseClickEventProducer MouseClickEventProducer { get; set; }
 
         /// <summary>
-        /// A single-writer-multiple-reader queue for MouseScrollEvent
+        ///     A single-writer-multiple-reader queue for MouseScrollEvent
         /// </summary>
         [Import]
         private MouseScrollEventProducer MouseScrollEventProducer { get; set; }
 
         /// <summary>
-        /// A single-writer-multiple-reader queue for MouseMoveEvent
+        ///     A single-writer-multiple-reader queue for MouseMoveEvent
         /// </summary>
         [Import]
         private MouseMoveEventProducer MouseMoveEventProducer { get; set; }
@@ -38,8 +38,8 @@ namespace MORR.Modules.Mouse
 
         /// <summary>
         ///     if the module is enabled or not.
-        ///     When a module is being enabled, the keyboard hook will be set.
-        ///     When a module is being disabled, the keyboard hook will be released.
+        ///     When a module is being enabled, all the mouse hook in the producers will be set.
+        ///     When a module is being disabled, all the mouse hook in the producers will be released.
         /// </summary>
         public bool IsActive
         {
@@ -49,13 +49,16 @@ namespace MORR.Modules.Mouse
                 isActive = value;
                 if (value)
                 {
-                    //TODO Set the hooks in all producers
                     MouseMoveEventProducer.StartTimer();
+                    MouseClickEventProducer.HookMouse();
+                    MouseScrollEventProducer.HookMouse();
                 }
                 else
                 {
                     //TODO Release the hooks in all producers
                     MouseMoveEventProducer.DisposeTimer();
+                    MouseClickEventProducer.UnhookMouse();
+                    MouseScrollEventProducer.UnhookMouse();
                 }
             }
         }
@@ -68,12 +71,16 @@ namespace MORR.Modules.Mouse
         /// </summary>
         public void Initialize()
         {
-            //TODO extract the configuration value from the IConfiguration instances.
-            Int32 period = MouseModuleConfiguration.period;
-            double threshold = MouseModuleConfiguration.threshold;
+            // retrieve all parameters from the MouseModuleConfiguration
+            var period = MouseModuleConfiguration.period;
+            var threshold = MouseModuleConfiguration.threshold;
 
-            //TODO initialize all producers with parameters from MouseModuleConfiguration.
-            MouseMoveEventProducer = new MouseMoveEventProducer(period,threshold);
+            // initialize all producers
+            MouseMoveEventProducer = new MouseMoveEventProducer(period, threshold);
+            MouseClickEventProducer = new MouseClickEventProducer();
+            MouseScrollEventProducer = new MouseScrollEventProducer();
+
+            // stay inactive
             isActive = false;
         }
     }

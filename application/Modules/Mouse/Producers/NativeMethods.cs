@@ -27,9 +27,7 @@ namespace MORR.Modules.Mouse.Producers
             WM_LBUTTONDOWN = 0x0201,
             WM_RBUTTONDOWN = 0x0204,
             WM_MBUTTONDOWN = 0x0207,
-            WM_MBUTTONDBLCLK = 0x0209,
-            WM_RBUTTONDBLCLK = 0x0206,
-            WM_LBUTTONDBLCLK = 0x0203
+            WM_MOUSEWHEEL = 0x020A
         }
 
         public delegate int LowLevelMouseProc(int code, int wParam, IntPtr lParam);
