@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Composition;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
@@ -14,7 +14,6 @@ namespace MORR.Modules.Keyboard.Producers
     /// </summary>
     [Export(typeof(KeyboardInteractEventProducer))]
     [Export(typeof(IReadOnlyEventQueue<KeyboardInteractEvent>))]
-    [Shared]
     public class KeyboardInteractEventProducer : BoundedMultiConsumerEventQueue<KeyboardInteractEvent>
     {
         private IntPtr hook = IntPtr.Zero;

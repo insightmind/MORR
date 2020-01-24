@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Composition;
+using System.ComponentModel.Composition;
 using System.Text.Json;
 using System.Threading.Tasks;
 using MORR.Core.Data.Sample.Metadata;
@@ -9,7 +9,7 @@ using MORR.Shared.Events.Queue.Strategy.SingleConsumer;
 
 namespace MORR.Core.Data.Capture.Metadata
 {
-    [Export(typeof(IReadOnlyEventQueue<MetadataSample>))]
+    [Export(typeof(MetadataSampleProducer))]
     public class MetadataSampleProducer : BoundedSingleConsumerEventQueue<MetadataSample>
     {
         [ImportMany]

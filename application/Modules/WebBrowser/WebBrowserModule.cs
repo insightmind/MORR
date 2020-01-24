@@ -1,6 +1,6 @@
 ﻿using System;
 using MORR.Shared.Modules;
-using System.Composition;
+using System.ComponentModel.Composition;
 using MORR.Modules.WebBrowser.Producers;
 
 namespace MORR.Modules.WebBrowser

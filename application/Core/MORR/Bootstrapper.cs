@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Composition;
-using System.Composition.Hosting;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -17,7 +17,7 @@ namespace MORR.Core
     {
         private const string moduleSubdirectory = "Modules";
         private const string moduleNamePattern = "*.MORR-Module.dll";
-        private CompositionHost container;
+        private CompositionContainer container;
 
         public Bootstrapper()
         {
@@ -33,20 +33,22 @@ namespace MORR.Core
 
         public void ComposeImports(object @object)
         {
-            container.SatisfyImports(@object);
+            container.SatisfyImportsOnce(@object);
         }
 
         private void LoadFromPath(DirectoryPath path)
         {
             var moduleAssemblies = Directory.GetFiles(path.ToString(), moduleNamePattern)
-                                            .Select(ModuleLoadContext.Current.LoadModule);
+                                            .Select(ModuleLoadContext.Current.LoadModule).Select(x => new AssemblyCatalog(x));
 
-            var containerConfiguration = new ContainerConfiguration();
-            containerConfiguration.WithAssemblies(moduleAssemblies)
-                                  .WithAssembly(Assembly.GetExecutingAssembly())
-                                  .WithAssembly(Assembly.GetEntryAssembly());
+            var executingAssembly = new AssemblyCatalog(Assembly.GetExecutingAssembly());
+            var entryAssembly = new AssemblyCatalog(Assembly.GetEntryAssembly());
 
-            container = containerConfiguration.CreateContainer();
+            var catalogs = moduleAssemblies.Append(executingAssembly).Append(entryAssembly);
+
+            var aggregateCatalog = new AggregateCatalog(catalogs);
+
+            container = new CompositionContainer(aggregateCatalog);
         }
 
         private class ModuleLoadContext : AssemblyLoadContext

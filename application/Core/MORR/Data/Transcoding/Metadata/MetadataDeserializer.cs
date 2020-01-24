@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Composition;
+using System.ComponentModel.Composition;
 using System.Text.Json;
 using System.Threading.Tasks;
 using MORR.Core.Data.Sample.Metadata;
 using MORR.Shared.Events;
 using MORR.Shared.Events.Queue;
-using MORR.Shared.Modules;
 
 namespace MORR.Core.Data.Transcoding.Metadata
 {
-    [Export(typeof(IModule))]
     public class MetadataDeserializer : IMetadataDeserializer
     {
         [ImportMany]

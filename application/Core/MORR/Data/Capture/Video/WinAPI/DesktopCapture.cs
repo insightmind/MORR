@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Composition;
+using System.ComponentModel.Composition;
 using System.Linq;
 using Windows.Graphics.Capture;
 using MORR.Core.Data.Capture.Video.WinAPI.Utility;
@@ -7,7 +7,6 @@ using MORR.Shared.Modules;
 
 namespace MORR.Core.Data.Capture.Video.WinAPI
 {
-    [Export(typeof(IModule))]
     public class DesktopCapture : ICollectingModule
     {
         private bool isActive;

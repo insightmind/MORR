@@ -1,7 +1,7 @@
 ﻿using System;
 using MORR.Shared.Modules;
 using MORR.Modules.Mouse.Producers;
-using System.Composition;
+using System.ComponentModel.Composition;
 
 namespace MORR.Modules.Mouse
 {

@@ -2,7 +2,6 @@
   "MORR.Core.Modules.GlobalModuleConfiguration": {
     "EnabledModules": [
       "MORR.Core.Data.Capture.Metadata.MetadataCapture",
-      "MORR.Core.Data.Transcoding.Metadata.MetadataDeserializer",
       "MORR.Core.Data.Capture.Video.WinAPI.DesktopCapture",
       "MORR.Modules.Mouse.MouseModule, Mouse.MORR-Module, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
       "MORR.Modules.Clipboard.ClipboardModule, Clipboard.MORR-Module, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",

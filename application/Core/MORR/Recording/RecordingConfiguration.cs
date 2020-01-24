@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Composition;
+using System.ComponentModel.Composition;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using MORR.Core.Configuration;
@@ -9,7 +9,6 @@ namespace MORR.Core.Recording
 {
     [Export(typeof(RecordingConfiguration))]
     [Export(typeof(IConfiguration))]
-    [Shared]
     public class RecordingConfiguration : IConfiguration
     {
         /// <summary>

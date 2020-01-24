@@ -1,8 +1,11 @@
-﻿namespace MORR.Core.Data.Transcoding
+﻿using System.ComponentModel.Composition;
+
+namespace MORR.Core.Data.Transcoding
 {
     /// <summary>
     ///     Encodes provided samples to a file.
     /// </summary>
+    [InheritedExport]
     public interface IEncoder
     {
         /// <summary>

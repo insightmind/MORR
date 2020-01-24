@@ -1,6 +1,6 @@
 ﻿using MORR.Shared.Events.Queue;
 using MORR.Modules.WindowManagement.Events;
-using System.Composition;
+using System.ComponentModel.Composition;
 using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
 
 namespace MORR.Modules.WindowManagement.Producers
@@ -10,7 +10,6 @@ namespace MORR.Modules.WindowManagement.Producers
     /// </summary>
     [Export(typeof(WindowStateChangedEventProducer))]
     [Export(typeof(IReadOnlyEventQueue<WindowStateChangedEvent>))]
-    [Shared]
     public class WindowStateChangedEventProducer : BoundedMultiConsumerEventQueue<WindowStateChangedEvent>
     {
         // TODO: Implement this

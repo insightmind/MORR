@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Composition;
+using System.ComponentModel.Composition;
 using MORR.Modules.Keyboard.Producers;
 using MORR.Shared.Modules;
 

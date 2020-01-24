@@ -1,7 +1,7 @@
 ﻿using System;
 using MORR.Shared.Modules;
 using MORR.Modules.WindowManagement.Producers;
-using System.Composition;
+using System.ComponentModel.Composition;
 
 namespace MORR.Modules.WindowManagement
 {

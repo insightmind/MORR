@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Composition;
+using System.ComponentModel.Composition;
 using System.Text.Json;
 using MORR.Core.Configuration;
 using MORR.Shared.Configuration;
@@ -7,7 +7,6 @@ using MORR.Shared.Configuration;
 namespace MORR.Core.Data.Capture.Video.WinAPI
 {
     [Export(typeof(DesktopCaptureConfiguration))]
-    [Export(typeof(IConfiguration))]
     public class DesktopCaptureConfiguration : IConfiguration
     {
         /// <summary>

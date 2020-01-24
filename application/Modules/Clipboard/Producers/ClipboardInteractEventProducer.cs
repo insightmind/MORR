@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MORR.Shared.Events.Queue;
+﻿using System.ComponentModel.Composition;
 using MORR.Modules.Clipboard.Events;
-using MORR.Shared.Events;
-using System.Composition;
+using MORR.Shared.Events.Queue;
 using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
 
 namespace MORR.Modules.Clipboard.Producers
@@ -14,7 +10,6 @@ namespace MORR.Modules.Clipboard.Producers
     /// </summary>
     [Export(typeof(ClipboardInteractEventProducer))]
     [Export(typeof(IReadOnlyEventQueue<ClipboardInteractEvent>))]
-    [Shared]
     public class ClipboardInteractEventProducer : BoundedMultiConsumerEventQueue<ClipboardInteractEvent>
     {
         // TODO: Implement this
