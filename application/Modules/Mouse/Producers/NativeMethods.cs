@@ -1,36 +1,44 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
+using System.Windows;
 
 namespace MORR.Modules.Mouse.Producers
 {
-    static class NativeMethods
+    internal static class NativeMethods
     {
         #region #region Constant, Structure and Delegate Definitions
+
         public struct MouseHookStruct
         {
-            POINT pt;
-            int mouseData;
-            int flags;
-            int time;
-            int dwExtraInfo;
+            public Point pt;
+            public uint mouseData;
+            public uint flags;
+            public uint time;
+            public IntPtr dwExtraInfo;
         }
 
-        public struct POINT
+        public enum HookType
         {
-            long x; //was LONG in the document
-            long y;
+            WH_MOUSE_LL = 14
         }
 
-        public delegate int LowLevelMouseProc(int code, int wParam, ref MouseHookStruct lParam);
+        public enum MessageType
+        {
+            WM_LBUTTONDOWN = 0x0201,
+            WM_RBUTTONDOWN = 0x0204,
+            WM_MBUTTONDOWN = 0x0207,
+            WM_MBUTTONDBLCLK = 0x0209,
+            WM_RBUTTONDBLCLK = 0x0206,
+            WM_LBUTTONDBLCLK = 0x0203
+        }
 
+        public delegate int LowLevelMouseProc(int code, int wParam, IntPtr lParam);
 
         #endregion
 
 
-
         #region DLL imports
+
         /// <summary>
         ///     Sets the windows hook, do the desired event, one of hInstance or threadId must be non-null
         /// </summary>
@@ -63,10 +71,16 @@ namespace MORR.Modules.Mouse.Producers
         /// <returns></returns>
         [DllImport("user32.dll")]
         public static extern int
-            CallNextHookEx(IntPtr idHook, int nCode, int wParam, ref MouseHookStruct lParam);
+            CallNextHookEx(IntPtr idHook, int nCode, int wParam, IntPtr lParam);
 
         [DllImport("kernel32.dll")]
         public static extern IntPtr GetModuleHandle(string lpModuleName);
+
+        [DllImport("user32.dll")]
+        public static extern bool GetCursorPos(out Point lpPoint);
+
+        [DllImport("user32.dll")]
+        public static extern uint GetDoubleClickTime();
 
         #endregion
     }

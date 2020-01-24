@@ -1,5 +1,4 @@
-﻿using System.Numerics;
-using System.Windows;
+﻿using System;
 
 namespace MORR.Modules.Mouse.Events
 {
