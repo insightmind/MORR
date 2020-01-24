@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using MORR.Shared.Events.Queue;
 using MORR.Modules.WebBrowser.Events;
 using MORR.Shared.Events;
 using System.Composition;
+using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
+
 namespace MORR.Modules.WebBrowser.Producers
 {
     /// <summary>
@@ -13,24 +13,20 @@ namespace MORR.Modules.WebBrowser.Producers
     [Export(typeof(FileDownloadEventProducer))]
     [Export(typeof(EventQueue<FileDownloadEvent>))]
     [Export(typeof(EventQueue<Event>))]
-    public class FileDownloadEventProducer : EventQueue<FileDownloadEvent>
+    [Export(typeof(IWebBrowserEventProducer))]
+    public class FileDownloadEventProducer : EventQueue<FileDownloadEvent>, IWebBrowserEventProducer
     {
-        /// <summary>
-        ///     Asynchronously gets all file download events as FileDownloadEvent type
-        /// </summary>
-        /// <returns>A stream of FileDownloadEvent</returns>
-        public override IAsyncEnumerable<FileDownloadEvent> GetEvents()
+        public FileDownloadEventProducer() : base(new BoundedMultiConsumerChannelStrategy<FileDownloadEvent>(64, null))
         {
-            throw new NotImplementedException();
+
         }
 
-        /// <summary>
-        ///     Asynchronously enqueues a new file download event
-        /// </summary>
-        /// <param name="event">The file download event to enqueue</param>
-        protected override void Enqueue(FileDownloadEvent @event)
+        public void Notify(WebBrowserEvent @event)
         {
-            throw new NotImplementedException();
+            if (@event is FileDownloadEvent fileDownloadEvent)
+                Enqueue(fileDownloadEvent);
         }
+
+        public Type HandledEventType => typeof(FileDownloadEvent);
     }
 }

@@ -5,6 +5,8 @@ using MORR.Shared.Events.Queue;
 using MORR.Modules.WebBrowser.Events;
 using MORR.Shared.Events;
 using System.Composition;
+using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
+
 namespace MORR.Modules.WebBrowser.Producers
 {
     /// <summary>
@@ -13,24 +15,21 @@ namespace MORR.Modules.WebBrowser.Producers
     [Export(typeof(TextSelectionEventProducer))]
     [Export(typeof(EventQueue<TextSelectionEvent>))]
     [Export(typeof(EventQueue<Event>))]
-    public class TextSelectionEventProducer : EventQueue<TextSelectionEvent>
+    [Export(typeof(IWebBrowserEventProducer))]
+    public class TextSelectionEventProducer : EventQueue<TextSelectionEvent>, IWebBrowserEventProducer
     {
-        /// <summary>
-        ///     Asynchronously gets all text selection events as TextSelectionEvent type
-        /// </summary>
-        /// <returns>A stream of TextSelectionEvent</returns>
-        public override IAsyncEnumerable<TextSelectionEvent> GetEvents()
+        public TextSelectionEventProducer() : base(
+            new BoundedMultiConsumerChannelStrategy<TextSelectionEvent>(16, null))
         {
-            throw new NotImplementedException();
+
         }
 
-        /// <summary>
-        ///     Asynchronously enqueues a new text selection event
-        /// </summary>
-        /// <param name="event">The text selection event to enqueue</param>
-        protected override void Enqueue(TextSelectionEvent @event)
+        public void Notify(WebBrowserEvent @event)
         {
-            throw new NotImplementedException();
+            if (@event is TextSelectionEvent textSelectionEvent)
+                Enqueue(textSelectionEvent);
         }
+
+        public Type HandledEventType => typeof(TextSelectionEvent);
     }
 }

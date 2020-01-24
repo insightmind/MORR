@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using MORR.Shared.Events.Queue;
 using MORR.Modules.WebBrowser.Events;
 using MORR.Shared.Events;
 using System.Composition;
+using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
+
 namespace MORR.Modules.WebBrowser.Producers
 {
     /// <summary>
@@ -13,24 +13,20 @@ namespace MORR.Modules.WebBrowser.Producers
     [Export(typeof (OpenTabEventProducer))]
     [Export(typeof(EventQueue<OpenTabEvent>))]
     [Export(typeof(EventQueue<Event>))]
-    public class OpenTabEventProducer : EventQueue<OpenTabEvent>
+    [Export(typeof(IWebBrowserEventProducer))]
+    public class OpenTabEventProducer : EventQueue<OpenTabEvent>, IWebBrowserEventProducer
     {
-        /// <summary>
-        ///     Asynchronously gets all open tab events as OpenTabEvent type
-        /// </summary>
-        /// <returns>A stream of OpenTabEvent</returns>
-        public override IAsyncEnumerable<OpenTabEvent> GetEvents()
+        public OpenTabEventProducer() : base(new BoundedMultiConsumerChannelStrategy<OpenTabEvent>(64, null))
         {
-            throw new NotImplementedException();
+
         }
 
-        /// <summary>
-        ///     Asynchronously enqueues a new open tab event
-        /// </summary>
-        /// <param name="event">The open tab event to enqueue</param>
-        protected override void Enqueue(OpenTabEvent @event)
+        public void Notify(WebBrowserEvent @event)
         {
-            throw new NotImplementedException();
+            if (@event is OpenTabEvent openTabEvent)
+                Enqueue(openTabEvent);
         }
+
+        public Type HandledEventType => typeof(OpenTabEvent);
     }
 }

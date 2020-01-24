@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using MORR.Shared.Modules;
 using System.Composition;
+using MORR.Modules.WebBrowser.Events;
 using MORR.Modules.WebBrowser.Producers;
 using MORR.Shared.Utility;
 
@@ -12,72 +14,39 @@ namespace MORR.Modules.WebBrowser
     public class WebBrowserModule : ICollectingModule
     {
         private bool isActive;
+        private WebExtensionListener listener;
         public bool IsActive
         {
             get => isActive;
-            set => Utility.SetAndDispatch(ref isActive, value, () =>throw new NotImplementedException(),
-                                          () => throw new NotImplementedException());
+            set => Utility.SetAndDispatch(ref isActive, value, 
+                                          () =>
+                                          {
+                                              listener.RecordingActive = true;
+                                          },
+                                          () =>
+                                          {
+                                              listener.RecordingActive = false;
+                                          });
         }
 
-        public Guid Identifier => throw new NotImplementedException();
+        public Guid Identifier { get; } = new Guid("e9240dc4-f33f-43db-a419-5b36d8279c88");
 
-        /// <summary>
-        /// A single-writer-multiple-reader queue for ButtonClickEvent
-        /// </summary>
-        [Import] 
-        public ButtonClickEventProducer ButtonClickEventProducer { get; private set; }
 
-        /// <summary>
-        /// A single-writer-multiple-reader queue for CloseTabEvent
-        /// </summary>
+        [ImportMany]
+        private IEnumerable<IWebBrowserEventProducer> Producers { get; set; }
+
+
         [Import]
-        public CloseTabEventProducer CloseTabEventProducer { get; private set; }
-
-        /// <summary>
-        /// A single-writer-multiple-reader queue for FileDownloadEvent
-        /// </summary> 
-        [Import]
-        public FileDownloadEventProducer FileDownloadEventProducer { get; private set; }
-
-        /// <summary>
-        /// A single-writer-multiple-reader queue for HoverEvent
-        /// </summary>
-        [Import]
-        public HoverEventProducer HoverEventProducer { get; private set; }
-
-        /// <summary>
-        /// A single-writer-multiple-reader queue for NavigationEvent
-        /// </summary>
-        [Import]
-        public NavigationEventProducer NavigationEventProducer { get; private set; }
-
-        /// <summary>
-        /// A single-writer-multiple-reader queue for OpenTabEvent
-        /// </summary>
-        [Import]
-        public OpenTabEventProducer OpenTabEventProducer { get; private set; }
-
-        /// <summary>
-        /// A single-writer-multiple-reader queue for SwitchTabEvent
-        /// </summary>
-        [Import]
-        public SwitchTabEventProducer SwitchTabEventProducer { get; private set; }
-
-        /// <summary>
-        /// A single-writer-multiple-reader queue for TextInputEvent
-        /// </summary>
-        [Import]
-        public TextInputEventProducer TextInputEventProducer { get; private set; }
-
-        /// <summary>
-        /// A single-writer-multiple-reader queue for TextSelectionEvent
-        /// </summary>
-        [Import]
-        public TextSelectionEventProducer TextSelectionEventProducer { get; private set; }
+        private WebBrowserModuleConfiguration Configuration { get; set; }
 
         public void Initialize()
         {
-            throw new NotImplementedException();
+            listener = new WebExtensionListener(Configuration.UrlSuffix);
+            listener.startListening();
+            foreach (var producer in Producers)
+            {
+                listener.SubScribe(producer, producer.EventType);
+            }
         }
     }
 }

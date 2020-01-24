@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using MORR.Shared.Events.Queue;
 using MORR.Modules.WebBrowser.Events;
 using MORR.Shared.Events;
 using System.Composition;
+using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
+
 namespace MORR.Modules.WebBrowser.Producers
 {
     /// <summary>
@@ -13,24 +13,19 @@ namespace MORR.Modules.WebBrowser.Producers
     [Export(typeof(CloseTabEventProducer))]
     [Export(typeof(EventQueue<CloseTabEvent>))]
     [Export(typeof(EventQueue<Event>))]
-    public class CloseTabEventProducer : EventQueue<CloseTabEvent>
+    [Export(typeof(IWebBrowserEventProducer))]
+    public class CloseTabEventProducer : EventQueue<CloseTabEvent>, IWebBrowserEventProducer
     {
-        /// <summary>
-        ///     Asynchronously gets all close tab events as CloseTabEvent type
-        /// </summary>
-        /// <returns>A stream of CloseTabEvent</returns>
-        public override IAsyncEnumerable<CloseTabEvent> GetEvents()
+        public CloseTabEventProducer() : base(new BoundedMultiConsumerChannelStrategy<CloseTabEvent>(64, null))
         {
-            throw new NotImplementedException();
+
+        }
+        public void Notify(WebBrowserEvent @event)
+        {
+            if (@event is CloseTabEvent closeTabEvent)
+                Enqueue(closeTabEvent);
         }
 
-        /// <summary>
-        ///     Asynchronously enqueues a new close tab event
-        /// </summary>
-        /// <param name="event">The close tab event to enqueue</param>
-        protected override void Enqueue(CloseTabEvent @event)
-        {
-            throw new NotImplementedException();
-        }
+        public Type HandledEventType => typeof(CloseTabEvent);
     }
 }

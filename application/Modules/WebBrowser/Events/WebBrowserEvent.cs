@@ -1,5 +1,5 @@
 ﻿using System;
-using MORR.Shared;
+using MORR.Shared.Events;
 
 namespace MORR.Modules.WebBrowser.Events
 {

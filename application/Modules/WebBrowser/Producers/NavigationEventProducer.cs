@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using MORR.Shared.Events.Queue;
 using MORR.Modules.WebBrowser.Events;
 using MORR.Shared.Events;
 using System.Composition;
+using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
+
 namespace MORR.Modules.WebBrowser.Producers
 {
     /// <summary>
@@ -13,24 +13,16 @@ namespace MORR.Modules.WebBrowser.Producers
     [Export(typeof(NavigationEventProducer))]
     [Export(typeof(EventQueue<NavigationEvent>))]
     [Export(typeof(EventQueue<Event>))]
-    public class NavigationEventProducer : EventQueue<NavigationEvent>
+    [Export(typeof(IWebBrowserEventProducer))]
+    public class NavigationEventProducer : EventQueue<NavigationEvent>, IWebBrowserEventProducer
     {
-        /// <summary>
-        ///     Asynchronously gets all navigation events as NavigationEvent type
-        /// </summary>
-        /// <returns>A stream of NavigationEvent</returns>
-        public override IAsyncEnumerable<NavigationEvent> GetEvents()
+        public NavigationEventProducer() : base(new BoundedMultiConsumerChannelStrategy<NavigationEvent>(64, null)) { }
+        public void Notify(WebBrowserEvent @event)
         {
-            throw new NotImplementedException();
+            if (@event is NavigationEvent navigationEvent)
+                Enqueue(navigationEvent);
         }
 
-        /// <summary>
-        ///     Asynchronously enqueues a new navigation event
-        /// </summary>
-        /// <param name="event">The navigation event to enqueue</param>
-        protected override void Enqueue(NavigationEvent @event)
-        {
-            throw new NotImplementedException();
-        }
+        public Type HandledEventType => typeof(NavigationEvent);
     }
 }

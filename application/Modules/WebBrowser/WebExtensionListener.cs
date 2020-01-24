@@ -3,15 +3,18 @@ using System.Net;
 using System.IO;
 using System.Collections.Concurrent;
 using System.Text.Json;
+using MORR.Modules.WebBrowser.Events;
 using MORR.Shared.Utility;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MORR.Modules.WebBrowser
 {
     /// <summary>
-    /// The <see cref="WebExtensionListener"/> is responsible for maintaining the connection to the WebBrowser(s).
-    /// It will answer incoming requests based on the recording state and receive incoming event data.
+    ///     The <see cref="WebExtensionListener"/> is responsible for maintaining the connection to the WebBrowser(s).
+    ///     It will answer incoming requests based on the recording state and receive incoming event data.
     /// </summary>
-    class WebExtensionListener
+    class WebExtensionListener : IWebBrowserEventObservible
     {
         #region Private helper classes
         //a private helper class to parse and identify the request
@@ -65,11 +68,13 @@ namespace MORR.Modules.WebBrowser
         private readonly ConcurrentQueue<HttpListenerResponse> startQueue;
         private readonly ConcurrentQueue<HttpListenerResponse> stopQueue;
         private readonly HttpListener listener;
+        //deliberately don't use IList, as RemoveAll function is used later
+        private readonly List<Tuple<IWebBrowserEventObserver, Type>> observers;
 
         private bool recordingActive = false;
 
         /// <summary>
-        /// Create a new WebExtensionListener, listening on localhost with port and optionally a directory determined by urlSuffix
+        ///     Create a new WebExtensionListener, listening on localhost with port and optionally a directory determined by urlSuffix
         /// </summary>
         /// <param name="urlSuffix">the url suffix consisting of port number and optional directory. Must end in a slash '/' character.</param>
         ///<exception cref = "HttpListenerException" >If a listener already listens on the given port (might also be another application).</exception>
@@ -81,6 +86,7 @@ namespace MORR.Modules.WebBrowser
             listener.Prefixes.Add(new Uri(URLPREFIX + urlSuffix).ToString()); //the short conversion to Uri is just to check URL validity
             startQueue = new ConcurrentQueue<HttpListenerResponse>();
             stopQueue = new ConcurrentQueue<HttpListenerResponse>();
+            observers = new List<Tuple<IWebBrowserEventObserver, Type>>();
         }
 
         public bool RecordingActive
@@ -90,7 +96,7 @@ namespace MORR.Modules.WebBrowser
         }
 
         /// <summary>
-        /// Start listening and handling requests.
+        ///     Start listening and handling requests.
         /// </summary>
         public void startListening()
         {
@@ -102,7 +108,7 @@ namespace MORR.Modules.WebBrowser
         }
 
         /// <summary>
-        /// Stop listening and handling requests.
+        ///     Stop listening and handling requests.
         /// </summary>
         public void stopListening()
         {
@@ -123,11 +129,11 @@ namespace MORR.Modules.WebBrowser
         }
         #region Private methods
         /// <summary>
-        /// Signal that the recording starts.
+        ///     Signal that the recording starts.
         /// </summary>
         private void Start()
         {
-            foreach (HttpListenerResponse response in startQueue)
+            foreach (var response in startQueue)
             {
                 AnswerRequest(response, new WebBrowserResponse(ResponseStrings.STARTRESPONSE));
             }
@@ -135,11 +141,11 @@ namespace MORR.Modules.WebBrowser
         }
 
         /// <summary>
-        /// Signal that the recording stops.
+        ///     Signal that the recording stops.
         /// </summary>
         private void Stop()
         {
-            foreach (HttpListenerResponse response in stopQueue)
+            foreach (var response in stopQueue)
             {
                 AnswerRequest(response, new WebBrowserResponse(ResponseStrings.STOPRESPONSE));
             }
@@ -242,7 +248,27 @@ namespace MORR.Modules.WebBrowser
                 url = newUrl;
             return newUrl;
         }
+        #endregion
 
+        #region Observer pattern implementation
+        public void SubScribe(IWebBrowserEventObserver observer, Type eventType)
+        {
+            this.observers.RemoveAll(tuple => tuple.Item1 == observer);
+            this.observers.Add(new Tuple<IWebBrowserEventObserver, Type>(observer, eventType));
+        }
+
+        public void UnSubScribe(IWebBrowserEventObserver observer)
+        {
+            this.observers.RemoveAll(tuple => tuple.Item1 == observer);
+        }
+
+        private void NotifyAll(WebBrowserEvent @event)
+        {
+            foreach (var tuple in observers.FindAll(tuple => (tuple.Item2 == @event.GetType())))
+            {
+                tuple.Item1.Notify(@event);
+            }
+        }
         #endregion
     }
 }

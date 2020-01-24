@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Composition;
 using MORR.Shared.Events.Queue;
 using MORR.Modules.WebBrowser.Events;
+using MORR.Shared.Events;
+using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
 
 namespace MORR.Modules.WebBrowser.Producers
 {
@@ -13,23 +14,20 @@ namespace MORR.Modules.WebBrowser.Producers
     [Export(typeof(SwitchTabEventProducer))]
     [Export(typeof(EventQueue<SwitchTabEvent>))]
     [Export(typeof(EventQueue<Event>))]
-    public class SwitchTabEventProducer : EventQueue<SwitchTabEvent>
+    [Export(typeof(IWebBrowserEventProducer))]
+    public class SwitchTabEventProducer : EventQueue<SwitchTabEvent>, IWebBrowserEventProducer
     {
-        /// <summary>
-        ///     Asynchronously gets all switch tab events as SwitchTabEvent type
-        /// </summary>
-        /// <returns>A stream of SwitchTabEvent</returns>
-        public override IAsyncEnumerable<SwitchTabEvent> GetEvents()
+        public SwitchTabEventProducer() : base(new BoundedMultiConsumerChannelStrategy<SwitchTabEvent>(64, null))
         {
-            throw new NotImplementedException();
+
         }
-        /// <summary>
-        ///     Asynchronously enqueues a new switch tab event
-        /// </summary>
-        /// <param name="event">The switch tab event to enqueue</param>
-        protected override void Enqueue(SwitchTabEvent @event)
+
+        public void Notify(WebBrowserEvent @event)
         {
-            throw new NotImplementedException();
+            if (@event is SwitchTabEvent switchTabEvent)
+                Enqueue(switchTabEvent);
         }
+
+        public Type HandledEventType => typeof(SwitchTabEvent);
     }
 }

@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using MORR.Shared.Events.Queue;
 using MORR.Modules.WebBrowser.Events;
 using MORR.Shared.Events;
 using System.Composition;
+using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
+
 namespace MORR.Modules.WebBrowser.Producers
 {
     /// <summary>
@@ -13,24 +13,20 @@ namespace MORR.Modules.WebBrowser.Producers
     [Export(typeof(HoverEventProducer))]
     [Export(typeof(EventQueue<HoverEvent>))]
     [Export(typeof(EventQueue<Event>))]
-    public class HoverEventProducer : EventQueue<HoverEvent>
+    [Export(typeof(IWebBrowserEventProducer))]
+    public class HoverEventProducer : EventQueue<HoverEvent>, IWebBrowserEventProducer
     {
-        /// <summary>
-        ///     Asynchronously gets all hover events as HoverEvent type
-        /// </summary>
-        /// <returns>A stream of HoverEvent</returns>
-        public override IAsyncEnumerable<HoverEvent> GetEvents()
+        public HoverEventProducer() : base(new BoundedMultiConsumerChannelStrategy<HoverEvent>(16, null))
         {
-            throw new NotImplementedException();
+
         }
 
-        /// <summary>
-        ///     Asynchronously enqueues a new hover event
-        /// </summary>
-        /// <param name="event">The hover event to enqueue</param>
-        protected override void Enqueue(HoverEvent @event)
+        public void Notify(WebBrowserEvent @event)
         {
-            throw new NotImplementedException();
+            if (@event is HoverEvent hoverEvent)
+                Enqueue(hoverEvent);
         }
+
+        public Type HandledEventType => typeof(HoverEvent);
     }
 }
