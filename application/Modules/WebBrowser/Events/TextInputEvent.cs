@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json;
 
 namespace MORR.Modules.WebBrowser.Events
 {
@@ -16,6 +17,13 @@ namespace MORR.Modules.WebBrowser.Events
         /// The textbox where the text was inputted in
         /// </summary>
        public string Textbox { get; set; }
+
+        protected override void DeserializeSpecificAttributes(JsonDocument parsed)
+        {
+            var root = parsed.RootElement;
+            InputtedText = root.GetProperty("text").GetString();
+            Textbox = root.GetProperty("target").GetString();
+        }
     }
 }
  

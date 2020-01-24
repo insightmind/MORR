@@ -19,6 +19,10 @@ namespace MORR.Modules.WebBrowser.Producers
 
         }
 
+        /// <summary>
+        ///     Simply forward the event to the internal queue if its of the appropriate type. Ignore otherwise.
+        /// </summary>
+        /// <param name="event"></param>
         public void Notify(WebBrowserEvent @event)
         {
             if (@event is T specificEvent)

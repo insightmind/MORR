@@ -205,8 +205,14 @@ namespace MORR.Modules.WebBrowser
                             startQueue.Enqueue(context.Response);
                         break;
                     case (WebBrowserRequestType.SENDDATA):
-                        //TODO: do something with data
-                        AnswerRequest(context.Response, new WebBrowserResponse(ResponseStrings.POSITIVERESPONSE));
+                        if (request.Data != null && DeserializeEventAndBroadcast(request))
+                        {
+                            AnswerRequest(context.Response, new WebBrowserResponse(ResponseStrings.POSITIVERESPONSE));
+                        }
+                        else
+                        {
+                            AnswerInvalid(context.Response);
+                        }
                         break;
                     case (WebBrowserRequestType.WAITSTOP):
                         if (!recordingActive)
@@ -247,6 +253,61 @@ namespace MORR.Modules.WebBrowser
             while ((newUrl = Uri.UnescapeDataString(url)) != url)
                 url = newUrl;
             return newUrl;
+        }
+
+        private bool DeserializeEventAndBroadcast(WebBrowserRequest request)
+        {
+            var parsed = JsonDocument.Parse(request.Data);
+            EventLabel label;
+            if (!Enum.TryParse(parsed.RootElement.GetProperty("type").ToString(), true, out label))
+                return false;
+
+            WebBrowserEvent @event;
+            //choose event class based on type label
+            //there may be some smoother way to map from string to class
+            switch (label)
+            {
+                case (EventLabel.BUTTONCLICK):
+                    @event = new ButtonClickEvent();
+                    break;
+                case (EventLabel.CLOSETAB):
+                    @event = new CloseTabEvent();
+                    break;
+                case (EventLabel.OPENTAB):
+                    @event = new OpenTabEvent();
+                    break;
+                case (EventLabel.SWITCHTAB):
+                    @event = new SwitchTabEvent();
+                    break;
+                case (EventLabel.NAVIGATION):
+                    @event = new NavigationEvent();
+                    break;
+                case (EventLabel.TEXTINPUT):
+                    @event = new TextInputEvent();
+                    break;
+                case (EventLabel.TEXTSELECTION):
+                    @event = new TextSelectionEvent();
+                    break;
+                case (EventLabel.DOWNLOAD):
+                    @event = new FileDownloadEvent();
+                    break;
+                case (EventLabel.HOVER):
+                    @event = new HoverEvent();
+                    break;
+                default:
+                    return false;
+            }
+
+            try
+            {
+                @event.Deserialize(parsed);
+            }
+            catch (KeyNotFoundException)
+            {
+                return false;
+            }
+            NotifyAll(@event);
+            return true;
         }
         #endregion
 
