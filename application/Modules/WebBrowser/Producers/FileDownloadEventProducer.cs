@@ -1,7 +1,6 @@
-﻿using MORR.Shared.Events.Queue;
+﻿using System.ComponentModel.Composition;
 using MORR.Modules.WebBrowser.Events;
-using System.ComponentModel.Composition;
-using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
+using MORR.Shared.Events.Queue;
 
 namespace MORR.Modules.WebBrowser.Producers
 {
@@ -10,7 +9,7 @@ namespace MORR.Modules.WebBrowser.Producers
     /// </summary>
     [Export(typeof(FileDownloadEventProducer))]
     [Export(typeof(IReadOnlyEventQueue<FileDownloadEvent>))]
-    public class FileDownloadEventProducer : BoundedMultiConsumerEventQueue<FileDownloadEvent>
+    public class FileDownloadEventProducer : DefaultEventQueue<FileDownloadEvent>
     {
         // TODO: Implement this
     }

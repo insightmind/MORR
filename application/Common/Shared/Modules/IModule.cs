@@ -1,12 +1,10 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 
 namespace MORR.Shared.Modules
 {
     /// <summary>
     ///     A module.
     /// </summary>
-    [InheritedExport]
     public interface IModule
     {
         /// <summary>

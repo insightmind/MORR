@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.Composition;
 using MORR.Modules.WebBrowser.Events;
 using MORR.Shared.Events.Queue;
-using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
 
 namespace MORR.Modules.WebBrowser.Producers
 {
@@ -10,7 +9,7 @@ namespace MORR.Modules.WebBrowser.Producers
     /// </summary>
     [Export(typeof(ButtonClickEventProducer))]
     [Export(typeof(IReadOnlyEventQueue<ButtonClickEvent>))]
-    public class ButtonClickEventProducer : BoundedMultiConsumerEventQueue<ButtonClickEvent>
+    public class ButtonClickEventProducer : DefaultEventQueue<ButtonClickEvent>
     {
         // TODO: Implement this
     }

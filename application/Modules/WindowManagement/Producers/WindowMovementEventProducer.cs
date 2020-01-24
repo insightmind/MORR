@@ -1,7 +1,6 @@
-﻿using MORR.Shared.Events.Queue;
+﻿using System.ComponentModel.Composition;
 using MORR.Modules.WindowManagement.Events;
-using System.ComponentModel.Composition;
-using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
+using MORR.Shared.Events.Queue;
 
 namespace MORR.Modules.WindowManagement.Producers
 {
@@ -10,7 +9,7 @@ namespace MORR.Modules.WindowManagement.Producers
     /// </summary>
     [Export(typeof(WindowMovementEventProducer))]
     [Export(typeof(IReadOnlyEventQueue<WindowMovementEvent>))]
-    public class WindowMovementEventProducer : BoundedMultiConsumerEventQueue<WindowMovementEvent>
+    public class WindowMovementEventProducer : DefaultEventQueue<WindowMovementEvent>
     {
         // TODO: Implement this
     }

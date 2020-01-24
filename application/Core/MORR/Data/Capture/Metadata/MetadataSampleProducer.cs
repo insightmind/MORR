@@ -5,12 +5,13 @@ using System.Threading.Tasks;
 using MORR.Core.Data.Sample.Metadata;
 using MORR.Shared.Events;
 using MORR.Shared.Events.Queue;
-using MORR.Shared.Events.Queue.Strategy.SingleConsumer;
 
 namespace MORR.Core.Data.Capture.Metadata
 {
     [Export(typeof(MetadataSampleProducer))]
-    public class MetadataSampleProducer : BoundedSingleConsumerEventQueue<MetadataSample>
+    [Export(typeof(ITranscodeableEventQueue<MetadataSample>))]
+    [Export(typeof(ITranscodeableEventQueue<Event>))]
+    public class MetadataSampleProducer : DefaultTranscodeableEventQueue<MetadataSample>
     {
         [ImportMany]
         private IEnumerable<IReadOnlyEventQueue<Event>> EventQueues { get; set; }

@@ -11,7 +11,7 @@ namespace MORR.Core.CLI.Output
     public class OutputFormatter : IOutputFormatter
     {
         [Import]
-        private IReadOnlyEventQueue<MetadataSample> MetadataQueue { get; set; }
+        private ITranscodeableEventQueue<MetadataSample> MetadataQueue { get; set; }
 
         public async void Encode()
         {

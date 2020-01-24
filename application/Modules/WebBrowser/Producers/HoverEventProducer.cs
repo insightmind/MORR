@@ -1,7 +1,6 @@
-﻿using MORR.Shared.Events.Queue;
+﻿using System.ComponentModel.Composition;
 using MORR.Modules.WebBrowser.Events;
-using System.ComponentModel.Composition;
-using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
+using MORR.Shared.Events.Queue;
 
 namespace MORR.Modules.WebBrowser.Producers
 {
@@ -10,7 +9,7 @@ namespace MORR.Modules.WebBrowser.Producers
     /// </summary>
     [Export(typeof(HoverEventProducer))]
     [Export(typeof(IReadOnlyEventQueue<HoverEvent>))]
-    public class HoverEventProducer : BoundedMultiConsumerEventQueue<HoverEvent>
+    public class HoverEventProducer : DefaultEventQueue<HoverEvent>
     {
         // TODO: Implement this
     }

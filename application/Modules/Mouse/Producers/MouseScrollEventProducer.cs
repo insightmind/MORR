@@ -1,7 +1,6 @@
-﻿using MORR.Shared.Events.Queue;
+﻿using System.ComponentModel.Composition;
 using MORR.Modules.Mouse.Events;
-using System.ComponentModel.Composition;
-using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
+using MORR.Shared.Events.Queue;
 
 namespace MORR.Modules.Mouse.Producers
 {
@@ -10,7 +9,7 @@ namespace MORR.Modules.Mouse.Producers
     /// </summary>
     [Export(typeof(MouseScrollEventProducer))]
     [Export(typeof(IReadOnlyEventQueue<MouseScrollEvent>))]
-    public class MouseScrollEventProducer : BoundedMultiConsumerEventQueue<MouseScrollEvent>
+    public class MouseScrollEventProducer : DefaultEventQueue<MouseScrollEvent>
     {
         // TODO: Implement this
     }

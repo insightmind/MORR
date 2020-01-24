@@ -1,7 +1,6 @@
-﻿using MORR.Shared.Events.Queue;
+﻿using System.ComponentModel.Composition;
 using MORR.Modules.WebBrowser.Events;
-using System.ComponentModel.Composition;
-using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
+using MORR.Shared.Events.Queue;
 
 namespace MORR.Modules.WebBrowser.Producers
 {
@@ -10,7 +9,7 @@ namespace MORR.Modules.WebBrowser.Producers
     /// </summary>
     [Export(typeof(TextInputEventProducer))]
     [Export(typeof(IReadOnlyEventQueue<TextInputEvent>))]
-    public class TextInputEventProducer : BoundedMultiConsumerEventQueue<TextInputEvent>
+    public class TextInputEventProducer : DefaultEventQueue<TextInputEvent>
     {
         // TODO: Implement this
     }

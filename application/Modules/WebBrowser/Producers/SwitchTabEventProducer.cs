@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.Composition;
-using MORR.Shared.Events.Queue;
 using MORR.Modules.WebBrowser.Events;
-using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
+using MORR.Shared.Events.Queue;
 
 namespace MORR.Modules.WebBrowser.Producers
 {
@@ -10,7 +9,7 @@ namespace MORR.Modules.WebBrowser.Producers
     /// </summary>
     [Export(typeof(SwitchTabEventProducer))]
     [Export(typeof(IReadOnlyEventQueue<SwitchTabEvent>))]
-    public class SwitchTabEventProducer : BoundedMultiConsumerEventQueue<SwitchTabEvent>
+    public class SwitchTabEventProducer : DefaultEventQueue<SwitchTabEvent>
     {
         // TODO: Implement this
     }

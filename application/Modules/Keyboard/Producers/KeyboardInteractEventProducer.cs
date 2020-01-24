@@ -14,7 +14,7 @@ namespace MORR.Modules.Keyboard.Producers
     /// </summary>
     [Export(typeof(KeyboardInteractEventProducer))]
     [Export(typeof(IReadOnlyEventQueue<KeyboardInteractEvent>))]
-    public class KeyboardInteractEventProducer : BoundedMultiConsumerEventQueue<KeyboardInteractEvent>
+    public class KeyboardInteractEventProducer : DefaultEventQueue<KeyboardInteractEvent>
     {
         private IntPtr hook = IntPtr.Zero;
 
