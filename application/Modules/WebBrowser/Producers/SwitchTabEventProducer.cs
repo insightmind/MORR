@@ -14,20 +14,10 @@ namespace MORR.Modules.WebBrowser.Producers
     [Export(typeof(SwitchTabEventProducer))]
     [Export(typeof(EventQueue<SwitchTabEvent>))]
     [Export(typeof(EventQueue<Event>))]
-    [Export(typeof(IWebBrowserEventProducer))]
-    public class SwitchTabEventProducer : EventQueue<SwitchTabEvent>, IWebBrowserEventProducer
+    [Export(typeof(WebBrowserEventProducer<SwitchTabEvent>))]
+    [Export(typeof(WebBrowserEventProducer<WebBrowserEvent>))]
+    public class SwitchTabEventProducer : WebBrowserEventProducer<SwitchTabEvent>
     {
-        public SwitchTabEventProducer() : base(new BoundedMultiConsumerChannelStrategy<SwitchTabEvent>(64, null))
-        {
 
-        }
-
-        public void Notify(WebBrowserEvent @event)
-        {
-            if (@event is SwitchTabEvent switchTabEvent)
-                Enqueue(switchTabEvent);
-        }
-
-        public Type HandledEventType => typeof(SwitchTabEvent);
     }
 }

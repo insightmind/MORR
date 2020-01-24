@@ -15,21 +15,9 @@ namespace MORR.Modules.WebBrowser.Producers
     [Export(typeof(TextSelectionEventProducer))]
     [Export(typeof(EventQueue<TextSelectionEvent>))]
     [Export(typeof(EventQueue<Event>))]
-    [Export(typeof(IWebBrowserEventProducer))]
-    public class TextSelectionEventProducer : EventQueue<TextSelectionEvent>, IWebBrowserEventProducer
+    [Export(typeof(WebBrowserEventProducer<TextSelectionEvent>))]
+    [Export(typeof(WebBrowserEventProducer<WebBrowserEvent>))]
+    public class TextSelectionEventProducer : WebBrowserEventProducer<TextSelectionEvent>
     {
-        public TextSelectionEventProducer() : base(
-            new BoundedMultiConsumerChannelStrategy<TextSelectionEvent>(16, null))
-        {
-
-        }
-
-        public void Notify(WebBrowserEvent @event)
-        {
-            if (@event is TextSelectionEvent textSelectionEvent)
-                Enqueue(textSelectionEvent);
-        }
-
-        public Type HandledEventType => typeof(TextSelectionEvent);
     }
 }

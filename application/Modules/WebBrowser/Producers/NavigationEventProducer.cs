@@ -13,16 +13,9 @@ namespace MORR.Modules.WebBrowser.Producers
     [Export(typeof(NavigationEventProducer))]
     [Export(typeof(EventQueue<NavigationEvent>))]
     [Export(typeof(EventQueue<Event>))]
-    [Export(typeof(IWebBrowserEventProducer))]
-    public class NavigationEventProducer : EventQueue<NavigationEvent>, IWebBrowserEventProducer
+    [Export(typeof(WebBrowserEventProducer<NavigationEvent>))]
+    [Export(typeof(WebBrowserEventProducer<WebBrowserEvent>))]
+    public class NavigationEventProducer :  WebBrowserEventProducer<NavigationEvent>
     {
-        public NavigationEventProducer() : base(new BoundedMultiConsumerChannelStrategy<NavigationEvent>(64, null)) { }
-        public void Notify(WebBrowserEvent @event)
-        {
-            if (@event is NavigationEvent navigationEvent)
-                Enqueue(navigationEvent);
-        }
-
-        public Type HandledEventType => typeof(NavigationEvent);
     }
 }

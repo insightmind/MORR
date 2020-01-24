@@ -13,20 +13,10 @@ namespace MORR.Modules.WebBrowser.Producers
     [Export(typeof(TextInputEventProducer))]
     [Export(typeof(EventQueue<TextInputEvent>))]
     [Export(typeof(EventQueue<Event>))]
-    [Export(typeof(IWebBrowserEventProducer))]
-    public class TextInputEventProducer : EventQueue<TextInputEvent>, IWebBrowserEventProducer
+    [Export(typeof(WebBrowserEventProducer<TextInputEvent>))]
+    [Export(typeof(WebBrowserEventProducer<WebBrowserEvent>))]
+    public class TextInputEventProducer : WebBrowserEventProducer<TextInputEvent>
     {
-        public TextInputEventProducer() : base(new BoundedMultiConsumerChannelStrategy<TextInputEvent>(64, null))
-        {
 
-        }
-
-        public void Notify(WebBrowserEvent @event)
-        {
-            if (@event is TextInputEvent textInputEvent)
-                Enqueue(textInputEvent);
-        }
-
-        public Type HandledEventType => typeof(TextInputEvent);
     }
 }

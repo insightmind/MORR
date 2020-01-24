@@ -13,20 +13,9 @@ namespace MORR.Modules.WebBrowser.Producers
     [Export(typeof(HoverEventProducer))]
     [Export(typeof(EventQueue<HoverEvent>))]
     [Export(typeof(EventQueue<Event>))]
-    [Export(typeof(IWebBrowserEventProducer))]
-    public class HoverEventProducer : EventQueue<HoverEvent>, IWebBrowserEventProducer
+    [Export(typeof(WebBrowserEventProducer<HoverEvent>))]
+    [Export(typeof(WebBrowserEventProducer<WebBrowserEvent>))]
+    public class HoverEventProducer : WebBrowserEventProducer<HoverEvent>
     {
-        public HoverEventProducer() : base(new BoundedMultiConsumerChannelStrategy<HoverEvent>(16, null))
-        {
-
-        }
-
-        public void Notify(WebBrowserEvent @event)
-        {
-            if (@event is HoverEvent hoverEvent)
-                Enqueue(hoverEvent);
-        }
-
-        public Type HandledEventType => typeof(HoverEvent);
     }
 }

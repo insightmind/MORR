@@ -13,20 +13,10 @@ namespace MORR.Modules.WebBrowser.Producers
     [Export(typeof (OpenTabEventProducer))]
     [Export(typeof(EventQueue<OpenTabEvent>))]
     [Export(typeof(EventQueue<Event>))]
-    [Export(typeof(IWebBrowserEventProducer))]
-    public class OpenTabEventProducer : EventQueue<OpenTabEvent>, IWebBrowserEventProducer
+    [Export(typeof(WebBrowserEventProducer<OpenTabEvent>))]
+    [Export(typeof(WebBrowserEventProducer<WebBrowserEvent>))]
+    public class OpenTabEventProducer : WebBrowserEventProducer<OpenTabEvent>
     {
-        public OpenTabEventProducer() : base(new BoundedMultiConsumerChannelStrategy<OpenTabEvent>(64, null))
-        {
 
-        }
-
-        public void Notify(WebBrowserEvent @event)
-        {
-            if (@event is OpenTabEvent openTabEvent)
-                Enqueue(openTabEvent);
-        }
-
-        public Type HandledEventType => typeof(OpenTabEvent);
     }
 }

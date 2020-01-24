@@ -13,19 +13,10 @@ namespace MORR.Modules.WebBrowser.Producers
     [Export(typeof(ButtonClickEventProducer))]
     [Export(typeof(EventQueue<ButtonClickEvent>))]
     [Export(typeof(EventQueue<Event>))]
-    [Export(typeof(IWebBrowserEventProducer))]
-    public class ButtonClickEventProducer : EventQueue<ButtonClickEvent>, IWebBrowserEventProducer
+    [Export(typeof(WebBrowserEventProducer<ButtonClickEvent>))]
+    [Export(typeof(WebBrowserEventProducer<WebBrowserEvent>))]
+    public class ButtonClickEventProducer :  WebBrowserEventProducer<ButtonClickEvent>
     {
-        public ButtonClickEventProducer() : base(new BoundedMultiConsumerChannelStrategy<ButtonClickEvent>(256, null))
-        {
 
-        }
-        public void Notify(WebBrowserEvent @event)
-        {
-            if (@event is ButtonClickEvent buttonClickEvent)
-                Enqueue(buttonClickEvent);
-        }
-
-        public Type HandledEventType => typeof(ButtonClickEvent);
     }
 }

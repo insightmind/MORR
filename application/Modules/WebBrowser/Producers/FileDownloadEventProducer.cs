@@ -1,9 +1,7 @@
-﻿using System;
-using MORR.Shared.Events.Queue;
+﻿using MORR.Shared.Events.Queue;
 using MORR.Modules.WebBrowser.Events;
 using MORR.Shared.Events;
 using System.Composition;
-using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
 
 namespace MORR.Modules.WebBrowser.Producers
 {
@@ -13,20 +11,9 @@ namespace MORR.Modules.WebBrowser.Producers
     [Export(typeof(FileDownloadEventProducer))]
     [Export(typeof(EventQueue<FileDownloadEvent>))]
     [Export(typeof(EventQueue<Event>))]
-    [Export(typeof(IWebBrowserEventProducer))]
-    public class FileDownloadEventProducer : EventQueue<FileDownloadEvent>, IWebBrowserEventProducer
+    [Export(typeof(WebBrowserEventProducer<FileDownloadEvent>))]
+    [Export(typeof(WebBrowserEventProducer<WebBrowserEvent>))]
+    public class FileDownloadEventProducer :  WebBrowserEventProducer<FileDownloadEvent>
     {
-        public FileDownloadEventProducer() : base(new BoundedMultiConsumerChannelStrategy<FileDownloadEvent>(64, null))
-        {
-
-        }
-
-        public void Notify(WebBrowserEvent @event)
-        {
-            if (@event is FileDownloadEvent fileDownloadEvent)
-                Enqueue(fileDownloadEvent);
-        }
-
-        public Type HandledEventType => typeof(FileDownloadEvent);
     }
 }

@@ -13,19 +13,9 @@ namespace MORR.Modules.WebBrowser.Producers
     [Export(typeof(CloseTabEventProducer))]
     [Export(typeof(EventQueue<CloseTabEvent>))]
     [Export(typeof(EventQueue<Event>))]
-    [Export(typeof(IWebBrowserEventProducer))]
-    public class CloseTabEventProducer : EventQueue<CloseTabEvent>, IWebBrowserEventProducer
+    [Export(typeof(WebBrowserEventProducer<CloseTabEvent>))]
+    [Export(typeof(WebBrowserEventProducer<WebBrowserEvent>))]
+    public class CloseTabEventProducer :  WebBrowserEventProducer<CloseTabEvent>
     {
-        public CloseTabEventProducer() : base(new BoundedMultiConsumerChannelStrategy<CloseTabEvent>(64, null))
-        {
-
-        }
-        public void Notify(WebBrowserEvent @event)
-        {
-            if (@event is CloseTabEvent closeTabEvent)
-                Enqueue(closeTabEvent);
-        }
-
-        public Type HandledEventType => typeof(CloseTabEvent);
     }
 }
