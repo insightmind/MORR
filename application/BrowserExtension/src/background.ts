@@ -2,7 +2,6 @@ import '@babel/polyfill'
 import { BrowserEvent } from './Shared/SharedDeclarations'
 import { ICommunicationStrategy, PostHTTPInterface } from './ApplicationInterface/';
 import ListenerManager from "./ListenerManager"
-import * as Mock from './__mock__'
 
 enum ExtensionState {
     Disconnected,
@@ -27,6 +26,7 @@ class BackgroundScript {
      * Helper variables
      */
     private configString : string | undefined;
+    private isConnected : boolean;
     private static readonly RETRYDELAYMS = 5000;
     private isRecording : boolean;
 
@@ -34,6 +34,7 @@ class BackgroundScript {
      * Creates an instance of background script and initializes the listeners.
      */
     constructor() {
+        this.isConnected = false;
         this.listenerManager = new ListenerManager(this.callback);
         this.appInterface = new PostHTTPInterface();
         this.appInterface.addOnStopListener((error? : boolean) => {
@@ -76,11 +77,14 @@ class BackgroundScript {
 
     //completely reset the connection status
     private reset = () : void => {
-        if (this.isRecording) {
-            this.isRecording = false;
-            this.listenerManager.stopAll();
+        if (this.isConnected) {
+            this.isConnected = false;
+            if (this.isRecording) {
+                this.isRecording = false;
+                this.listenerManager.stopAll();
+            }
+            setTimeout(this.run, BackgroundScript.RETRYDELAYMS);
         }
-        this.run();
     }
 
 
@@ -88,13 +92,18 @@ class BackgroundScript {
      * Connect to the main application and start recording when receiving the corresponding signal from the main application.
      */
     public run = () : void => {
+        this.isConnected = false;
         this.setStatusIcon(ExtensionState.Disconnected);
         this.establishConnection(true)
         .then(() => {
+            this.isConnected = true;
             this.setStatusIcon(ExtensionState.Ready);
             return this.appInterface.waitForStart();
         }).then(() => this.start())
-        .catch((e) => this.run());
+        .catch(() => {
+            this.isConnected = false;
+            setTimeout(this.run, BackgroundScript.RETRYDELAYMS)
+        });
     }
 
     /**
@@ -103,7 +112,7 @@ class BackgroundScript {
     public callback = (event : BrowserEvent) : void => {
         console.log(`${BackgroundScript.timeStampString(event.timeStamp)}: ${event.type} occured in tab ${event.tabID} in window ${event.windowID}`);
         this.appInterface.sendData(event.serialize(true))
-        .catch((e) => {
+        .catch(() => {
             this.reset();
         });
     }
