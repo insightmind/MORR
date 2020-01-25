@@ -4,6 +4,6 @@ namespace MORR.Core.CLI.Output
 {
     public interface IOutputFormatter : IEncoder
     {
-        // TODO: Implement this
+        // This is supposed to be empty
     }
 }

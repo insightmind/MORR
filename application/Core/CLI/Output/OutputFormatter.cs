@@ -1,17 +1,19 @@
-﻿using System;
-using System.ComponentModel.Composition;
-using System.Text.Json;
-using MORR.Core.Data.Sample.Metadata;
+﻿using MORR.Core.Data.Sample.Metadata;
 using MORR.Core.Data.Transcoding;
 using MORR.Core.Data.Transcoding.Exceptions;
-using MORR.Shared.Events;
 using MORR.Shared.Events.Queue;
+using System;
+using System.ComponentModel.Composition;
+using System.Text;
+using System.Text.Json;
 
 namespace MORR.Core.CLI.Output
 {
     [Export(typeof(IEncoder))]
     public class OutputFormatter : IOutputFormatter
     {
+        private static readonly string DateFormatString = "HH:mm:ss.fff";
+
         [Import]
         private ITranscodeableEventQueue<MetadataSample> MetadataQueue { get; set; }
 
@@ -24,6 +26,7 @@ namespace MORR.Core.CLI.Output
 
             await foreach (var sample in MetadataQueue.GetEvents())
             {
+
                 PrintSample(sample);
             }
         }
@@ -35,8 +38,10 @@ namespace MORR.Core.CLI.Output
                 throw new EncodingException();
             }
 
-            var @event = JsonSerializer.Deserialize(sample.SerializedData, sample.EventType) as Event;
-            Console.WriteLine($"{@event.Timestamp.ToShortTimeString()}: {sample.SerializedData}");
+            var output = Encoding.UTF8.GetString(sample.SerializedData);
+            var timestamp = DateTime.Now.ToString(DateFormatString);
+
+            Console.WriteLine($"{timestamp}: {output}");
         }
 
         private static void PrintError(Exception exception)

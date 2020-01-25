@@ -25,7 +25,7 @@ namespace MORR.Core.Data.Capture.Metadata
         private static MetadataSample MakeMetadataSample(Event @event)
         {
             var eventType = @event.GetType();
-            var serializedData = JsonSerializer.SerializeToUtf8Bytes(@event);
+            var serializedData = JsonSerializer.SerializeToUtf8Bytes(@event, eventType);
 
             var sample = new MetadataSample
             {
