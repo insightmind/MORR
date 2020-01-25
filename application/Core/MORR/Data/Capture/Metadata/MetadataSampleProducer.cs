@@ -11,6 +11,7 @@ namespace MORR.Core.Data.Capture.Metadata
     [Export(typeof(MetadataSampleProducer))]
     [Export(typeof(ITranscodeableEventQueue<MetadataSample>))]
     [Export(typeof(ITranscodeableEventQueue<Event>))]
+    [PartCreationPolicy(CreationPolicy.Shared)]
     public class MetadataSampleProducer : DefaultTranscodeableEventQueue<MetadataSample>
     {
         [ImportMany]

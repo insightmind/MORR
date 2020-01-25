@@ -21,7 +21,9 @@ namespace MORR.Core.CLI.Commands.Record
                 IRecordingManager recordingManager = new RecordingManager(configPath);
                 recordingManager.StartRecording();
 
-                while (true) { }
+                // Run message loop required for Windows hooks
+                NativeMethods.DoWin32MessageLoop();
+                return 0;
             }
             catch (ArgumentException exception)
             {
