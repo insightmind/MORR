@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.Timers;
+using MORR.Shared.Events;
 using MORR.Shared.Events.Queue;
 using MORR.Shared.Modules;
 
@@ -8,9 +9,11 @@ namespace MORR.Core.CLI.Demo
 {
     [Export(typeof(IModule))]
     [Export(typeof(IReadOnlyEventQueue<DemoEvent>))]
+    [Export(typeof(IReadOnlyEventQueue<Event>))]
     public class DemoProducer : BoundedMultiConsumerEventQueue<DemoEvent>, IModule
     {
         private Timer timer;
+        private int produced;
 
         public bool IsActive
         {
@@ -26,11 +29,14 @@ namespace MORR.Core.CLI.Demo
             timer.AutoReset = true;
             timer.Enabled = false;
             timer.Elapsed += GenerateEvent;
+            produced = 0;
         }
 
         private void GenerateEvent(Object source, ElapsedEventArgs args)
         {
-            Enqueue(new DemoEvent());
+            produced++;
+            var @event = new DemoEvent {Num = produced, IssuingModule = Identifier};
+            Enqueue(@event);
         }
 
     }
