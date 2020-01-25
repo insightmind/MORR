@@ -20,8 +20,6 @@ namespace MORR.Core.Data.Capture.Video.WinAPI
         /// </summary>
         public bool PromptUserForMonitorSelection { get; private set; }
 
-        public string Identifier { get; } = "DesktopCapture";
-
         public void Parse(RawConfiguration configuration)
         {
             var element = JsonDocument.Parse(configuration.RawValue).RootElement;
