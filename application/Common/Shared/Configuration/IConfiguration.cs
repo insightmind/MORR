@@ -9,8 +9,6 @@ namespace MORR.Shared.Configuration
     [InheritedExport]
     public interface IConfiguration
     {
-        string GetIdentifier() => GetType().ToString();
-
         /// <summary>
         ///     Parses the configuration from the provided value
         /// </summary>
