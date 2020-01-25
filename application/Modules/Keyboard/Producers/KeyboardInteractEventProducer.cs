@@ -4,8 +4,8 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
 using MORR.Modules.Keyboard.Events;
+using MORR.Shared.Events;
 using MORR.Shared.Events.Queue;
-using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
 
 namespace MORR.Modules.Keyboard.Producers
 {
@@ -14,6 +14,8 @@ namespace MORR.Modules.Keyboard.Producers
     /// </summary>
     [Export(typeof(KeyboardInteractEventProducer))]
     [Export(typeof(IReadOnlyEventQueue<KeyboardInteractEvent>))]
+    [Export(typeof(IReadOnlyEventQueue<Event>))]
+    [PartCreationPolicy(CreationPolicy.Shared)]
     public class KeyboardInteractEventProducer : DefaultEventQueue<KeyboardInteractEvent>
     {
         private IntPtr hook = IntPtr.Zero;
@@ -30,7 +32,6 @@ namespace MORR.Modules.Keyboard.Producers
                 public int time;
                 public int dwExtraInfo;
             }
-
 
             public enum HookType
             {
