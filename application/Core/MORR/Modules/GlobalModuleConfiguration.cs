@@ -9,7 +9,7 @@ using MORR.Shared.Modules;
 
 namespace MORR.Core.Modules
 {
-    [Export(typeof(GlobalModuleConfiguration)), PartCreationPolicy(CreationPolicy.Shared)]
+    [Export(typeof(GlobalModuleConfiguration))]
     public class GlobalModuleConfiguration : IConfiguration
     {
         /// <summary>

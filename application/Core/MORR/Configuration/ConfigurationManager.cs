@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using MORR.Shared.Configuration;
 using MORR.Shared.Utility;
@@ -65,34 +66,17 @@ namespace MORR.Core.Configuration
                 throw new InvalidConfigurationException("Invalid configuration file path!");
             }
 
-            foreach (var config in Configurations)
+            foreach (var configurationObject in document.RootElement.EnumerateObject())
             {
-                if (config?.GetIdentifier() == null)
+                var configurationType = Type.GetType(configurationObject.Name);
+                var resolvedConfiguration = Configurations.SingleOrDefault(x => x.GetType() == configurationType);
+
+                if (resolvedConfiguration == null)
                 {
-                    throw new InvalidConfigurationException("Configuration did not offer valid identifier! Please check loaded modules.");
+                    throw new InvalidConfigurationException($"Could not find specified configuration type {configurationObject}");
                 }
 
-                try
-                {
-                    var element = document.RootElement.GetProperty(config.GetIdentifier());
-                    config.Parse(new RawConfiguration(element.GetRawText()));
-                }
-                catch (KeyNotFoundException exception)
-                {
-                    throw new InvalidConfigurationException("Could not find configuration for key: " + config.GetIdentifier(), exception);
-                }
-                catch (ArgumentNullException exception)
-                {
-                    throw new InvalidConfigurationException("Configuration did not offer valid identifier! Please check loaded modules.", exception);
-                }
-                catch (ObjectDisposedException exception)
-                {
-                    throw new InvalidConfigurationException("An Internal Error occurred while resolving the configuration. Please try again!", exception);
-                }
-                catch (InvalidOperationException exception)
-                {
-                    throw new InvalidConfigurationException("Invalid subtype for key: " + config.GetIdentifier() + " found!", exception);
-                }
+                resolvedConfiguration.Parse(new RawConfiguration(configurationObject.Value.GetRawText()));
             }
         }
     }
