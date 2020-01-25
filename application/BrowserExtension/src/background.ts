@@ -2,7 +2,12 @@ import '@babel/polyfill'
 import { BrowserEvent } from './Shared/SharedDeclarations'
 import { ICommunicationStrategy, PostHTTPInterface } from './ApplicationInterface/';
 import ListenerManager from "./ListenerManager"
-import * as Mock from './__mock__'
+
+enum ExtensionState {
+    Disconnected,
+    Ready,
+    Recording
+}
 
 /**
  * The "main" class of the webextension
@@ -21,57 +26,84 @@ class BackgroundScript {
      * Helper variables
      */
     private configString : string | undefined;
+    private isConnected : boolean;
     private static readonly RETRYDELAYMS = 5000;
-    private isRunning : boolean;
+    private isRecording : boolean;
 
     /**
      * Creates an instance of background script and initializes the listeners.
      */
     constructor() {
+        this.isConnected = false;
         this.listenerManager = new ListenerManager(this.callback);
-        this.appInterface = new Mock.CommunicationMock();
-        this.isRunning = false;
-        this.run();
+        this.appInterface = new PostHTTPInterface();
+        this.appInterface.addOnStopListener((error? : boolean) => {
+            if (!error)
+                this.stop();
+            else
+                this.reset();
+        });
+        this.isRecording = false;
+        this.setStatusIcon(ExtensionState.Disconnected);
     }
 
     /**
      * Start all listeners
      */
-    public start = () : void => {
-        if (!this.isRunning) {
-            this.isRunning = true;
+    private start = () : void => {
+        if (!this.isRecording) {
+            this.isRecording = true;
             this.listenerManager.startAll();
+            console.log("BackgroundScript started.");
+            this.setStatusIcon(ExtensionState.Recording);
         }
     }
     /**
      * Stop all listeners and wait for next start signal
      */
-    public stop = () : void => {
-        if (this.isRunning) {
-            this.isRunning = false;
+    private stop = () : void => {
+        if (this.isRecording) {
+            this.setStatusIcon(ExtensionState.Ready);
+            this.isRecording = false;
             this.listenerManager.stopAll();
-            this.waitForStart()
+            this.appInterface.waitForStart()
             .then(() => this.start())
             .catch((e) => {
                 this.reset();
             });
+            console.log("BackgroundScript stopped.");
         }
     }
 
     //completely reset the connection status
     private reset = () : void => {
-        if (this.isRunning) {
-            this.isRunning = false;
-            this.listenerManager.stopAll();
-            this.run();
+        if (this.isConnected) {
+            this.isConnected = false;
+            if (this.isRecording) {
+                this.isRecording = false;
+                this.listenerManager.stopAll();
+            }
+            setTimeout(this.run, BackgroundScript.RETRYDELAYMS);
         }
     }
 
-    private run = () : void => {
+
+    /**
+     * Connect to the main application and start recording when receiving the corresponding signal from the main application.
+     */
+    public run = () : void => {
+        this.isConnected = false;
+        this.setStatusIcon(ExtensionState.Disconnected);
         this.establishConnection(true)
-        .then(() => this.waitForStart())
-        .catch((e) => this.run())
-        .then(() => this.start());
+        .then(() => {
+            this.isConnected = true;
+            this.setStatusIcon(ExtensionState.Ready);
+            return this.appInterface.waitForStart();
+        }).then(() => this.start())
+        .catch(() => {
+            this.isConnected = false;
+            setTimeout(this.run, BackgroundScript.RETRYDELAYMS)
+        });
     }
 
     /**
@@ -79,12 +111,9 @@ class BackgroundScript {
      */
     public callback = (event : BrowserEvent) : void => {
         console.log(`${BackgroundScript.timeStampString(event.timeStamp)}: ${event.type} occured in tab ${event.tabID} in window ${event.windowID}`);
-        this.appInterface.sendData(JSON.stringify(event)).
-        catch((e) => {
-            if (e == "Stop")
-                this.stop();
-            else
-                this.reset();
+        this.appInterface.sendData(event.serialize(true))
+        .catch(() => {
+            this.reset();
         });
     }
 
@@ -95,21 +124,6 @@ class BackgroundScript {
      */
     private static timeStampString(date : Date) : string {
         return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}:${date.getMilliseconds()}`;
-    }
-
-    /**
-     * Wait for start signal of the MORR application
-     */
-    private waitForStart = () : Promise<void> => {
-        return this.appInterface.waitForStart();
-    }
-
-    /**
-     * @deprecated
-     * Request config of the MORR application
-     */
-    private requestConfig = () : void => {
-        this.appInterface.requestConfig();
     }
 
     /**
@@ -131,7 +145,7 @@ class BackgroundScript {
                 resolve();
             })
             .catch((err : string) => {
-                console.error(`Error during initialization: ${err}`);
+                console.log(`Error during initialization: ${err}. Retrying in ${BackgroundScript.RETRYDELAYMS} ms.`);
                 setTimeout(() => {
                     this.establishConnection(getConfig)
                     .then(() => resolve());
@@ -149,7 +163,37 @@ class BackgroundScript {
     private parseAndApplyConfiguration(configuration : string) : boolean {
         throw new Error("Method not implemented.");
     }
+
+
+    /**
+     * Sets the badge in the browser tray
+     * @param status the current status
+     */
+    private setStatusIcon(status : ExtensionState) : void {
+        let label : string;
+        let color : string;
+        switch(status) {
+            case(ExtensionState.Disconnected):
+                label = "DC";
+                color = "#333333"
+                break;
+            case(ExtensionState.Ready):
+                label = "RDY";
+                color = "#00AA00";
+                break;
+            case(ExtensionState.Recording):
+                label = "REC";
+                color = "#AA0000";
+                break;
+            default:
+                label = "ERR";
+                color = "#000000";
+        }
+        chrome.browserAction.setBadgeText({text : label});
+        chrome.browserAction.setBadgeBackgroundColor({color : color});
+    }
 }
 
 //entry point
 let main = new BackgroundScript()
+main.run();

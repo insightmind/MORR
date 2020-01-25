@@ -26,5 +26,11 @@ export default interface ICommunicationStrategy {
      * @param data The serialized data to send
      * @returns a Promise which fill be resolved when the data was successfully sent
      */
-    sendData(data : string) : Promise<void>;
+    sendData(data : string) : Promise<string>;
+
+    /**
+     * Add a listener to be called when the communication interface gets a stop signal from the MORR application.
+     * @param callback the callback to be invoked when receiving a stop-signal
+     */
+    addOnStopListener(callback: (error? : boolean) => void) : void;
 }

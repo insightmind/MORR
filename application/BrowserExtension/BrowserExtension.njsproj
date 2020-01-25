@@ -33,7 +33,10 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="jest.config.js" />
     <Content Include="materials\manifest.json" />
+    <Content Include="materials\options.html" />
+    <Content Include="materials\options.js" />
     <Content Include="tsconfig.json" />
     <Content Include="package.json" />
   </ItemGroup>
@@ -47,6 +50,14 @@
     <Folder Include="src\Listeners\Download\" />
     <Folder Include="src\Listeners\Tab\" />
     <Folder Include="src\Shared\" />
+    <Folder Include="src\__mock__\" />
+    <Folder Include="src\__tests__\" />
+    <Folder Include="src\__tests__\Listeners\" />
+    <Folder Include="src\__tests__\Listeners\DOM\" />
+    <Folder Include="src\__tests__\Listeners\DOM\ContentScript\" />
+    <Folder Include="src\__tests__\Listeners\Download\" />
+    <Folder Include="src\__tests__\Listeners\Tab\" />
+    <Folder Include="src\__tests__\Shared\" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="src\ApplicationInterface\ICommunicationStrategy.ts" />
@@ -57,15 +68,32 @@
     <TypeScriptCompile Include="src\ListenerManager.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="src\Listeners\DOM\ContentScript\DOMEventFactory.ts" />
     <TypeScriptCompile Include="src\Listeners\DOM\ContentScript\DOMEventRecorder.ts" />
     <TypeScriptCompile Include="src\Listeners\DOM\DOMEvents.ts" />
     <TypeScriptCompile Include="src\Listeners\DOM\DOMListener.ts" />
+    <TypeScriptCompile Include="src\Listeners\Download\DownloadEventFactory.ts" />
     <TypeScriptCompile Include="src\Listeners\Download\DownloadEvents.ts" />
     <TypeScriptCompile Include="src\Listeners\Download\DownloadListener.ts" />
     <TypeScriptCompile Include="src\Listeners\index.ts" />
+    <TypeScriptCompile Include="src\Listeners\Tab\TabEventFactory.ts" />
     <TypeScriptCompile Include="src\Listeners\Tab\TabEvents.ts" />
     <TypeScriptCompile Include="src\Listeners\Tab\TabListener.ts" />
     <TypeScriptCompile Include="src\Shared\SharedDeclarations.ts" />
+    <TypeScriptCompile Include="src\__mock__\chrome_mock.ts" />
+    <TypeScriptCompile Include="src\__mock__\client.ts" />
+    <TypeScriptCompile Include="src\__mock__\CommunicationMock.ts" />
+    <TypeScriptCompile Include="src\__mock__\index.ts" />
+    <TypeScriptCompile Include="src\__tests__\Listeners\DOM\ContentScript\DOMEventFactory.test.ts" />
+    <TypeScriptCompile Include="src\__tests__\Listeners\DOM\DOMEvents.test.ts" />
+    <TypeScriptCompile Include="src\__tests__\Listeners\DOM\DOMListener.test.ts" />
+    <TypeScriptCompile Include="src\__tests__\Listeners\Download\DownloadEventFactory.test.ts" />
+    <TypeScriptCompile Include="src\__tests__\Listeners\Download\DownloadEvents.test.ts" />
+    <TypeScriptCompile Include="src\__tests__\Listeners\Download\DownloadListener.test.ts" />
+    <TypeScriptCompile Include="src\__tests__\Listeners\Tab\TabEventFactory.test.ts" />
+    <TypeScriptCompile Include="src\__tests__\Listeners\Tab\TabEvents.test.ts" />
+    <TypeScriptCompile Include="src\__tests__\Listeners\Tab\TabListener.test.ts" />
+    <TypeScriptCompile Include="src\__tests__\Shared\BrowserEvent.tests.ts" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
   <ProjectExtensions>
