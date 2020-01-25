@@ -1,8 +1,8 @@
-﻿using MORR.Core.Recording;
+﻿using MORR.Core.CLI.Output;
+using MORR.Core.Recording;
 using MORR.Shared.Utility;
 using System;
 using System.IO;
-using MORR.Core.CLI.Output;
 
 namespace MORR.Core.CLI.Commands.Process
 {
@@ -42,7 +42,7 @@ namespace MORR.Core.CLI.Commands.Process
 
                 while (true) { }
             }
-            catch (ArgumentException exception)
+            catch (Exception exception) // I know this is not a recommend way to deal with exception, however this method receives a arbitrary amount of exception types.
             {
                 OutputFormatter.PrintError(exception);
                 return -1;

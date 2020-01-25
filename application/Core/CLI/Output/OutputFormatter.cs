@@ -4,9 +4,7 @@ using MORR.Core.Data.Transcoding.Exceptions;
 using MORR.Shared.Events.Queue;
 using System;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.Text;
-using System.Text.Json;
 
 namespace MORR.Core.CLI.Output
 {
@@ -50,7 +48,7 @@ namespace MORR.Core.CLI.Output
 
         internal static void PrintError(Exception exception)
         {
-            Console.WriteLine(ErrorPrefix + exception.GetType() + exception.Message);
+            Console.WriteLine(ErrorPrefix + exception.Message);
         }
 
         internal static void PrintDebug(String message)
