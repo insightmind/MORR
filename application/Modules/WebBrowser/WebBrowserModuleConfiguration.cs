@@ -6,7 +6,6 @@ using MORR.Shared.Configuration;
 
 namespace MORR.Modules.WebBrowser
 {
-    [Export(typeof(IConfiguration))]
     [Export(typeof(WebBrowserModuleConfiguration))]
     public class WebBrowserModuleConfiguration : IConfiguration
     {
