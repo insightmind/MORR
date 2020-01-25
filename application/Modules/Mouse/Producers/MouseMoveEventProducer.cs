@@ -1,9 +1,8 @@
-using System.Composition;
+using System.ComponentModel.Composition;
 using System.Threading;
-using System.Windows;
 using MORR.Modules.Mouse.Events;
-using MORR.Shared.Events;
 using MORR.Shared.Events.Queue;
+using System.Windows;
 
 namespace MORR.Modules.Mouse.Producers
 {

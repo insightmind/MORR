@@ -17,15 +17,5 @@ namespace MORR.Modules.Mouse.Events
         ///     The handle of the window in which the mouse scroll occurred
         /// </summary>
         public IntPtr HWnd { get; set; }
-
-        public override string Serialize()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Deserialize(string serialized)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

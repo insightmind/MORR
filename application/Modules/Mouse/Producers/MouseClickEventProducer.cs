@@ -1,12 +1,12 @@
 using System;
-using System.Composition;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Input;
 using MORR.Modules.Mouse.Events;
-using MORR.Shared.Events;
 using MORR.Shared.Events.Queue;
+using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
 
 namespace MORR.Modules.Mouse.Producers
 {
@@ -24,7 +24,7 @@ namespace MORR.Modules.Mouse.Producers
         ///     initialize the isWaitingOn~DoubleClick fields to false.
         ///     retrieves the current double-click time for the mouse.
         /// </summary>
-        public MouseClickEventProducer() : base(new KeepAllStorageStrategy())
+        public MouseClickEventProducer() : base(new BoundedMultiConsumerChannelStrategy<MouseClickEvent>)
         {
             isWaitingOnLeftDoubleClick = false;
             isWaitingOnRightDoubleClick = false;
