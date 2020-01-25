@@ -1,0 +1,29 @@
+{
+  "MORR.Core.Modules.GlobalModuleConfiguration": {
+    "EnabledModules": [
+      "MORR.Core.Data.Capture.Metadata.MetadataCapture",
+      "MORR.Core.Data.Capture.Video.WinAPI.DesktopCapture",
+      "MORR.Core.CLI.Demo.DemoProducer, CLI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "MORR.Modules.Keyboard.KeyboardModule, Keyboard.MORR-Module, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+    ]
+  },
+  "MORR.Core.Recording.RecordingConfiguration": {
+    "Encoder": "MORR.Core.CLI.Output.OutputFormatter, CLI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+  },
+  "MORR.Core.Data.Capture.Video.WinAPI.DesktopCaptureConfiguration": {
+    "MonitorIndex": 0,
+    "PromptUserForMonitorSelection": false
+  },
+  "MORR.Core.Data.Transcoding.WinAPI.MPEGEncoderConfiguration": {
+    "Width": 1920,
+    "Height": 1080,
+    "BitsPerSecond": 5000,
+    "FramesPerSecond": 60,
+    "RecordingsDirectory": "C:\\Users\\Niklas\\Videos\\Captures",
+    "NamePattern": "{TIME}_{GUID}_{USERNAME}"
+  },
+  "MORR.Modules.Mouse.MouseModuleConfiguration, Mouse.MORR-Module, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": {
+    "MaxPollingRateInHz": 100,
+    "MovementThreshold": 20
+  }
+}

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using MORR.Shared.Modules;
-using System.Composition;
 using MORR.Modules.WebBrowser.Events;
+using System.ComponentModel.Composition;
 using MORR.Modules.WebBrowser.Producers;
 using MORR.Shared.Utility;
 
@@ -13,6 +13,7 @@ namespace MORR.Modules.WebBrowser
     /// </summary>
     public class WebBrowserModule : ICollectingModule
     {
+
         private bool isActive;
         private WebExtensionListener listener;
         public bool IsActive
@@ -45,7 +46,7 @@ namespace MORR.Modules.WebBrowser
             listener.startListening();
             foreach (var producer in Producers)
             {
-                listener.SubScribe(producer, producer.EventType);
+                listener.SubScribe(producer, producer.HandledEventType);
             }
         }
     }

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MORR.Shared.Events.Queue;
+﻿using System.ComponentModel.Composition;
 using MORR.Modules.WindowManagement.Events;
-using MORR.Shared.Events;
-using System.Composition;
+using MORR.Shared.Events.Queue;
 
 namespace MORR.Modules.WindowManagement.Producers
 {
@@ -12,26 +8,9 @@ namespace MORR.Modules.WindowManagement.Producers
     ///     Provides a single-writer-multiple-reader queue for WindowResizingEvent
     /// </summary>
     [Export(typeof(WindowResizingEventProducer))]
-    [Export(typeof(EventQueue<WindowResizingEvent>))]
-    [Export(typeof(EventQueue<Event>))]
-    public class WindowResizingEventProducer : EventQueue<WindowResizingEvent>
+    [Export(typeof(IReadOnlyEventQueue<WindowResizingEvent>))]
+    public class WindowResizingEventProducer : DefaultEventQueue<WindowResizingEvent>
     {
-        /// <summary>
-        ///     Asynchronously gets all window resizing events as WindowResizingEvent type
-        /// </summary>
-        /// <returns>A stream of WindowResiznigEvent</returns>
-        public override IAsyncEnumerable<WindowResizingEvent> GetEvents()
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        ///     Asynchronously enqueues a new window resizing event
-        /// </summary>
-        /// <param name="event">The window resizing event to enqueue</param>
-        protected override void Enqueue(WindowResizingEvent @event)
-        {
-            throw new NotImplementedException();
-        }
+        // TODO: Implement this
     }
 }

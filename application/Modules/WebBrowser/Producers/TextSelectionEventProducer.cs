@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MORR.Shared.Events.Queue;
+﻿using System.ComponentModel.Composition;
 using MORR.Modules.WebBrowser.Events;
 using MORR.Shared.Events;
-using System.Composition;
-using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
+using MORR.Shared.Events.Queue;
+
 
 namespace MORR.Modules.WebBrowser.Producers
 {
@@ -13,11 +10,12 @@ namespace MORR.Modules.WebBrowser.Producers
     ///     Provides a single-writer-multiple-reader queue for TextSelectionEvent
     /// </summary>
     [Export(typeof(TextSelectionEventProducer))]
-    [Export(typeof(EventQueue<TextSelectionEvent>))]
-    [Export(typeof(EventQueue<Event>))]
+
+    [Export(typeof(IReadOnlyEventQueue<TextSelectionEvent>))]
     [Export(typeof(WebBrowserEventProducer<TextSelectionEvent>))]
     [Export(typeof(WebBrowserEventProducer<WebBrowserEvent>))]
     public class TextSelectionEventProducer : WebBrowserEventProducer<TextSelectionEvent>
     {
+
     }
 }

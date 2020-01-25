@@ -10,7 +10,7 @@
     <RootNamespace>MORR.Modules.Mouse</RootNamespace>
     <Platforms>x64</Platforms>
     <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\Modules</OutDir>
-    <AssemblyName>Mouse.MORR.Module</AssemblyName>
+    <AssemblyName>Mouse.MORR-Module</AssemblyName>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
@@ -23,7 +23,7 @@
   <ItemGroup>
     <Reference Include="PresentationCore">
       <!-- Manually set this to be the actual assembly instead of the reference assembly to make MEF work -->
-      <HintPath>C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\3.1.0\PresentationCore.dll</HintPath>
+      <HintPath>C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\3.1.1\PresentationCore.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 
 namespace MORR.Shared.Utility
 {
@@ -32,7 +33,8 @@ namespace MORR.Shared.Utility
         {
             result = null;
 
-            if (!Uri.TryCreate(path, UriKind.Absolute, out var parsedUri) || !parsedUri.IsFile)
+            if (!Uri.TryCreate(path, UriKind.Absolute, out var parsedUri) || !parsedUri.IsFile ||
+                string.IsNullOrEmpty(Path.GetExtension(path)))
             {
                 return false;
             }

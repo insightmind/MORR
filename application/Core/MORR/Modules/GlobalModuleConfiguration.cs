@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Composition;
+using System.ComponentModel.Composition;
+using System.Linq;
+using System.Text.Json;
+using MORR.Core.Configuration;
 using MORR.Shared.Configuration;
 using MORR.Shared.Modules;
 
 namespace MORR.Core.Modules
 {
-    [Export(typeof(GlobalModuleConfiguration))]
-    [Export(typeof(IConfiguration))]
+    [Export(typeof(GlobalModuleConfiguration)), PartCreationPolicy(CreationPolicy.Shared)]
     public class GlobalModuleConfiguration : IConfiguration
     {
         /// <summary>
@@ -15,10 +17,30 @@ namespace MORR.Core.Modules
         /// </summary>
         public IEnumerable<Type> EnabledModules { get; private set; }
 
-        public void Parse(string configuration)
+        public void Parse(RawConfiguration configuration)
         {
-            // TODO Implement mechanism to read this once a format has been decided
-            throw new NotImplementedException();
+            var element = JsonDocument.Parse(configuration.RawValue).RootElement;
+
+            if (!element.TryGetProperty(nameof(EnabledModules), out var enabledModulesElement))
+            {
+                throw new InvalidConfigurationException("Failed to parse enabled modules list.");
+            }
+
+            var enabledModules = new List<Type>();
+
+            foreach (var value in enabledModulesElement.EnumerateArray().Select(x => x.ToString()))
+            {
+                var type = Type.GetType(value);
+
+                if (type == null)
+                {
+                    throw new InvalidConfigurationException($"Failed to find module {value}.");
+                }
+
+                enabledModules.Add(type);
+            }
+
+            EnabledModules = enabledModules;
         }
     }
 }

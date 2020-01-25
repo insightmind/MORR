@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Specialized;
 using MORR.Modules.WebBrowser.Events;
 using MORR.Shared.Events.Queue;
-using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
 
 namespace MORR.Modules.WebBrowser.Producers
 {
@@ -12,12 +10,8 @@ namespace MORR.Modules.WebBrowser.Producers
     ///     of the appropriate type.
     /// </summary>
     /// <typeparam name="T">The BrowserEvent type to produce.</typeparam>
-    public abstract class WebBrowserEventProducer<T> : EventQueue<T>, IWebBrowserEventObserver where T : WebBrowserEvent
+    public abstract class WebBrowserEventProducer<T> : DefaultEventQueue<T>, IWebBrowserEventObserver where T : WebBrowserEvent
     {
-        internal WebBrowserEventProducer() : base(new BoundedMultiConsumerChannelStrategy<T>(128, null))
-        {
-
-        }
 
         /// <summary>
         ///     Simply forward the event to the internal queue if its of the appropriate type. Ignore otherwise.
@@ -32,6 +26,6 @@ namespace MORR.Modules.WebBrowser.Producers
         /// <summary>
         ///     The BrowserEvent type to be handled by this producer.
         /// </summary>
-        private Type HandledEventType => typeof(T);
+        public Type HandledEventType => typeof(T);
     }
 }

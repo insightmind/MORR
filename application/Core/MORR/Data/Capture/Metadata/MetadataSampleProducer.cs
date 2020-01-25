@@ -1,16 +1,18 @@
 ﻿using System.Collections.Generic;
-using System.Composition;
+using System.ComponentModel.Composition;
 using System.Text.Json;
 using System.Threading.Tasks;
 using MORR.Core.Data.Sample.Metadata;
 using MORR.Shared.Events;
 using MORR.Shared.Events.Queue;
-using MORR.Shared.Events.Queue.Strategy.SingleConsumer;
 
 namespace MORR.Core.Data.Capture.Metadata
 {
-    [Export(typeof(IReadOnlyEventQueue<MetadataSample>))]
-    public class MetadataSampleProducer : BoundedSingleConsumerEventQueue<MetadataSample>
+    [Export(typeof(MetadataSampleProducer))]
+    [Export(typeof(ITranscodeableEventQueue<MetadataSample>))]
+    [Export(typeof(ITranscodeableEventQueue<Event>))]
+    [PartCreationPolicy(CreationPolicy.Shared)]
+    public class MetadataSampleProducer : DefaultTranscodeableEventQueue<MetadataSample>
     {
         [ImportMany]
         private IEnumerable<IReadOnlyEventQueue<Event>> EventQueues { get; set; }
@@ -23,7 +25,7 @@ namespace MORR.Core.Data.Capture.Metadata
         private static MetadataSample MakeMetadataSample(Event @event)
         {
             var eventType = @event.GetType();
-            var serializedData = JsonSerializer.SerializeToUtf8Bytes(@event);
+            var serializedData = JsonSerializer.SerializeToUtf8Bytes(@event, eventType);
 
             var sample = new MetadataSample
             {
