@@ -3,7 +3,7 @@
     "EnabledModules": [
       "MORR.Core.Data.Capture.Metadata.MetadataCapture",
       "MORR.Core.Data.Capture.Video.WinAPI.DesktopCapture",
-      "MORR.Modules.Clipboard.ClipboardModule, Clipboard.MORR-Module, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+      "MORR.Core.CLI.Demo.DemoProducer, CLI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
     ]
   },
   "MORR.Core.Recording.RecordingConfiguration": {

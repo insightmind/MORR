@@ -8,7 +8,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>Morr.Core.CLI</RootNamespace>
+    <RootNamespace>MORR.Core.CLI</RootNamespace>
     <Platforms>x64</Platforms>
     <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)</OutDir>
     <Nullable>enable</Nullable>
