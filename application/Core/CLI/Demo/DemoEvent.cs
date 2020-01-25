@@ -1,5 +1,4 @@
-﻿using System;
-using MORR.Shared.Events;
+﻿using MORR.Shared.Events;
 
 namespace MORR.Core.CLI.Demo
 {

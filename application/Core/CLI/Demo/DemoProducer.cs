@@ -1,9 +1,9 @@
-﻿using System;
-using System.ComponentModel.Composition;
-using System.Timers;
-using MORR.Shared.Events;
+﻿using MORR.Shared.Events;
 using MORR.Shared.Events.Queue;
 using MORR.Shared.Modules;
+using System;
+using System.ComponentModel.Composition;
+using System.Timers;
 
 namespace MORR.Core.CLI.Demo
 {
@@ -35,7 +35,7 @@ namespace MORR.Core.CLI.Demo
         private void GenerateEvent(Object source, ElapsedEventArgs args)
         {
             produced++;
-            var @event = new DemoEvent {Num = produced, IssuingModule = Identifier};
+            var @event = new DemoEvent { Num = produced, IssuingModule = Identifier };
             Enqueue(@event);
         }
 

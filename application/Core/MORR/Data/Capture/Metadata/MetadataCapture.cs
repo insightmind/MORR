@@ -1,6 +1,6 @@
-﻿using System;
+﻿using MORR.Shared.Modules;
+using System;
 using System.ComponentModel.Composition;
-using MORR.Shared.Modules;
 
 namespace MORR.Core.Data.Capture.Metadata
 {
