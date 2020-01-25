@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Composition;
-using MORR.Shared.Events.Queue;
+﻿using System.ComponentModel.Composition;
 using MORR.Modules.WebBrowser.Events;
+using MORR.Shared.Events.Queue;
 
 namespace MORR.Modules.WebBrowser.Producers
 {
@@ -11,25 +8,9 @@ namespace MORR.Modules.WebBrowser.Producers
     ///     Provides a single-writer-multiple-reader queue for SwitchTabEvent
     /// </summary>
     [Export(typeof(SwitchTabEventProducer))]
-    [Export(typeof(EventQueue<SwitchTabEvent>))]
-    [Export(typeof(EventQueue<Event>))]
-    public class SwitchTabEventProducer : EventQueue<SwitchTabEvent>
+    [Export(typeof(IReadOnlyEventQueue<SwitchTabEvent>))]
+    public class SwitchTabEventProducer : DefaultEventQueue<SwitchTabEvent>
     {
-        /// <summary>
-        ///     Asynchronously gets all switch tab events as SwitchTabEvent type
-        /// </summary>
-        /// <returns>A stream of SwitchTabEvent</returns>
-        public override IAsyncEnumerable<SwitchTabEvent> GetEvents()
-        {
-            throw new NotImplementedException();
-        }
-        /// <summary>
-        ///     Asynchronously enqueues a new switch tab event
-        /// </summary>
-        /// <param name="event">The switch tab event to enqueue</param>
-        protected override void Enqueue(SwitchTabEvent @event)
-        {
-            throw new NotImplementedException();
-        }
+        // TODO: Implement this
     }
 }

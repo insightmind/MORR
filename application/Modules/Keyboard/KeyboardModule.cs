@@ -1,55 +1,38 @@
 ﻿using System;
-using System.Composition;
+using System.ComponentModel.Composition;
 using MORR.Modules.Keyboard.Producers;
 using MORR.Shared.Modules;
+using MORR.Shared.Utility;
 
 namespace MORR.Modules.Keyboard
 {
     /// <summary>
-    ///     The <see cref="KeyboardModule" /> is responsible for recording all keyboard related user interactions
+    ///     The <see cref="KeyboardModule" /> is responsible for recording all keyboard related user interactions.
     /// </summary>
+    [Export(typeof(IModule))]
     public class KeyboardModule : ICollectingModule
     {
-        private bool isEnabled;
+        private bool isActive;
 
-        /// <summary>
-        ///     A single-writer-multiple-reader queue for KeyboardInteractEvent
-        /// </summary>
         [Import]
         private KeyboardInteractEventProducer KeyboardInteractEventProducer { get; set; }
 
         /// <summary>
-        ///     if the module is enabled or not.
-        ///     When a module is being enabled, the keyboard hook will be set.
-        ///     When a module is being disabled, the keyboard hook will be released.
+        ///     Indicates whether the module is active or not.
+        ///     When a module is being active, the keyboard hook will be set.
+        ///     When a module is being inactive, the keyboard hook will be released.
         /// </summary>
-        public bool IsEnabled
+        public bool IsActive
         {
-            get => isEnabled;
-            set
-            {
-                isEnabled = value;
-                if (value)
-                {
-                    KeyboardInteractEventProducer.HookKeyboard();
-                }
-                else
-                {
-                    KeyboardInteractEventProducer.UnhookKeyboard();
-                }
-            }
+            get => isActive;
+            set => Utility.SetAndDispatch(ref isActive, value, KeyboardInteractEventProducer.StartCapture,
+                                          KeyboardInteractEventProducer.StopCapture);
         }
 
-        public Guid Identifier => new Guid("99F679D6-0D20-40EE-8604-F128F0E5AE3B");
+        public static Guid Identifier = new Guid("99F679D6-0D20-40EE-8604-F128F0E5AE3B");
 
+        Guid IModule.Identifier => Identifier;
 
-        /// <summary>
-        ///     Initialize the module unenabled with KeyboardInteractEventProducer.
-        /// </summary>
-        public void Initialize()
-        {
-            KeyboardInteractEventProducer = new KeyboardInteractEventProducer();
-            isEnabled = false;
-        }
+        public void Initialize() { }
     }
 }

@@ -1,6 +1,4 @@
-﻿using MORR.Core.Data.Transcoding.Audio.EventHandlers;
-using MORR.Core.Data.Transcoding.Metadata.EventHandlers;
-using MORR.Core.Data.Transcoding.Video.EventHandlers;
+﻿﻿using MORR.Shared.Utility;
 
 namespace MORR.Core.Data.Transcoding.WinAPI
 {
@@ -9,10 +7,9 @@ namespace MORR.Core.Data.Transcoding.WinAPI
     /// </summary>
     public class Decoder : IDecoder
     {
-        public bool IsDecoding { get; set; }
-        public string DecodingPath { get; set; }
-        public event AudioSampleDecodedEventHandler AudioSampleDecoded;
-        public event VideoSampleDecodedEventHandler VideoSampleDecoded;
-        public event MetadataSampleDecodedEventHandler MetadataSampleDecoded;
+        public void Decode(FilePath path)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

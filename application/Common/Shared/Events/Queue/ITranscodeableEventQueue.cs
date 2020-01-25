@@ -7,33 +7,23 @@ namespace MORR.Shared.Events.Queue
     ///     Provides a single-writer-multiple-reader queue for <see cref="Event" /> types.
     /// </summary>
     /// <typeparam name="T">The type of the event</typeparam>
-    public abstract class EventQueue<T> : IReadOnlyEventQueue<T> where T : Event
+    public interface ITranscodeableEventQueue<T> where T : Event
     {
-        protected EventQueue(IEventQueueStorageStrategy<T> storageStrategy)
-        {
-            this.storageStrategy = storageStrategy;
-        }
-
-        private readonly IEventQueueStorageStrategy<T> storageStrategy;
-
         /// <summary>
         ///     Asynchronously gets all events as concrete type <typeparamref name="T" />.
         /// </summary>
         /// <returns>A stream of <typeparamref name="T" /></returns>
-        public IAsyncEnumerable<T> GetEvents()
-        {
-            return storageStrategy.GetEvents();
-        }
+        IAsyncEnumerable<T> GetEvents();
+
+        /// <summary>
+        ///     The actual type of the events enqueued in this queue.
+        /// </summary>
+        Type EventType => typeof(T);
 
         /// <summary>
         ///     Asynchronously enqueues a new event.
         /// </summary>
         /// <param name="event">The event to enqueue</param>
-        public void Enqueue(T @event)
-        {
-            storageStrategy.Enqueue(@event);
-        }
-
-        public Type EventType => typeof(T);
+        void Enqueue(T @event);
     }
 }

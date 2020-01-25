@@ -1,7 +1,7 @@
 ﻿using System;
 using MORR.Shared.Modules;
 using MORR.Modules.Mouse.Producers;
-using System.Composition;
+using System.ComponentModel.Composition;
 
 namespace MORR.Modules.Mouse
 {
@@ -10,7 +10,7 @@ namespace MORR.Modules.Mouse
     /// </summary>
     public class MouseModule : ICollectingModule
     {
-        public bool IsEnabled { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public bool IsActive { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public Guid Identifier => throw new NotImplementedException();
 

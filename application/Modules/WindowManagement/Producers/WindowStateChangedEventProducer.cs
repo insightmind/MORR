@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MORR.Shared.Events.Queue;
+﻿using System.ComponentModel.Composition;
 using MORR.Modules.WindowManagement.Events;
-using MORR.Shared.Events;
-using System.Composition;
+using MORR.Shared.Events.Queue;
 
 namespace MORR.Modules.WindowManagement.Producers
 {
@@ -12,26 +8,9 @@ namespace MORR.Modules.WindowManagement.Producers
     ///     Provides a single-writer-multiple-reader queue for WindowStateChangedEvent
     /// </summary>
     [Export(typeof(WindowStateChangedEventProducer))]
-    [Export(typeof(EventQueue<WindowStateChangedEvent>))]
-    [Export(typeof(EventQueue<Event>))]
-    public class WindowStateChangedEventProducer : EventQueue<WindowStateChangedEvent>
+    [Export(typeof(IReadOnlyEventQueue<WindowStateChangedEvent>))]
+    public class WindowStateChangedEventProducer : DefaultEventQueue<WindowStateChangedEvent>
     {
-        /// <summary>
-        ///     Asynchronously gets all user interaction with changing the state of the window as WindowStateChangedEvent type
-        /// </summary>
-        /// <returns>A stream of WindowStateChangedEvent</returns>
-        public override IAsyncEnumerable<WindowStateChangedEvent> GetEvents()
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        ///     Asynchronously enqueues a new window state changed event
-        /// </summary>
-        /// <param name="event">The window state changed event to enqueue</param>
-        protected override void Enqueue(WindowStateChangedEvent @event)
-        {
-            throw new NotImplementedException();
-        }
+        // TODO: Implement this
     }
 }

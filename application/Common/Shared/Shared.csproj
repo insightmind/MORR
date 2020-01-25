@@ -15,4 +15,8 @@
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 
+  <ItemGroup>
+    <PackageReference Include="System.ComponentModel.Composition" Version="4.7.0" />
+  </ItemGroup>
+
 </Project>

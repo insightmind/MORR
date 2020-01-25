@@ -1,5 +1,8 @@
-﻿using System.Composition;
-using System.Composition.Hosting;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
+using System.ComponentModel.Composition.Primitives;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -13,31 +16,65 @@ namespace MORR.Core
     /// </summary>
     public class Bootstrapper : IBootstrapper
     {
-        private const string moduleSubdirectoryRelativePath = "\\Modules";
-        private const string moduleNamePattern = "*.MORR-Module.dll";
-        private CompositionHost container;
+        private const string moduleSubdirectory = "Modules";
+        private const string moduleNamePattern = "*.dll";
+        private CompositionContainer container;
 
         public Bootstrapper()
         {
             var currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            LoadFromPath(new FilePath(currentDirectory + moduleSubdirectoryRelativePath));
+
+            if (currentDirectory == null)
+            {
+                throw new Exception("Failed to get directory to current assembly.");
+            }
+
+            LoadFromPath(new DirectoryPath(Path.Combine(currentDirectory, moduleSubdirectory)));
         }
 
         public void ComposeImports(object @object)
         {
-            container.SatisfyImports(@object);
+            container.SatisfyImportsOnce(@object);
         }
 
-        private void LoadFromPath(FilePath path)
+        private void LoadFromPath(DirectoryPath path)
         {
-            var assemblies = Directory.GetFiles(path.ToString(), moduleNamePattern)
-                                      .Select(AssemblyLoadContext.Default.LoadFromAssemblyPath);
+            var alreadyLoadedAssemblies = AssemblyLoadContext.Default.Assemblies.Select(x => x.FullName).ToList();
+            var moduleFiles = Directory.GetFiles(path.ToString(), moduleNamePattern);
+            var moduleAssemblies = moduleFiles
+                                   .Select(x => LoadWithReferencesIfNotLoaded(x, alreadyLoadedAssemblies))
+                                   .Where(x => x != null)
+                                   .Select(x => new AssemblyCatalog(x)).ToArray();
 
-            var containerConfiguration = new ContainerConfiguration();
-            containerConfiguration.WithAssemblies(assemblies)
-                                  .WithAssembly(Assembly.GetExecutingAssembly());
+            var applicationCatalog = new ApplicationCatalog();
+            var catalogs = moduleAssemblies.Cast<ComposablePartCatalog>().Append(applicationCatalog);
 
-            container = containerConfiguration.CreateContainer();
+            var aggregateCatalog = new AggregateCatalog(catalogs);
+
+            container = new CompositionContainer(aggregateCatalog);
+        }
+
+        private static Assembly? LoadWithReferencesIfNotLoaded(string path, IEnumerable<string?> alreadyLoadedAssemblies)
+        {
+            var resolver = new AssemblyDependencyResolver(path);
+            var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(path);
+
+            if (alreadyLoadedAssemblies.Contains(assembly.FullName))
+            {
+                return null;
+            }
+
+            foreach (var referencedAssembly in assembly.GetReferencedAssemblies())
+            {
+                var referencedAssemblyPath = resolver.ResolveAssemblyToPath(referencedAssembly);
+
+                if (referencedAssemblyPath != null)
+                {
+                    AssemblyLoadContext.Default.LoadFromAssemblyPath(referencedAssemblyPath);
+                }
+            }
+
+            return assembly;
         }
     }
 }
