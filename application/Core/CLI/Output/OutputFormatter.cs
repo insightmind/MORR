@@ -2,7 +2,6 @@
 using System.ComponentModel.Composition;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using MORR.Core.Data.Sample.Metadata;
 using MORR.Core.Data.Transcoding;
 using MORR.Core.Data.Transcoding.Exceptions;
@@ -40,7 +39,7 @@ namespace MORR.Core.CLI.Output
 
             dynamic @event =
                 JsonSerializer.Deserialize(sample.SerializedData, sample.EventType);
-            var output = JsonConverter,
+            var output = Encoding.UTF8.GetString(sample.SerializedData);
             Console.WriteLine($"{(@event as Event).Timestamp.ToString("HH:mm:ss.fff")}: {output}");
         }
 
