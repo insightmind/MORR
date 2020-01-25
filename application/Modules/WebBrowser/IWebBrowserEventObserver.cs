@@ -9,6 +9,7 @@ namespace MORR.Modules.WebBrowser
     internal interface IWebBrowserEventObserver
     {
         public void Notify(WebBrowserEvent @event);
+        public Type HandledEventType { get; }
     }
 
     internal interface IWebBrowserEventObservible

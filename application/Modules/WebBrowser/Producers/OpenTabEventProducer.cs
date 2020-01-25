@@ -12,7 +12,7 @@ namespace MORR.Modules.WebBrowser.Producers
     [Export(typeof (OpenTabEventProducer))]
     [Export(typeof(IReadOnlyEventQueue<OpenTabEvent>))]
     [Export(typeof(WebBrowserEventProducer<OpenTabEvent>))]
-    [Export(typeof(WebBrowserEventProducer<>))]
+    [Export(typeof(IWebBrowserEventObserver))]
     public class OpenTabEventProducer : WebBrowserEventProducer<OpenTabEvent>
     {
     

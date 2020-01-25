@@ -35,7 +35,7 @@ namespace MORR.Modules.WebBrowser
 
 
         [ImportMany]
-        private IEnumerable<WebBrowserEventProducer<WebBrowserEvent>> Producers { get; set; }
+        private IEnumerable<IWebBrowserEventObserver> Producers { get; set; }
 
 
         [Import]

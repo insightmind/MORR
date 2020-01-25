@@ -16,9 +16,9 @@ namespace MORR.Modules.WebBrowser.Events
         /// </summary>
         public string HoveredElement { get; set; }
 
-        protected override void DeserializeSpecificAttributes(JsonDocument parsed)
+        protected override void DeserializeSpecificAttributes(JsonElement parsed)
         {
-            HoveredElement = parsed.RootElement.GetProperty("target").GetString();
+            HoveredElement = parsed.GetProperty("target").GetString();
         }
     }
 }

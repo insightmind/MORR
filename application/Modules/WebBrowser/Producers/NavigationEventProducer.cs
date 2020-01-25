@@ -10,7 +10,7 @@ namespace MORR.Modules.WebBrowser.Producers
     [Export(typeof(NavigationEventProducer))]
     [Export(typeof(IReadOnlyEventQueue<NavigationEvent>))]
     [Export(typeof(WebBrowserEventProducer<NavigationEvent>))]
-    [Export(typeof(WebBrowserEventProducer<>))]
+    [Export(typeof(IWebBrowserEventObserver))]
     public class NavigationEventProducer :  WebBrowserEventProducer<NavigationEvent>
     {
 

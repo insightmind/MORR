@@ -11,8 +11,8 @@ namespace MORR.Modules.WebBrowser.Producers
     /// </summary>
     [Export(typeof(CloseTabEventProducer))]
     [Export(typeof(WebBrowserEventProducer<CloseTabEvent>))]
-    [Export(typeof(WebBrowserEventProducer<>))]
     [Export(typeof(IReadOnlyEventQueue<CloseTabEvent>))]
+    [Export(typeof(IWebBrowserEventObserver))]
     public class CloseTabEventProducer :  WebBrowserEventProducer<CloseTabEvent>
     {
 

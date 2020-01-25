@@ -21,7 +21,7 @@ namespace MORR.Modules.WebBrowser
         private class WebBrowserRequest
         {
             public string Request { get; set; }
-            public string? Data { get; set; }
+            public JsonElement? Data { get; set; }
         }
 
         //a private helper class to build the response
@@ -172,7 +172,7 @@ namespace MORR.Modules.WebBrowser
             {
                 webBrowserRequest = JsonSerializer.Deserialize<WebBrowserRequest>(decodedRequest, new JsonSerializerOptions{PropertyNameCaseInsensitive = true});
             }
-            catch (JsonException)
+            catch (JsonException ex)
             {
                 AnswerInvalid(context.Response);
                 return;
@@ -257,9 +257,11 @@ namespace MORR.Modules.WebBrowser
 
         private bool DeserializeEventAndBroadcast(WebBrowserRequest request)
         {
-            var parsed = JsonDocument.Parse(request.Data);
+            if (request.Data == null)
+                return false;
+            JsonElement parsed = request.Data.Value;
             EventLabel label;
-            if (!Enum.TryParse(parsed.RootElement.GetProperty("type").ToString(), true, out label))
+            if (!Enum.TryParse(parsed.GetProperty("type").ToString(), true, out label))
                 return false;
 
             WebBrowserEvent @event;

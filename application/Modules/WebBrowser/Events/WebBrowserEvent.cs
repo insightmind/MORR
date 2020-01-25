@@ -12,7 +12,7 @@ namespace MORR.Modules.WebBrowser.Events
         /// <summary>
         ///     The identifier of the tab where the web browser event occured in
         /// </summary>
-        public Guid TabID { get; set; }
+        public int TabID { get; set; }
 
         /// <summary>
         ///     The URL of the website where the web browser event occured in
@@ -25,14 +25,14 @@ namespace MORR.Modules.WebBrowser.Events
         /// <param name="serialized">The serialized event</param>
         public void Deserialize(string serialized)
         {
-            this.Deserialize(JsonDocument.Parse(serialized));
+            this.Deserialize(JsonDocument.Parse(serialized).RootElement);
         }
 
         /// <summary>
         ///     Deserialize a browser event from a JsonDocument instance
         /// </summary>
         /// <param name="serialized">A JsonDocument parsed from a serialized event.</param>
-        public void Deserialize(JsonDocument parsed)
+        public void Deserialize(JsonElement parsed)
         {
             DeserializeCommonAttributes(parsed);
             DeserializeSpecificAttributes(parsed);
@@ -42,7 +42,7 @@ namespace MORR.Modules.WebBrowser.Events
         ///     Deserialize the attributes specific to the event type.
         /// </summary>
         /// <param name="parsed"></param>
-        protected virtual void DeserializeSpecificAttributes(JsonDocument parsed)
+        protected virtual void DeserializeSpecificAttributes(JsonElement parsed)
         {
 
         }
@@ -51,12 +51,11 @@ namespace MORR.Modules.WebBrowser.Events
         ///     Deserialize the attributes shared by all browser event types.
         /// </summary>
         /// <param name="parsed"></param>
-        protected void DeserializeCommonAttributes(JsonDocument parsed)
+        protected void DeserializeCommonAttributes(JsonElement parsed)
         {
-            var root = parsed.RootElement;
-            TabID = root.GetProperty("tabID").GetGuid();
-            CurrentURL = new Uri(root.GetProperty("url").ToString());
-            Timestamp = root.GetProperty("timeStamp").GetDateTime();
+            TabID = parsed.GetProperty("tabID").GetInt32();
+            CurrentURL = new Uri(parsed.GetProperty("url").ToString());
+            Timestamp = parsed.GetProperty("timeStamp").GetDateTime();
             IssuingModule = new Guid("e9240dc4-f33f-43db-a419-5b36d8279c88"); //TODO: actually obtain this from the module
         }
     }

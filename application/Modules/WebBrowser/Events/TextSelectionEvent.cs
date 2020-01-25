@@ -15,9 +15,9 @@ namespace MORR.Modules.WebBrowser.Events
         /// </summary>
         public string SelectedText { get; set; }
 
-        protected override void DeserializeSpecificAttributes(JsonDocument parsed)
+        protected override void DeserializeSpecificAttributes(JsonElement parsed)
         {
-            SelectedText = parsed.RootElement.GetProperty("textSelection").GetString();
+            SelectedText = parsed.GetProperty("textSelection").GetString();
         }
     }
 }

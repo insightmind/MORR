@@ -18,11 +18,10 @@ namespace MORR.Modules.WebBrowser.Events
         /// </summary>
        public string Textbox { get; set; }
 
-        protected override void DeserializeSpecificAttributes(JsonDocument parsed)
+        protected override void DeserializeSpecificAttributes(JsonElement parsed)
         {
-            var root = parsed.RootElement;
-            InputtedText = root.GetProperty("text").GetString();
-            Textbox = root.GetProperty("target").GetString();
+            InputtedText = parsed.GetProperty("text").GetString();
+            Textbox = parsed.GetProperty("target").GetString();
         }
     }
 }

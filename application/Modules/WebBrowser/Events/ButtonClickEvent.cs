@@ -20,10 +20,10 @@ namespace MORR.Modules.WebBrowser.Events
         /// </summary>
         public Uri? Href { get; set; }
 
-        protected override void DeserializeSpecificAttributes(JsonDocument parsed)
+        protected override void DeserializeSpecificAttributes(JsonElement parsed)
         {
-            Button = parsed.RootElement.GetProperty("buttonTitle").GetString();
-            if (parsed.RootElement.TryGetProperty("buttonHref", out var hrefElement))
+            Button = parsed.GetProperty("buttonTitle").GetString();
+            if (parsed.TryGetProperty("buttonHref", out var hrefElement))
                 Href = new Uri(hrefElement.GetString());
         }
     }

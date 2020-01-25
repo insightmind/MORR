@@ -20,11 +20,10 @@ namespace MORR.Modules.WebBrowser.Events
         /// </summary>
         public string MIMEType { get; set; }
 
-        protected override void DeserializeSpecificAttributes(JsonDocument parsed)
+        protected override void DeserializeSpecificAttributes(JsonElement parsed)
         {
-            var root = parsed.RootElement;
-            FileURL = new Uri(root.GetProperty("fileURL").GetString());
-            MIMEType = root.GetProperty("mimeType").GetString();
+            FileURL = new Uri(parsed.GetProperty("fileURL").GetString());
+            MIMEType = parsed.GetProperty("mimeType").GetString();
         }
     }
 }
