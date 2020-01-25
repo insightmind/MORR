@@ -1,89 +1,52 @@
 ﻿using System;
-using System.Net;
-using System.IO;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Text;
 using System.Text.Json;
 using MORR.Modules.WebBrowser.Events;
 using MORR.Shared.Utility;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace MORR.Modules.WebBrowser
 {
     /// <summary>
-    ///     The <see cref="WebExtensionListener"/> is responsible for maintaining the connection to the WebBrowser(s).
+    ///     The <see cref="WebExtensionListener" /> is responsible for maintaining the connection to the WebBrowser(s).
     ///     It will answer incoming requests based on the recording state and receive incoming event data.
     /// </summary>
-    class WebExtensionListener : IWebBrowserEventObservible
+    internal class WebExtensionListener : IWebBrowserEventObservible
     {
-        #region Private helper classes
-        //a private helper class to parse and identify the request
-        private class WebBrowserRequest
-        {
-            public string Request { get; set; }
-            public JsonElement? Data { get; set; }
-        }
+        private readonly HttpListener listener;
 
-        //a private helper class to build the response
-        private class WebBrowserResponse
-        {
-            //this is only here to the JsonSerializer adds it to the response
-            public string application { get; } = "MORR";
-            public string response { get; }
-            public string? config { get; }
-            public WebBrowserResponse(string response, string? config = null)
-            {
-                this.response = response;
-                this.config = config;
-            }
-        }
-
-        //the possible incoming requests
-        private enum WebBrowserRequestType
-        {
-            CONNECT,
-            CONFIG,
-            START,
-            SENDDATA,
-            WAITSTOP
-        }
-        #endregion
-
-        #region constants
-        //the possible responses to send
-        private sealed class ResponseStrings
-        {
-            public static readonly string POSITIVERESPONSE = "Ok";
-            public static readonly string NEGATIVERESPONSE = "Invalid Request";
-            public static readonly string STARTRESPONSE = "Start";
-            public static readonly string STOPRESPONSE = "Stop";
-        }
-
-        private static readonly string URLPREFIX = "http://localhost:";
-
-        #endregion
+        //deliberately don't use IList, as RemoveAll function is used later
+        private readonly List<Tuple<IWebBrowserEventObserver, Type>> observers;
 
         //i am not 100% positive that i need a threadsafe collection here
         //depends on the way the asynchronous BeginGetContext is handled internally
         private readonly ConcurrentQueue<HttpListenerResponse> startQueue;
         private readonly ConcurrentQueue<HttpListenerResponse> stopQueue;
-        private readonly HttpListener listener;
-        //deliberately don't use IList, as RemoveAll function is used later
-        private readonly List<Tuple<IWebBrowserEventObserver, Type>> observers;
 
-        private bool recordingActive = false;
+        private bool recordingActive;
 
         /// <summary>
-        ///     Create a new WebExtensionListener, listening on localhost with port and optionally a directory determined by urlSuffix
+        ///     Create a new WebExtensionListener, listening on localhost with port and optionally a directory determined by
+        ///     urlSuffix
         /// </summary>
-        /// <param name="urlSuffix">the url suffix consisting of port number and optional directory. Must end in a slash '/' character.</param>
-        ///<exception cref = "HttpListenerException" >If a listener already listens on the given port (might also be another application).</exception>
-        ///<exception cref = "UriFormatException" >If the urlSuffix is invalid.</exception>
-        public WebExtensionListener(string urlSuffix) 
+        /// <param name="urlSuffix">
+        ///     the url suffix consisting of port number and optional directory. Must end in a slash '/'
+        ///     character.
+        /// </param>
+        /// <exception cref="HttpListenerException">
+        ///     If a listener already listens on the given port (might also be another
+        ///     application).
+        /// </exception>
+        /// <exception cref="UriFormatException">If the urlSuffix is invalid.</exception>
+        public WebExtensionListener(string urlSuffix)
         {
             listener = new HttpListener();
             //this might throw the HttpListenerException
-            listener.Prefixes.Add(new Uri(URLPREFIX + urlSuffix).ToString()); //the short conversion to Uri is just to check URL validity
+            listener.Prefixes.Add(new Uri(URLPREFIX + urlSuffix)
+                                      .ToString()); //the short conversion to Uri is just to check URL validity
             startQueue = new ConcurrentQueue<HttpListenerResponse>();
             stopQueue = new ConcurrentQueue<HttpListenerResponse>();
             observers = new List<Tuple<IWebBrowserEventObserver, Type>>();
@@ -127,7 +90,61 @@ namespace MORR.Modules.WebBrowser
                 }
             }
         }
+
+        #region Private helper classes
+
+        //a private helper class to parse and identify the request
+        private class WebBrowserRequest
+        {
+            public string Request { get; set; }
+            public JsonElement? Data { get; set; }
+        }
+
+        //a private helper class to build the response
+        private class WebBrowserResponse
+        {
+            public WebBrowserResponse(string response, string? config = null)
+            {
+                this.response = response;
+                this.config = config;
+            }
+            
+            //this is only here to the JsonSerializer adds it to the response
+            //DO NOT change the names of these
+            public string application { get; } = "MORR";
+            public string response { get; }
+            public string? config { get; }
+        }
+
+        //the possible incoming requests
+        private enum WebBrowserRequestType
+        {
+            CONNECT,
+            CONFIG,
+            START,
+            SENDDATA,
+            WAITSTOP
+        }
+
+        #endregion
+
+        #region constants
+
+        //the possible responses to send
+        private sealed class ResponseStrings
+        {
+            public static readonly string POSITIVERESPONSE = "Ok";
+            public static readonly string NEGATIVERESPONSE = "Invalid Request";
+            public static readonly string STARTRESPONSE = "Start";
+            public static readonly string STOPRESPONSE = "Stop";
+        }
+
+        private static readonly string URLPREFIX = "http://localhost:";
+
+        #endregion
+
         #region Private methods
+
         /// <summary>
         ///     Signal that the recording starts.
         /// </summary>
@@ -137,6 +154,7 @@ namespace MORR.Modules.WebBrowser
             {
                 AnswerRequest(response, new WebBrowserResponse(ResponseStrings.STARTRESPONSE));
             }
+
             startQueue.Clear();
         }
 
@@ -149,6 +167,7 @@ namespace MORR.Modules.WebBrowser
             {
                 AnswerRequest(response, new WebBrowserResponse(ResponseStrings.STOPRESPONSE));
             }
+
             stopQueue.Clear();
         }
 
@@ -157,26 +176,31 @@ namespace MORR.Modules.WebBrowser
         {
             var context = listener.EndGetContext(result);
             var request = context.Request;
- 
+
             //get post data and decode it (will come in URL encoding)
             string decodedRequest;
             using (var reader = new StreamReader(request.InputStream, request.ContentEncoding))
             {
                 decodedRequest = DecodeUrlString(reader.ReadToEnd());
             }
+
             listener.BeginGetContext(RetrieveRequest, null); //get ready for next request
 
             //try parsing the request
             WebBrowserRequest webBrowserRequest;
             try
             {
-                webBrowserRequest = JsonSerializer.Deserialize<WebBrowserRequest>(decodedRequest, new JsonSerializerOptions{PropertyNameCaseInsensitive = true});
+                webBrowserRequest =
+                    JsonSerializer.Deserialize<WebBrowserRequest>(decodedRequest,
+                                                                  new JsonSerializerOptions
+                                                                      { PropertyNameCaseInsensitive = true });
             }
             catch (JsonException ex)
             {
                 AnswerInvalid(context.Response);
                 return;
             }
+
             HandleRequest(webBrowserRequest, context);
         }
 
@@ -192,19 +216,26 @@ namespace MORR.Modules.WebBrowser
             {
                 switch (type)
                 {
-                    case (WebBrowserRequestType.CONNECT):
+                    case WebBrowserRequestType.CONNECT:
                         AnswerRequest(context.Response, new WebBrowserResponse(ResponseStrings.POSITIVERESPONSE));
                         break;
-                    case (WebBrowserRequestType.CONFIG):
-                        AnswerRequest(context.Response, new WebBrowserResponse(ResponseStrings.POSITIVERESPONSE, "undefined")); //TODO: retrieve and send config
+                    case WebBrowserRequestType.CONFIG:
+                        AnswerRequest(context.Response,
+                                      new WebBrowserResponse(ResponseStrings.POSITIVERESPONSE,
+                                                             "undefined")); //TODO: retrieve and send config
                         break;
-                    case (WebBrowserRequestType.START):
+                    case WebBrowserRequestType.START:
                         if (recordingActive)
+                        {
                             AnswerRequest(context.Response, new WebBrowserResponse(ResponseStrings.STARTRESPONSE));
+                        }
                         else
+                        {
                             startQueue.Enqueue(context.Response);
+                        }
+
                         break;
-                    case (WebBrowserRequestType.SENDDATA):
+                    case WebBrowserRequestType.SENDDATA:
                         if (request.Data != null && DeserializeEventAndBroadcast(request))
                         {
                             AnswerRequest(context.Response, new WebBrowserResponse(ResponseStrings.POSITIVERESPONSE));
@@ -213,12 +244,18 @@ namespace MORR.Modules.WebBrowser
                         {
                             AnswerInvalid(context.Response);
                         }
+
                         break;
-                    case (WebBrowserRequestType.WAITSTOP):
+                    case WebBrowserRequestType.WAITSTOP:
                         if (!recordingActive)
+                        {
                             AnswerRequest(context.Response, new WebBrowserResponse(ResponseStrings.STOPRESPONSE));
+                        }
                         else
+                        {
                             stopQueue.Enqueue(context.Response);
+                        }
+
                         break;
                     default:
                         //theoretically unreachable, as Enum.TryParse should have failed in this case
@@ -237,10 +274,10 @@ namespace MORR.Modules.WebBrowser
         //send an answer to the sender
         private void AnswerRequest(HttpListenerResponse response, WebBrowserResponse answer)
         {
-            byte[] buffer = System.Text.Encoding.UTF8.GetBytes(JsonSerializer.Serialize((answer)));
+            var buffer = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(answer));
             response.ContentType = "Application/json";
             response.ContentLength64 = buffer.Length;
-            Stream output = response.OutputStream;
+            var output = response.OutputStream;
             output.Write(buffer, 0, buffer.Length);
             output.Close();
         }
@@ -251,49 +288,57 @@ namespace MORR.Modules.WebBrowser
             string newUrl;
             //url is not guaranteed to be decoded within a single call
             while ((newUrl = Uri.UnescapeDataString(url)) != url)
+            {
                 url = newUrl;
+            }
+
             return newUrl;
         }
 
         private bool DeserializeEventAndBroadcast(WebBrowserRequest request)
         {
             if (request.Data == null)
+            {
                 return false;
-            JsonElement parsed = request.Data.Value;
+            }
+
+            var parsed = request.Data.Value;
             EventLabel label;
             if (!Enum.TryParse(parsed.GetProperty("type").ToString(), true, out label))
+            {
                 return false;
+            }
 
             WebBrowserEvent @event;
             //choose event class based on type label
             //there may be some smoother way to map from string to class
             switch (label)
             {
-                case (EventLabel.BUTTONCLICK):
+                case EventLabel.BUTTONCLICK:
                     @event = new ButtonClickEvent();
                     break;
-                case (EventLabel.CLOSETAB):
+                case EventLabel.CLOSETAB:
                     @event = new CloseTabEvent();
                     break;
-                case (EventLabel.OPENTAB):
+                case EventLabel.OPENTAB:
                     @event = new OpenTabEvent();
                     break;
-                case (EventLabel.SWITCHTAB):
+                case EventLabel.SWITCHTAB:
                     @event = new SwitchTabEvent();
                     break;
-                case (EventLabel.NAVIGATION):
+                case EventLabel.NAVIGATION:
                     @event = new NavigationEvent();
                     break;
-                case (EventLabel.TEXTINPUT):
+                case EventLabel.TEXTINPUT:
                     @event = new TextInputEvent();
                     break;
-                case (EventLabel.TEXTSELECTION):
+                case EventLabel.TEXTSELECTION:
                     @event = new TextSelectionEvent();
                     break;
-                case (EventLabel.DOWNLOAD):
+                case EventLabel.DOWNLOAD:
                     @event = new FileDownloadEvent();
                     break;
-                case (EventLabel.HOVER):
+                case EventLabel.HOVER:
                     @event = new HoverEvent();
                     break;
                 default:
@@ -308,30 +353,34 @@ namespace MORR.Modules.WebBrowser
             {
                 return false;
             }
+
             NotifyAll(@event);
             return true;
         }
+
         #endregion
 
         #region Observer pattern implementation
+
         public void SubScribe(IWebBrowserEventObserver observer, Type eventType)
         {
-            this.observers.RemoveAll(tuple => tuple.Item1 == observer);
-            this.observers.Add(new Tuple<IWebBrowserEventObserver, Type>(observer, eventType));
+            observers.RemoveAll(tuple => tuple.Item1 == observer);
+            observers.Add(new Tuple<IWebBrowserEventObserver, Type>(observer, eventType));
         }
 
         public void UnSubScribe(IWebBrowserEventObserver observer)
         {
-            this.observers.RemoveAll(tuple => tuple.Item1 == observer);
+            observers.RemoveAll(tuple => tuple.Item1 == observer);
         }
 
         private void NotifyAll(WebBrowserEvent @event)
         {
-            foreach (var tuple in observers.FindAll(tuple => (tuple.Item2 == @event.GetType())))
+            foreach (var tuple in observers.FindAll(tuple => tuple.Item2 == @event.GetType()))
             {
                 tuple.Item1.Notify(@event);
             }
         }
+
         #endregion
     }
 }

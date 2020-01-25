@@ -1,7 +1,7 @@
-using MORR.Shared.Events.Queue;
+using System.ComponentModel.Composition;
 using MORR.Modules.WebBrowser.Events;
-﻿using System.ComponentModel.Composition;
 using MORR.Shared.Events;
+using MORR.Shared.Events.Queue;
 
 namespace MORR.Modules.WebBrowser.Producers
 {
@@ -14,8 +14,5 @@ namespace MORR.Modules.WebBrowser.Producers
     [Export(typeof(IWebBrowserEventObserver))]
     [Export(typeof(IReadOnlyEventQueue<Event>))]
     [Export(typeof(IReadWriteEventQueue<CloseTabEvent>))]
-    public class CloseTabEventProducer :  WebBrowserEventProducer<CloseTabEvent>
-    {
-
-    }
+    public class CloseTabEventProducer : WebBrowserEventProducer<CloseTabEvent> { }
 }

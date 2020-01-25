@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using MORR.Modules.WebBrowser.Events;
 
 namespace MORR.Modules.WebBrowser
 {
     internal interface IWebBrowserEventObserver
     {
-        public void Notify(WebBrowserEvent @event);
         public Type HandledEventType { get; }
+        public void Notify(WebBrowserEvent @event);
     }
 
     internal interface IWebBrowserEventObservible

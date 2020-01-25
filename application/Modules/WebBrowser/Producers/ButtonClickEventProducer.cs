@@ -1,7 +1,8 @@
+using System.ComponentModel.Composition;
 using MORR.Modules.WebBrowser.Events;
 using MORR.Shared.Events;
 using MORR.Shared.Events.Queue;
-using System.ComponentModel.Composition;
+
 namespace MORR.Modules.WebBrowser.Producers
 {
     /// <summary>
@@ -13,8 +14,5 @@ namespace MORR.Modules.WebBrowser.Producers
     [Export(typeof(IReadWriteEventQueue<ButtonClickEvent>))]
     [Export(typeof(WebBrowserEventProducer<ButtonClickEvent>))]
     [Export(typeof(IWebBrowserEventObserver))]
-    public class ButtonClickEventProducer :  WebBrowserEventProducer<ButtonClickEvent>
-    {
-
-    }
+    public class ButtonClickEventProducer : WebBrowserEventProducer<ButtonClickEvent> { }
 }
