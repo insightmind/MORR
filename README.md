@@ -1,6 +1,8 @@
 # Application for aquisition of research activities
 (PSE Team 2)
 
+![Build + Test](https://github.com/insightmind/MORR/workflows/Build%20+%20Test/badge.svg)
+
 ## General
 
 Team Communication via Slack
