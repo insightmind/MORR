@@ -38,7 +38,6 @@ namespace MORR.Core.CLI.Output
                 throw new EncodingException();
             }
 
-            dynamic @event = JsonSerializer.Deserialize(sample.SerializedData, sample.EventType);
             var output = Encoding.UTF8.GetString(sample.SerializedData);
             var timestamp = DateTime.Now.ToString(DateFormatString);
 
