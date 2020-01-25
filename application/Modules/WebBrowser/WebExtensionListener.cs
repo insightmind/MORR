@@ -28,13 +28,13 @@ namespace MORR.Modules.WebBrowser
         private class WebBrowserResponse
         {
             //this is only here to the JsonSerializer adds it to the response
-            public string Application { get; } = "MORR";
-            public string Response { get; }
-            public string? Config { get; }
+            public string application { get; } = "MORR";
+            public string response { get; }
+            public string? config { get; }
             public WebBrowserResponse(string response, string? config = null)
             {
-                this.Response = response;
-                this.Config = config;
+                this.response = response;
+                this.config = config;
             }
         }
 
@@ -55,7 +55,7 @@ namespace MORR.Modules.WebBrowser
         {
             public static readonly string POSITIVERESPONSE = "Ok";
             public static readonly string NEGATIVERESPONSE = "Invalid Request";
-            public static readonly string STARTRESPONSE = "Ok";
+            public static readonly string STARTRESPONSE = "Start";
             public static readonly string STOPRESPONSE = "Stop";
         }
 
@@ -196,7 +196,7 @@ namespace MORR.Modules.WebBrowser
                         AnswerRequest(context.Response, new WebBrowserResponse(ResponseStrings.POSITIVERESPONSE));
                         break;
                     case (WebBrowserRequestType.CONFIG):
-                        AnswerRequest(context.Response, new WebBrowserResponse(ResponseStrings.POSITIVERESPONSE, "")); //TODO: retrieve and send config
+                        AnswerRequest(context.Response, new WebBrowserResponse(ResponseStrings.POSITIVERESPONSE, "undefined")); //TODO: retrieve and send config
                         break;
                     case (WebBrowserRequestType.START):
                         if (recordingActive)

@@ -10,7 +10,7 @@ namespace MORR.Modules.WebBrowser.Producers
     [Export(typeof(ButtonClickEventProducer))]
     [Export(typeof(IReadOnlyEventQueue<ButtonClickEvent>))]
     [Export(typeof(WebBrowserEventProducer<ButtonClickEvent>))]
-    [Export(typeof(WebBrowserEventProducer<WebBrowserEvent>))]
+    [Export(typeof(WebBrowserEventProducer<>))]
     public class ButtonClickEventProducer :  WebBrowserEventProducer<ButtonClickEvent>
     {
 

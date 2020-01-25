@@ -11,7 +11,7 @@ namespace MORR.Modules.WebBrowser.Producers
 
     [Export(typeof(IReadOnlyEventQueue<SwitchTabEvent>))]
     [Export(typeof(WebBrowserEventProducer<SwitchTabEvent>))]
-    [Export(typeof(WebBrowserEventProducer<WebBrowserEvent>))]
+    [Export(typeof(WebBrowserEventProducer<>))]
     public class SwitchTabEventProducer : WebBrowserEventProducer<SwitchTabEvent>
     {
     

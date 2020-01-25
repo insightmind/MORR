@@ -1,12 +1,13 @@
-﻿using System.Composition;
+﻿using System.ComponentModel.Composition;
 using System.Text.Json;
 using MORR.Shared.Configuration;
-using MORR.Core.Recording;
+using System.Collections.Generic;
+using MORR.Core.Configuration;
 
 namespace MORR.Modules.WebBrowser
 {
-    [Export(typeof(RecordingConfiguration))]
     [Export(typeof(IConfiguration))]
+    [Export(typeof(WebBrowserModuleConfiguration))]
     public class WebBrowserModuleConfiguration : IConfiguration
     {
         /// <summary>
@@ -16,11 +17,17 @@ namespace MORR.Modules.WebBrowser
         ///     Examples for valid values are "60024/" or "60024/johndoe/".
         /// </summary>
         public string UrlSuffix;
-        public string Identifier => "WebBrowser";
-        public void Parse(string configuration)
+        public void Parse(RawConfiguration configuration)
         {
-            var instance = JsonSerializer.Deserialize<WebBrowserModuleConfiguration>(configuration);
-            this.UrlSuffix = instance.UrlSuffix;
+            var element = JsonDocument.Parse(configuration.RawValue).RootElement;
+            try
+            {
+                this.UrlSuffix = element.GetProperty("UrlSuffix").GetString();
+            }
+            catch (KeyNotFoundException)
+            {
+                throw new InvalidConfigurationException("Failed to parse UrlSuffix.");
+            }
         }
     }
 }
