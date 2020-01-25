@@ -11,9 +11,11 @@ namespace MORR.Modules.WebBrowser.Producers
     /// </summary>
     [Export(typeof(TextSelectionEventProducer))]
 
+    [Export(typeof(IReadOnlyEventQueue<Event>))]
     [Export(typeof(IReadOnlyEventQueue<TextSelectionEvent>))]
     [Export(typeof(WebBrowserEventProducer<TextSelectionEvent>))]
     [Export(typeof(IWebBrowserEventObserver))]
+    [Export(typeof(IReadWriteEventQueue<TextSelectionEvent>))]
     public class TextSelectionEventProducer : WebBrowserEventProducer<TextSelectionEvent>
     {
 

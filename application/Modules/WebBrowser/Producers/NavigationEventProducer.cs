@@ -1,6 +1,7 @@
 using MORR.Shared.Events.Queue;
 using MORR.Modules.WebBrowser.Events;
 using System.ComponentModel.Composition;
+using MORR.Shared.Events;
 
 namespace MORR.Modules.WebBrowser.Producers
 {
@@ -11,6 +12,8 @@ namespace MORR.Modules.WebBrowser.Producers
     [Export(typeof(IReadOnlyEventQueue<NavigationEvent>))]
     [Export(typeof(WebBrowserEventProducer<NavigationEvent>))]
     [Export(typeof(IWebBrowserEventObserver))]
+    [Export(typeof(IReadOnlyEventQueue<Event>))]
+    [Export(typeof(IReadWriteEventQueue<NavigationEvent>))]
     public class NavigationEventProducer :  WebBrowserEventProducer<NavigationEvent>
     {
 

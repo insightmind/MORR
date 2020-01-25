@@ -18,13 +18,13 @@ namespace MORR.Modules.WebBrowser.Events
         /// <summary>
         /// The URL of the website that the button is linked to
         /// </summary>
-        public Uri? Href { get; set; }
+        public string? Href { get; set; }
 
         protected override void DeserializeSpecificAttributes(JsonElement parsed)
         {
             Button = parsed.GetProperty("buttonTitle").GetString();
             if (parsed.TryGetProperty("buttonHref", out var hrefElement))
-                Href = new Uri(hrefElement.GetString());
+                Href = hrefElement.GetString();
         }
     }
 }

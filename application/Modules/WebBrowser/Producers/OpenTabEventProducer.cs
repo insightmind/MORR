@@ -1,7 +1,7 @@
 using MORR.Shared.Events.Queue;
 using MORR.Modules.WebBrowser.Events;
 ﻿using System.ComponentModel.Composition;
-
+using MORR.Shared.Events;
 
 namespace MORR.Modules.WebBrowser.Producers
 {
@@ -13,6 +13,8 @@ namespace MORR.Modules.WebBrowser.Producers
     [Export(typeof(IReadOnlyEventQueue<OpenTabEvent>))]
     [Export(typeof(WebBrowserEventProducer<OpenTabEvent>))]
     [Export(typeof(IWebBrowserEventObserver))]
+    [Export(typeof(IReadOnlyEventQueue<Event>))]
+    [Export(typeof(IReadWriteEventQueue<OpenTabEvent>))]
     public class OpenTabEventProducer : WebBrowserEventProducer<OpenTabEvent>
     {
     
