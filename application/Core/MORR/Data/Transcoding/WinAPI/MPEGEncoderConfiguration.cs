@@ -31,7 +31,7 @@ namespace MORR.Core.Data.Transcoding.WinAPI
         public uint Height { get; set; }
 
         /// <summary>
-        ///     The bit rate in bits per second of the resulting video stream.
+        ///     The bit rate in kilo bits per second of the resulting video stream.
         /// </summary>
         public uint KiloBitsPerSecond { get; set; }
 
