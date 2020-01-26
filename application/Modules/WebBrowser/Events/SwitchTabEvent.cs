@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.Json;
+﻿using System.Text.Json;
 
 namespace MORR.Modules.WebBrowser.Events
 {
@@ -10,7 +7,7 @@ namespace MORR.Modules.WebBrowser.Events
     /// </summary>
     public class SwitchTabEvent : WebBrowserEvent
     {
-        private static readonly string serializednewTabIDField = "newTabID";
+        private const string serializedNewTabIdField = "newTabID";
         /// <summary>
         /// The identifier of the tab that the user switched to
         /// </summary>
@@ -18,7 +15,7 @@ namespace MORR.Modules.WebBrowser.Events
 
         protected override void DeserializeSpecificAttributes(JsonElement parsed)
         {
-            NewTabID = parsed.GetProperty(serializednewTabIDField).GetInt32();
+            NewTabID = parsed.GetProperty(serializedNewTabIdField).GetInt32();
         }
     }
 }

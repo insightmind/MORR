@@ -9,9 +9,9 @@ namespace MORR.Modules.WebBrowser.Events
     /// </summary>
     public abstract class WebBrowserEvent : Event
     {
-        private static readonly string serializedTabIdField = "tabID";
-        private static readonly string serializedUrlField = "url";
-        private static readonly string serializedTimeStampField = "timeStamp";
+        private const string serializedTabIdField = "tabID";
+        private const string serializedUrlField = "url";
+        private const string serializedTimeStampField = "timeStamp";
         /// <summary>
         ///     The identifier of the tab where the web browser event occured in
         /// </summary>
@@ -32,9 +32,9 @@ namespace MORR.Modules.WebBrowser.Events
         }
 
         /// <summary>
-        ///     Deserialize a browser event from a JsonDocument instance
+        ///     Deserialize a browser event from a JSONElement instance
         /// </summary>
-        /// <param name="serialized">A JsonDocument parsed from a serialized event.</param>
+        /// <param name="parsed">A JSONElement parsed from a serialized event.</param>
         public void Deserialize(JsonElement parsed)
         {
             DeserializeCommonAttributes(parsed);
@@ -56,9 +56,9 @@ namespace MORR.Modules.WebBrowser.Events
         /// <param name="parsed"></param>
         protected void DeserializeCommonAttributes(JsonElement parsed)
         {
-            TabID = parsed.GetProperty("tabID").GetInt32();
-            CurrentURL = new Uri(parsed.GetProperty("url").ToString());
-            Timestamp = parsed.GetProperty("timeStamp").GetDateTime();
+            TabID = parsed.GetProperty(serializedTabIdField).GetInt32();
+            CurrentURL = new Uri(parsed.GetProperty(serializedUrlField).ToString());
+            Timestamp = parsed.GetProperty(serializedTimeStampField).GetDateTime();
             IssuingModule = new Guid("e9240dc4-f33f-43db-a419-5b36d8279c88"); //TODO: actually obtain this from the module
         }
     }

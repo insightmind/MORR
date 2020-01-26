@@ -14,7 +14,7 @@ namespace MORR.Modules.WebBrowser
     ///     The <see cref="WebExtensionListener" /> is responsible for maintaining the connection to the WebBrowser(s).
     ///     It will answer incoming requests based on the recording state and receive incoming event data.
     /// </summary>
-    internal class WebExtensionListener : IWebBrowserEventObservible
+    internal class WebExtensionListener : IWebBrowserEventObservable
     {
         private readonly HttpListener listener;
         private static readonly string serializedTypeField = "type";
@@ -363,13 +363,13 @@ namespace MORR.Modules.WebBrowser
 
         #region Observer pattern implementation
 
-        public void SubScribe(IWebBrowserEventObserver observer, Type eventType)
+        public void Subscribe(IWebBrowserEventObserver observer, Type eventType)
         {
             observers.RemoveAll(tuple => tuple.Item1 == observer);
             observers.Add(new Tuple<IWebBrowserEventObserver, Type>(observer, eventType));
         }
 
-        public void UnSubScribe(IWebBrowserEventObserver observer)
+        public void Unsubscribe(IWebBrowserEventObserver observer)
         {
             observers.RemoveAll(tuple => tuple.Item1 == observer);
         }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text.Json;
+﻿using System.Text.Json;
 
 namespace MORR.Modules.WebBrowser.Events
 {
@@ -8,8 +7,8 @@ namespace MORR.Modules.WebBrowser.Events
     /// </summary>
     public class TextInputEvent : WebBrowserEvent
     {
-        private static readonly string serializedTextField = "text";
-        private static readonly string serializedTextBoxField = "target";
+        private const string serializedTextField = "text";
+        private const string serializedTextBoxField = "target";
         /// <summary>
         /// The text that was inputted by the user on the website
         /// </summary>

@@ -5,7 +5,7 @@ using MORR.Shared.Events.Queue;
 namespace MORR.Modules.WebBrowser.Producers
 {
     /// <summary>
-    ///     A generic producer for WebBrowserEvents, which will need to be subscribed to a <see cref="IWebBrowserEventObservible"/> to gather
+    ///     A generic producer for WebBrowserEvents, which will need to be subscribed to a <see cref="IWebBrowserEventObservable"/> to gather
     ///     incoming event data. The default implementation here simply forwards the incoming events to the Queue if they are
     ///     of the appropriate type.
     /// </summary>

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.Json;
+﻿using System.Text.Json;
 
 namespace MORR.Modules.WebBrowser.Events
 {
@@ -10,7 +7,7 @@ namespace MORR.Modules.WebBrowser.Events
     /// </summary>
     public class TextSelectionEvent : WebBrowserEvent
     {
-        private static readonly string serializedTextField = "textSelection";
+        private const string serializedTextField = "textSelection";
         /// <summary>
         /// The text that was selected on the website
         /// </summary>

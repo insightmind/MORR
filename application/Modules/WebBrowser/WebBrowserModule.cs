@@ -27,8 +27,8 @@ namespace MORR.Modules.WebBrowser
         {
             get => isActive;
             set => Utility.SetAndDispatch(ref isActive, value,
-                                          () => { listener.RecordingActive = true; },
-                                          () => { listener.RecordingActive = false; });
+                                          () => listener.RecordingActive = true,
+                                          () => listener.RecordingActive = false);
         }
 
         public Guid Identifier { get; } = new Guid("e9240dc4-f33f-43db-a419-5b36d8279c88");
@@ -39,7 +39,7 @@ namespace MORR.Modules.WebBrowser
             listener.startListening();
             foreach (var producer in Producers)
             {
-                listener.SubScribe(producer, producer.HandledEventType);
+                listener.Subscribe(producer, producer.HandledEventType);
             }
         }
     }

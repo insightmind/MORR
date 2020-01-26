@@ -9,7 +9,7 @@ namespace MORR.Modules.WebBrowser
     [Export(typeof(WebBrowserModuleConfiguration))]
     public class WebBrowserModuleConfiguration : IConfiguration
     {
-        private static readonly string configUrlSuffixField = "UrlSuffix";
+        private const string configUrlSuffixField = "UrlSuffix";
         /// <summary>
         ///     A combination of port number and optionally directory.
         ///     Will be appended to the localhost-prefix defined in <see cref="WebExtensionListener" />.

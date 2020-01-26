@@ -7,7 +7,7 @@ namespace MORR.Modules.WebBrowser.Events
     /// </summary>
     public class HoverEvent : WebBrowserEvent
     {
-        private static readonly string serializedHoveredElementField = "target";
+        private const string serializedHoveredElementField = "target";
         /// <summary>
         /// The element on the website that has been hovered
         /// </summary>

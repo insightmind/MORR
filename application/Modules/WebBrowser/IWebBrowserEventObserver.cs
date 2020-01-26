@@ -9,9 +9,9 @@ namespace MORR.Modules.WebBrowser
         public void Notify(WebBrowserEvent @event);
     }
 
-    internal interface IWebBrowserEventObservible
+    internal interface IWebBrowserEventObservable
     {
-        public void SubScribe(IWebBrowserEventObserver observer, Type eventType);
-        public void UnSubScribe(IWebBrowserEventObserver observer);
+        public void Subscribe(IWebBrowserEventObserver observer, Type eventType);
+        public void Unsubscribe(IWebBrowserEventObserver observer);
     }
 }
