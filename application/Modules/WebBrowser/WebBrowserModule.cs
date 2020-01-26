@@ -36,7 +36,7 @@ namespace MORR.Modules.WebBrowser
         public void Initialize()
         {
             listener = new WebExtensionListener(Configuration.UrlSuffix);
-            listener.startListening();
+            listener.StartListening();
             foreach (var producer in Producers)
             {
                 listener.Subscribe(producer, producer.HandledEventType);

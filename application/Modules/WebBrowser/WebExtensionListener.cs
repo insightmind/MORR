@@ -17,7 +17,7 @@ namespace MORR.Modules.WebBrowser
     internal class WebExtensionListener : IWebBrowserEventObservable
     {
         private readonly HttpListener listener;
-        private static readonly string serializedTypeField = "type";
+        private const string serializedTypeField = "type";
 
         //deliberately don't use IList, as RemoveAll function is used later
         private readonly List<Tuple<IWebBrowserEventObserver, Type>> observers;
@@ -62,7 +62,7 @@ namespace MORR.Modules.WebBrowser
         /// <summary>
         ///     Start listening and handling requests.
         /// </summary>
-        public void startListening()
+        public void StartListening()
         {
             if (!listener.IsListening)
             {
@@ -74,7 +74,7 @@ namespace MORR.Modules.WebBrowser
         /// <summary>
         ///     Stop listening and handling requests.
         /// </summary>
-        public void stopListening()
+        public void StopListening()
         {
             if (listener.IsListening)
             {
@@ -109,12 +109,17 @@ namespace MORR.Modules.WebBrowser
                 this.response = response;
                 this.config = config;
             }
-            
+
             //this is only here to the JsonSerializer adds it to the response
             //DO NOT change the names of these
+#pragma warning disable IDE1006
+            // ReSharper disable once InconsistentNaming
             public string application { get; } = "MORR";
+            // ReSharper disable once InconsistentNaming
             public string response { get; }
+            // ReSharper disable once InconsistentNaming
             public string? config { get; }
+#pragma warning restore IDE1006
         }
 
         //the possible incoming requests
@@ -208,8 +213,7 @@ namespace MORR.Modules.WebBrowser
         //handle a retrieved and parsed request
         private void HandleRequest(WebBrowserRequest request, HttpListenerContext context)
         {
-            WebBrowserRequestType type;
-            if (!Enum.TryParse(request.Request, true, out type))
+            if (!Enum.TryParse(request.Request, true, out WebBrowserRequestType type))
             {
                 AnswerInvalid(context.Response);
             }
@@ -304,8 +308,7 @@ namespace MORR.Modules.WebBrowser
             }
 
             var parsed = request.Data.Value;
-            EventLabel label;
-            if (!Enum.TryParse(parsed.GetProperty(serializedTypeField).ToString(), true, out label))
+            if (!Enum.TryParse(parsed.GetProperty(serializedTypeField).ToString(), true, out EventLabel label))
             {
                 return false;
             }
