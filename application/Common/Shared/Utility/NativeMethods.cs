@@ -124,7 +124,6 @@ namespace MORR.Shared.Utility
             IntPtr ClipboardDataPointer = GetClipboardData(CF_TEXT);
 
             //Locks the handle to get the actual text pointer
-            UIntPtr Length = GlobalSize(ClipboardDataPointer);
             IntPtr gLock = GlobalLock(ClipboardDataPointer);
 
             string text;
