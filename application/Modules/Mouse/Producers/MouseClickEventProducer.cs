@@ -1,12 +1,11 @@
 using System;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Input;
 using MORR.Modules.Mouse.Events;
+using MORR.Shared.Events;
 using MORR.Shared.Events.Queue;
-using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
+using MORR.Shared.Utility;
 
 namespace MORR.Modules.Mouse.Producers
 {
@@ -15,196 +14,164 @@ namespace MORR.Modules.Mouse.Producers
     /// </summary>
     [Export(typeof(MouseClickEventProducer))]
     [Export(typeof(IReadOnlyEventQueue<MouseClickEvent>))]
+    [Export(typeof(IReadWriteEventQueue<MouseClickEvent>))]
+    [Export(typeof(IReadOnlyEventQueue<Event>))]
+    [PartCreationPolicy(CreationPolicy.Shared)]
     public class MouseClickEventProducer : DefaultEventQueue<MouseClickEvent>
     {
-        #region constructor
-
         /// <summary>
-        ///     initialize the MouseClickEventProducer.
-        ///     initialize the isWaitingOn~DoubleClick fields to false.
-        ///     retrieves the current double-click time for the mouse.
+        ///     the maximum number of milliseconds that may occur between the first and
+        ///     second click of a double-click.
         /// </summary>
-        public MouseClickEventProducer() : base(new BoundedMultiConsumerChannelStrategy<MouseClickEvent>)
-        {
-            isWaitingOnLeftDoubleClick = false;
-            isWaitingOnRightDoubleClick = false;
-            isWaitingOnRightDoubleClick = false;
-            doubleClickTime = NativeMethods.GetDoubleClickTime();
-        }
+        private readonly uint doubleClickTime = NativeMethods.GetDoubleClickTime();
 
-        #endregion
-
-        #region private fields
-
-        /// <summary>
-        ///     The low level mouse hook
-        /// </summary>
-        private IntPtr hook = IntPtr.Zero;
+        private NativeMethods.LowLevelMouseProc? callback;
 
         /// <summary>
         ///     true if a left single click is detected and a left double click is expected
         ///     in the double click time
         ///     false if no left single click is detected or a left single click is detected but the
         ///     double click time is passed
+        ///     this field should be initialized to false because click detecting happens only after the initialization
         /// </summary>
         private bool isWaitingOnLeftDoubleClick;
-
-        /// <summary>
-        ///     true if a right single click is detected and a right double click is expected
-        ///     in the double click time
-        ///     false if no right single click is detected or a right single click is detected but the
-        ///     double click time is passed
-        /// </summary>
-        private bool isWaitingOnRightDoubleClick;
 
         /// <summary>
         ///     true if a middle single click is detected and a middle double click is expected
         ///     in the double click time
         ///     false if no middle single click is detected or a middle single click is detected but the
         ///     double click time is passed
+        ///     this field should be initialized to false because click detecting happens only after the initialization
         /// </summary>
         private bool isWaitingOnMiddleDoubleClick;
 
         /// <summary>
-        ///     the maximum number of milliseconds that may occur between the first and
-        ///     second click of a double-click.
+        ///     true if a right single click is detected and a right double click is expected
+        ///     in the double click time
+        ///     false if no right single click is detected or a right single click is detected but the
+        ///     double click time is passed
+        ///     this field should be initialized to false because click detecting happens only after the initialization
         /// </summary>
-        private readonly uint doubleClickTime;
-
-        #endregion
-
-        #region public methods
+        private bool isWaitingOnRightDoubleClick;
 
         /// <summary>
-        ///     Set the hook for the mouse.
+        ///     The low level mouse MouseHookHandle
         /// </summary>
-        public void HookMouse()
+        private IntPtr MouseHookHandle;
+
+        public void StartCapture()
         {
-            var currentProcess = Process.GetCurrentProcess();
-            var currentModule = currentProcess.MainModule;
-            var moduleName = currentModule.ModuleName;
-            var moduleHandle = NativeMethods.GetModuleHandle(moduleName);
-            hook = NativeMethods.SetWindowsHookEx((int) NativeMethods.HookType.WH_MOUSE_LL, HookProc, moduleHandle,
-                                                  0);
-        }
-
-        /// <summary>
-        ///     Release the hook for the mouse.
-        /// </summary>
-        public void UnhookMouse()
-        {
-            NativeMethods.UnhookWindowsHookEx(hook);
-        }
-
-        #endregion
-
-        #region private methods
-
-        /// <summary>
-        ///     The callback for the Mouse hook
-        ///     Create MouseClickEvent when user clicks
-        /// </summary>
-        /// <param name="nCode">The hook code, if it isn't >= 0, the function shouldn't do anyting</param>
-        /// <param name="wParam">The event type</param>
-        /// <param name="lParam">The mouse event information</param>
-        /// <returns></returns>
-        private int HookProc(int nCode, int wParam, IntPtr lParam)
-        {
-            if (nCode >= 0)
+            callback = MouseHookCallback; // Store callback to prevent GC
+            if (!NativeMethods.TrySetMouseHook(callback, out MouseHookHandle))
             {
-                MouseAction mouseAction;
+                throw new Exception("Failed hook mouse.");
+            }
+        }
 
-                if (wParam == (int) NativeMethods.MessageType.WM_LBUTTONDOWN)
+        public void StopCapture()
+        {
+            if (!NativeMethods.UnhookWindowsHookEx(MouseHookHandle))
+            {
+                throw new Exception("Failed to unhook mouse.");
+            }
+        }
+
+
+        private int MouseHookCallback(int nCode,
+                                      NativeMethods.MessageType wParam,
+                                      NativeMethods.MSLLHOOKSTRUCT lParam)
+        {
+            if (nCode < 0)
+            {
+                // Required as per documentation
+                // see https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/ms644985(v=vs.85)#return-value
+                return NativeMethods.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
+            }
+
+            MouseAction mouseAction;
+
+            if (wParam == NativeMethods.MessageType.WM_LBUTTONDOWN)
+            {
+                // a left single mouse click is detected
+                if (isWaitingOnLeftDoubleClick)
                 {
-                    // a left single mouse click is detected
-                    if (isWaitingOnLeftDoubleClick)
-                    {
-                        // a left double click is expected
-                        mouseAction = MouseAction.LeftDoubleClick;
-                        // reset isWaitingOnLeftDoubleClick to false
-                        isWaitingOnLeftDoubleClick = false;
-                    }
-                    else
-                    {
-                        // a left double click is not expected
-                        mouseAction = MouseAction.LeftClick;
-                        // set isWaitingOnLeftDoubleClick to false
-                        isWaitingOnLeftDoubleClick = true;
-                        //start the Timer countdown to wait on a left double click
-                        WaitOnDoubleClick(doubleClickTime, ResetIsWaitingOnLeftDoubleClick);
-                    }
-                }
-                else if (wParam == (int) NativeMethods.MessageType.WM_RBUTTONDOWN)
-                {
-                    // a right single mouse click is detected
-                    if (isWaitingOnRightDoubleClick)
-                    {
-                        // a right double click is expected
-                        mouseAction = MouseAction.RightDoubleClick;
-                        // reset isWaitingOnRightDoubleClick to false
-                        isWaitingOnRightDoubleClick = false;
-                    }
-                    else
-                    {
-                        // a right double click is not expected
-                        mouseAction = MouseAction.RightClick;
-                        // set isWaitingOnRightDoubleClick to false
-                        isWaitingOnRightDoubleClick = true;
-                        //start the Timer countdown to wait on a right double click
-                        WaitOnDoubleClick(doubleClickTime, ResetIsWaitingOnRightDoubleClick);
-                    }
-                }
-                else if (wParam == (int) NativeMethods.MessageType.WM_MBUTTONDOWN)
-                {
-                    // a middle single mouse click is detected
-                    if (isWaitingOnRightDoubleClick)
-                    {
-                        // a middle double click is expected
-                        mouseAction = MouseAction.MiddleDoubleClick;
-                        // reset isWaitingOnMiddleDoubleClick to false
-                        isWaitingOnRightDoubleClick = false;
-                    }
-                    else
-                    {
-                        // a middle double click is not expected
-                        mouseAction = MouseAction.MiddleClick;
-                        // set isWaitingOnMiddleDoubleClick to false
-                        isWaitingOnRightDoubleClick = true;
-                        //start the Timer countdown to wait on a middle double click
-                        WaitOnDoubleClick(doubleClickTime, ResetIsWaitingOnMiddleDoubleClick);
-                    }
+                    // a left double click is expected
+                    mouseAction = MouseAction.LeftDoubleClick;
+                    // reset isWaitingOnLeftDoubleClick to false
+                    isWaitingOnLeftDoubleClick = false;
                 }
                 else
                 {
-                    // no click is detected
-                    mouseAction = MouseAction.None;
+                    // a left double click is not expected
+                    mouseAction = MouseAction.LeftClick;
+                    // set isWaitingOnLeftDoubleClick to false
+                    isWaitingOnLeftDoubleClick = true;
+                    //start the Timer countdown to wait on a left double click
+                    WaitOnDoubleClick(doubleClickTime, ResetIsWaitingOnLeftDoubleClick);
                 }
-
-
-                if (mouseAction != MouseAction.None)
+            }
+            else if (wParam == NativeMethods.MessageType.WM_RBUTTONDOWN)
+            {
+                // a right single mouse click is detected
+                if (isWaitingOnRightDoubleClick)
                 {
-                    // create a MouseClickEvent
-                    var @event = new MouseClickEvent();
-
-                    // set the MouseAction
-                    @event.MouseAction = mouseAction;
-
-                    //retrieve the mouse position from the lParam
-                    var hookStruct =
-                        (NativeMethods.MouseHookStruct) Marshal.PtrToStructure(
-                            lParam, typeof(NativeMethods.MouseHookStruct));
-                    var mousePosition = hookStruct.pt;
-
-                    // set the mouse position
-                    @event.MousePosition = mousePosition;
-
-                    //TODO get the Intptr of the window
-
-                    //Enqueue the MouseClickEvent
-                    Enqueue(@event);
+                    // a right double click is expected
+                    mouseAction = MouseAction.RightDoubleClick;
+                    // reset isWaitingOnRightDoubleClick to false
+                    isWaitingOnRightDoubleClick = false;
                 }
+                else
+                {
+                    // a right double click is not expected
+                    mouseAction = MouseAction.RightClick;
+                    // set isWaitingOnRightDoubleClick to false
+                    isWaitingOnRightDoubleClick = true;
+                    //start the Timer countdown to wait on a right double click
+                    WaitOnDoubleClick(doubleClickTime, ResetIsWaitingOnRightDoubleClick);
+                }
+            }
+            else if (wParam == NativeMethods.MessageType.WM_MBUTTONDOWN)
+            {
+                // a middle single mouse click is detected
+                if (isWaitingOnMiddleDoubleClick)
+                {
+                    // a middle double click is expected
+                    mouseAction = MouseAction.MiddleDoubleClick;
+                    // reset isWaitingOnMiddleDoubleClick to false
+                    isWaitingOnMiddleDoubleClick = false;
+                }
+                else
+                {
+                    // a middle double click is not expected
+                    mouseAction = MouseAction.MiddleClick;
+                    // set isWaitingOnMiddleDoubleClick to false
+                    isWaitingOnMiddleDoubleClick = true;
+                    //start the Timer countdown to wait on a middle double click
+                    WaitOnDoubleClick(doubleClickTime, ResetIsWaitingOnMiddleDoubleClick);
+                }
+            }
+            else
+            {
+                // no click is detected
+                mouseAction = MouseAction.None;
+            }
 
-                var x = NativeMethods.GetDoubleClickTime();
+
+            if (mouseAction != MouseAction.None)
+            {
+                // create a MouseClickEvent
+                var @event = new MouseClickEvent();
+
+                // set the MouseAction
+                @event.MouseAction = mouseAction;
+
+                // set the mouse position
+                @event.MousePosition = lParam.pt;
+
+                //TODO get the Intptr of the window
+
+                //Enqueue the MouseClickEvent
+                Enqueue(@event);
             }
 
             return NativeMethods.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
@@ -271,7 +238,5 @@ namespace MORR.Modules.Mouse.Producers
             t.Dispose();
             isWaitingOnMiddleDoubleClick = false;
         }
-
-        #endregion
     }
 }

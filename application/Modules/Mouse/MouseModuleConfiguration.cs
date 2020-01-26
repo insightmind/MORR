@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Composition;
+using System.ComponentModel.Composition;
 using MORR.Shared.Configuration;
 
 namespace MORR.Modules.Mouse
 {
     [Export(typeof(MouseModuleConfiguration))]
-    [Export(typeof(IConfiguration))]
     public class MouseModuleConfiguration : IConfiguration
     {
         /// <summary>
@@ -23,9 +22,8 @@ namespace MORR.Modules.Mouse
 
         public string Identifier { get; } = "MouseModule";
 
-        public void Parse(string configuration)
+        public void Parse(RawConfiguration configuration)
         {
-            // TODO Implement this .
             throw new NotImplementedException();
         }
     }

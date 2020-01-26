@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
@@ -36,32 +35,6 @@ namespace MORR.Shared.Utility
 
         #endregion
 
-        #region SetHook helper
-
-        /// <summary>
-        ///     Sets a low-level keyboard hook.
-        /// </summary>
-        /// <param name="callback">The callback of the hook.</param>
-        /// <param name="handle">The handle of the hook. Valid if the method returns <see langword="true" /></param>
-        /// <returns><see langword="true" /> if the hook could successfully be set, <see langword="false" /> otherwise.</returns>
-        public static bool TrySetKeyboardHook(LowLevelKeyboardProc callback, [NotNullWhen(true)] out IntPtr handle)
-        {
-            using var currentProcess = Process.GetCurrentProcess();
-            using var currentModule = currentProcess.MainModule;
-
-            if (currentModule == null)
-            {
-                handle = IntPtr.Zero;
-                return false;
-            }
-
-            var moduleHandle = GetModuleHandle(currentModule.ModuleName);
-            handle = SetWindowsHookEx(HookType.WH_KEYBOARD_LL, callback, moduleHandle, 0);
-            return true;
-        }
-
-        #endregion
-
         #region Keyboard state helper
 
         /// <summary>
@@ -72,6 +45,63 @@ namespace MORR.Shared.Utility
         public static bool IsKeyPressed(VirtualKeyCode virtualKeyCode)
         {
             return Convert.ToBoolean(GetKeyState(virtualKeyCode) & (int) KeyMask.KEY_PRESSED);
+        }
+
+        #endregion
+
+        #region SetHook helper
+
+        private static bool TryGetCurrentModuleHandle(out IntPtr handle)
+        {
+            using var currentProcess = Process.GetCurrentProcess();
+            using var currentModule = currentProcess.MainModule;
+            if (currentModule == null)
+            {
+                handle = IntPtr.Zero;
+                return false;
+            }
+
+            handle = GetModuleHandle(currentModule.ModuleName);
+            return true;
+        }
+
+        /// <summary>
+        ///     Sets a low-level keyboard hook.
+        /// </summary>
+        /// <param name="callback">The callback of the hook.</param>
+        /// <param name="handle">The handle of the hook. Valid if the method returns <see langword="true" /></param>
+        /// <returns><see langword="true" /> if the hook could successfully be set, <see langword="false" /> otherwise.</returns>
+        public static bool TrySetKeyboardHook(LowLevelKeyboardProc callback, out IntPtr handle)
+        {
+            if (!TryGetCurrentModuleHandle(out var moduleHandle))
+            {
+                handle = IntPtr.Zero;
+                return false;
+            }
+
+
+            handle = SetWindowsHookEx(HookType.WH_KEYBOARD_LL, callback, moduleHandle, 0);
+            return true;
+        }
+
+
+        /// <summary>
+        ///     Sets a low-level mouse hook.
+        /// </summary>
+        /// <param name="callback">The callback of the hook.</param>
+        /// <param name="handle">The handle of the hook. Valid if the method returns <see langword="true" /></param>
+        /// <returns><see langword="true" /> if the hook could successfully be set, <see langword="false" /> otherwise.</returns>
+        public static bool TrySetMouseHook(LowLevelMouseProc callback, out IntPtr handle)
+        {
+            if (!TryGetCurrentModuleHandle(out var moduleHandle))
+            {
+                handle = IntPtr.Zero;
+                return false;
+            }
+
+
+            handle = SetWindowsHookEx(HookType.WH_MOUSE_LL, callback, moduleHandle, 0);
+            return true;
         }
 
         #endregion
@@ -114,6 +144,8 @@ namespace MORR.Shared.Utility
 
         public delegate int LowLevelKeyboardProc(int nCode, MessageType wParam, [In] KBDLLHOOKSTRUCT lParam);
 
+        public delegate int LowLevelMouseProc(int nCode, MessageType wParam, [In] MSLLHOOKSTRUCT lParam);
+
         [DllImport("user32.dll")]
         public static extern short GetKeyState(VirtualKeyCode nVirtualKeyCode);
 
@@ -124,10 +156,20 @@ namespace MORR.Shared.Utility
                                                      uint dwThreadId);
 
         [DllImport("user32.dll")]
+        public static extern IntPtr SetWindowsHookEx(HookType hookType,
+                                                     LowLevelMouseProc lpFn,
+                                                     IntPtr hMod,
+                                                     uint dwThreadId);
+
+        [DllImport("user32.dll")]
         public static extern bool UnhookWindowsHookEx(IntPtr hhk);
 
         [DllImport("user32.dll")]
         public static extern int CallNextHookEx(IntPtr hhk, int nCode, MessageType wParam, [In] KBDLLHOOKSTRUCT lParam);
+
+        [DllImport("user32.dll")]
+        public static extern int CallNextHookEx(IntPtr hhk, int nCode, MessageType wParam, [In] MSLLHOOKSTRUCT lParam);
+
 
         [DllImport("kernel32.dll")]
         public static extern IntPtr GetModuleHandle(string lpModuleName);
@@ -138,6 +180,11 @@ namespace MORR.Shared.Utility
         [DllImport("user32.dll")]
         public static extern IntPtr GetActiveWindow();
 
+        [DllImport("user32.dll")]
+        public static extern bool GetCursorPos(out POINT lpPoint);
+
+        [DllImport("user32.dll")]
+        public static extern uint GetDoubleClickTime();
         #endregion
 
         #region Structs
@@ -155,10 +202,10 @@ namespace MORR.Shared.Utility
         [StructLayout(LayoutKind.Sequential)]
         public struct POINT
         {
-            public int X;
-            public int Y;
+            public long X;
+            public long Y;
 
-            public POINT(int x, int y)
+            public POINT(long x, long y)
             {
                 X = x;
                 Y = y;
@@ -166,12 +213,23 @@ namespace MORR.Shared.Utility
 
             public static implicit operator Point(POINT p)
             {
-                return new Point(p.X, p.Y);
+                return new Point((int) p.X, (int) p.Y);
             }
 
             public static implicit operator POINT(Point p)
             {
                 return new POINT(p.X, p.Y);
+            }
+
+            public static implicit operator System.Windows.Point(POINT p)
+
+            {
+                return new System.Windows.Point(p.X, p.Y);
+            }
+
+            public static implicit operator POINT(System.Windows.Point p)
+            {
+                return new POINT((long) p.X, (long) p.Y);
             }
         }
 
@@ -182,6 +240,15 @@ namespace MORR.Shared.Utility
             public int Flags;
             public int Time;
             public int DWExtraInfo;
+        }
+
+        public struct MSLLHOOKSTRUCT
+        {
+            public POINT pt;
+            public uint mouseData;
+            public uint flags;
+            public uint time;
+            public IntPtr dwExtraInfo;
         }
 
         #endregion
@@ -196,7 +263,8 @@ namespace MORR.Shared.Utility
 
         public enum HookType
         {
-            WH_KEYBOARD_LL = 13
+            WH_KEYBOARD_LL = 13,
+            WH_MOUSE_LL = 14
         }
 
         public enum MessageType
@@ -424,7 +492,7 @@ namespace MORR.Shared.Utility
 
             WM_USER = 0x400,
             WM_APP = 0x8000
-        }
+    }
 
         public enum VirtualKeyCode
         {

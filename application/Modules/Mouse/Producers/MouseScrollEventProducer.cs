@@ -1,10 +1,9 @@
 using System;
-using System.Composition;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
+using System.ComponentModel.Composition;
 using MORR.Modules.Mouse.Events;
 using MORR.Shared.Events;
 using MORR.Shared.Events.Queue;
+using MORR.Shared.Utility;
 
 namespace MORR.Modules.Mouse.Producers
 {
@@ -13,27 +12,35 @@ namespace MORR.Modules.Mouse.Producers
     /// </summary>
     [Export(typeof(MouseScrollEventProducer))]
     [Export(typeof(IReadOnlyEventQueue<MouseScrollEvent>))]
+    [Export(typeof(IReadWriteEventQueue<MouseScrollEvent>))]
+    [Export(typeof(IReadOnlyEventQueue<Event>))]
+    [PartCreationPolicy(CreationPolicy.Shared)]
     public class MouseScrollEventProducer : DefaultEventQueue<MouseScrollEvent>
     {
-        #region private fields
+        private NativeMethods.LowLevelMouseProc? callback;
 
         /// <summary>
-        ///     The low level mouse hook
+        ///     The low level mouse MouseHookHandle
         /// </summary>
-        private IntPtr hook = IntPtr.Zero;
+        private IntPtr MouseHookHandle;
 
-        #endregion
+        public void StartCapture()
+        {
+            callback = MouseHookCallback; // Store callback to prevent GC
+            if (!NativeMethods.TrySetMouseHook(callback, out MouseHookHandle))
+            {
+                throw new Exception("Failed hook mouse.");
+            }
+        }
 
-        #region constructor
+        public void StopCapture()
+        {
+            if (!NativeMethods.UnhookWindowsHookEx(MouseHookHandle))
+            {
+                throw new Exception("Failed to unhook mouse.");
+            }
+        }
 
-        /// <summary>
-        ///     Initialize a MouseScrollEventProducer
-        /// </summary>
-        public MouseScrollEventProducer() : base(new KeepAllStorageStrategy()) { }
-
-        #endregion
-
-        #region private methods
 
         /// <summary>
         ///     The callback for the Mouse hook
@@ -43,21 +50,27 @@ namespace MORR.Modules.Mouse.Producers
         /// <param name="wParam">The event type</param>
         /// <param name="lParam">The mouse event information</param>
         /// <returns></returns>
-        private int HookProc(int nCode, int wParam, IntPtr lParam)
+        private int MouseHookCallback(int nCode,
+                                      NativeMethods.MessageType wParam,
+                                      NativeMethods.MSLLHOOKSTRUCT lParam)
         {
-            if (nCode >= 0 && wParam == (int) NativeMethods.MessageType.WM_MOUSEWHEEL)
+            if (nCode < 0)
+            {
+                // Required as per documentation
+                // see https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/ms644985(v=vs.85)#return-value
+                return NativeMethods.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
+            }
+
+            if (wParam == NativeMethods.MessageType.WM_MOUSEWHEEL)
             {
                 /// get the hookStruct from the lParam and retrieve the mousedata from it 
-                var hookStruct =
-                    (NativeMethods.MouseHookStruct) Marshal.PtrToStructure(
-                        lParam, typeof(NativeMethods.MouseHookStruct));
-                var mousedata = hookStruct.mouseData;
+                var mousedata = lParam.mouseData;
 
                 //If the message is WM_MOUSEWHEEL, the high-order word of mouseData member is the wheel delta. 
                 //One wheel click is defined as WHEEL_DELTA, which is 120. 
                 //(value >> 16) & 0xffff; retrieves the high-order word from the given 32-bit value
                 var scrollAmount = (short) ((mousedata >> 16) & 0xffff);
-                var mousePosition = hookStruct.pt;
+                var mousePosition = lParam.pt;
 
                 //Create corresponding event MouseScrollEvent and enqueue it
                 var @event = new MouseScrollEvent();
@@ -68,32 +81,5 @@ namespace MORR.Modules.Mouse.Producers
 
             return NativeMethods.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
         }
-
-        #endregion
-
-        #region public methods
-
-        /// <summary>
-        ///     Set the hook for the mouse.
-        /// </summary>
-        public void HookMouse()
-        {
-            var currentProcess = Process.GetCurrentProcess();
-            var currentModule = currentProcess.MainModule;
-            var moduleName = currentModule.ModuleName;
-            var moduleHandle = NativeMethods.GetModuleHandle(moduleName);
-            hook = NativeMethods.SetWindowsHookEx((int) NativeMethods.HookType.WH_MOUSE_LL, HookProc, moduleHandle,
-                                                  0);
-        }
-
-        /// <summary>
-        ///     Release the hook for the mouse.
-        /// </summary>
-        public void UnhookMouse()
-        {
-            NativeMethods.UnhookWindowsHookEx(hook);
-        }
-
-        #endregion
     }
 }

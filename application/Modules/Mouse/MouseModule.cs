@@ -1,13 +1,15 @@
 ﻿using System;
-using System.Composition;
+using System.ComponentModel.Composition;
 using MORR.Modules.Mouse.Producers;
 using MORR.Shared.Modules;
+using MORR.Shared.Utility;
 
 namespace MORR.Modules.Mouse
 {
     /// <summary>
     ///     The <see cref="MouseModule" /> is responsible for recording all mouse related user interactions
     /// </summary>
+    [Export(typeof(IModule))]
     public class MouseModule : ICollectingModule
     {
         private bool isActive;
@@ -36,6 +38,8 @@ namespace MORR.Modules.Mouse
         [Import]
         private MouseModuleConfiguration MouseModuleConfiguration { get; set; }
 
+        public static Guid Identifier => new Guid("EFF894B3-4DC9-4605-9937-F02F400B4A62");
+
         /// <summary>
         ///     if the module is enabled or not.
         ///     When a module is being enabled, all the mouse hook in the producers will be set.
@@ -44,27 +48,11 @@ namespace MORR.Modules.Mouse
         public bool IsActive
         {
             get => isActive;
-            set
-            {
-                isActive = value;
-                if (value)
-                {
-                    MouseMoveEventProducer.StartTimer();
-                    MouseClickEventProducer.HookMouse();
-                    MouseScrollEventProducer.HookMouse();
-                }
-                else
-                {
-                    //TODO Release the hooks in all producers
-                    MouseMoveEventProducer.DisposeTimer();
-                    MouseClickEventProducer.UnhookMouse();
-                    MouseScrollEventProducer.UnhookMouse();
-                }
-            }
+            set => Utility.SetAndDispatch(ref isActive, value, StartCapture,
+                                          StopCapture);
         }
 
-        public Guid Identifier => new Guid("EFF894B3-4DC9-4605-9937-F02F400B4A62");
-
+        Guid IModule.Identifier => Identifier;
 
         /// <summary>
         ///     Initialize the module unenabled with KeyboardInteractEventProducer.
@@ -76,12 +64,21 @@ namespace MORR.Modules.Mouse
             var threshold = MouseModuleConfiguration.threshold;
 
             // initialize all producers
-            MouseMoveEventProducer = new MouseMoveEventProducer(period, threshold);
-            MouseClickEventProducer = new MouseClickEventProducer();
-            MouseScrollEventProducer = new MouseScrollEventProducer();
+            MouseMoveEventProducer.Configure(period, threshold);
+        }
 
-            // stay inactive
-            isActive = false;
+        private void StartCapture()
+        {
+            MouseClickEventProducer.StartCapture();
+            MouseScrollEventProducer.StartCapture();
+            MouseMoveEventProducer.StartCapture();
+        }
+
+        private void StopCapture()
+        {
+            MouseClickEventProducer.StopCapture();
+            MouseScrollEventProducer.StopCapture();
+            MouseMoveEventProducer.StopCapture();
         }
     }
 }

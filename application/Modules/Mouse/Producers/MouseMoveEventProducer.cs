@@ -1,8 +1,10 @@
 using System.ComponentModel.Composition;
 using System.Threading;
-using MORR.Modules.Mouse.Events;
-using MORR.Shared.Events.Queue;
 using System.Windows;
+using MORR.Modules.Mouse.Events;
+using MORR.Shared.Events;
+using MORR.Shared.Events.Queue;
+using MORR.Shared.Utility;
 
 namespace MORR.Modules.Mouse.Producers
 {
@@ -11,22 +13,35 @@ namespace MORR.Modules.Mouse.Producers
     /// </summary>
     [Export(typeof(MouseMoveEventProducer))]
     [Export(typeof(IReadOnlyEventQueue<MouseMoveEvent>))]
+    [Export(typeof(IReadWriteEventQueue<MouseMoveEvent>))]
+    [Export(typeof(IReadOnlyEventQueue<Event>))]
+    [PartCreationPolicy(CreationPolicy.Shared)]
     public class MouseMoveEventProducer : DefaultEventQueue<MouseMoveEvent>
     {
-        #region constructor
+        /// <summary>
+        ///     The mouse position in the last period.
+        ///     This field will be initialized to the mouse position
+        ///     when the StartTimer() is called.
+        /// </summary>
+        private NativeMethods.POINT lastMousePosition;
 
         /// <summary>
-        ///     Initialize a MouseMoveEventProducer with period and threshold.
+        ///     A timer that records the mouse position at specific intervals.
         /// </summary>
-        /// <param name="period">The time interval between invocation of method to record mouse position, in milliseconds. </param>
-        /// <param name="threshold">The minimal distance a mouse move must reach in a period to be recorded.</param>
-        public MouseMoveEventProducer(int period, double threshold) : base(new KeepAllStorageStrategy())
-        {
-            this.period = period;
-            this.threshold = threshold;
-        }
+        private Timer mousePositionRecordingTimer;
 
-        #endregion
+        /// <summary>
+        ///     The time interval between invocation of method to record mouse position, in milliseconds.
+        /// </summary>
+        private int period { get; set; }
+
+        /// <summary>
+        ///     The minimal distance a mouse move must reach in a period to be recorded.
+        ///     (A mouse move with distance less than the threshold will be ignored,
+        ///     in other words, a new MouseMoveEvent will not be generated and
+        ///     the mouse position will not be recorded)
+        /// </summary>
+        private double threshold { get; set; }
 
         #region private methods
 
@@ -38,7 +53,7 @@ namespace MORR.Modules.Mouse.Producers
         private void GetMousePosition(object stateInfo)
         {
             // get the current mouse position as Point
-            Point currentMousePosition;
+            NativeMethods.POINT currentMousePosition;
             NativeMethods.GetCursorPos(out currentMousePosition);
 
             // compare the last and the current mouse position and compute their distance
@@ -59,41 +74,19 @@ namespace MORR.Modules.Mouse.Producers
 
         #endregion
 
-        #region private fields
-
-        /// <summary>
-        ///     The time interval between invocation of method to record mouse position, in milliseconds.
-        /// </summary>
-        private readonly int period;
-
-        /// <summary>
-        ///     The minimal distance a mouse move must reach in a period to be recorded.
-        ///     (A mouse move with distance less than the threshold will be ignored,
-        ///     in other words, a new MouseMoveEvent will not be generated and
-        ///     the mouse position will not be recorded)
-        /// </summary>
-        private readonly double threshold;
-
-        /// <summary>
-        ///     The mouse position in the last period.
-        ///     This field will be initialized to the mouse position
-        ///     when the StartTimer() is called.
-        /// </summary>
-        private Point lastMousePosition;
-
-        /// <summary>
-        ///     A timer that records the mouse position at specific intervals.
-        /// </summary>
-        private Timer mousePositionRecordingTimer;
-
-        #endregion
 
         #region public methods
 
+        public void Configure(int period, double threshold)
+        {
+            this.period = period;
+            this.threshold = threshold;
+        }
+
         /// <summary>
-        ///     Start the timer that records mouse position.
+        ///     start the mouse movement capture by starting the timer that records mouse position.
         /// </summary>
-        public void StartTimer()
+        public void StartCapture()
         {
             NativeMethods.GetCursorPos(out lastMousePosition);
 
@@ -101,9 +94,9 @@ namespace MORR.Modules.Mouse.Producers
         }
 
         /// <summary>
-        ///     Dispose the timer that records mouse position.
+        ///     stop the mouse movement capture by disposing the timer that records mouse position.
         /// </summary>
-        public void DisposeTimer()
+        public void StopCapture()
         {
             mousePositionRecordingTimer.Dispose();
         }
