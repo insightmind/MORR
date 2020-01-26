@@ -9,6 +9,7 @@ using MORR.Shared.Utility;
 
 namespace MORR.Core.Data.Capture.Video.Desktop
 {
+    [Export(typeof(IModule))]
     public class DesktopCapture : ICollectingModule
     {
         private bool isActive;
