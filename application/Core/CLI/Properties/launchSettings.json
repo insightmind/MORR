@@ -7,7 +7,7 @@
     },
     "Record": {
       "commandName": "Project",
-      "commandLineArgs": "record --config config.morr --verbose TRUE",
+      "commandLineArgs": "record --config config.morr --verbose",
       "workingDirectory": "$(SolutionDir)\\BuildEnvironment"
     },
     "Version": {
