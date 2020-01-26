@@ -7,6 +7,7 @@ namespace MORR.Modules.WebBrowser.Events
     /// </summary>
     public class HoverEvent : WebBrowserEvent
     {
+        private static readonly string serializedHoveredElementField = "target";
         /// <summary>
         /// The element on the website that has been hovered
         /// </summary>
@@ -14,7 +15,7 @@ namespace MORR.Modules.WebBrowser.Events
 
         protected override void DeserializeSpecificAttributes(JsonElement parsed)
         {
-            HoveredElement = parsed.GetProperty("target").GetString();
+            HoveredElement = parsed.GetProperty(serializedHoveredElementField).GetString();
         }
     }
 }

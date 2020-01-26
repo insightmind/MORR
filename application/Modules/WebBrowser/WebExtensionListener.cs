@@ -17,6 +17,7 @@ namespace MORR.Modules.WebBrowser
     internal class WebExtensionListener : IWebBrowserEventObservible
     {
         private readonly HttpListener listener;
+        private static readonly string serializedTypeField = "type";
 
         //deliberately don't use IList, as RemoveAll function is used later
         private readonly List<Tuple<IWebBrowserEventObserver, Type>> observers;
@@ -304,7 +305,7 @@ namespace MORR.Modules.WebBrowser
 
             var parsed = request.Data.Value;
             EventLabel label;
-            if (!Enum.TryParse(parsed.GetProperty("type").ToString(), true, out label))
+            if (!Enum.TryParse(parsed.GetProperty(serializedTypeField).ToString(), true, out label))
             {
                 return false;
             }

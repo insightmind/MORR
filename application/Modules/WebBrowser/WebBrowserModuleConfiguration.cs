@@ -9,6 +9,7 @@ namespace MORR.Modules.WebBrowser
     [Export(typeof(WebBrowserModuleConfiguration))]
     public class WebBrowserModuleConfiguration : IConfiguration
     {
+        private static readonly string configUrlSuffixField = "UrlSuffix";
         /// <summary>
         ///     A combination of port number and optionally directory.
         ///     Will be appended to the localhost-prefix defined in <see cref="WebExtensionListener" />.
@@ -22,7 +23,7 @@ namespace MORR.Modules.WebBrowser
             var element = JsonDocument.Parse(configuration.RawValue).RootElement;
             try
             {
-                UrlSuffix = element.GetProperty("UrlSuffix").GetString();
+                UrlSuffix = element.GetProperty(configUrlSuffixField).GetString();
             }
             catch (KeyNotFoundException)
             {

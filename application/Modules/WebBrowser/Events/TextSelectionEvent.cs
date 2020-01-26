@@ -10,6 +10,7 @@ namespace MORR.Modules.WebBrowser.Events
     /// </summary>
     public class TextSelectionEvent : WebBrowserEvent
     {
+        private static readonly string serializedTextField = "textSelection";
         /// <summary>
         /// The text that was selected on the website
         /// </summary>
@@ -17,7 +18,7 @@ namespace MORR.Modules.WebBrowser.Events
 
         protected override void DeserializeSpecificAttributes(JsonElement parsed)
         {
-            SelectedText = parsed.GetProperty("textSelection").GetString();
+            SelectedText = parsed.GetProperty(serializedTextField).GetString();
         }
     }
 }

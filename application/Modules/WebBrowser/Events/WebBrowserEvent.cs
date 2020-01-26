@@ -9,6 +9,9 @@ namespace MORR.Modules.WebBrowser.Events
     /// </summary>
     public abstract class WebBrowserEvent : Event
     {
+        private static readonly string serializedTabIdField = "tabID";
+        private static readonly string serializedUrlField = "url";
+        private static readonly string serializedTimeStampField = "timeStamp";
         /// <summary>
         ///     The identifier of the tab where the web browser event occured in
         /// </summary>

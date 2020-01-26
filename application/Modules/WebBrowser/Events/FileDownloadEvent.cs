@@ -8,6 +8,8 @@ namespace MORR.Modules.WebBrowser.Events
     /// </summary>
     public class FileDownloadEvent : WebBrowserEvent
     {
+        private static readonly string serializedFileURLField = "fileURL";
+        private static readonly string serializedmimeTypeField = "mimeType";
         /// <summary>
         /// The URL of the file that was downloaded
         /// </summary>
@@ -20,8 +22,8 @@ namespace MORR.Modules.WebBrowser.Events
 
         protected override void DeserializeSpecificAttributes(JsonElement parsed)
         {
-            FileURL = new Uri(parsed.GetProperty("fileURL").GetString());
-            MIMEType = parsed.GetProperty("mimeType").GetString();
+            FileURL = new Uri(parsed.GetProperty(serializedFileURLField).GetString());
+            MIMEType = parsed.GetProperty(serializedmimeTypeField).GetString();
         }
     }
 }

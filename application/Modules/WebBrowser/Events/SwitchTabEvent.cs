@@ -10,6 +10,7 @@ namespace MORR.Modules.WebBrowser.Events
     /// </summary>
     public class SwitchTabEvent : WebBrowserEvent
     {
+        private static readonly string serializednewTabIDField = "newTabID";
         /// <summary>
         /// The identifier of the tab that the user switched to
         /// </summary>
@@ -17,7 +18,7 @@ namespace MORR.Modules.WebBrowser.Events
 
         protected override void DeserializeSpecificAttributes(JsonElement parsed)
         {
-            NewTabID = parsed.GetProperty("newTabID").GetInt32();
+            NewTabID = parsed.GetProperty(serializednewTabIDField).GetInt32();
         }
     }
 }
