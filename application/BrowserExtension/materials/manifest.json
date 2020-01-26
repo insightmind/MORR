@@ -5,7 +5,7 @@
   "permissions": ["<all_urls>", "activeTab", "storage", "tabs", "webNavigation", "downloads"],
   "background": {
     "scripts": ["background.js"],
-    "persistent": false
+    "persistent": true
   },
   "options_ui": {
     "page": "options.html"
