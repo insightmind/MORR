@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using CommandLine;
+﻿using CommandLine;
 
 namespace MORR.Core.CLI.Commands.Process
 {
@@ -13,5 +10,8 @@ namespace MORR.Core.CLI.Commands.Process
 
         [Option('i', "inputFile", Required = true, HelpText = "Path to input file, which should be processed")]
         public string InputFile { get; set; }
+
+        [Option('v', "verbose", Required = false, Default = false, HelpText = "Defines whether the application should run in verbose mode.")]
+        public bool IsVerbose { get; set; }
     }
 }

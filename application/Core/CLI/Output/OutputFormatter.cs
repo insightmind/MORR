@@ -5,13 +5,15 @@ using MORR.Shared.Events.Queue;
 using System;
 using System.ComponentModel.Composition;
 using System.Text;
-using System.Text.Json;
 
 namespace MORR.Core.CLI.Output
 {
     [Export(typeof(IEncoder))]
     public class OutputFormatter : IOutputFormatter
     {
+        internal static bool IsVerbose = false;
+        private static readonly string DebugPrefix = "DEBUG: ";
+        private static readonly string ErrorPrefix = "ERROR: ";
         private static readonly string DateFormatString = "HH:mm:ss.fff";
 
         [Import]
@@ -44,9 +46,17 @@ namespace MORR.Core.CLI.Output
             Console.WriteLine($"{timestamp}: {output}");
         }
 
-        private static void PrintError(Exception exception)
+        internal static void PrintError(Exception exception)
         {
-            Console.WriteLine($"ERROR: {exception.GetType()} {exception.Message}");
+            Console.WriteLine(ErrorPrefix + exception.Message);
+        }
+
+        internal static void PrintDebug(String message)
+        {
+            if (IsVerbose)
+            {
+                Console.WriteLine(DebugPrefix + message);
+            }
         }
     }
 }
