@@ -123,7 +123,6 @@ namespace MORR.Shared.Utility
             //Gets pointer to clipboard data in the selected format
             IntPtr ClipboardDataPointer = GetClipboardData(CF_TEXT);
 
-            //Locks the handle to get the actual text pointer
             IntPtr gLock = GlobalLock(ClipboardDataPointer);
 
             string text;
@@ -198,12 +197,8 @@ namespace MORR.Shared.Utility
         public static extern bool GlobalUnlock(IntPtr hMem);
 
         [DllImport("kernel32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
         public static extern IntPtr GlobalLock(IntPtr hMem);
 
-        [DllImport("kernel32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern UIntPtr GlobalSize(IntPtr hMem);
 
         #endregion
 
