@@ -7,6 +7,7 @@ using MORR.Shared.Modules;
 
 namespace MORR.Core.Data.Capture.Video.WinAPI
 {
+    [Export(typeof(IModule))]
     public class DesktopCapture : ICollectingModule
     {
         private bool isActive;
@@ -31,7 +32,7 @@ namespace MORR.Core.Data.Capture.Video.WinAPI
         private GraphicsCaptureItem? GetGraphicsCaptureItem()
         {
             // On versions prior to 1903, the user will always have to manually select the window/monitor to capture
-            if (GraphicsCaptureHelper.CanCreateItemWithoutPicker || Configuration.PromptUserForMonitorSelection)
+            if (!GraphicsCaptureHelper.CanCreateItemWithoutPicker || Configuration.PromptUserForMonitorSelection)
             {
                 return new GraphicsCapturePicker().PickSingleItemAsync().GetResults();
             }

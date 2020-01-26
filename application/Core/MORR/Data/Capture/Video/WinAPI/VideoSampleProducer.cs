@@ -47,13 +47,14 @@ namespace MORR.Core.Data.Capture.Video.WinAPI
 
         private void EnqueueFrames()
         {
-            var currentSample = GetNextFrame();
+            VideoSample? currentSample;
 
-            while (currentSample != null)
+            do
             {
-                Enqueue(currentSample);
                 currentSample = GetNextFrame();
+                Enqueue(currentSample); // Intentionally enqueue null to stop encoder
             }
+            while (currentSample != null);
         }
 
         private VideoSample? GetNextFrame()

@@ -8,22 +8,19 @@
     ]
   },
   "MORR.Core.Recording.RecordingConfiguration": {
-    "Encoder": "MORR.Core.CLI.Output.OutputFormatter, CLI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+    "Encoder": "MORR.Core.Data.Transcoding.WinAPI.MPEGEncoder"
   },
   "MORR.Core.Data.Capture.Video.WinAPI.DesktopCaptureConfiguration": {
     "MonitorIndex": 0,
     "PromptUserForMonitorSelection": false
   },
   "MORR.Core.Data.Transcoding.WinAPI.MPEGEncoderConfiguration": {
+    "InputWidth": 1920,
+    "InputHeight":  1080,
     "Width": 1920,
     "Height": 1080,
-    "BitsPerSecond": 5000,
+    "KiloBitsPerSecond": 4000,
     "FramesPerSecond": 60,
-    "RecordingsDirectory": "C:\\Users\\Niklas\\Videos\\Captures",
-    "NamePattern": "{TIME}_{GUID}_{USERNAME}"
-  },
-  "MORR.Modules.Mouse.MouseModuleConfiguration, Mouse.MORR-Module, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": {
-    "MaxPollingRateInHz": 100,
-    "MovementThreshold": 20
+    "RecordingsDirectory": "%userprofile%\\Videos\\MORR"
   }
 }
