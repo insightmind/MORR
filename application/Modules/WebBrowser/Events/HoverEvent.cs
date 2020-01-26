@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Web;
+﻿using System.Text.Json;
 
 namespace MORR.Modules.WebBrowser.Events
 {
@@ -10,9 +7,15 @@ namespace MORR.Modules.WebBrowser.Events
     /// </summary>
     public class HoverEvent : WebBrowserEvent
     {
+        private const string serializedHoveredElementField = "target";
         /// <summary>
         /// The element on the website that has been hovered
         /// </summary>
         public string HoveredElement { get; set; }
+
+        protected override void DeserializeSpecificAttributes(JsonElement parsed)
+        {
+            HoveredElement = parsed.GetProperty(serializedHoveredElementField).GetString();
+        }
     }
 }

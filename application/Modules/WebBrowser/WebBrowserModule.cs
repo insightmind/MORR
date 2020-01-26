@@ -1,76 +1,46 @@
 ﻿using System;
-using MORR.Shared.Modules;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using MORR.Modules.WebBrowser.Producers;
+using MORR.Shared.Modules;
+using MORR.Shared.Utility;
 
 namespace MORR.Modules.WebBrowser
 {
     /// <summary>
-    /// The <see cref="WebBrowserModule"/> is responsible for recording all browser related user interactions
+    ///     The <see cref="WebBrowserModule" /> is responsible for recording all browser related user interactions
     /// </summary>
+    [Export(typeof(IModule))]
     public class WebBrowserModule : ICollectingModule
     {
-        public bool IsActive { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        private bool isActive;
+        private WebExtensionListener listener;
 
-        public Guid Identifier => throw new NotImplementedException();
 
-        /// <summary>
-        /// A single-writer-multiple-reader queue for ButtonClickEvent
-        /// </summary>
-        [Import] 
-        public ButtonClickEventProducer ButtonClickEventProducer { get; private set; }
+        [ImportMany]
+        private IEnumerable<IWebBrowserEventObserver> Producers { get; set; }
 
-        /// <summary>
-        /// A single-writer-multiple-reader queue for CloseTabEvent
-        /// </summary>
+
         [Import]
-        public CloseTabEventProducer CloseTabEventProducer { get; private set; }
+        private WebBrowserModuleConfiguration Configuration { get; set; }
 
-        /// <summary>
-        /// A single-writer-multiple-reader queue for FileDownloadEvent
-        /// </summary> 
-        [Import]
-        public FileDownloadEventProducer FileDownloadEventProducer { get; private set; }
+        public bool IsActive
+        {
+            get => isActive;
+            set => Utility.SetAndDispatch(ref isActive, value,
+                                          () => listener.RecordingActive = true,
+                                          () => listener.RecordingActive = false);
+        }
 
-        /// <summary>
-        /// A single-writer-multiple-reader queue for HoverEvent
-        /// </summary>
-        [Import]
-        public HoverEventProducer HoverEventProducer { get; private set; }
-
-        /// <summary>
-        /// A single-writer-multiple-reader queue for NavigationEvent
-        /// </summary>
-        [Import]
-        public NavigationEventProducer NavigationEventProducer { get; private set; }
-
-        /// <summary>
-        /// A single-writer-multiple-reader queue for OpenTabEvent
-        /// </summary>
-        [Import]
-        public OpenTabEventProducer OpenTabEventProducer { get; private set; }
-
-        /// <summary>
-        /// A single-writer-multiple-reader queue for SwitchTabEvent
-        /// </summary>
-        [Import]
-        public SwitchTabEventProducer SwitchTabEventProducer { get; private set; }
-
-        /// <summary>
-        /// A single-writer-multiple-reader queue for TextInputEvent
-        /// </summary>
-        [Import]
-        public TextInputEventProducer TextInputEventProducer { get; private set; }
-
-        /// <summary>
-        /// A single-writer-multiple-reader queue for TextSelectionEvent
-        /// </summary>
-        [Import]
-        public TextSelectionEventProducer TextSelectionEventProducer { get; private set; }
+        public Guid Identifier { get; } = new Guid("e9240dc4-f33f-43db-a419-5b36d8279c88");
 
         public void Initialize()
         {
-            throw new NotImplementedException();
+            listener = new WebExtensionListener(Configuration.UrlSuffix);
+            listener.StartListening();
+            foreach (var producer in Producers)
+            {
+                listener.Subscribe(producer, producer.HandledEventType);
+            }
         }
     }
 }

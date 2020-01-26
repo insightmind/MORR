@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Text.Json;
 
 namespace MORR.Modules.WebBrowser.Events
 {
@@ -9,6 +8,8 @@ namespace MORR.Modules.WebBrowser.Events
     /// </summary>
     public class FileDownloadEvent : WebBrowserEvent
     {
+        private const string serializedFileUrlField = "fileURL";
+        private const string serializedMimeTypeField = "mimeType";
         /// <summary>
         /// The URL of the file that was downloaded
         /// </summary>
@@ -18,5 +19,11 @@ namespace MORR.Modules.WebBrowser.Events
         /// MIME type of the file that was downloaded
         /// </summary>
         public string MIMEType { get; set; }
+
+        protected override void DeserializeSpecificAttributes(JsonElement parsed)
+        {
+            FileURL = new Uri(parsed.GetProperty(serializedFileUrlField).GetString());
+            MIMEType = parsed.GetProperty(serializedMimeTypeField).GetString();
+        }
     }
 }

@@ -1,5 +1,6 @@
-﻿using System.ComponentModel.Composition;
+using System.ComponentModel.Composition;
 using MORR.Modules.WebBrowser.Events;
+using MORR.Shared.Events;
 using MORR.Shared.Events.Queue;
 
 namespace MORR.Modules.WebBrowser.Producers
@@ -9,8 +10,9 @@ namespace MORR.Modules.WebBrowser.Producers
     /// </summary>
     [Export(typeof(SwitchTabEventProducer))]
     [Export(typeof(IReadOnlyEventQueue<SwitchTabEvent>))]
-    public class SwitchTabEventProducer : DefaultEventQueue<SwitchTabEvent>
-    {
-        // TODO: Implement this
-    }
+    [Export(typeof(WebBrowserEventProducer<SwitchTabEvent>))]
+    [Export(typeof(IWebBrowserEventObserver))]
+    [Export(typeof(IReadOnlyEventQueue<Event>))]
+    [Export(typeof(IReadWriteEventQueue<SwitchTabEvent>))]
+    public class SwitchTabEventProducer : WebBrowserEventProducer<SwitchTabEvent> { }
 }
