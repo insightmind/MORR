@@ -9,6 +9,7 @@ namespace MORR.Modules.Clipboard
     /// <summary>
     /// The <see cref="ClipboardModule"/> is responsible for recording all clipboard related user interactions
     /// </summary>
+    [Export(typeof(IModule))]
     public class ClipboardModule : ICollectingModule
     {
         private bool isActive;
