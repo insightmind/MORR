@@ -2,7 +2,7 @@
   "profiles": {
     "Validate": {
       "commandName": "Project",
-      "commandLineArgs": "validate --config config.morr --verbose TRUE",
+      "commandLineArgs": "validate --config config.morr --verbose",
       "workingDirectory": "$(SolutionDir)\\BuildEnvironment"
     },
     "Record": {
