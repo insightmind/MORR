@@ -66,8 +66,7 @@ namespace MORR.Modules.Mouse.Producers
             //record the new Position in the created MouseMoveEvent and enqueue it
             if (distance >= threshold)
             {
-                var @event = new MouseMoveEvent();
-                @event.MousePosition = currentMousePosition;
+                var @event = new MouseMoveEvent() { MousePosition = currentMousePosition};
                 Enqueue(@event);
             }
         }

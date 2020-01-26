@@ -72,10 +72,11 @@ namespace MORR.Modules.Mouse.Producers
                 var scrollAmount = (short) ((mousedata >> 16) & 0xffff);
                 var mousePosition = lParam.pt;
 
+                //TODO get the Intptr of the window
+            IntPtr hwnd = IntPtr.Zero;
+
                 //Create corresponding event MouseScrollEvent and enqueue it
-                var @event = new MouseScrollEvent();
-                @event.ScrollAmount = scrollAmount;
-                @event.MousePosition = mousePosition;
+                var @event = new MouseScrollEvent() { ScrollAmount = scrollAmount, MousePosition = mousePosition,HWnd = hwnd};
                 Enqueue(@event);
             }
 

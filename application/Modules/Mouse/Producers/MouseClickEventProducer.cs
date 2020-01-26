@@ -156,19 +156,15 @@ namespace MORR.Modules.Mouse.Producers
                 mouseAction = MouseAction.None;
             }
 
+            //TODO get the Intptr of the window
+            IntPtr hwnd = IntPtr.Zero;
 
             if (mouseAction != MouseAction.None)
             {
                 // create a MouseClickEvent
-                var @event = new MouseClickEvent();
+                var @event = new MouseClickEvent(){MouseAction = mouseAction,MousePosition = lParam.pt, HWnd = hwnd};
 
-                // set the MouseAction
-                @event.MouseAction = mouseAction;
 
-                // set the mouse position
-                @event.MousePosition = lParam.pt;
-
-                //TODO get the Intptr of the window
 
                 //Enqueue the MouseClickEvent
                 Enqueue(@event);

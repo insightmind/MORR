@@ -16,5 +16,3 @@ namespace MORR.Modules.Mouse.Events
         public Point MousePosition { get; set; }
     }
 }
-
-}
