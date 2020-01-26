@@ -41,7 +41,7 @@ namespace MORR.Modules.Mouse.Producers
         ///     in other words, a new MouseMoveEvent will not be generated and
         ///     the mouse position will not be recorded)
         /// </summary>
-        private double threshold { get; set; }
+        private int threshold { get; set; }
 
         #region private methods
 
@@ -76,7 +76,7 @@ namespace MORR.Modules.Mouse.Producers
 
         #region public methods
 
-        public void Configure(int period, double threshold)
+        public void Configure(int period, int threshold)
         {
             this.period = period;
             this.threshold = threshold;

@@ -60,8 +60,8 @@ namespace MORR.Modules.Mouse
         public void Initialize()
         {
             // retrieve all parameters from the MouseModuleConfiguration
-            var period = MouseModuleConfiguration.period;
-            var threshold = MouseModuleConfiguration.threshold;
+            var period = MouseModuleConfiguration.Period;
+            var threshold = MouseModuleConfiguration.Threshold;
 
             // initialize all producers
             MouseMoveEventProducer.Configure(period, threshold);
