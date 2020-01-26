@@ -1,12 +1,17 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Input;
+using MORR.Core.Configuration;
+using MORR.Core.Recording;
 using Morr.Core.UI.Dialogs;
 using MORR.Core.UI.ViewModels.Utility;
+using MORR.Shared.Utility;
 
 namespace MORR.Core.UI.ViewModels
 {
     public class ApplicationViewModel : DependencyObject
     {
+        private RecordingManager recordingManager;
         public ApplicationViewModel()
         {
             Initialize();
@@ -14,9 +19,16 @@ namespace MORR.Core.UI.ViewModels
 
         private void Initialize()
         {
-            // TODO Configure application here
-
             var configurationSuccessful = true;
+
+            try
+            {
+                recordingManager = new RecordingManager(new FilePath(Environment.GetCommandLineArgs()[0]));
+            }
+            catch (InvalidConfigurationException)
+            {
+                configurationSuccessful = false;
+            }
 
             if (!configurationSuccessful)
             {
@@ -64,13 +76,14 @@ namespace MORR.Core.UI.ViewModels
             if (new InformationDialog().ShowDialog() ?? false)
             {
                 IsRecording = true;
-                // TODO Start recording
+                recordingManager.StopRecording();
+                
             }
         }
 
         private void StopRecording()
         {
-            // TODO Stop recording
+            recordingManager.StopRecording();
 
             IsRecording = false;
             if (new SaveDialog().ShowDialog() ?? false)

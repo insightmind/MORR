@@ -60,6 +60,38 @@ namespace MORR.Shared.Utility
             return true;
         }
 
+        public static bool TrySetClipboardCutHook(LowLevelClipboardProc callback, [NotNullWhen(true)] out IntPtr handle)
+        {
+            using var currentProcess = Process.GetCurrentProcess();
+            using var currentModule = currentProcess.MainModule;
+
+            if (currentModule == null)
+            {
+                handle = IntPtr.Zero;
+                return false;
+            }
+
+            var moduleHandle = GetModuleHandle(currentModule.ModuleName);
+            handle = SetWindowsHookEx(HookType.WH_CALLWNDPROC, callback, moduleHandle, 0);
+            return true;
+        }
+
+        public static bool TrySetClipboardPasteHook(LowLevelClipboardProc callback, [NotNullWhen(true)] out IntPtr handle)
+        {
+            using var currentProcess = Process.GetCurrentProcess();
+            using var currentModule = currentProcess.MainModule;
+
+            if (currentModule == null)
+            {
+                handle = IntPtr.Zero;
+                return false;
+            }
+
+            var moduleHandle = GetModuleHandle(currentModule.ModuleName);
+            handle = SetWindowsHookEx(HookType.WH_CALLWNDPROC, callback, moduleHandle, 0);
+            return true;
+        }
+
         #endregion
 
         #region Keyboard state helper
@@ -76,18 +108,34 @@ namespace MORR.Shared.Utility
 
         #endregion
 
-        #region Window for process helper
-
+        #region Clipboard text helper
         /// <summary>
-        ///     Attempts to get a window associated with the current process.
+        ///     Gets the text from the clipboard
         /// </summary>
-        /// <returns>The handle of a window associated with the current process.</returns>
-        public static IntPtr GetAssociatedWindow()
-        {
-            var activeWindow = GetActiveWindow();
-            var consoleWindow = GetConsoleWindow();
+        /// <param name="hwnd">Pointer to the window that currently has clipboard</param>
+        /// <returns>String representing text from the clipboard</returns>
+        public static string getClipboardText()
+        { 
+            uint CF_TEXT = 1;
 
-            return activeWindow != IntPtr.Zero ? activeWindow : consoleWindow;
+            OpenClipboard(GetOpenClipboardWindow());
+
+            //Gets pointer to clipboard data in the selected format
+            IntPtr ClipboardDataPointer = GetClipboardData(CF_TEXT);
+
+            //Locks the handle to get the actual text pointer
+            UIntPtr Length = GlobalSize(ClipboardDataPointer);
+            IntPtr gLock = GlobalLock(ClipboardDataPointer);
+
+            string text;
+
+            text = Marshal.PtrToStringAuto(gLock);
+
+            GlobalUnlock(gLock);
+
+            CloseClipboard();
+
+            return text;
         }
 
         #endregion
@@ -105,12 +153,19 @@ namespace MORR.Shared.Utility
 
         public delegate int LowLevelKeyboardProc(int nCode, MessageType wParam, [In] KBDLLHOOKSTRUCT lParam);
 
+        public delegate int LowLevelClipboardProc(int code, MessageType wParam, int lParam);
+
         [DllImport("user32.dll")]
         public static extern short GetKeyState(VirtualKeyCode nVirtualKeyCode);
 
         [DllImport("user32.dll")]
         public static extern IntPtr SetWindowsHookEx(HookType hookType,
                                                      LowLevelKeyboardProc lpFn,
+                                                     IntPtr hMod,
+                                                     uint dwThreadId);
+        [DllImport("user32.dll")]
+        public static extern IntPtr SetWindowsHookEx(HookType hookType,
+                                                     LowLevelClipboardProc lpFn,
                                                      IntPtr hMod,
                                                      uint dwThreadId);
 
@@ -120,14 +175,36 @@ namespace MORR.Shared.Utility
         [DllImport("user32.dll")]
         public static extern int CallNextHookEx(IntPtr hhk, int nCode, MessageType wParam, [In] KBDLLHOOKSTRUCT lParam);
 
+        [DllImport("user32.dll")]
+        public static extern int CallNextHookEx(IntPtr hhk, int nCode, MessageType wParam, int lParam);
+
         [DllImport("kernel32.dll")]
         public static extern IntPtr GetModuleHandle(string lpModuleName);
 
-        [DllImport("kernel32.dll")]
-        public static extern IntPtr GetConsoleWindow();
 
         [DllImport("user32.dll")]
-        public static extern IntPtr GetActiveWindow();
+        public static extern bool OpenClipboard(IntPtr hWndNewOwner);
+       
+        [DllImport("user32.dll")]
+        public static extern bool CloseClipboard();
+        
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetOpenClipboardWindow();
+       
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetClipboardData(uint uFormat);
+
+        [DllImport("kernel32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GlobalUnlock(IntPtr hMem);
+
+        [DllImport("kernel32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern IntPtr GlobalLock(IntPtr hMem);
+
+        [DllImport("kernel32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern UIntPtr GlobalSize(IntPtr hMem);
 
         #endregion
 
@@ -187,13 +264,17 @@ namespace MORR.Shared.Utility
 
         public enum HookType
         {
-            WH_KEYBOARD_LL = 13
+            WH_KEYBOARD_LL = 13,
+            WH_CALLWNDPROC = 4
         }
 
         public enum MessageType
         {
-            WM_KEYDOWN = 0x100
-        }
+            WM_KEYDOWN = 0x100,
+            WM_CUT = 0x0300,
+            WM_PASTE = 0x0302,
+            WM_CLIPBOARDUPDATE = 0x031D
+    }
 
         public enum VirtualKeyCode
         {
