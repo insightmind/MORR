@@ -15,13 +15,15 @@ It is encoded using the JSON format and its file extension is `.morr`
   "MORR.Core.Modules.GlobalModuleConfiguration": {
     "EnabledModules": [
       "MORR.Core.Data.Capture.Metadata.MetadataCapture",
-      "MORR.Core.CLI.Demo.DemoProducer, CLI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
       "MORR.Modules.Keyboard.KeyboardModule, Keyboard.MORR-Module, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
       "MORR.Modules.Webbrowser.WebbrowserModule, Webbrowser.MORR-Module, Version=1.0.0.0, Culture=neutral"
     ]
   },
   "MORR.Core.Recording.RecordingConfiguration": {
     "Encoder": "MORR.Core.CLI.Output.OutputFormatter, CLI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+  },
+  "MORR.Modules.WebBrowser.WebBrowserModuleConfiguration, WebBrowser.MORR-Module, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": {
+    "UrlSuffix": "60024/"
   }
 }
 ```
@@ -217,7 +219,21 @@ This will start a processing session with the given configuration file located a
 
 ## BrowserExtension
 
+### Loading as temporary extension
+To test the extension before it's packed and distributed via chrome webstore and addons.mozilla, you can load the unpacked extension as temporary extension in the respective browser.
 
+#### Mozilla Firefox
+To load the unpacked extension in Firefox, navigate to **about:debugging**, and, if applicable, click on **This Firefox** (might not be necessary depending on your version). Then, choose the option **Load Temporary Add-on**, and then choose any file in the webextensions' _./dist_ or _./debug_ directory (e.g. the _manifest.json_).
+The extension is now loaded. To allow the extension to connect to the MORR main application, the communication port has to be set, see below.
+
+#### Google Chrome
+To load the unpacked extension in Google Chrome, navigate to **chrome://extensions** and activate **Developer mode** (top right corner). Next, click on **Load unpacked** and choose the _./dist_ or _./debug_ folder (the whole folder, not a file inside it).
+The extension is now loaded. The extension is now loaded. To allow the extension to connect to the MORR main application, the communication port has to be set, see below.
+
+#### Setting the communication port
+In order for the browser extension to be able to communicate with the MORR main application, a port (and optionally a directory) have to be set in the browser extension's options/preferences. In chrome those can be accessed on **chrome://extensions -> Details -> Extension Options**, or by right-clicking on the MORR extension icon next to the address bar and choosing **Options**. In Mozilla Firefox, navigate to **about:addons** instead and choose **Preferences** next to the MORR extension. Examples for valid port settings are `60024` and `60024/johndoe`.
+
+**Note**: The equivalent value has to also be set in the config.morr as `UrlSuffix`, see the example configuration at the beginning of this document. This `UrlSuffix` has to end with a slash '/' character.
 
 ## User Application
 
