@@ -4,9 +4,9 @@ using MORR.Shared.Events;
 namespace MORR.Core.Data.IntermediateFormat
 {
     /// <summary>
-    ///     A single metadata capture sample.
+    ///     A sample in an intermediate format.
     /// </summary>
-    public class IntermediateFormatSample : Event
+    public abstract class IntermediateFormatSample : Event
     {
         /// <summary>
         ///     The type of the event that is serialized.
