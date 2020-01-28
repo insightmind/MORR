@@ -13,6 +13,6 @@ namespace MORR.Modules.WebBrowser.Producers
     [Export(typeof(WebBrowserEventProducer<FileDownloadEvent>))]
     [Export(typeof(IWebBrowserEventObserver))]
     [Export(typeof(IReadOnlyEventQueue<Event>))]
-    [Export(typeof(IReadWriteEventQueue<FileDownloadEvent>))]
+    [Export(typeof(ISupportDeserializationEventQueue<FileDownloadEvent>))]
     public class FileDownloadEventProducer : WebBrowserEventProducer<FileDownloadEvent> { }
 }

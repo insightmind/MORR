@@ -16,7 +16,7 @@ namespace MORR.Core.Data.IntermediateFormat.Json
         private bool isActive;
 
         [ImportMany]
-        private IEnumerable<IReadWriteEventQueue<Event>> EventQueues { get; set; }
+        private IEnumerable<ISupportDeserializationEventQueue<Event>> EventQueues { get; set; }
 
         [Import]
         private IDecodeableEventQueue<IntermediateFormatSample> IntermediateFormatSampleQueue { get; set; }
@@ -42,7 +42,7 @@ namespace MORR.Core.Data.IntermediateFormat.Json
             }
         }
 
-        private async void LinkSingleQueue(IReadWriteEventQueue<Event> eventQueue)
+        private async void LinkSingleQueue(ISupportDeserializationEventQueue<Event> eventQueue)
         {
             await foreach (var sample in IntermediateFormatSampleQueue.GetEvents())
             {

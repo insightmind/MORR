@@ -14,7 +14,7 @@ namespace MORR.Core.Data.IntermediateFormat.Json
     [Export(typeof(IEncodeableEventQueue<JsonIntermediateFormatSample>))]
     [Export(typeof(IEncodeableEventQueue<IntermediateFormatSample>))]
     public class JsonIntermediateFormatSerializer
-        : DefaultTranscodeableEventQueue<JsonIntermediateFormatSample>, ITransformingModule
+        : DefaultEncodeableEventQueue<JsonIntermediateFormatSample>, ITransformingModule
     {
         private bool isActive;
 

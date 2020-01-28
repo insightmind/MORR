@@ -13,7 +13,7 @@ namespace MORR.Modules.Keyboard.Producers
     /// </summary>
     [Export(typeof(KeyboardInteractEventProducer))]
     [Export(typeof(IReadOnlyEventQueue<KeyboardInteractEvent>))]
-    [Export(typeof(IReadWriteEventQueue<KeyboardInteractEvent>))]
+    [Export(typeof(ISupportDeserializationEventQueue<KeyboardInteractEvent>))]
     [Export(typeof(IReadOnlyEventQueue<Event>))]
     [PartCreationPolicy(CreationPolicy.Shared)]
     public class KeyboardInteractEventProducer : DefaultEventQueue<KeyboardInteractEvent>

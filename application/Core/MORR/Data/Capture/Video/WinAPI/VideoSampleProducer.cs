@@ -7,7 +7,6 @@ using Windows.Graphics.DirectX;
 using Windows.Graphics.DirectX.Direct3D11;
 using MORR.Core.Data.Capture.Video.WinAPI.Utility;
 using MORR.Core.Data.Sample.Video;
-using MORR.Shared.Events;
 using MORR.Shared.Events.Queue;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
@@ -17,9 +16,8 @@ using Device = SharpDX.Direct3D11.Device;
 namespace MORR.Core.Data.Capture.Video.WinAPI
 {
     [Export(typeof(VideoSampleProducer))]
-    [Export(typeof(ITranscodeableEventQueue<VideoSample>))]
-    [Export(typeof(ITranscodeableEventQueue<Event>))]
-    public class VideoSampleProducer : DefaultTranscodeableEventQueue<VideoSample>
+    [Export(typeof(IEncodeableEventQueue<VideoSample>))]
+    public class VideoSampleProducer : DefaultEncodeableEventQueue<VideoSample>
     {
         /// <summary>
         ///     Starts a video capture from the provided capture item.

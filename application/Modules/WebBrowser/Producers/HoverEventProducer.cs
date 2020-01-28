@@ -13,6 +13,6 @@ namespace MORR.Modules.WebBrowser.Producers
     [Export(typeof(WebBrowserEventProducer<HoverEvent>))]
     [Export(typeof(IWebBrowserEventObserver))]
     [Export(typeof(IReadOnlyEventQueue<Event>))]
-    [Export(typeof(IReadWriteEventQueue<HoverEvent>))]
+    [Export(typeof(ISupportDeserializationEventQueue<HoverEvent>))]
     public class HoverEventProducer : WebBrowserEventProducer<HoverEvent> { }
 }

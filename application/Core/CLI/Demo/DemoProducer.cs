@@ -10,7 +10,7 @@ namespace MORR.Core.CLI.Demo
     [Export(typeof(IModule))]
     [Export(typeof(IReadOnlyEventQueue<DemoEvent>))]
     [Export(typeof(IReadOnlyEventQueue<Event>))]
-    public class DemoProducer : BoundedMultiConsumerEventQueue<DemoEvent>, IModule
+    public class DemoProducer : DefaultEventQueue<DemoEvent>, IModule
     {
         private Timer timer;
         private int produced;
