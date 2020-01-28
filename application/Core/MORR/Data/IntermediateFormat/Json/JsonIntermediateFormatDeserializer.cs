@@ -1,0 +1,60 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Text.Json;
+using System.Threading.Tasks;
+using MORR.Shared.Events;
+using MORR.Shared.Events.Queue;
+using MORR.Shared.Modules;
+using MORR.Shared.Utility;
+
+namespace MORR.Core.Data.IntermediateFormat.Json
+{
+    [Export(typeof(IModule))]
+    public class JsonIntermediateFormatDeserializer : ITransformingModule
+    {
+        private bool isActive;
+
+        [ImportMany]
+        private IEnumerable<IReadWriteEventQueue<Event>> EventQueues { get; set; }
+
+        [Import]
+        private IDecodeableEventQueue<IntermediateFormatSample> IntermediateFormatSampleQueue { get; set; }
+
+        public bool IsActive
+        {
+            get => isActive;
+            set => Utility.SetAndDispatch(ref isActive, value, LinkAllQueues, delegate
+            {
+                /* TODO Cancel iteration */
+            });
+        }
+
+        public Guid Identifier { get; } = new Guid("03496342-BBAE-46A7-BCBE-98FACA083B74");
+
+        public void Initialize() { }
+
+        private void LinkAllQueues()
+        {
+            foreach (var eventQueue in EventQueues)
+            {
+                Task.Run(() => LinkSingleQueue(eventQueue));
+            }
+        }
+
+        private async void LinkSingleQueue(IReadWriteEventQueue<Event> eventQueue)
+        {
+            await foreach (var sample in IntermediateFormatSampleQueue.GetEvents())
+            {
+                if (sample.EventType == eventQueue.EventType)
+                {
+                    // The actual event type is known to be sample.EventType at runtime
+                    // We have to bypass type checking by using dynamic as we cannot cast to the specified type at compile time
+                    dynamic @event =
+                        JsonSerializer.Deserialize(sample.SerializedData, sample.EventType);
+                    eventQueue.Enqueue(@event);
+                }
+            }
+        }
+    }
+}
