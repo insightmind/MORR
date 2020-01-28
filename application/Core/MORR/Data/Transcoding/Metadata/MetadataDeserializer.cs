@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Text.Json;
 using System.Threading.Tasks;
-using MORR.Core.Data.Sample.Metadata;
+using MORR.Core.Data.IntermediateFormat;
 using MORR.Shared.Events;
 using MORR.Shared.Events.Queue;
 
@@ -15,7 +15,7 @@ namespace MORR.Core.Data.Transcoding.Metadata
         private IEnumerable<IReadWriteEventQueue<Event>> EventQueues { get; set; }
 
         [Import]
-        private ITranscodeableEventQueue<MetadataSample> MetadataSampleQueue { get; set; }
+        private ITranscodeableEventQueue<IntermediateFormatSample> MetadataSampleQueue { get; set; }
 
         public bool IsActive { get; set; }
         public Guid Identifier { get; } = new Guid("03496342-BBAE-46A7-BCBE-98FACA083B74");

@@ -1,12 +1,12 @@
 ﻿using System;
 using MORR.Shared.Events;
 
-namespace MORR.Core.Data.Sample.Metadata
+namespace MORR.Core.Data.IntermediateFormat
 {
     /// <summary>
     ///     A single metadata capture sample.
     /// </summary>
-    public class MetadataSample : Event
+    public class IntermediateFormatSample : Event
     {
         /// <summary>
         ///     The type of the event that is serialized.

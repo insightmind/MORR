@@ -1,6 +1,6 @@
-﻿using MORR.Core.Data.Sample.Metadata;
-using MORR.Core.Data.Transcoding;
+﻿using MORR.Core.Data.Transcoding;
 using MORR.Core.Data.Transcoding.Exceptions;
+using MORR.Core.Data.IntermediateFormat;
 using MORR.Shared.Events.Queue;
 using System;
 using System.ComponentModel.Composition;
@@ -17,7 +17,7 @@ namespace MORR.Core.CLI.Output
         private static readonly string DateFormatString = "HH:mm:ss.fff";
 
         [Import]
-        private ITranscodeableEventQueue<MetadataSample> MetadataQueue { get; set; }
+        private ITranscodeableEventQueue<IntermediateFormatSample> MetadataQueue { get; set; }
 
         public async void Encode()
         {
@@ -33,7 +33,7 @@ namespace MORR.Core.CLI.Output
             }
         }
 
-        private static void PrintSample(MetadataSample sample)
+        private static void PrintSample(IntermediateFormatSample sample)
         {
             if (sample == null)
             {
