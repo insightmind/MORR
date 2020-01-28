@@ -7,7 +7,7 @@
 	  "MORR.Modules.WebBrowser.WebBrowserModule, WebBrowser.MORR-Module, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
     ]
   },
-  "MORR.Core.Recording.RecordingConfiguration": {
+  "MORR.Core.Session.SessionConfiguration": {
     "Encoder": "MORR.Core.CLI.Output.OutputFormatter, CLI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
   },
   "MORR.Core.Data.Capture.Video.WinAPI.DesktopCaptureConfiguration": {

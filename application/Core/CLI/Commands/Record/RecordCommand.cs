@@ -1,5 +1,5 @@
 ﻿using MORR.Core.CLI.Output;
-using MORR.Core.Recording;
+using MORR.Core.Session;
 using MORR.Shared.Utility;
 using System;
 using System.IO;
@@ -9,7 +9,7 @@ namespace MORR.Core.CLI.Commands.Record
     internal class RecordCommand : ICLICommand<RecordOptions>
     {
         private const string loadedFileMessage = "Load configuration file.";
-        private const string recordingManagerMessage = "Load recording manager with configuration file.";
+        private const string sessionManagerMessage = "Load session manager with configuration file.";
         private const string startRecordingMessage = "Start recording session:";
 
         public int Execute(RecordOptions options)
@@ -27,13 +27,13 @@ namespace MORR.Core.CLI.Commands.Record
                 OutputFormatter.PrintDebug(loadedFileMessage);
                 var configPath = new FilePath(Path.GetFullPath(options.ConfigPath));
 
-                // Load Recording Manager
-                OutputFormatter.PrintDebug(recordingManagerMessage);
-                IRecordingManager recordingManager = new RecordingManager(configPath);
+                // Load Session Manager
+                OutputFormatter.PrintDebug(sessionManagerMessage);
+                ISessionManager sessionManager = new SessionManager(configPath);
 
                 // Start Recording
                 OutputFormatter.PrintDebug(startRecordingMessage);
-                recordingManager.StartRecording();
+                sessionManager.StartRecording();
 
                 // Run message loop required for Windows hooks
                 NativeMethods.DoWin32MessageLoop();

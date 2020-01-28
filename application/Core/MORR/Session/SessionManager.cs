@@ -4,33 +4,24 @@ using System.Linq;
 using MORR.Core.Configuration;
 using MORR.Core.Data.Transcoding;
 using MORR.Core.Modules;
-using MORR.Core.Recording.Exceptions;
+using MORR.Core.Session.Exceptions;
 using MORR.Shared.Utility;
 
-namespace MORR.Core.Recording
+namespace MORR.Core.Session
 {
-    public class RecordingManager : IRecordingManager
+    public class SessionManager : ISessionManager
     {
-        private readonly IModuleManager moduleManager;
-        private readonly IEncoder encoder;
         private readonly IDecoder? decoder;
+        private readonly IEncoder encoder;
+        private readonly IModuleManager moduleManager;
 
-        [ImportMany]
-        private IEnumerable<IEncoder> Encoders { get; set; }
+        public SessionManager(FilePath configurationPath) : this(configurationPath, new Bootstrapper(),
+                                                                 new ConfigurationManager(), new ModuleManager()) { }
 
-        [ImportMany]
-        private IEnumerable<IDecoder> Decoders { get; set; }
-
-        [Import]
-        private RecordingConfiguration Configuration { get; set; }
-
-        public RecordingManager(FilePath configurationPath) : this(configurationPath, new Bootstrapper(),
-                                                                   new ConfigurationManager(), new ModuleManager()) { }
-
-        public RecordingManager(FilePath configurationPath,
-                                IBootstrapper bootstrapper,
-                                IConfigurationManager configurationManager,
-                                IModuleManager moduleManager)
+        public SessionManager(FilePath configurationPath,
+                              IBootstrapper bootstrapper,
+                              IConfigurationManager configurationManager,
+                              IModuleManager moduleManager)
         {
             this.moduleManager = moduleManager;
             bootstrapper.ComposeImports(this);
@@ -44,6 +35,15 @@ namespace MORR.Core.Recording
 
             moduleManager.InitializeModules();
         }
+
+        [ImportMany]
+        private IEnumerable<IEncoder> Encoders { get; set; }
+
+        [ImportMany]
+        private IEnumerable<IDecoder> Decoders { get; set; }
+
+        [Import]
+        private SessionConfiguration Configuration { get; set; }
 
         public bool IsRecording { get; private set; }
 

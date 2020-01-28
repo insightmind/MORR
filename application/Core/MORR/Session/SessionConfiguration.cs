@@ -5,10 +5,10 @@ using System.Text.Json;
 using MORR.Core.Configuration;
 using MORR.Shared.Configuration;
 
-namespace MORR.Core.Recording
+namespace MORR.Core.Session
 {
-    [Export(typeof(RecordingConfiguration))]
-    public class RecordingConfiguration : IConfiguration
+    [Export(typeof(SessionConfiguration))]
+    public class SessionConfiguration : IConfiguration
     {
         /// <summary>
         ///     The type of the encoder to use.

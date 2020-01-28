@@ -1,4 +1,4 @@
-﻿namespace MORR.Core.Recording.Exceptions
+﻿namespace MORR.Core.Session.Exceptions
 {
     /// <summary>
     ///     Exception thrown if a recording is stopped while no recording is currently running.

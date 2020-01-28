@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MORR.Core.Recording.Exceptions
+namespace MORR.Core.Session.Exceptions
 {
     /// <summary>
     ///     A generic recording exception.

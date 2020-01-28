@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using MORR.Shared.Utility;
 
-namespace MORR.Core.Recording
+namespace MORR.Core.Session
 {
     /// <summary>
-    ///     A manager responsible for all aspects of recording.
+    ///     A manager responsible for all aspects of recording and processing.
     /// </summary>
-    public interface IRecordingManager
+    public interface ISessionManager
     {
         /// <summary>
         ///     Indicates whether a session is currently being recorded. <see langword="true" /> if a session is currently being
