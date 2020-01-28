@@ -61,7 +61,7 @@ DLL void SetHook(WH_MessageCallBack progressCallback) {
         NULL,              // default security attributes
         FALSE,             // initially not owned
         TEXT(MUTEXNAME));
-    printf("HookLibrary64: Setting Hook\n");
+    globalCallback = progressCallback;
     if (hkKey == NULL)
         hkKey = SetWindowsHookEx(WH_GETMESSAGE, procCharMsg, hInstHookDll, 0);
     dispatcherthread = std::thread(dispatchForever);
@@ -76,7 +76,7 @@ void dispatchForever() {
         //WaitForSingleObject(mtx, INFINITE);
         printf("Dispatcher: message from %d, event number %d\n", lastMsg.hwnd, counter);
         printf("Message: %d, point: %d,%d\n", lastMsg.message, lastMsg.point.x, lastMsg.point.y);
-        //globalCallback(lastMsg.hwnd, lastMsg.message, lastMsg.point); //currently crashes for some reason
+        globalCallback(lastMsg.hwnd, lastMsg.message, lastMsg.point); //currently crashes for some reason
         newMsg = 0;
         //ReleaseMutex(mtx);
     }
