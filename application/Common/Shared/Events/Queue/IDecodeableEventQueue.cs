@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 
 namespace MORR.Shared.Events.Queue
 {
@@ -12,6 +13,6 @@ namespace MORR.Shared.Events.Queue
         ///     Asynchronously gets all events as concrete type <typeparamref name="T" />.
         /// </summary>
         /// <returns>A stream of <typeparamref name="T" /></returns>
-        IAsyncEnumerable<T> GetEvents();
+        IAsyncEnumerable<T> GetEvents(CancellationToken cancellationToken = default);
     }
 }

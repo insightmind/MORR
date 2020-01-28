@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Threading;
 
-namespace MORR.Shared.Events.Queue
+namespace MORR.Shared.Events.Queue.Strategy
 {
     public interface IEventQueueStorageStrategy<T> where T : Event
     {

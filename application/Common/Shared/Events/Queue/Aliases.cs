@@ -3,10 +3,44 @@ using MORR.Shared.Events.Queue.Strategy.SingleConsumer;
 
 namespace MORR.Shared.Events.Queue
 {
-    public class DefaultEventQueue<T> : BoundedMultiConsumerEventQueue<T> where T : Event
+    /// <summary>
+    ///     Provides an event queue for the most common scenarios that supports deserialization.
+    /// </summary>
+    /// <typeparam name="T">The type of <see cref="Event" /> in this queue.</typeparam>
+    public class DefaultEventQueue<T> : SupportDeserializationEventQueue<T> where T : Event
     {
-        public DefaultEventQueue(int bufferCapacity = 1024, uint? maxConsumers = null) :
-            base(bufferCapacity, maxConsumers) { }
+        protected DefaultEventQueue(int bufferCapacity = 1024, uint? maxConsumers = null) :
+            base(new BoundedMultiConsumerChannelStrategy<T>(bufferCapacity, maxConsumers)) { }
+    }
+
+    /// <summary>
+    ///     Provides an event queue for events intended for encoding.
+    /// </summary>
+    /// <typeparam name="T">The type of <see cref="Event" /> in this queue.</typeparam>
+    public class DefaultEncodeableEventQueue<T> : EncodeableEventQueue<T> where T : Event
+    {
+        public DefaultEncodeableEventQueue(int bufferCapacity = 1024) : base(
+            new BoundedSingleConsumerChannelStrategy<T>(bufferCapacity)) { }
+    }
+
+    /// <summary>
+    ///     Provides an event queue for events intended for decoding.
+    /// </summary>
+    /// <typeparam name="T">The type of <see cref="Event" /> in this queue.</typeparam>
+    public class DefaultDecodeableEventQueue<T> : DecodeableEventQueue<T> where T : Event
+    {
+        public DefaultDecodeableEventQueue(int bufferCapacity = 1024) : base(
+            new BoundedSingleConsumerChannelStrategy<T>(bufferCapacity)) { }
+    }
+
+    /// <summary>
+    ///     Provides an event queue for events that do not support deserialization.
+    /// </summary>
+    /// <typeparam name="T">The type of <see cref="Event" /> in this queue.</typeparam>
+    public class NonDeserializableEventQueue<T> : ReadOnlyEventQueue<T> where T : Event
+    {
+        public NonDeserializableEventQueue(int bufferCapacity = 1024, uint? maxConsumers = null) : base(
+            new BoundedMultiConsumerChannelStrategy<T>(bufferCapacity, maxConsumers)) { }
     }
 
     public class DefaultTranscodeableEventQueue<T> : BoundedSingleConsumerTranscodeableEventQueue<T> where T : Event
