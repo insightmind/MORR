@@ -5,12 +5,14 @@
 #include <thread>
 #define MUTEXNAME "MORR_MSG_MUTEX"
 #define DLL extern "C" __declspec(dllexport)
-typedef void(__stdcall* WH_MessageCallBack)(HWND, UINT, POINT);
+
 typedef struct {
-    HWND hwnd;
-    UINT message;
-    POINT point;
-} StoredMSG; //if i save the message itself like MSG storedMSG = &msg, the handles won't be preserved
+    UINT Type;
+    HWND Hwnd;
+    UINT wParam;
+    POINT CursorPosition;
+} WM_Message; //if i save the message itself like MSG storedMSG = &msg, the handles won't be preserved
+typedef void(__stdcall* WH_MessageCallBack)(WM_Message);
 #pragma data_seg("Shared")
 
 HWINEVENTHOOK g_hook;
@@ -21,13 +23,13 @@ bool newMsg = 0;
 
 WH_MessageCallBack globalCallback;
 
-StoredMSG lastMsg = { 0, 0, {0, 0} };
+WM_Message lastMsg = { 0, 0, 0, {0, 0} };
 #pragma data_seg() //end of our data segment
 
 #pragma comment(linker,"/section:Shared,rws")
 
 void dispatchForever();
-DLL void SetHook(WH_MessageCallBack progressCallback);
+DLL void SetHook(WH_MessageCallBack wh_messageCallBack);
 DLL void RemoveHook();
 LRESULT CALLBACK procMessage(int nCode, WPARAM wParam, LPARAM lParam);
 HANDLE mtx = NULL; //mutex
