@@ -1,4 +1,5 @@
-﻿using MORR.Shared.Events.Queue.Strategy;
+﻿using System;
+using MORR.Shared.Events.Queue.Strategy;
 
 namespace MORR.Shared.Events.Queue
 {
@@ -13,9 +14,14 @@ namespace MORR.Shared.Events.Queue
         protected SupportDeserializationEventQueue(IEventQueueStorageStrategy<T> storageStrategy) : base(
             storageStrategy) { }
 
-        public new void Enqueue(T @event)
+        public void Enqueue(object @event)
         {
-            base.Enqueue(@event);
+            if (!(@event is T typedEvent))
+            {
+                throw new ArgumentException($"Cannot convert event type {@event.GetType()} to expected type {typeof(T)}.");
+            }
+
+            base.Enqueue(typedEvent);
         }
     }
 }
