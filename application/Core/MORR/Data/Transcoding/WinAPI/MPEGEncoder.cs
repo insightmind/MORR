@@ -2,30 +2,28 @@
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Threading;
-using System.IO;
 using System.Threading.Tasks;
 using Windows.Media.Core;
 using Windows.Media.MediaProperties;
 using Windows.Media.Transcoding;
-using MORR.Core.Data.Sample.Video;
+using MORR.Core.Data.Capture.Video;
 using MORR.Shared.Events.Queue;
 using MORR.Shared.Utility;
 
 namespace MORR.Core.Data.Transcoding.WinAPI
 {
-    [Export(typeof(IEncoder))]
     public class MPEGEncoder : IEncoder
     {
         private readonly AutoResetEvent nextSampleReady = new AutoResetEvent(false);
         private readonly AutoResetEvent sampleProcessed = new AutoResetEvent(true);
         private DateTime encodingStart;
-        private VideoSample? nextSample;
+        private DirectXVideoSample? nextSample;
 
         [Import]
         private MPEGEncoderConfiguration Configuration { get; set; }
 
         [Import]
-        private ITranscodeableEventQueue<VideoSample> VideoQueue { get; set; }
+        private IEncodeableEventQueue<DirectXVideoSample> VideoQueue { get; set; }
 
         public void Encode()
         {

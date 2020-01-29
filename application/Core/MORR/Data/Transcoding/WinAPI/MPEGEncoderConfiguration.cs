@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Text.Json;
 using MORR.Core.Configuration;
 using MORR.Shared.Configuration;
@@ -7,7 +6,6 @@ using MORR.Shared.Utility;
 
 namespace MORR.Core.Data.Transcoding.WinAPI
 {
-    [Export(typeof(MPEGEncoderConfiguration))]
     public class MPEGEncoderConfiguration : IConfiguration
     {
         /// <summary>
