@@ -25,9 +25,9 @@ namespace MORR.Core
         }
 
         /// <summary>
-        /// Gets a registration builder that contains all composition conventions
+        ///     Gets a registration builder that contains all composition conventions
         /// </summary>
-        /// <returns>The <see cref="RegistrationBuilder"/> containing all composition conventions.</returns>
+        /// <returns>The <see cref="RegistrationBuilder" /> containing all composition conventions.</returns>
         public static RegistrationBuilder GetRegistrationBuilder()
         {
             var registrationBuilder = new RegistrationBuilder();
@@ -60,12 +60,15 @@ namespace MORR.Core
                                                          x, typeof(ISupportDeserializationEventQueue<>)))
                                .Export();
 
-
-            // Export implementers of IEncodeableEventQueue<'Event'> as IEncodeableEventQueue<'Event'>
+            // Export implementers of IEncodeableEventQueue<'Event'> as IEncodeableEventQueue<'Event'> and themselves
+            registrationBuilder.ForTypesMatching(x => ImplementsQueueType(x, typeof(IEncodeableEventQueue<>)))
+                               .Export();
             registrationBuilder.ForTypesMatching(x => IsQueueInterfaceType(x, typeof(IEncodeableEventQueue<>)))
                                .Export(x => x.Inherited());
 
-            // Export implementers of IDecodeableEventQueue<'Event'> as IDecodeableEventQueue<'Event'>
+            // Export implementers of IDecodeableEventQueue<'Event'> as IDecodeableEventQueue<'Event'> and themselves
+            registrationBuilder.ForTypesMatching(x => ImplementsQueueType(x, typeof(IDecodeableEventQueue<>)))
+                               .Export();
             registrationBuilder.ForTypesMatching(x => IsQueueInterfaceType(x, typeof(IDecodeableEventQueue<>)))
                                .Export(x => x.Inherited());
 
