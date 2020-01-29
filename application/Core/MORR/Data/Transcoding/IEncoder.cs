@@ -9,7 +9,6 @@ namespace MORR.Core.Data.Transcoding
     {
         /// <summary>
         ///     Encodes the provided samples to a file.
-        ///     <remarks>This method will not return before the encoding is finished.</remarks>
         /// </summary>
         /// <param name="directoryRecordingPath">The <see cref="DirectoryPath" /> to contain the recording.</param>
         void Encode(DirectoryPath directoryRecordingPath);
