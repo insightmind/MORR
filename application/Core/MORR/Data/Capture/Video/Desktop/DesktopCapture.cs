@@ -3,6 +3,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using Windows.Graphics.Capture;
 using MORR.Core.Data.Capture.Video.Desktop.Utility;
+using MORR.Core.Data.Capture.Video.Exceptions;
 using MORR.Shared.Modules;
 using MORR.Shared.Utility;
 
@@ -51,7 +52,7 @@ namespace MORR.Core.Data.Capture.Video.Desktop
         {
             if (!GraphicsCaptureSession.IsSupported())
             {
-                throw new Exception("Screen capture is not supported on this device.");
+                throw new VideoCaptureException("Screen capture is not supported on this device.");
             }
 
             var item = GetGraphicsCaptureItem();
