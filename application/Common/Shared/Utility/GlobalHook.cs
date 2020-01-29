@@ -87,5 +87,16 @@ namespace MORR.Shared.Utility
                 hooked = false;
             }
         }
+
+        static void OnProcessExit(object sender, EventArgs e)
+        {
+            if (hooked)
+                UnHook();
+        }
+
+        static GlobalHook()
+        {
+            AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
+        }
     }
 }
