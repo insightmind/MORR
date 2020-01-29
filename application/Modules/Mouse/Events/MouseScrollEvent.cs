@@ -9,7 +9,10 @@ namespace MORR.Modules.Mouse.Events
     {
         /// <summary>
         ///     The amount of the wheel being scrolled.
-        ///     relative standard: One wheel click is defined as WHEEL_DELTA, which is 120.
+        ///     A positive value indicates that the wheel was rotated forward,
+        ///     away from the user; a negative value indicates that the wheel
+        ///     was rotated backward, toward the user.
+        ///     One wheel click is defined as WHEEL_DELTA, which is 120.
         /// </summary>
         public short ScrollAmount { get; set; }
 

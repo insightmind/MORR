@@ -10,6 +10,13 @@ namespace MORR.Modules.Mouse.Events
     {
         /// <summary>
         ///     Specifies constants that define actions performed by the mouse.
+        ///     0-None
+        ///     1-LeftClick
+        ///     2-RightClick
+        ///     3-MiddleClick
+        ///     5-LeftDoubleClick
+        ///     6-RightDoubleClick
+        ///     7-MiddleDoubleClick
         /// </summary>
         public MouseAction MouseAction { get; set; }
 

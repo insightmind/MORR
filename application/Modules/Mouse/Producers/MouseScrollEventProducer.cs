@@ -20,14 +20,14 @@ namespace MORR.Modules.Mouse.Producers
         private NativeMethods.LowLevelMouseProc? callback;
 
         /// <summary>
-        ///     The low level mouse MouseHookHandle
+        ///     The low level mouse mouseHookHandle
         /// </summary>
-        private IntPtr MouseHookHandle;
+        private IntPtr mouseHookHandle;
 
         public void StartCapture()
         {
             callback = MouseHookCallback; // Store callback to prevent GC
-            if (!NativeMethods.TrySetMouseHook(callback, out MouseHookHandle))
+            if (!NativeMethods.TrySetMouseHook(callback, out mouseHookHandle))
             {
                 throw new Exception("Failed hook mouse.");
             }
@@ -35,7 +35,7 @@ namespace MORR.Modules.Mouse.Producers
 
         public void StopCapture()
         {
-            if (!NativeMethods.UnhookWindowsHookEx(MouseHookHandle))
+            if (!NativeMethods.UnhookWindowsHookEx(mouseHookHandle))
             {
                 throw new Exception("Failed to unhook mouse.");
             }
@@ -63,7 +63,7 @@ namespace MORR.Modules.Mouse.Producers
 
             if (wParam == NativeMethods.MessageType.WM_MOUSEWHEEL)
             {
-                /// get the hookStruct from the lParam and retrieve the mousedata from it 
+                // get the hookStruct from the lParam and retrieve the mousedata from it 
                 var mousedata = lParam.mouseData;
 
                 //If the message is WM_MOUSEWHEEL, the high-order word of mouseData member is the wheel delta. 
@@ -73,10 +73,11 @@ namespace MORR.Modules.Mouse.Producers
                 var mousePosition = lParam.pt;
 
                 //TODO get the Intptr of the window
-            IntPtr hwnd = IntPtr.Zero;
+                var hwnd = IntPtr.Zero;
 
                 //Create corresponding event MouseScrollEvent and enqueue it
-                var @event = new MouseScrollEvent() { ScrollAmount = scrollAmount, MousePosition = mousePosition,HWnd = hwnd};
+                var @event = new MouseScrollEvent
+                    { ScrollAmount = scrollAmount, MousePosition = mousePosition, HWnd = hwnd };
                 Enqueue(@event);
             }
 

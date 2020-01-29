@@ -55,14 +55,14 @@ namespace MORR.Modules.Mouse.Producers
         private bool isWaitingOnRightDoubleClick;
 
         /// <summary>
-        ///     The low level mouse MouseHookHandle
+        ///     The low level mouse mouseHookHandle
         /// </summary>
-        private IntPtr MouseHookHandle;
+        private IntPtr mouseHookHandle;
 
         public void StartCapture()
         {
             callback = MouseHookCallback; // Store callback to prevent GC
-            if (!NativeMethods.TrySetMouseHook(callback, out MouseHookHandle))
+            if (!NativeMethods.TrySetMouseHook(callback, out mouseHookHandle))
             {
                 throw new Exception("Failed hook mouse.");
             }
@@ -70,7 +70,7 @@ namespace MORR.Modules.Mouse.Producers
 
         public void StopCapture()
         {
-            if (!NativeMethods.UnhookWindowsHookEx(MouseHookHandle))
+            if (!NativeMethods.UnhookWindowsHookEx(mouseHookHandle))
             {
                 throw new Exception("Failed to unhook mouse.");
             }
@@ -88,151 +88,91 @@ namespace MORR.Modules.Mouse.Producers
                 return NativeMethods.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
             }
 
-            MouseAction mouseAction;
-
-            if (wParam == NativeMethods.MessageType.WM_LBUTTONDOWN)
-            {
-                // a left single mouse click is detected
-                if (isWaitingOnLeftDoubleClick)
-                {
-                    // a left double click is expected
-                    mouseAction = MouseAction.LeftDoubleClick;
-                    // reset isWaitingOnLeftDoubleClick to false
-                    isWaitingOnLeftDoubleClick = false;
-                }
-                else
-                {
-                    // a left double click is not expected
-                    mouseAction = MouseAction.LeftClick;
-                    // set isWaitingOnLeftDoubleClick to false
-                    isWaitingOnLeftDoubleClick = true;
-                    //start the Timer countdown to wait on a left double click
-                    WaitOnDoubleClick(doubleClickTime, ResetIsWaitingOnLeftDoubleClick);
-                }
-            }
-            else if (wParam == NativeMethods.MessageType.WM_RBUTTONDOWN)
-            {
-                // a right single mouse click is detected
-                if (isWaitingOnRightDoubleClick)
-                {
-                    // a right double click is expected
-                    mouseAction = MouseAction.RightDoubleClick;
-                    // reset isWaitingOnRightDoubleClick to false
-                    isWaitingOnRightDoubleClick = false;
-                }
-                else
-                {
-                    // a right double click is not expected
-                    mouseAction = MouseAction.RightClick;
-                    // set isWaitingOnRightDoubleClick to false
-                    isWaitingOnRightDoubleClick = true;
-                    //start the Timer countdown to wait on a right double click
-                    WaitOnDoubleClick(doubleClickTime, ResetIsWaitingOnRightDoubleClick);
-                }
-            }
-            else if (wParam == NativeMethods.MessageType.WM_MBUTTONDOWN)
-            {
-                // a middle single mouse click is detected
-                if (isWaitingOnMiddleDoubleClick)
-                {
-                    // a middle double click is expected
-                    mouseAction = MouseAction.MiddleDoubleClick;
-                    // reset isWaitingOnMiddleDoubleClick to false
-                    isWaitingOnMiddleDoubleClick = false;
-                }
-                else
-                {
-                    // a middle double click is not expected
-                    mouseAction = MouseAction.MiddleClick;
-                    // set isWaitingOnMiddleDoubleClick to false
-                    isWaitingOnMiddleDoubleClick = true;
-                    //start the Timer countdown to wait on a middle double click
-                    WaitOnDoubleClick(doubleClickTime, ResetIsWaitingOnMiddleDoubleClick);
-                }
-            }
-            else
-            {
-                // no click is detected
-                mouseAction = MouseAction.None;
-            }
-
-            //TODO get the Intptr of the window
-            IntPtr hwnd = IntPtr.Zero;
-
+            var mouseAction = GetMouseAction(wParam);
             if (mouseAction != MouseAction.None)
             {
-                // create a MouseClickEvent
-                var @event = new MouseClickEvent(){MouseAction = mouseAction,MousePosition = lParam.pt, HWnd = hwnd};
+                //TODO get the Intptr of the window
+                var hwnd = IntPtr.Zero;
 
-
-
-                //Enqueue the MouseClickEvent
+                var @event = new MouseClickEvent { MouseAction = mouseAction, MousePosition = lParam.pt, HWnd = hwnd };
                 Enqueue(@event);
             }
 
             return NativeMethods.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
         }
 
+
         /// <summary>
-        ///     Waits on a double click
-        ///     Starts a timer countdown with given due time
-        ///     The callback method will be called when the due time is reached
+        ///     Returns the MouseAction base on the wParam
         /// </summary>
-        /// <param name="dueTime">the due time in milliseconds</param>
-        /// <param name="callback">the Timer callback method</param>
-        public void WaitOnDoubleClick(uint dueTime, TimerCallback callback)
+        /// <param name="wParam"></param>
+        /// <returns></returns>
+        private MouseAction GetMouseAction(NativeMethods.MessageType wParam)
         {
-            var t = new Timer(callback);
-            t.Change(dueTime, 0);
+            if (wParam == NativeMethods.MessageType.WM_LBUTTONDOWN)
+            {
+                if (isWaitingOnLeftDoubleClick)
+                {
+                    isWaitingOnLeftDoubleClick = false;
+                    return MouseAction.LeftDoubleClick;
+                }
+
+                isWaitingOnLeftDoubleClick = true;
+                WaitOnDoubleClick(doubleClickTime, isWaitingOnLeftDoubleClick);
+                return MouseAction.LeftClick;
+            }
+
+            if (wParam == NativeMethods.MessageType.WM_RBUTTONDOWN)
+            {
+                if (isWaitingOnRightDoubleClick)
+                {
+                    isWaitingOnRightDoubleClick = false;
+                    return MouseAction.RightDoubleClick;
+                }
+
+                isWaitingOnRightDoubleClick = true;
+                WaitOnDoubleClick(doubleClickTime, isWaitingOnRightDoubleClick);
+                return MouseAction.RightClick;
+            }
+
+            if (wParam == NativeMethods.MessageType.WM_MBUTTONDOWN)
+            {
+                if (isWaitingOnMiddleDoubleClick)
+                {
+                    isWaitingOnMiddleDoubleClick = false;
+                    return MouseAction.MiddleDoubleClick;
+                }
+
+                isWaitingOnMiddleDoubleClick = true;
+                WaitOnDoubleClick(doubleClickTime, isWaitingOnMiddleDoubleClick);
+                return MouseAction.MiddleClick;
+            }
+
+            return MouseAction.None;
+        }
+
+
+        /// <summary>
+        ///     Starts a timer with which a isWaitingOnDouble~Click Boolean type will be reset
+        ///     to false if the due time is reached. Before the due time is reached, a potential
+        ///     double click is expected
+        /// </summary>
+        /// <param name="dueTime">due time in milliseconds</param>
+        /// <param name="isWaitingOnDoubleClick">a Boolean indicates if it is waiting for a certain type of double click</param>
+        private void WaitOnDoubleClick(uint dueTime, bool isWaitingOnDoubleClick)
+        {
+            var timer = new Timer(ResetIsWaitingOnDoubleClick, isWaitingOnDoubleClick, dueTime, 0);
+            timer.Dispose();
         }
 
         /// <summary>
-        ///     This method will be called by StartTimer() method to
-        ///     reset the isWaitingOnLeftDoubleClick to false.
+        ///     This method will be called by WaitOnDoubleClick() method to
+        ///     reset the isWaitingOn~DoubleClick to false.
         /// </summary>
-        /// <param name="state">
-        ///     An object containing application-specific information relevant to the method invoked by this
-        ///     delegate, or null.
-        /// </param>
-        private void ResetIsWaitingOnLeftDoubleClick(object state)
+        /// <param name="isWaitingOnDoubleClick">a Boolean indicates if it is waiting for a certain type of double click</param>
+        private void ResetIsWaitingOnDoubleClick(object isWaitingOnDoubleClick)
         {
-            isWaitingOnLeftDoubleClick = true;
-            // The state object is the Timer object.
-            var t = (Timer) state;
-            t.Dispose();
-            isWaitingOnLeftDoubleClick = false;
-        }
-
-        /// <summary>
-        ///     This method will be called by StartTimer() method to
-        ///     reset the isWaitingOnRightDoubleClick to false and dispose the timer
-        /// </summary>
-        /// <param name="state">
-        ///     An object containing application-specific information relevant to the method invoked by this
-        ///     delegate, or null.
-        /// </param>
-        private void ResetIsWaitingOnRightDoubleClick(object state)
-        {
-            // The state object is the Timer object.
-            var t = (Timer) state;
-            t.Dispose();
-            isWaitingOnRightDoubleClick = false;
-        }
-
-        /// <summary>
-        ///     This method will be called by StartTimer() method to
-        ///     reset the isWaitingOnMiddleDoubleClick to false and dispose the timer.
-        /// </summary>
-        /// <param name="state">
-        ///     An object containing application-specific information relevant to the method invoked by this
-        ///     delegate, or null.
-        /// </param>
-        private void ResetIsWaitingOnMiddleDoubleClick(object state)
-        {
-            // The state object is the Timer object.
-            var t = (Timer) state;
-            t.Dispose();
-            isWaitingOnMiddleDoubleClick = false;
+            isWaitingOnDoubleClick = false;
         }
     }
 }

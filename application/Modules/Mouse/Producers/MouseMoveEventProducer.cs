@@ -19,7 +19,7 @@ namespace MORR.Modules.Mouse.Producers
     public class MouseMoveEventProducer : DefaultEventQueue<MouseMoveEvent>
     {
         /// <summary>
-        ///     The mouse position in the last period.
+        ///     The mouse position in screen coordinates in the last period.
         ///     This field will be initialized to the mouse position
         ///     when the StartTimer() is called.
         /// </summary>
@@ -28,26 +28,25 @@ namespace MORR.Modules.Mouse.Producers
         /// <summary>
         ///     A timer that records the mouse position at specific intervals.
         /// </summary>
-        private Timer mousePositionRecordingTimer;
+        private Timer? mousePositionRecordingTimer;
 
         /// <summary>
-        ///     The time interval between invocation of method to record mouse position, in milliseconds.
+        ///     The sampling rate of the mouse position capture, in Hz.
         /// </summary>
-        private int period { get; set; }
+        private int SamplingRate { get; set; }
 
         /// <summary>
-        ///     The minimal distance a mouse move must reach in a period to be recorded.
-        ///     (A mouse move with distance less than the threshold will be ignored,
+        ///     The minimal distance(computed with screen coordinates) a mouse move
+        ///     must reach in a period to be recorded.
+        ///     A mouse move with distance less than the Threshold will be ignored,
         ///     in other words, a new MouseMoveEvent will not be generated and
-        ///     the mouse position will not be recorded)
+        ///     the mouse position will not be recorded.
         /// </summary>
-        private int threshold { get; set; }
-
-        #region private methods
+        private int Threshold { get; set; }
 
         /// <summary>
         ///     Get the mouse position and create & enqueue corresponding event
-        ///     if the threshold is reached.
+        ///     if the Threshold is reached.
         /// </summary>
         /// <param name="stateInfo"></param>
         private void GetMousePosition(object stateInfo)
@@ -62,24 +61,20 @@ namespace MORR.Modules.Mouse.Producers
             // replace the last mouse position with the current mouse position
             lastMousePosition = currentMousePosition;
 
-            //if the distance that the mouse has been moved reaches(is greater than) the threshold
+            //if the distance that the mouse has been moved reaches(is greater than) the Threshold
             //record the new Position in the created MouseMoveEvent and enqueue it
-            if (distance >= threshold)
+            if (distance >= Threshold)
             {
-                var @event = new MouseMoveEvent() { MousePosition = currentMousePosition};
+                var @event = new MouseMoveEvent { MousePosition = currentMousePosition };
                 Enqueue(@event);
             }
         }
 
-        #endregion
 
-
-        #region public methods
-
-        public void Configure(int period, int threshold)
+        public void Configure(int samplingRate, int threshold)
         {
-            this.period = period;
-            this.threshold = threshold;
+            this.SamplingRate = samplingRate;
+            this.Threshold = threshold;
         }
 
         /// <summary>
@@ -89,7 +84,9 @@ namespace MORR.Modules.Mouse.Producers
         {
             NativeMethods.GetCursorPos(out lastMousePosition);
 
-            mousePositionRecordingTimer = new Timer(GetMousePosition, null, 0, period);
+            int samplingTimeIntervalInMilliseconds = (int)(((double)1 / this.SamplingRate)*1000);
+
+            mousePositionRecordingTimer = new Timer(GetMousePosition, null, 0, samplingTimeIntervalInMilliseconds);
         }
 
         /// <summary>
@@ -99,7 +96,5 @@ namespace MORR.Modules.Mouse.Producers
         {
             mousePositionRecordingTimer.Dispose();
         }
-
-        #endregion
     }
 }

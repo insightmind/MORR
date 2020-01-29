@@ -199,13 +199,16 @@ namespace MORR.Shared.Utility
             public POINT Pt;
         }
 
+        /// <summary>
+        ///     The POINT is of two int(32 bits) for the usage in MSLLHOOKSTRUCT.
+        /// </summary>
         [StructLayout(LayoutKind.Sequential)]
         public struct POINT
         {
-            public long X;
-            public long Y;
+            public int X;
+            public int Y;
 
-            public POINT(long x, long y)
+            public POINT(int x, int y)
             {
                 X = x;
                 Y = y;
@@ -213,7 +216,7 @@ namespace MORR.Shared.Utility
 
             public static implicit operator Point(POINT p)
             {
-                return new Point((int) p.X, (int) p.Y);
+                return new Point(p.X, p.Y);
             }
 
             public static implicit operator POINT(Point p)
@@ -222,14 +225,13 @@ namespace MORR.Shared.Utility
             }
 
             public static implicit operator System.Windows.Point(POINT p)
-
             {
                 return new System.Windows.Point(p.X, p.Y);
             }
 
             public static implicit operator POINT(System.Windows.Point p)
             {
-                return new POINT((long) p.X, (long) p.Y);
+                return new POINT((int) p.X, (int) p.Y);
             }
         }
 
@@ -242,6 +244,11 @@ namespace MORR.Shared.Utility
             public int DWExtraInfo;
         }
 
+
+        /// <summary>
+        ///     The POINT in this structure is of two 32 bits Integer.
+        ///     see https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-msllhookstruct
+        /// </summary>
         public struct MSLLHOOKSTRUCT
         {
             public POINT pt;

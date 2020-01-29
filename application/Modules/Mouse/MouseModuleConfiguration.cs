@@ -11,15 +11,16 @@ namespace MORR.Modules.Mouse
     public class MouseModuleConfiguration : IConfiguration
     {
         /// <summary>
-        ///     The time interval between invocation of method to record mouse position, in milliseconds.
+        ///     The sampling rate of the mouse position capture, in Hz.
         /// </summary>
-        public int Period { get; set; }
+        public int SamplingRate { get; set; }
 
         /// <summary>
-        ///     The minimal distance a mouse move must reach in a period to be recorded.
-        ///     (A mouse move with distance less than the threshold will be ignored,
+        ///     The minimal distance(computed with screen coordinates) a mouse move
+        ///     must reach in a period to be recorded.
+        ///     A mouse move with distance less than the Threshold will be ignored,
         ///     in other words, a new MouseMoveEvent will not be generated and
-        ///     the mouse position will not be recorded, the distance will be computed in screen coordinates.)
+        ///     the mouse position will not be recorded.
         /// </summary>
         public int Threshold { get; set; }
 
@@ -30,16 +31,12 @@ namespace MORR.Modules.Mouse
             var element = JsonDocument.Parse(configuration.RawValue).RootElement;
             try
             {
-                int period;
-                int threshold;
-                Int32.TryParse(element.GetProperty("Period").GetString(),out period);
-                Int32.TryParse(element.GetProperty("Threshold").GetString(),out threshold);
-                Period = period;
-                Threshold = threshold;
+                SamplingRate = element.GetProperty("SamplingRate").GetInt32();
+                Threshold = element.GetProperty("Threshold").GetInt32();
             }
             catch (KeyNotFoundException)
             {
-                throw new InvalidConfigurationException("Failed to parse the period and the threshold for mouse module.");
+                throw new InvalidConfigurationException("Failed to parse the sampling rate and the threshold for mouse module.");
             }
         }
     }

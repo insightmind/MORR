@@ -1,9 +1,10 @@
 {
   "MORR.Core.Modules.GlobalModuleConfiguration": {
     "EnabledModules": [
-      "MORR.Core.Data.IntermediateFormat.Json.JsonIntermediateFormatSerializer",
-      "MORR.Modules.Keyboard.KeyboardModule",
-      "MORR.Modules.WebBrowser.WebBrowserModule"
+      "MORR.Core.Data.Capture.Metadata.MetadataCapture",
+      "MORR.Core.Data.Capture.Video.WinAPI.DesktopCapture",
+      "MORR.Modules.Keyboard.KeyboardModule, Keyboard.MORR-Module, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "MORR.Modules.Mouse.MouseModule, Mouse.MORR-Module, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
     ]
   },
   "MORR.Core.Session.SessionConfiguration": {
@@ -14,6 +15,7 @@
     "MonitorIndex": 0,
     "PromptUserForMonitorSelection": false
   },
+<<<<<<< HEAD
   "MORR.Core.Data.Transcoding.Mpeg.MpegEncoderConfiguration": {
     "Width": 1920,
     "Height": 1080,
@@ -23,5 +25,10 @@
   },
   "MORR.Modules.WebBrowser.WebBrowserModuleConfiguration": {
     "UrlSuffix": "60024/"
+=======
+  "MORR.Modules.Mouse.MouseModuleConfiguration, Mouse.MORR-Module, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": {
+    "SamplingRate": 10,
+    "Threshold": 50
+>>>>>>> Optimize the code according to suggestions
   }
 }

@@ -60,11 +60,11 @@ namespace MORR.Modules.Mouse
         public void Initialize()
         {
             // retrieve all parameters from the MouseModuleConfiguration
-            var period = MouseModuleConfiguration.Period;
+            var samplingRate = MouseModuleConfiguration.SamplingRate;
             var threshold = MouseModuleConfiguration.Threshold;
 
             // initialize all producers
-            MouseMoveEventProducer.Configure(period, threshold);
+            MouseMoveEventProducer.Configure(samplingRate, threshold);
         }
 
         private void StartCapture()

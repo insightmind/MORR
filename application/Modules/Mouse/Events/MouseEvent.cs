@@ -11,7 +11,7 @@ namespace MORR.Modules.Mouse.Events
     public abstract class MouseEvent : Event
     {
         /// <summary>
-        ///     The current position of the mouse
+        ///     The current position of the mouse in screen coordinates
         /// </summary>
         public Point MousePosition { get; set; }
     }
