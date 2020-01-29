@@ -10,9 +10,6 @@ using MORR.Shared.Utility;
 
 namespace MORR.Core.Data.IntermediateFormat.Json
 {
-    [Export(typeof(IModule))]
-    [Export(typeof(IEncodeableEventQueue<JsonIntermediateFormatSample>))]
-    [Export(typeof(IEncodeableEventQueue<IntermediateFormatSample>))]
     public class JsonIntermediateFormatSerializer
         : DefaultEncodeableEventQueue<JsonIntermediateFormatSample>, ITransformingModule
     {

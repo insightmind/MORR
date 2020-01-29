@@ -1,5 +1,4 @@
-﻿using MORR.Core.Data.Transcoding;
-using MORR.Core.Data.Transcoding.Exceptions;
+﻿using MORR.Core.Data.Transcoding.Exceptions;
 using MORR.Core.Data.IntermediateFormat;
 using MORR.Shared.Events.Queue;
 using System;
@@ -8,7 +7,6 @@ using System.Text;
 
 namespace MORR.Core.CLI.Output
 {
-    [Export(typeof(IEncoder))]
     public class OutputFormatter : IOutputFormatter
     {
         internal static bool IsVerbose = false;

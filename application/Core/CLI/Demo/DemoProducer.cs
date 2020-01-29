@@ -1,15 +1,10 @@
-﻿using MORR.Shared.Events;
-using MORR.Shared.Events.Queue;
+﻿using MORR.Shared.Events.Queue;
 using MORR.Shared.Modules;
 using System;
-using System.ComponentModel.Composition;
 using System.Timers;
 
 namespace MORR.Core.CLI.Demo
 {
-    [Export(typeof(IModule))]
-    [Export(typeof(IReadOnlyEventQueue<DemoEvent>))]
-    [Export(typeof(IReadOnlyEventQueue<Event>))]
     public class DemoProducer : DefaultEventQueue<DemoEvent>, IModule
     {
         private Timer timer;

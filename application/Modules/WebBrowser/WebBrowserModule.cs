@@ -9,7 +9,6 @@ namespace MORR.Modules.WebBrowser
     /// <summary>
     ///     The <see cref="WebBrowserModule" /> is responsible for recording all browser related user interactions
     /// </summary>
-    [Export(typeof(IModule))]
     public class WebBrowserModule : ICollectingModule
     {
         private bool isActive;

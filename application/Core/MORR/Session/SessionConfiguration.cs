@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using MORR.Core.Configuration;
@@ -7,7 +6,6 @@ using MORR.Shared.Configuration;
 
 namespace MORR.Core.Session
 {
-    [Export(typeof(SessionConfiguration))]
     public class SessionConfiguration : IConfiguration
     {
         /// <summary>
