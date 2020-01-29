@@ -5,6 +5,7 @@ using MORR.Shared.Events.Queue;
 using System;
 using System.ComponentModel.Composition;
 using System.Text;
+using MORR.Core.Data.IntermediateFormat.Json;
 
 namespace MORR.Core.CLI.Output
 {
@@ -17,7 +18,7 @@ namespace MORR.Core.CLI.Output
         private static readonly string DateFormatString = "HH:mm:ss.fff";
 
         [Import]
-        private IEncodeableEventQueue<IntermediateFormatSample> MetadataQueue { get; set; }
+        private IEncodeableEventQueue<JsonIntermediateFormatSample> MetadataQueue { get; set; }
 
         public async void Encode()
         {
