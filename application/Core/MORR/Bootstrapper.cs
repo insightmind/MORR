@@ -39,14 +39,16 @@ namespace MORR.Core
 
         private void LoadFromPath(DirectoryPath path)
         {
+            var registrationBuilder = BootstrapperConventions.GetRegistrationBuilder();
+
             var alreadyLoadedAssemblies = AssemblyLoadContext.Default.Assemblies.Select(x => x.FullName).ToList();
             var moduleFiles = Directory.GetFiles(path.ToString(), moduleNamePattern);
             var moduleAssemblies = moduleFiles
                                    .Select(x => LoadWithReferencesIfNotLoaded(x, alreadyLoadedAssemblies))
                                    .Where(x => x != null)
-                                   .Select(x => new AssemblyCatalog(x)).ToArray();
+                                   .Select(x => new AssemblyCatalog(x, registrationBuilder)).ToArray();
 
-            var applicationCatalog = new ApplicationCatalog();
+            var applicationCatalog = new ApplicationCatalog(registrationBuilder);
             var catalogs = moduleAssemblies.Cast<ComposablePartCatalog>().Append(applicationCatalog);
 
             var aggregateCatalog = new AggregateCatalog(catalogs);
