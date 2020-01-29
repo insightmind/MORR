@@ -7,7 +7,7 @@ using SharpDX.DXGI;
 using Device = SharpDX.Direct3D11.Device;
 using Device3 = SharpDX.DXGI.Device3;
 
-namespace MORR.Core.Data.Capture.Video.WinAPI.Utility
+namespace MORR.Core.Data.Capture.Video.Desktop.Utility
 {
     [ComImport]
     [Guid("A9B3D012-3DF2-4EE3-B8D1-8695F457D3C1")]

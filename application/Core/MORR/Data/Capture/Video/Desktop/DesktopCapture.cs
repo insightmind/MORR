@@ -2,11 +2,11 @@
 using System.ComponentModel.Composition;
 using System.Linq;
 using Windows.Graphics.Capture;
-using MORR.Core.Data.Capture.Video.WinAPI.Utility;
+using MORR.Core.Data.Capture.Video.Desktop.Utility;
 using MORR.Shared.Modules;
 using MORR.Shared.Utility;
 
-namespace MORR.Core.Data.Capture.Video.WinAPI
+namespace MORR.Core.Data.Capture.Video.Desktop
 {
     public class DesktopCapture : ICollectingModule
     {

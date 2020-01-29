@@ -29,7 +29,7 @@ using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.Graphics.Capture;
 
-namespace MORR.Core.Data.Capture.Video.WinAPI.Utility
+namespace MORR.Core.Data.Capture.Video.Desktop.Utility
 {
     /// <summary>
     ///     Provides utility methods for interacting with GraphicsCapture objects.

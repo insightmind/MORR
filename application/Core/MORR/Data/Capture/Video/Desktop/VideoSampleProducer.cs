@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Windows.Graphics.Capture;
 using Windows.Graphics.DirectX;
 using Windows.Graphics.DirectX.Direct3D11;
-using MORR.Core.Data.Capture.Video.WinAPI.Utility;
+using MORR.Core.Data.Capture.Video.Desktop.Utility;
 using MORR.Core.Data.Sample.Video;
 using MORR.Shared.Events.Queue;
 using SharpDX.Direct3D11;
@@ -12,7 +12,7 @@ using SharpDX.DXGI;
 using SharpDX.Mathematics.Interop;
 using Device = SharpDX.Direct3D11.Device;
 
-namespace MORR.Core.Data.Capture.Video.WinAPI
+namespace MORR.Core.Data.Capture.Video.Desktop
 {
     public class VideoSampleProducer : DefaultEncodeableEventQueue<VideoSample>
     {
