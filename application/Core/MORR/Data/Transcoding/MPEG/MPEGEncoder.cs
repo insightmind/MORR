@@ -15,10 +15,13 @@ namespace MORR.Core.Data.Transcoding.MPEG
 {
     public class MPEGEncoder : IEncoder
     {
+        private readonly ManualResetEvent onResolutionInferred = new ManualResetEvent(false);
         private readonly AutoResetEvent nextSampleReady = new AutoResetEvent(false);
         private readonly AutoResetEvent sampleProcessed = new AutoResetEvent(true);
         private DateTime encodingStart;
         private DirectXVideoSample? nextSample;
+        private Tuple<uint, uint>? inferredResolution;
+        private bool hasInferredResolution;
 
         [Import]
         private MPEGEncoderConfiguration Configuration { get; set; }
@@ -31,7 +34,8 @@ namespace MORR.Core.Data.Transcoding.MPEG
             encodingStart = DateTime.Now;
             var recordingFilePath = GetRecordingFile(recordingDirectoryPath);
 
-            Task.Run(GetFirstSample).ContinueWith(x => InitializeTranscode(x.Result, recordingFilePath));
+            Task.Run(ConsumeVideoSamples);
+            Task.Run(() => InitializeTranscode(recordingFilePath));
         }
 
         private FilePath GetRecordingFile(DirectoryPath recordingDirectoryPath)
@@ -42,15 +46,17 @@ namespace MORR.Core.Data.Transcoding.MPEG
             return recordingFile;
         }
 
-        private async void InitializeTranscode(DirectXVideoSample firstSample, FilePath recordingFilePath)
+        private async void InitializeTranscode(FilePath recordingFilePath)
         {
-            ConsumeVideoSamples();
+            onResolutionInferred.WaitOne();
 
-            var width = (uint) firstSample.Surface.Description.Width;
-            var height = (uint) firstSample.Surface.Description.Height;
+            if (inferredResolution == null)
+            {
+                throw new EncodingException("Failed to infer video input resolution.");
+            }
 
             var transcoder = GetTranscoder();
-            var streamDescriptor = GetStreamDescriptor(width, height);
+            var streamDescriptor = GetStreamDescriptor(inferredResolution.Item1, inferredResolution.Item2);
 
             var mediaStreamSource = GetMediaStreamSource(streamDescriptor);
             var encodingProfile = GetEncodingProfile();
@@ -69,20 +75,22 @@ namespace MORR.Core.Data.Transcoding.MPEG
             await prepareTranscodeResult.TranscodeAsync();
         }
 
-        private async Task<DirectXVideoSample> GetFirstSample()
-        {
-            await foreach (var videoSample in VideoQueue.GetEvents())
-            {
-                return videoSample;
-            }
-
-            return null;
-        }
-
         private async Task ConsumeVideoSamples()
         {
             await foreach (var videoSample in VideoQueue.GetEvents())
             {
+                if (!hasInferredResolution)
+                {
+                    hasInferredResolution = true;
+
+                    var description = videoSample.Surface.Description;
+                    var inferredWidth = (uint) description.Width;
+                    var inferredHeight = (uint) description.Height;
+
+                    inferredResolution = new Tuple<uint, uint>(inferredWidth, inferredHeight);
+                    onResolutionInferred.Set();
+                }
+                
                 sampleProcessed.WaitOne();
                 nextSample = videoSample;
                 nextSampleReady.Set();
