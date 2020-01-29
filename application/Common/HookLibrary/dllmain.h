@@ -18,8 +18,8 @@
 typedef struct {
     UINT Type;
     HWND Hwnd;
-    UINT wParam;
-    POINT CursorPosition;
+    WPARAM wParam;
+    POINT Coordinates;
 } WM_Message; //message struct used to send to the MORR application
 typedef void(__stdcall* WH_MessageCallBack)(WM_Message);
 #pragma data_seg("Shared")
@@ -27,7 +27,7 @@ typedef void(__stdcall* WH_MessageCallBack)(WM_Message);
 HWINEVENTHOOK g_hook;
 //our hook handle which will be returned by calling SetWindowsHookEx function
 HHOOK GetMessageHook = NULL;
-//HHOOK CallWndProcHook = NULL;
+HHOOK CallWndProcHook = NULL;
 ULONG bufferIterator = 0;
 
 WH_MessageCallBack globalCallback;
@@ -43,6 +43,7 @@ DLL bool IsCaptured(UINT type);
 DLL void SetHook(WH_MessageCallBack wh_messageCallBack);
 DLL void RemoveHook();
 LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK CallWndProc(int nCode, WPARAM wParam, LPARAM lParam);
 HANDLE semaphore = NULL;
 bool running = 0;
 std::thread dispatcherthread;

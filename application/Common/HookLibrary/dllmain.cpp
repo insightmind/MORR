@@ -31,14 +31,37 @@ LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
     {
         unsigned int incremented;
         unsigned int type = msg->message;
-        if ((type >= WM_MOUSEMOVE && type <= WM_MOUSEHWHEEL) || WM_KEYDOWN) {
+        if ((type >= WM_MOUSEMOVE && type <= WM_MOUSEHWHEEL) || type == WM_KEYDOWN) {
             incremented = InterlockedIncrement(&bufferIterator); //atomic increment. overflows should not matter as we modulo it anyways.
-            lastMsg[incremented % BUFFERSIZE] = { msg->message, msg->hwnd, (UINT)msg->wParam, msg->pt };
+            lastMsg[incremented % BUFFERSIZE] = { msg->message, msg->hwnd, msg->wParam, msg->pt };
             timeStamps[incremented % BUFFERSIZE] = msg->time;
         }
         else if ((type >= WM_CUT && type <= WM_CLEAR)) {
             incremented = InterlockedIncrement(&bufferIterator);
             lastMsg[incremented % BUFFERSIZE] = { msg->message, msg->hwnd, 0, msg->pt };
+            timeStamps[incremented % BUFFERSIZE] = msg->time;
+        }
+        else if (type == WM_CREATE)
+        {
+            incremented = InterlockedIncrement(&bufferIterator);
+            lastMsg[incremented % BUFFERSIZE] = { msg->message, msg->hwnd, 0, {((CREATESTRUCT*)msg->lParam)->x, ((CREATESTRUCT*)msg->lParam)->y } };
+            timeStamps[incremented % BUFFERSIZE] = msg->time;
+        }
+        else if (type == WM_MOVE)
+        {
+            incremented = InterlockedIncrement(&bufferIterator);
+            lastMsg[incremented % BUFFERSIZE] = { msg->message, msg->hwnd, 0, {(int)(short) LOWORD(msg->lParam), (int)(short)HIWORD(msg->lParam)} };
+            timeStamps[incremented % BUFFERSIZE] = msg->time;
+        }
+        else if (type == WM_DESTROY || type == WM_ACTIVATE || (type >= WM_SETFOCUS) && (type <= WM_ENABLE))
+        {
+            incremented = InterlockedIncrement(&bufferIterator);
+            lastMsg[incremented % BUFFERSIZE] = { msg->message, (type == WM_ACTIVATE) ? (HWND)msg->lParam : msg->hwnd, msg->wParam, {0, 0}};
+            timeStamps[incremented % BUFFERSIZE] = msg->time;
+        }
+        else if (type == WM_SIZE) {
+            incremented = InterlockedIncrement(&bufferIterator);
+            lastMsg[incremented % BUFFERSIZE] = { msg->message, msg->hwnd, msg->wParam,  {(int)(short)LOWORD(msg->lParam), (int)(short)HIWORD(msg->lParam)} };
             timeStamps[incremented % BUFFERSIZE] = msg->time;
         }
         else
@@ -52,6 +75,62 @@ forwardEvent:
     //passing this message to target application
 }
 
+LRESULT CALLBACK CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
+//this is the hook procedure
+{
+    //a pointer to hold the MSG structure that is passed as lParam
+    CWPSTRUCT* msg;
+    if (semaphore == NULL) {
+        semaphore = CreateSemaphore(NULL, 0, BUFFERSIZE, TEXT(SEMAPHORE_GUID));
+    }
+
+    //lParam contains pointer to MSG structure.
+    msg = (CWPSTRUCT*)lParam;
+    /* see https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/ms644981(v=vs.85) */
+    if (nCode >= 0 && nCode == HC_ACTION)
+    {
+        unsigned int incremented;
+        unsigned int type = msg->message;
+        if (type == WM_CREATE)
+        {
+            incremented = InterlockedIncrement(&bufferIterator);
+            lastMsg[incremented % BUFFERSIZE] = { msg->message, msg->hwnd, 0, {((CREATESTRUCT*)msg->lParam)->x, ((CREATESTRUCT*)msg->lParam)->y } };
+            timeStamps[incremented % BUFFERSIZE] = 0;
+        }
+        else if (type == WM_MOVE)
+        {
+            incremented = InterlockedIncrement(&bufferIterator);
+            lastMsg[incremented % BUFFERSIZE] = { msg->message, msg->hwnd, 0, {(int)(short)LOWORD(msg->lParam), (int)(short)HIWORD(msg->lParam)} };
+            timeStamps[incremented % BUFFERSIZE] = 0;
+        }
+        else if (type == WM_DESTROY || type == WM_ACTIVATE || (type >= WM_SETFOCUS) && (type <= WM_ENABLE))
+        {
+            incremented = InterlockedIncrement(&bufferIterator);
+            lastMsg[incremented % BUFFERSIZE] = { msg->message, (type == WM_ACTIVATE) ? (HWND)msg->lParam : msg->hwnd, msg->wParam, {0, 0} };
+            timeStamps[incremented % BUFFERSIZE] = 0;
+        }
+        else if (type == WM_SIZE) {
+            incremented = InterlockedIncrement(&bufferIterator);
+            lastMsg[incremented % BUFFERSIZE] = { msg->message, msg->hwnd, msg->wParam,  {(int)(short)LOWORD(msg->lParam), (int)(short)HIWORD(msg->lParam)} };
+            timeStamps[incremented % BUFFERSIZE] = 0;
+        }
+        else if ((type >= WM_CUT && type <= WM_CLEAR)) {
+            incremented = InterlockedIncrement(&bufferIterator);
+            lastMsg[incremented % BUFFERSIZE] = { msg->message, msg->hwnd, 0, 0 };
+            timeStamps[incremented % BUFFERSIZE] = 0;
+        }
+        else
+        {
+            goto forwardEvent;
+        }
+        ReleaseSemaphore(semaphore, 1, NULL);
+    }
+forwardEvent:
+    return CallNextHookEx(GetMessageHook, nCode, wParam, lParam);
+    //passing this message to target application
+}
+
+
 /**
     Return if the message type is captured by this DLL.
     Should be kept up-to-date with the switch case in the procMessage function.
@@ -60,7 +139,7 @@ forwardEvent:
 bool IsCaptured(UINT type) {
     return (type == WM_KEYDOWN
         || (type >= WM_MOUSEMOVE && type <= WM_MOUSEWHEEL)
-        || (type >= WM_CREATE && type <= WM_ACTIVATE)
+        || (type >= WM_CREATE && type <= WM_ENABLE)
         || (type >= WM_CUT && type <= WM_CLEAR)
         );
 }
@@ -71,8 +150,8 @@ DLL void SetHook(WH_MessageCallBack progressCallback) {
     globalCallback = progressCallback;
     if (GetMessageHook == NULL)
         GetMessageHook = SetWindowsHookEx(WH_GETMESSAGE, GetMsgProc, hInstHookDll, 0);
-    //if (CallWndProcHook == NULL)
-        //CallWndProcHook = SetWindowsHookEx(WH_GETMESSAGE, GetMsgProc, hInstHookDll, 0);
+    if (CallWndProcHook == NULL)
+        CallWndProcHook = SetWindowsHookEx(WH_CALLWNDPROC, CallWndProc, hInstHookDll, 0);
     dispatcherthread = std::thread(dispatchForever);
     dispatcherthread.detach();
     printf("GlobalHook: Hooked\n");
@@ -83,10 +162,10 @@ DLL void RemoveHook()
 {
     if (GetMessageHook != NULL)
         UnhookWindowsHookEx(GetMessageHook);
-    //if (CallWndProcHook != NULL)
+    if (CallWndProcHook != NULL)
         //UnhookWindowsHookEx(CallWndProcHook);
     GetMessageHook = NULL;
-    //CallWndProcHook = NULL;
+    CallWndProcHook = NULL;
     GetMessageHook = NULL;
     running = false;
     printf("GlobalHook: Unhooked\n");
