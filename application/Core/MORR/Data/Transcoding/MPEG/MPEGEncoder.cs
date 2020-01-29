@@ -10,7 +10,7 @@ using MORR.Core.Data.Capture.Video;
 using MORR.Shared.Events.Queue;
 using MORR.Shared.Utility;
 
-namespace MORR.Core.Data.Transcoding.WinAPI
+namespace MORR.Core.Data.Transcoding.MPEG
 {
     public class MPEGEncoder : IEncoder
     {
