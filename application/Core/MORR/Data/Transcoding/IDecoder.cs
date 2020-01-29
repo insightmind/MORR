@@ -1,12 +1,10 @@
-﻿using System.ComponentModel.Composition;
-using MORR.Shared.Utility;
+﻿using MORR.Shared.Utility;
 
 namespace MORR.Core.Data.Transcoding
 {
     /// <summary>
     ///     Decodes samples from a file and provides the decoded samples.
     /// </summary>
-    [InheritedExport]
     public interface IDecoder
     {
         /// <summary>
