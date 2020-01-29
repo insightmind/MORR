@@ -19,7 +19,7 @@ namespace MORR.Core.Data.IntermediateFormat.Json
         private IEnumerable<ISupportDeserializationEventQueue<Event>> EventQueues { get; set; }
 
         [Import]
-        private IDecodeableEventQueue<IntermediateFormatSample> IntermediateFormatSampleQueue { get; set; }
+        private IDecodeableEventQueue<JsonIntermediateFormatSample> IntermediateFormatSampleQueue { get; set; }
 
         public bool IsActive
         {
@@ -48,10 +48,7 @@ namespace MORR.Core.Data.IntermediateFormat.Json
             {
                 if (sample.EventType == eventQueue.EventType)
                 {
-                    // The actual event type is known to be sample.EventType at runtime
-                    // We have to bypass type checking by using dynamic as we cannot cast to the specified type at compile time
-                    dynamic @event =
-                        JsonSerializer.Deserialize(sample.SerializedData, sample.EventType);
+                    var @event = JsonSerializer.Deserialize(sample.SerializedData, sample.EventType);
                     eventQueue.Enqueue(@event);
                 }
             }
