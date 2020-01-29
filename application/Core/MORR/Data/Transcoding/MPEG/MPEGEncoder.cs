@@ -25,20 +25,18 @@ namespace MORR.Core.Data.Transcoding.MPEG
         [Import]
         private IEncodeableEventQueue<DirectXVideoSample> VideoQueue { get; set; }
 
-        public void Encode()
+        public void Encode(DirectoryPath recordingDirectoryPath)
         {
             encodingStart = DateTime.Now;
-            var recordingFilePath = GetRecordingFile();
+            var recordingFilePath = GetRecordingFile(recordingDirectoryPath);
 
             Task.Run(ConsumeVideoSamples);
             EncodeInternalAsync(recordingFilePath); // Intentionally do not block here
         }
 
-        private FilePath GetRecordingFile()
+        private FilePath GetRecordingFile(DirectoryPath recordingDirectoryPath)
         {
-            var currentTime = encodingStart.ToString("yyyy-MM-dd_HH-mm-ss");
-
-            var recordingFilePath = Path.Combine(Configuration.RecordingsDirectory.ToString(), $"{currentTime}.mp4");
+            var recordingFilePath = Path.Combine(recordingDirectoryPath.ToString(), $"{Configuration.RecordingName}.mp4");
             var recordingFile = new FilePath(recordingFilePath);
             return recordingFile;
         }
