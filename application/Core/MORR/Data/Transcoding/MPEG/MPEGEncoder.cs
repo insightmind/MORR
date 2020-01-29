@@ -7,6 +7,7 @@ using Windows.Media.Core;
 using Windows.Media.MediaProperties;
 using Windows.Media.Transcoding;
 using MORR.Core.Data.Capture.Video;
+using MORR.Core.Data.Transcoding.Exceptions;
 using MORR.Shared.Events.Queue;
 using MORR.Shared.Utility;
 
@@ -30,15 +31,52 @@ namespace MORR.Core.Data.Transcoding.MPEG
             encodingStart = DateTime.Now;
             var recordingFilePath = GetRecordingFile(recordingDirectoryPath);
 
-            Task.Run(ConsumeVideoSamples);
-            EncodeInternalAsync(recordingFilePath); // Intentionally do not block here
+            Task.Run(GetFirstSample).ContinueWith(x => InitializeTranscode(x.Result, recordingFilePath));
         }
 
         private FilePath GetRecordingFile(DirectoryPath recordingDirectoryPath)
         {
-            var recordingFilePath = Path.Combine(recordingDirectoryPath.ToString(), $"{Configuration.RecordingName}.mp4");
+            var recordingFilePath =
+                Path.Combine(recordingDirectoryPath.ToString(), $"{Configuration.RecordingName}.mp4");
             var recordingFile = new FilePath(recordingFilePath);
             return recordingFile;
+        }
+
+        private async void InitializeTranscode(DirectXVideoSample firstSample, FilePath recordingFilePath)
+        {
+            ConsumeVideoSamples();
+
+            var width = (uint) firstSample.Surface.Description.Width;
+            var height = (uint) firstSample.Surface.Description.Height;
+
+            var transcoder = GetTranscoder();
+            var streamDescriptor = GetStreamDescriptor(width, height);
+
+            var mediaStreamSource = GetMediaStreamSource(streamDescriptor);
+            var encodingProfile = GetEncodingProfile();
+
+            await using var destinationFile = File.Open(recordingFilePath.ToString(), FileMode.Create);
+
+            var prepareTranscodeResult =
+                await transcoder.PrepareMediaStreamSourceTranscodeAsync(
+                    mediaStreamSource, destinationFile.AsRandomAccessStream(), encodingProfile);
+
+            if (!prepareTranscodeResult.CanTranscode)
+            {
+                throw new EncodingException();
+            }
+
+            await prepareTranscodeResult.TranscodeAsync();
+        }
+
+        private async Task<DirectXVideoSample> GetFirstSample()
+        {
+            await foreach (var videoSample in VideoQueue.GetEvents())
+            {
+                return videoSample;
+            }
+
+            return null;
         }
 
         private async Task ConsumeVideoSamples()
@@ -49,23 +87,6 @@ namespace MORR.Core.Data.Transcoding.MPEG
                 nextSample = videoSample;
                 nextSampleReady.Set();
             }
-        }
-
-        private async Task EncodeInternalAsync(FilePath destination)
-        {
-            var transcoder = GetTranscoder();
-
-            var (videoStreamDescriptor, metadataStreamDescriptor) = GetStreamDescriptors();
-
-            var mediaStreamSource = GetMediaStreamSource(videoStreamDescriptor, metadataStreamDescriptor);
-            var encodingProfile = GetEncodingProfile();
-
-            await using var destinationFile = File.Open(destination.ToString(), FileMode.Create);
-
-            var prepareTranscodeResult =
-                await transcoder.PrepareMediaStreamSourceTranscodeAsync(
-                    mediaStreamSource, destinationFile.AsRandomAccessStream(), encodingProfile);
-            await prepareTranscodeResult.TranscodeAsync().AsTask();
         }
 
         #region Transcoder setup
@@ -96,11 +117,10 @@ namespace MORR.Core.Data.Transcoding.MPEG
             return profile;
         }
 
-        private Tuple<VideoStreamDescriptor, TimedMetadataStreamDescriptor> GetStreamDescriptors()
+        private static VideoStreamDescriptor GetStreamDescriptor(uint width, uint height)
         {
             var videoEncoding = VideoEncodingProperties.CreateUncompressed(MediaEncodingSubtypes.Bgra8,
-                                                                           Configuration.InputWidth,
-                                                                           Configuration.InputHeight);
+                                                                           width, height);
 
             var videoStreamDescriptor = new VideoStreamDescriptor(videoEncoding)
             {
@@ -108,36 +128,12 @@ namespace MORR.Core.Data.Transcoding.MPEG
                 Label = "Desktop video stream"
             };
 
-            var metadataEncoding = new TimedMetadataEncodingProperties
-            {
-                Subtype = "{36002D6F-4D0D-4FD7-8538-5680DA4ED58D}"
-            };
-
-            // Arbitrary byte sequence to uniquely identify MORR data
-            byte[] streamDescriptionData =
-            {
-                0x4d, 0x4f, 0x52, 0x52,
-                0x45, 0x76, 0x65, 0x6e,
-                0x74, 0x54, 0x72, 0x61,
-                0x63, 0x6b, 0xFF, 0xFF
-            };
-
-            metadataEncoding.SetFormatUserData(streamDescriptionData);
-
-            var metadataStreamDescriptor = new TimedMetadataStreamDescriptor(metadataEncoding)
-            {
-                Name = "MORR Event data",
-                Label = "MORR Event data"
-            };
-
-            return new Tuple<VideoStreamDescriptor, TimedMetadataStreamDescriptor>(
-                videoStreamDescriptor, metadataStreamDescriptor);
+            return videoStreamDescriptor;
         }
 
-        private MediaStreamSource GetMediaStreamSource(IMediaStreamDescriptor videoStreamDescriptor,
-                                                       IMediaStreamDescriptor metadataStreamDescriptor)
+        private MediaStreamSource GetMediaStreamSource(IMediaStreamDescriptor videoStreamDescriptor)
         {
-            var mediaStreamSource = new MediaStreamSource(videoStreamDescriptor, metadataStreamDescriptor)
+            var mediaStreamSource = new MediaStreamSource(videoStreamDescriptor)
             {
                 BufferTime = TimeSpan.FromSeconds(0)
             };
@@ -148,7 +144,7 @@ namespace MORR.Core.Data.Transcoding.MPEG
             return mediaStreamSource;
         }
 
-        private MediaTranscoder GetTranscoder()
+        private static MediaTranscoder GetTranscoder()
         {
             var transcoder = new MediaTranscoder { HardwareAccelerationEnabled = true };
             return transcoder;
@@ -187,9 +183,6 @@ namespace MORR.Core.Data.Transcoding.MPEG
                 sampleProcessed.Set();
                 deferral.Complete();
             }
-
-            // TODO Metadata encoding / handle different StreamDescriptor requests
-            // This method is know to never be called from a TimedMetadataStreamDescriptor, so we can skip handling this case for now
         }
 
         #endregion
