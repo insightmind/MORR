@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Graphics.Capture;
@@ -15,8 +14,6 @@ using Device = SharpDX.Direct3D11.Device;
 
 namespace MORR.Core.Data.Capture.Video.WinAPI
 {
-    [Export(typeof(VideoSampleProducer))]
-    [Export(typeof(IEncodeableEventQueue<VideoSample>))]
     public class VideoSampleProducer : DefaultEncodeableEventQueue<VideoSample>
     {
         /// <summary>

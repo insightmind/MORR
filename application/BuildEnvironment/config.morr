@@ -2,9 +2,7 @@
   "MORR.Core.Modules.GlobalModuleConfiguration": {
     "EnabledModules": [
       "MORR.Core.Data.IntermediateFormat.Json.JsonIntermediateFormatSerializer",
-      "MORR.Core.Data.Capture.Video.WinAPI.DesktopCapture",
-      "MORR.Modules.Keyboard.KeyboardModule, Keyboard.MORR-Module, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
-	  "MORR.Modules.WebBrowser.WebBrowserModule, WebBrowser.MORR-Module, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+      "MORR.Modules.Keyboard.KeyboardModule, Keyboard.MORR-Module, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
     ]
   },
   "MORR.Core.Session.SessionConfiguration": {
@@ -13,8 +11,5 @@
   "MORR.Core.Data.Capture.Video.WinAPI.DesktopCaptureConfiguration": {
     "MonitorIndex": 0,
     "PromptUserForMonitorSelection": false
-  },
-    "MORR.Modules.WebBrowser.WebBrowserModuleConfiguration, WebBrowser.MORR-Module, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": {
-    "UrlSuffix": "60024/"
   }
 }

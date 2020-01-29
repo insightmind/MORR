@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text.Json;
 using MORR.Core.Configuration;
@@ -9,7 +8,6 @@ using MORR.Shared.Modules;
 
 namespace MORR.Core.Modules
 {
-    [Export(typeof(GlobalModuleConfiguration))]
     public class GlobalModuleConfiguration : IConfiguration
     {
         /// <summary>
