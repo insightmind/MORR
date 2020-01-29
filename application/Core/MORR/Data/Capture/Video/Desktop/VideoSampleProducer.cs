@@ -5,7 +5,6 @@ using Windows.Graphics.Capture;
 using Windows.Graphics.DirectX;
 using Windows.Graphics.DirectX.Direct3D11;
 using MORR.Core.Data.Capture.Video.Desktop.Utility;
-using MORR.Core.Data.Sample.Video;
 using MORR.Shared.Events.Queue;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
@@ -14,7 +13,7 @@ using Device = SharpDX.Direct3D11.Device;
 
 namespace MORR.Core.Data.Capture.Video.Desktop
 {
-    public class VideoSampleProducer : DefaultEncodeableEventQueue<VideoSample>
+    public class VideoSampleProducer : DefaultEncodeableEventQueue<DirectXVideoSample>
     {
         /// <summary>
         ///     Starts a video capture from the provided capture item.
@@ -51,7 +50,7 @@ namespace MORR.Core.Data.Capture.Video.Desktop
             }
         }
 
-        private VideoSample? GetNextFrame()
+        private DirectXVideoSample? GetNextFrame()
         {
             currentFrame?.Dispose();
             frameEvent.Reset();
@@ -99,7 +98,7 @@ namespace MORR.Core.Data.Capture.Video.Desktop
                     return null;
                 }
 
-                return new VideoSample
+                return new DirectXVideoSample
                 {
                     Surface = surface
                 };
