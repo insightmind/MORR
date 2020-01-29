@@ -4,6 +4,7 @@ using System.Linq;
 using Windows.Graphics.Capture;
 using MORR.Core.Data.Capture.Video.WinAPI.Utility;
 using MORR.Shared.Modules;
+using MORR.Shared.Utility;
 
 namespace MORR.Core.Data.Capture.Video.WinAPI
 {
@@ -31,9 +32,13 @@ namespace MORR.Core.Data.Capture.Video.WinAPI
         private GraphicsCaptureItem? GetGraphicsCaptureItem()
         {
             // On versions prior to 1903, the user will always have to manually select the window/monitor to capture
-            if (GraphicsCaptureHelper.CanCreateItemWithoutPicker || Configuration.PromptUserForMonitorSelection)
+            if (!GraphicsCaptureHelper.CanCreateItemWithoutPicker || Configuration.PromptUserForMonitorSelection)
             {
-                return new GraphicsCapturePicker().PickSingleItemAsync().GetResults();
+                var picker = new GraphicsCapturePicker();
+                var handle = NativeMethods.GetAssociatedWindow();
+
+                picker.SetWindow(handle);
+                return picker.PickSingleItemAsync().GetAwaiter().GetResult();
             }
 
             var monitors = MonitorEnumerationHelper.GetMonitors();
@@ -44,6 +49,11 @@ namespace MORR.Core.Data.Capture.Video.WinAPI
 
         private void StartCapture()
         {
+            if (!GraphicsCaptureSession.IsSupported())
+            {
+                throw new Exception("Screen capture is not supported on this device.");
+            }
+
             var item = GetGraphicsCaptureItem();
 
             if (item != null)
