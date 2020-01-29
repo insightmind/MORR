@@ -1,25 +1,33 @@
+/**
+    This DLL allows hooking into processes' windows and retreiving
+    information on messages sent to them.
+*/
+
 #ifndef DLLMAIN_H
 #define DLLMAIN_H
 #include "pch.h"
 #include <Windows.h>
 #include <thread>
 #include <synchapi.h>
-#define MUTEXNAME "MORR_MSG_MUTEX"
+
+
 #define DLL extern "C" __declspec(dllexport)
 #define BUFFERSIZE 2048
 #define SEMAPHORE_GUID "7c4db072-3baf-457f-8259-da0c369e3ec8"
+
 typedef struct {
     UINT Type;
     HWND Hwnd;
     UINT wParam;
     POINT CursorPosition;
-} WM_Message; //if i save the message itself like MSG storedMSG = &msg, the handles won't be preserved
+} WM_Message; //message struct used to send to the MORR application
 typedef void(__stdcall* WH_MessageCallBack)(WM_Message);
 #pragma data_seg("Shared")
 
 HWINEVENTHOOK g_hook;
 //our hook handle which will be returned by calling SetWindowsHookEx function
-HHOOK hkKey = NULL;
+HHOOK GetMessageHook = NULL;
+//HHOOK CallWndProcHook = NULL;
 ULONG bufferIterator = 0;
 
 WH_MessageCallBack globalCallback;
@@ -31,9 +39,10 @@ WM_Message lastMsg[BUFFERSIZE] = { 0 };
 #pragma comment(linker,"/section:Shared,rws")
 
 void dispatchForever();
+DLL bool IsCaptured(UINT type);
 DLL void SetHook(WH_MessageCallBack wh_messageCallBack);
 DLL void RemoveHook();
-LRESULT CALLBACK procMessage(int nCode, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam);
 HANDLE semaphore = NULL;
 bool running = 0;
 std::thread dispatcherthread;

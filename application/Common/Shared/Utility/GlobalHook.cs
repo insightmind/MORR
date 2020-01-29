@@ -34,6 +34,10 @@ namespace MORR.Shared.Utility
         [DllImport(@"HookLibrary64", CallingConvention = CallingConvention.Cdecl)]
         private static extern void RemoveHook();
 
+        [DllImport(@"HookLibrary64", CallingConvention = CallingConvention.Cdecl)]
+        [return: MarshalAs(UnmanagedType.I1)]
+        private static extern bool IsCaptured([MarshalAs(UnmanagedType.U4)] uint type);
+
         public static class WH_GetMessage
         {
             public delegate void WorkCompletedCallBack(WM_Message message);
@@ -45,6 +49,8 @@ namespace MORR.Shared.Utility
             }
 
             public static void addListener(WorkCompletedCallBack callback, NativeMethods.MessageType type) {
+                if (!IsCaptured((uint)type))
+                    throw new NotSupportedException(String.Format("GlobalHook currently does not support this message type ({0})", type));
                 if (!listeners.ContainsKey(type))
                     listeners.Add(type, new List<WorkCompletedCallBack>());
                 listeners[type].Add(callback);
