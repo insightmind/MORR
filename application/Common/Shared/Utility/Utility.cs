@@ -24,9 +24,7 @@ namespace MORR.Shared.Utility
                 return;
             }
 
-            variable = value;
-
-            if (variable)
+            if (value)
             {
                 onTrue();
             }
@@ -34,6 +32,7 @@ namespace MORR.Shared.Utility
             {
                 onFalse();
             }
+            variable = value;
         }
     }
 }
