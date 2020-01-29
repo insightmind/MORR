@@ -4,6 +4,7 @@ using MORR.Shared.Events.Queue;
 using System;
 using System.ComponentModel.Composition;
 using System.Text;
+using MORR.Shared.Utility;
 
 namespace MORR.Core.CLI.Output
 {
@@ -17,7 +18,7 @@ namespace MORR.Core.CLI.Output
         [Import]
         private IEncodeableEventQueue<IntermediateFormatSample> MetadataQueue { get; set; }
 
-        public async void Encode()
+        public async void Encode(DirectoryPath _)
         {
             if (MetadataQueue == null)
             {
