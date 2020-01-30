@@ -40,8 +40,10 @@ namespace MORR.Shared.Utility
 
         [DllImport(@"HookLibrary64", CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.I1)]
-        private static extern bool IsCaptured([MarshalAs(UnmanagedType.U4)] uint type);
+        private static extern bool capture([MarshalAs(UnmanagedType.U4)] uint type);
 
+        [DllImport(@"HookLibrary64", CallingConvention = CallingConvention.Cdecl)]
+        private static extern void stopCapture([MarshalAs(UnmanagedType.U4)] uint type);
         #endregion
 
         #region Public functions
@@ -53,17 +55,20 @@ namespace MORR.Shared.Utility
         /// <param name="type">The message type to listen for.</param>
         public static void addListener(RetrieveMessageCallBack callback, NativeMethods.MessageType type)
         {
-            if (!IsCaptured((uint) type))
+            if (capture((uint)type))
             {
-                throw new NotSupportedException($"GlobalHook currently does not support this message type ({type})");
-            }
+                if (!listeners.ContainsKey(type))
+                {
+                    listeners.Add(type, new List<RetrieveMessageCallBack>());
+                }
 
-            if (!listeners.ContainsKey(type))
+                listeners[type].Add(callback);
+            }
+            else
             {
-                listeners.Add(type, new List<RetrieveMessageCallBack>());
+                throw new NotSupportedException(
+                    $"GlobalHook currently does not support this message type ({type})");
             }
-
-            listeners[type].Add(callback);
         }
 
         /// <summary>
@@ -75,7 +80,7 @@ namespace MORR.Shared.Utility
         {
             foreach (var type in types)
             {
-                if (!IsCaptured((uint) type))
+                if (!capture((uint) type))
                 {
                     throw new NotSupportedException(
                         $"GlobalHook currently does not support this message type ({type})");
@@ -106,6 +111,7 @@ namespace MORR.Shared.Utility
                 if (listeners[type].Count == 0)
                 {
                     listeners.Remove(type);
+                    stopCapture((uint) type);
                 }
             }
         }
@@ -122,6 +128,11 @@ namespace MORR.Shared.Utility
                 if (listeners.ContainsKey(type))
                 {
                     listeners[type].Remove(callback);
+                    if (listeners[type].Count == 0)
+                    {
+                        listeners.Remove(type);
+                        stopCapture((uint)type);
+                    }
                 }
             }
         }

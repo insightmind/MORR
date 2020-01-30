@@ -35,7 +35,7 @@ typedef void(__stdcall* WH_MessageCallBack)(WM_Message);
   */
 #define SEMAPHORE_GUID "7c4db072-3baf-457f-8259-da0c369e3ec8"
 
-
+#define MESSAGETABLESIZE 1025
 #pragma data_seg("Shared")
 /**
     Shared data segment accessible by all injected applications and MORR itself.
@@ -50,7 +50,7 @@ HHOOK CallWndProcHook = NULL;
 /**
     The iterator determining where in the buffer to store the next message.
 */
-ULONG globalBufferIterator = 0;
+UINT globalBufferIterator = 0;
 
 /**
     The callback function to be invoked inside the MORR address space to send WM_Message structs
@@ -68,6 +68,12 @@ WH_MessageCallBack globalCallback;
  */
 DWORD globalTimeStamps[BUFFERSIZE] = { 0 };
 WM_Message globalMessageBuffer[BUFFERSIZE] = { 0 };
+
+/**
+    An individual table entry has to be set to true if any listener wants this message information.
+    Used to prevent unnecessary processing of undesired messages.
+ */
+bool messageHasListener[MESSAGETABLESIZE] = { 0 };
 #pragma data_seg() /* end of shared data segment */
 
 #pragma comment(linker,"/section:Shared,rws")
@@ -76,14 +82,29 @@ WM_Message globalMessageBuffer[BUFFERSIZE] = { 0 };
     Function running in a separate thread in the context of MORR to send event data
     from the C++ part to C#.
  */
-void dispatchForever();
+void dispatchLoop();
 
 /**
     Check if an event type is captured by this DLL.
     @param type The message type to check
     @returns true if the message type can be captured by this DLL.
  */
-DLL bool IsCaptured(UINT type);
+bool IsCaptured(UINT type);
+
+
+/**
+    Signal that message of a specific type shall be captured.
+    Returns true if this message can be captured by the hook,
+    false if type is unsupported.
+    @param type the message type to capture
+ */
+DLL bool capture(UINT type);
+
+/**
+    Signal that message of a specific type shall not be captured.
+    @param type the message type to capture
+ */
+DLL void stopCapture(UINT type);
 
 /**
     Set the Hook(s) and capture messages.

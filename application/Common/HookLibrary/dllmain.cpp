@@ -18,6 +18,7 @@ BOOL APIENTRY DllMain(HANDLE hModule, DWORD  ul_reason_for_call,
 LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
 //this is the hook procedure
 {
+    LRESULT retVal = CallNextHookEx(GetMessageHook, nCode, wParam, lParam);
     //a pointer to hold the MSG structure that is passed as lParam
     MSG* msg;
     if (semaphore == NULL) {
@@ -27,14 +28,13 @@ LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
     //lParam contains pointer to MSG structure.
     msg = (MSG*)lParam;
     /* see https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/ms644981(v=vs.85) */
-    if (nCode >= 0 && nCode == HC_ACTION)
+    if (nCode >= 0 && nCode == HC_ACTION && msg->message < MESSAGETABLESIZE && messageHasListener[msg->message])
     {
-        unsigned int bufferSlot;
+        unsigned int bufferSlot = InterlockedIncrement(&globalBufferIterator) % BUFFERSIZE; //atomic increment. overflows should not matter as we modulo it anyways.
         unsigned int type = msg->message;
+        globalTimeStamps[bufferSlot] = msg->time;
         if ((type >= WM_MOUSEMOVE && type <= WM_MOUSEHWHEEL) || type == WM_KEYDOWN) {
-            bufferSlot = InterlockedIncrement(&globalBufferIterator); //atomic increment. overflows should not matter as we modulo it anyways.
-            globalMessageBuffer[bufferSlot % BUFFERSIZE] = { msg->message, msg->hwnd, msg->wParam, msg->pt };
-            globalTimeStamps[bufferSlot % BUFFERSIZE] = msg->time;
+            globalMessageBuffer[bufferSlot] = { msg->message, msg->hwnd, msg->wParam, msg->pt };
         }
         else
         {
@@ -44,56 +44,48 @@ LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
     }
 forwardEvent:
     /* pass message onto target application */
-    return CallNextHookEx(GetMessageHook, nCode, wParam, lParam);
+    return retVal;
 }
 
 LRESULT CALLBACK CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
+    LRESULT retVal = CallNextHookEx(CallWndProcHook, nCode, wParam, lParam);
     CWPSTRUCT* msg;
     if (semaphore == NULL) {
         semaphore = CreateSemaphore(NULL, 0, BUFFERSIZE, TEXT(SEMAPHORE_GUID));
     }
 
     msg = (CWPSTRUCT*)lParam;
+
     /* see https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/ms644981(v=vs.85) */
-    if (nCode >= 0 && nCode == HC_ACTION)
+    if (nCode >= 0 && nCode == HC_ACTION && msg->message < MESSAGETABLESIZE && messageHasListener[msg->message])
     {
-        unsigned int bufferSlot;
+        unsigned int bufferSlot = InterlockedIncrement(&globalBufferIterator) % BUFFERSIZE;
+        globalTimeStamps[bufferSlot] = 0;
         unsigned int type = msg->message;
+
         /* I did opt to go for if..elif instead of switch..case since some types can be checked by range */
         if (type == WM_CREATE)
         {
-            bufferSlot = InterlockedIncrement(&globalBufferIterator);
-            globalMessageBuffer[bufferSlot % BUFFERSIZE] = { msg->message, msg->hwnd, 0, {((CREATESTRUCT*)msg->lParam)->x, ((CREATESTRUCT*)msg->lParam)->y } };
-            globalTimeStamps[bufferSlot % BUFFERSIZE] = 0;
+            globalMessageBuffer[bufferSlot] = { msg->message, msg->hwnd, 0, {((CREATESTRUCT*)msg->lParam)->x, ((CREATESTRUCT*)msg->lParam)->y } };
         }
         else if (type == WM_MOVE)
         {
-            bufferSlot = InterlockedIncrement(&globalBufferIterator);
-            globalMessageBuffer[bufferSlot % BUFFERSIZE] = { msg->message, msg->hwnd, 0, {(int)(short)LOWORD(msg->lParam), (int)(short)HIWORD(msg->lParam)} };
-            globalTimeStamps[bufferSlot % BUFFERSIZE] = 0;
+            globalMessageBuffer[bufferSlot] = { msg->message, msg->hwnd, 0, {(int)(short)LOWORD(msg->lParam), (int)(short)HIWORD(msg->lParam)} };
         }
         else if (type == WM_DESTROY || type == WM_ACTIVATE || ((type >= WM_SETFOCUS) && (type <= WM_ENABLE)))
         {
-            bufferSlot = InterlockedIncrement(&globalBufferIterator);
-            globalMessageBuffer[bufferSlot % BUFFERSIZE] = { msg->message, (type == WM_ACTIVATE) ? (HWND)msg->lParam : msg->hwnd, msg->wParam, {0, 0} };
-            globalTimeStamps[bufferSlot % BUFFERSIZE] = 0;
+            globalMessageBuffer[bufferSlot] = { msg->message, (type == WM_ACTIVATE) ? (HWND)msg->lParam : msg->hwnd, msg->wParam, {0, 0} };
         }
         else if (type == WM_SIZE) {
-            bufferSlot = InterlockedIncrement(&globalBufferIterator);
-            globalMessageBuffer[bufferSlot % BUFFERSIZE] = { msg->message, msg->hwnd, msg->wParam,  {(int)(short)LOWORD(msg->lParam), (int)(short)HIWORD(msg->lParam)} };
-            globalTimeStamps[bufferSlot % BUFFERSIZE] = 0;
+            globalMessageBuffer[bufferSlot] = { msg->message, msg->hwnd, msg->wParam,  {(int)(short)LOWORD(msg->lParam), (int)(short)HIWORD(msg->lParam)} };
         }
         else if (type == WM_SIZING)
         {
-            bufferSlot = InterlockedIncrement(&globalBufferIterator);
-            globalMessageBuffer[bufferSlot % BUFFERSIZE] = { msg->message, msg->hwnd, msg->wParam,  0, 0 };
-            globalTimeStamps[bufferSlot % BUFFERSIZE] = 0;
+            globalMessageBuffer[bufferSlot] = { msg->message, msg->hwnd, msg->wParam,  0, 0 };
         }
         else if ((type >= WM_CUT && type <= WM_CLEAR)) {
-            bufferSlot = InterlockedIncrement(&globalBufferIterator);
-            globalMessageBuffer[bufferSlot % BUFFERSIZE] = { msg->message, msg->hwnd, 0, 0 };
-            globalTimeStamps[bufferSlot % BUFFERSIZE] = 0;
+            globalMessageBuffer[bufferSlot] = { msg->message, msg->hwnd, 0, 0 };
         }
         else
         {
@@ -103,7 +95,7 @@ LRESULT CALLBACK CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
     }
 forwardEvent:
     /* pass message onto target application */
-    return CallNextHookEx(GetMessageHook, nCode, wParam, lParam);
+    return retVal;
 }
 
 
@@ -118,6 +110,22 @@ bool IsCaptured(UINT type) {
         || (type == WM_SIZING)
         );
 }
+
+bool capture(UINT type) {
+    if (type < MESSAGETABLESIZE && IsCaptured(type)) {
+        messageHasListener[type] = true;
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+};
+
+void stopCapture(UINT type) {
+    if (type < MESSAGETABLESIZE)
+        messageHasListener[type] = false;
+};
 
 DLL void SetHook(WH_MessageCallBack progressCallback) {
     running = 1;
@@ -135,7 +143,7 @@ DLL void SetHook(WH_MessageCallBack progressCallback) {
         RemoveHook();
         return;
     }
-    dispatcherthread = new std::thread(dispatchForever);
+    dispatcherthread = new std::thread(dispatchLoop);
     printf("GlobalHook: Hooked\n");
 }
 
@@ -159,7 +167,7 @@ DLL void RemoveHook()
     printf("GlobalHook: Unhooked\n");
 }
 
-void dispatchForever() {
+void dispatchLoop() {
     unsigned int localBufferIterator = 0;
     unsigned int previous;
     semaphore = CreateSemaphore(NULL, 0, BUFFERSIZE, TEXT(SEMAPHORE_GUID));
@@ -169,18 +177,16 @@ void dispatchForever() {
                 if (running)
                     WaitForSingleObject(semaphore, 1000); /* wake up every second so we could react to RemoveHook call.*/
                 else
-                    goto terminate;
+                    return;
             }
 
             previous = localBufferIterator;
             localBufferIterator = ++localBufferIterator % BUFFERSIZE;
-            if ((globalTimeStamps[localBufferIterator] == globalTimeStamps[(previous)])
-                 && (globalMessageBuffer[localBufferIterator].Type == globalMessageBuffer[previous].Type)) /* discard event if it's a duplicate */
+            if ((globalTimeStamps[localBufferIterator]) && ((globalTimeStamps[localBufferIterator]) == globalTimeStamps[(previous)])
+                 && (globalMessageBuffer[localBufferIterator].Type == globalMessageBuffer[previous].Type)) /* discard event if it's obviously a duplicate (works only or events which
+                                                                                                           inherently come with a timestamp) */
                 continue;
             globalCallback(globalMessageBuffer[localBufferIterator % BUFFERSIZE]);
         }
     }
-terminate:
-    /* nothing to see here, move on */
-    (void)0;
 }
