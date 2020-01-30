@@ -117,11 +117,12 @@ namespace MORR.Shared.Utility
         public static string getClipboardText()
         { 
             uint CF_TEXT = 1;
+            uint CF_UNICODETEXT = 13;
 
             OpenClipboard(GetOpenClipboardWindow());
 
             //Gets pointer to clipboard data in the selected format
-            IntPtr ClipboardDataPointer = GetClipboardData(CF_TEXT);
+            IntPtr ClipboardDataPointer = GetClipboardData(CF_UNICODETEXT);
 
             IntPtr gLock = GlobalLock(ClipboardDataPointer);
 

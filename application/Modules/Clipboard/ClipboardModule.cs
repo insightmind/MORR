@@ -61,10 +61,11 @@ namespace MORR.Modules.Clipboard
         /// <summary>
         /// Unique module identifier
         /// </summary>
-        public static Guid Identifier => new Guid("06618216-80DC-4866-8717-BCBBEDB43BFB");
+        public static Guid Identifier { get; } = new Guid("B9179D3D-2DB4-46FA-845E-B47F9DCF7745");
 
         Guid IModule.Identifier => Identifier;
 
         public void Initialize() {}
     }
 }
+
