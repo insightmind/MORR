@@ -12,6 +12,7 @@
     <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\Modules</OutDir>
     <AssemblyName>Clipboard.MORR-Module</AssemblyName>
     <Nullable>enable</Nullable>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />

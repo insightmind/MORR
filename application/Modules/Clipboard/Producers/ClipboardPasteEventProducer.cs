@@ -5,7 +5,6 @@ using MORR.Shared.Events;
 using MORR.Shared.Events.Queue;
 using MORR.Shared.Utility;
 
-
 namespace MORR.Modules.Clipboard.Producers
 {
     /// <summary>
@@ -55,9 +54,9 @@ namespace MORR.Modules.Clipboard.Producers
             {
                 return NativeMethods.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
             }
+
             if (wParam == NativeMethods.MessageType.WM_PASTE)
             {
-
                 var text = NativeMethods.getClipboardText();
 
                 //create the corresponding new Event
