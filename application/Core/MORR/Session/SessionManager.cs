@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.IO;
 using System.Linq;
 using MORR.Core.Configuration;
 using MORR.Core.Data.Transcoding;
@@ -47,6 +49,14 @@ namespace MORR.Core.Session
 
         public bool IsRecording { get; private set; }
 
+        private DirectoryPath CreateNewRecordingDirectory()
+        {
+            var sessionId = Guid.NewGuid();
+            var directory = Path.Combine(Configuration.RecordingDirectory.ToString(), sessionId.ToString());
+            Directory.CreateDirectory(directory);
+            return new DirectoryPath(directory);
+        }
+
         public void StartRecording()
         {
             if (IsRecording)
@@ -56,7 +66,7 @@ namespace MORR.Core.Session
 
             IsRecording = true;
 
-            encoder.Encode();
+            encoder.Encode(CreateNewRecordingDirectory());
             moduleManager.NotifyModulesOnSessionStart();
         }
 
@@ -84,7 +94,7 @@ namespace MORR.Core.Session
             foreach (var file in files)
             {
                 decoder.Decode(file);
-                encoder.Encode();
+                encoder.Encode(CreateNewRecordingDirectory());
             }
 
             moduleManager.NotifyModulesOnSessionStop();
