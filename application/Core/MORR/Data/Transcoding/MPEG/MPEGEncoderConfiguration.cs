@@ -2,9 +2,9 @@
 using MORR.Core.Configuration;
 using MORR.Shared.Configuration;
 
-namespace MORR.Core.Data.Transcoding.MPEG
+namespace MORR.Core.Data.Transcoding.Mpeg
 {
-    public class MPEGEncoderConfiguration : IConfiguration
+    public class MpegEncoderConfiguration : IConfiguration
     {
         /// <summary>
         ///     The width in pixels of the resulting video stream.

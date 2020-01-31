@@ -11,9 +11,9 @@ using MORR.Core.Data.Transcoding.Exceptions;
 using MORR.Shared.Events.Queue;
 using MORR.Shared.Utility;
 
-namespace MORR.Core.Data.Transcoding.MPEG
+namespace MORR.Core.Data.Transcoding.Mpeg
 {
-    public class MPEGEncoder : IEncoder
+    public class MpegEncoder : IEncoder
     {
         private readonly ManualResetEvent onResolutionInferred = new ManualResetEvent(false);
         private readonly AutoResetEvent nextSampleReady = new AutoResetEvent(false);
@@ -21,10 +21,9 @@ namespace MORR.Core.Data.Transcoding.MPEG
         private DateTime encodingStart;
         private DirectXVideoSample? nextSample;
         private Tuple<uint, uint>? inferredResolution;
-        private bool hasInferredResolution;
 
         [Import]
-        private MPEGEncoderConfiguration Configuration { get; set; }
+        private MpegEncoderConfiguration Configuration { get; set; }
 
         [Import]
         private IEncodeableEventQueue<DirectXVideoSample> VideoQueue { get; set; }
@@ -61,7 +60,7 @@ namespace MORR.Core.Data.Transcoding.MPEG
             var mediaStreamSource = GetMediaStreamSource(streamDescriptor);
             var encodingProfile = GetEncodingProfile();
 
-            await using var destinationFile = File.Open(recordingFilePath.ToString(), FileMode.Create);
+            await using var destinationFile = File.Open(recordingFilePath.ToString(), FileMode.CreateNew);
 
             var prepareTranscodeResult =
                 await transcoder.PrepareMediaStreamSourceTranscodeAsync(
@@ -79,9 +78,13 @@ namespace MORR.Core.Data.Transcoding.MPEG
         {
             await foreach (var videoSample in VideoQueue.GetEvents())
             {
-                if (!hasInferredResolution)
+                if (inferredResolution == null)
                 {
-                    hasInferredResolution = true;
+                    // DesktopCapture may enqueue null samples intentionally to stop encoding
+                    if (videoSample == null)
+                    {
+                        throw new EncodingException("Failed to infer video input resolution.");
+                    }
 
                     var description = videoSample.Surface.Description;
                     var inferredWidth = (uint) description.Width;
