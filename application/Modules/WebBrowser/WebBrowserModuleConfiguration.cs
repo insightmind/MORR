@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Text.Json;
 using MORR.Core.Configuration;
 using MORR.Shared.Configuration;
 
 namespace MORR.Modules.WebBrowser
 {
-    [Export(typeof(WebBrowserModuleConfiguration))]
     public class WebBrowserModuleConfiguration : IConfiguration
     {
         private const string configUrlSuffixField = "UrlSuffix";
+
         /// <summary>
         ///     A combination of port number and optionally directory.
         ///     Will be appended to the localhost-prefix defined in <see cref="WebExtensionListener" />.

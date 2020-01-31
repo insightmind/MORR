@@ -1,12 +1,10 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Text.Json;
 using MORR.Core.Configuration;
 using MORR.Shared.Configuration;
 
-namespace MORR.Core.Data.Capture.Video.WinAPI
+namespace MORR.Core.Data.Capture.Video.Desktop
 {
-    [Export(typeof(DesktopCaptureConfiguration))]
     public class DesktopCaptureConfiguration : IConfiguration
     {
         /// <summary>

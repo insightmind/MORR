@@ -1,5 +1,4 @@
-﻿using MORR.Core.Data.Transcoding;
-using MORR.Core.Data.Transcoding.Exceptions;
+﻿using MORR.Core.Data.Transcoding.Exceptions;
 using MORR.Core.Data.IntermediateFormat;
 using MORR.Shared.Events.Queue;
 using System;
@@ -9,7 +8,6 @@ using MORR.Core.Data.IntermediateFormat.Json;
 
 namespace MORR.Core.CLI.Output
 {
-    [Export(typeof(IEncoder))]
     public class OutputFormatter : IOutputFormatter
     {
         internal static bool IsVerbose = false;
@@ -20,7 +18,7 @@ namespace MORR.Core.CLI.Output
         [Import]
         private IEncodeableEventQueue<JsonIntermediateFormatSample> MetadataQueue { get; set; }
 
-        public async void Encode()
+        public async void Encode(DirectoryPath _)
         {
             if (MetadataQueue == null)
             {

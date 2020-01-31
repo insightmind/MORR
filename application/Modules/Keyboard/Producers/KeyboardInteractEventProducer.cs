@@ -1,8 +1,6 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Windows.Input;
 using MORR.Modules.Keyboard.Events;
-using MORR.Shared.Events;
 using MORR.Shared.Events.Queue;
 using MORR.Shared.Utility;
 
@@ -11,11 +9,6 @@ namespace MORR.Modules.Keyboard.Producers
     /// <summary>
     ///     Provides a single-writer-multiple-reader queue for KeyboardInteractEvent
     /// </summary>
-    [Export(typeof(KeyboardInteractEventProducer))]
-    [Export(typeof(IReadOnlyEventQueue<KeyboardInteractEvent>))]
-    [Export(typeof(ISupportDeserializationEventQueue<KeyboardInteractEvent>))]
-    [Export(typeof(IReadOnlyEventQueue<Event>))]
-    [PartCreationPolicy(CreationPolicy.Shared)]
     public class KeyboardInteractEventProducer : DefaultEventQueue<KeyboardInteractEvent>
     {
         private NativeMethods.LowLevelKeyboardProc? callback;

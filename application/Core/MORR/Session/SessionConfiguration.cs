@@ -1,13 +1,12 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using MORR.Core.Configuration;
 using MORR.Shared.Configuration;
+using MORR.Shared.Utility;
 
 namespace MORR.Core.Session
 {
-    [Export(typeof(SessionConfiguration))]
     public class SessionConfiguration : IConfiguration
     {
         /// <summary>
@@ -19,6 +18,11 @@ namespace MORR.Core.Session
         ///     The type of the decoder to use.
         /// </summary>
         public Type? Decoder { get; private set; }
+
+        /// <summary>
+        ///     The directory in which to store new recordings.
+        /// </summary>
+        public DirectoryPath RecordingDirectory { get; private set; }
 
         public void Parse(RawConfiguration configuration)
         {
@@ -42,6 +46,15 @@ namespace MORR.Core.Session
             }
 
             Decoder = decoder;
+
+            if (!element.TryGetProperty(nameof(RecordingDirectory), out var directoryElement))
+            {
+                throw new InvalidConfigurationException("Failed to parse directory path.");
+            }
+
+            var directoryPath = directoryElement.GetString();
+            directoryPath = Environment.ExpandEnvironmentVariables(directoryPath);
+            RecordingDirectory = new DirectoryPath(directoryPath);
         }
 
         private static bool TryGetType(JsonElement element, [NotNullWhen(true)] out Type? value)

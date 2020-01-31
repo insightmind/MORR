@@ -28,7 +28,7 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using Windows.Foundation;
 
-namespace MORR.Core.Data.Capture.Video.WinAPI.Utility
+namespace MORR.Core.Data.Capture.Video.Desktop.Utility
 {
     /// <summary>
     ///     Encapsulates information about a monitor.
