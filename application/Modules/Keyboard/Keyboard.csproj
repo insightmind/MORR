@@ -12,12 +12,16 @@
     <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\Modules</OutDir>
     <AssemblyName>Keyboard.MORR-Module</AssemblyName>
     <Nullable>enable</Nullable>
+    <CopyLocalLockFileDependencies>true</CopyLocalLockFileDependencies>
   </PropertyGroup>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\MORR\MORR.csproj" />
+    <ProjectReference Include="..\..\Common\Shared\Shared.csproj">
+      <Private>false</Private>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>

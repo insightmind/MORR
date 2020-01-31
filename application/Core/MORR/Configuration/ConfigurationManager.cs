@@ -68,7 +68,7 @@ namespace MORR.Core.Configuration
 
             foreach (var configurationObject in document.RootElement.EnumerateObject())
             {
-                var configurationType = Type.GetType(configurationObject.Name);
+                var configurationType = Utility.GetTypeFromAnyAssembly(configurationObject.Name);
                 var resolvedConfiguration = Configurations.SingleOrDefault(x => x.GetType() == configurationType);
 
                 if (resolvedConfiguration == null)
