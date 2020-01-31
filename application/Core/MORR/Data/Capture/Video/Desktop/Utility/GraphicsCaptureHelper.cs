@@ -29,7 +29,7 @@ using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.Graphics.Capture;
 
-namespace MORR.Core.Data.Capture.Video.WinAPI.Utility
+namespace MORR.Core.Data.Capture.Video.Desktop.Utility
 {
     /// <summary>
     ///     Provides utility methods for interacting with GraphicsCapture objects.
@@ -54,6 +54,18 @@ namespace MORR.Core.Data.Capture.Video.WinAPI.Utility
         }
 
         /// <summary>
+        ///     Initializes a <see cref="GraphicsCapturePicker" /> with a window.
+        /// </summary>
+        /// <param name="picker">The <see cref="GraphicsCapturePicker" /> to initialize.</param>
+        /// <param name="hWnd">The handle of the window to initialize the picker with.</param>
+        internal static void SetWindow(this GraphicsCapturePicker picker, IntPtr hWnd)
+        {
+            // Cast via object as direct cast is not supported for imported interface
+            var interop = picker as object as IInitializeWithWindow;
+            interop?.Initialize(hWnd);
+        }
+
+        /// <summary>
         ///     Creates a <see cref="GraphicsCaptureItem" /> for a provided monitor. This requires
         ///     <see cref="CanCreateItemWithoutPicker" /> to be <see langword="true" />.
         /// </summary>
@@ -74,6 +86,15 @@ namespace MORR.Core.Data.Capture.Video.WinAPI.Utility
             }
 
             return null;
+        }
+
+        [ComImport]
+        [System.Runtime.InteropServices.Guid("3E68D4BD-7135-4D10-8018-9FB6D9F33FA1")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        [ComVisible(true)]
+        private interface IInitializeWithWindow
+        {
+            void Initialize(IntPtr hWnd);
         }
 
         [ComImport]

@@ -1,12 +1,11 @@
 ﻿using Windows.Graphics.DirectX.Direct3D11;
-using MORR.Shared.Events;
 
-namespace MORR.Core.Data.Sample.Video
+namespace MORR.Core.Data.Capture.Video
 {
     /// <summary>
-    ///     A single video capture sample.
+    ///     A single video capture sample in DirectX format.
     /// </summary>
-    public class VideoSample : Event
+    public class DirectXVideoSample : VideoSample
     {
         /// <summary>
         ///     The surface containing the data for this sample.

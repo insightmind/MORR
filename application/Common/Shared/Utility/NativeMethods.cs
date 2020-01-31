@@ -76,6 +76,22 @@ namespace MORR.Shared.Utility
 
         #endregion
 
+        #region Window for process helper
+
+        /// <summary>
+        ///     Attempts to get a window associated with the current process.
+        /// </summary>
+        /// <returns>The handle of a window associated with the current process.</returns>
+        public static IntPtr GetAssociatedWindow()
+        {
+            var activeWindow = GetActiveWindow();
+            var consoleWindow = GetConsoleWindow();
+
+            return activeWindow != IntPtr.Zero ? activeWindow : consoleWindow;
+        }
+
+        #endregion
+
         #region Methods
 
         [DllImport("user32.dll")]
@@ -106,6 +122,12 @@ namespace MORR.Shared.Utility
 
         [DllImport("kernel32.dll")]
         public static extern IntPtr GetModuleHandle(string lpModuleName);
+
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr GetConsoleWindow();
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetActiveWindow();
 
         #endregion
 

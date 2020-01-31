@@ -4,17 +4,16 @@ using System.Threading.Tasks;
 using Windows.Graphics.Capture;
 using Windows.Graphics.DirectX;
 using Windows.Graphics.DirectX.Direct3D11;
-using MORR.Core.Data.Capture.Video.WinAPI.Utility;
-using MORR.Core.Data.Sample.Video;
+using MORR.Core.Data.Capture.Video.Desktop.Utility;
 using MORR.Shared.Events.Queue;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.Mathematics.Interop;
 using Device = SharpDX.Direct3D11.Device;
 
-namespace MORR.Core.Data.Capture.Video.WinAPI
+namespace MORR.Core.Data.Capture.Video.Desktop
 {
-    public class VideoSampleProducer : DefaultEncodeableEventQueue<VideoSample>
+    public class VideoSampleProducer : DefaultEncodeableEventQueue<DirectXVideoSample>
     {
         /// <summary>
         ///     Starts a video capture from the provided capture item.
@@ -42,16 +41,17 @@ namespace MORR.Core.Data.Capture.Video.WinAPI
 
         private void EnqueueFrames()
         {
-            var currentSample = GetNextFrame();
+            DirectXVideoSample? currentSample;
 
-            while (currentSample != null)
+            do
             {
-                Enqueue(currentSample);
                 currentSample = GetNextFrame();
+                Enqueue(currentSample); // Intentionally enqueue null to stop encoder
             }
+            while (currentSample != null);
         }
 
-        private VideoSample? GetNextFrame()
+        private DirectXVideoSample? GetNextFrame()
         {
             currentFrame?.Dispose();
             frameEvent.Reset();
@@ -99,7 +99,7 @@ namespace MORR.Core.Data.Capture.Video.WinAPI
                     return null;
                 }
 
-                return new VideoSample
+                return new DirectXVideoSample
                 {
                     Surface = surface
                 };
