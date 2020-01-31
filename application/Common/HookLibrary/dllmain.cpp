@@ -34,7 +34,9 @@ LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
         unsigned int type = msg->message;
         globalTimeStamps[bufferSlot] = msg->time;
         if ((type >= WM_MOUSEMOVE && type <= WM_MOUSEHWHEEL) || type == WM_KEYDOWN) {
-            globalMessageBuffer[bufferSlot] = { msg->message, msg->hwnd, msg->wParam, msg->pt };
+            globalMessageBuffer[bufferSlot] = { msg->message, msg->hwnd, msg->wParam, {0} };
+            globalMessageBuffer[bufferSlot].data[0] = msg->pt.x;
+            globalMessageBuffer[bufferSlot].data[1] = msg->pt.y;
         }
         else
         {
@@ -179,12 +181,11 @@ void dispatchLoop() {
                 else
                     return;
             }
-
             previous = localBufferIterator;
             localBufferIterator = ++localBufferIterator % BUFFERSIZE;
             if ((globalTimeStamps[localBufferIterator]) && ((globalTimeStamps[localBufferIterator]) == globalTimeStamps[(previous)])
                  && (globalMessageBuffer[localBufferIterator].Type == globalMessageBuffer[previous].Type)) /* discard event if it's obviously a duplicate (works only or events which
-                                                                                                           inherently come with a timestamp) */
+                                                                                                              inherently come with a timestamp) */
                 continue;
             globalCallback(globalMessageBuffer[localBufferIterator % BUFFERSIZE]);
         }

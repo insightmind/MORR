@@ -9,8 +9,8 @@ namespace MORR.Shared.Utility
         /// <summary>
         ///     CallBack definition for addListener and removeListener methods.
         /// </summary>
-        /// <param name="message">the  <see cref="WM_Message" /> to be passed to the callback.</param>
-        public delegate void RetrieveMessageCallBack(WM_Message message);
+        /// <param name="message">the  <see cref="HookMessage" /> to be passed to the callback.</param>
+        public delegate void RetrieveMessageCallBack(HookMessage message);
 
         /// <summary>
         ///     If the GlobalHook is active or not. 
@@ -27,7 +27,7 @@ namespace MORR.Shared.Utility
             new Dictionary<NativeMethods.MessageType, List<RetrieveMessageCallBack>>();
 
         //this callback will get called by the native DLL code
-        internal static CppGetMessageCallback cppCallback = message => Trigger((NativeMethods.MessageType) message.type, message);
+        private static CppGetMessageCallback cppCallback = message => Trigger((NativeMethods.MessageType) message.Type, message);
 
         #region Imports
 
@@ -49,34 +49,11 @@ namespace MORR.Shared.Utility
         #region Public functions
 
         /// <summary>
-        ///     Add a listener for a single message type.
-        /// </summary>
-        /// <param name="callback">The  <see cref="RetrieveMessageCallBack" /> function to be called on messages.</param>
-        /// <param name="type">The message type to listen for.</param>
-        public static void addListener(RetrieveMessageCallBack callback, NativeMethods.MessageType type)
-        {
-            if (capture((uint)type))
-            {
-                if (!listeners.ContainsKey(type))
-                {
-                    listeners.Add(type, new List<RetrieveMessageCallBack>());
-                }
-
-                listeners[type].Add(callback);
-            }
-            else
-            {
-                throw new NotSupportedException(
-                    $"GlobalHook currently does not support this message type ({type})");
-            }
-        }
-
-        /// <summary>
         ///     Add a listener to multiple message types.
         /// </summary>
         /// <param name="callback">The <see cref="RetrieveMessageCallBack" /> function to be called on messages.</param>
         /// <param name="types">An array of the types to listen for.</param>
-        public static void addListener(RetrieveMessageCallBack callback, NativeMethods.MessageType[] types)
+        public static void addListener(RetrieveMessageCallBack callback, params NativeMethods.MessageType[] types)
         {
             foreach (var type in types)
             {
@@ -99,29 +76,11 @@ namespace MORR.Shared.Utility
         }
 
         /// <summary>
-        ///     Remove a listener from a single message type.
-        /// </summary>
-        /// <param name="callback">The  <see cref="RetrieveMessageCallBack" /> to remove.</param>
-        /// <param name="type">The message type to remove the callback for.</param>
-        public static void RemoveListener(RetrieveMessageCallBack callback, NativeMethods.MessageType type)
-        {
-            if (listeners.ContainsKey(type))
-            {
-                listeners[type].Remove(callback);
-                if (listeners[type].Count == 0)
-                {
-                    listeners.Remove(type);
-                    stopCapture((uint) type);
-                }
-            }
-        }
-
-        /// <summary>
         ///     Remove a listener from multiple message types.
         /// </summary>
         /// <param name="callback">The <see cref="RetrieveMessageCallBack" /> to remove.</param>
         /// <param name="types">An array of the types to remove the callback for.</param>
-        public static void RemoveListener(RetrieveMessageCallBack callback, NativeMethods.MessageType[] types)
+        public static void RemoveListener(RetrieveMessageCallBack callback, params NativeMethods.MessageType[] types)
         {
             foreach (var type in types)
             {
@@ -141,7 +100,7 @@ namespace MORR.Shared.Utility
 
         #region Private functions
 
-        private static void Trigger(NativeMethods.MessageType type, WM_Message message) //todo: hide
+        private static void Trigger(NativeMethods.MessageType type, HookMessage message)
         {
             if (listeners.ContainsKey(type))
             {
@@ -178,23 +137,18 @@ namespace MORR.Shared.Utility
         ///     A custom Message struct for all message types.
         /// </summary>
         [StructLayout(LayoutKind.Sequential)]
-        public struct WM_Message
+        public struct HookMessage
         {
-            [MarshalAs(UnmanagedType.U4)] public uint type;
+            [MarshalAs(UnmanagedType.U4)] public uint Type;
             [MarshalAs(UnmanagedType.SysInt)] public IntPtr Hwnd;
-            [MarshalAs(UnmanagedType.U4)] public uint wParam; //Note: the wParam definition might differ from the official specs based on message type.
-            public Point Position; //the semantics of Position differ based on message type (e.g. may be cursor or window position)
-        }
+            [MarshalAs(UnmanagedType.SysInt)] public IntPtr wParam;
 
-        [StructLayout(LayoutKind.Sequential)]
-        public struct Point
-        {
-            [MarshalAs(UnmanagedType.U4)] public int x;
-            [MarshalAs(UnmanagedType.U4)] public int y;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4, ArraySubType = UnmanagedType.I4)]
+            public int[] Data; //General purpose fields for message specific data
         }
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-        internal delegate void CppGetMessageCallback(WM_Message message);
+        private delegate void CppGetMessageCallback(HookMessage message);
         #endregion
     }
 }

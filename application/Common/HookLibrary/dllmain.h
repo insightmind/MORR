@@ -14,10 +14,10 @@
     A serializable structure used for sending message data to the MORR application.
  */
 typedef struct {
-    UINT Type;
+    UINT32 Type;
     HWND Hwnd;
     WPARAM wParam;
-    POINT Coordinates;
+    INT32 data[4];
 } WM_Message;
 
 /**
