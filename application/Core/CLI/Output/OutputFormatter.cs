@@ -5,6 +5,7 @@ using System;
 using System.ComponentModel.Composition;
 using System.Text;
 using MORR.Core.Data.IntermediateFormat.Json;
+using MORR.Shared.Utility;
 
 namespace MORR.Core.CLI.Output
 {
