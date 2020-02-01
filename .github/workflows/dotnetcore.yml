@@ -27,8 +27,8 @@ jobs:
     - name: Remove WebExtension from Runner solution
       run: dotnet sln application/MORR.sln remove application/BrowserExtension/BrowserExtension.njsproj
 
-    - name: Set correct path to MSBuild
-      run: SET MSBuildExtensionsPath="C:\Program Files\MSBuild"
+    - name: Remove HookLibrary from Runner solution
+      run: dotnet sln application/MORR.sln remove application/Common/HookLibrary/HookLibrary.vcxproj
 
     - name: Clean
       run: dotnet clean application/MORR.sln --nologo
@@ -63,3 +63,19 @@ jobs:
         working-directory: ./application/BrowserExtension
         run: npm run testcoverage
         
+  CPP-HookLibrary:
+    name: Build C++ HookLibrary
+    runs-on: windows-latest
+    
+    steps:
+      - name: Pull branch
+        uses: actions/checkout@v1
+
+      - name: Setup MSBuild.exe
+        uses: warrenbuckley/Setup-MSBuild@v1
+      
+      - name: MSBuild
+        working-directory: ./application/Common/HookLibrary
+        run: msbuild HookLibrary.vcxproj
+      
+    
