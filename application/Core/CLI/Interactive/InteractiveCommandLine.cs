@@ -6,8 +6,8 @@ namespace MORR.Core.CLI.Interactive
 {
     internal class InteractiveCommandLine
     {
-        private const string exitCommand = "exit";
-        private const string commandLine = "=> ";
+        private const char exitCommand = 'x';
+        private const string startMessage = "Use 'x' and enter to stop the recording!";
         private const string closingMessage = "Closing MORR. This may take some time!";
 
         public void Launch()
@@ -18,13 +18,8 @@ namespace MORR.Core.CLI.Interactive
 
         private void Start()
         {
-            do
-            {
-                Console.Write(commandLine);
-            }
-
-            while (Console.ReadLine() != exitCommand);
-
+            Console.WriteLine(startMessage);
+            while (Console.Read() != exitCommand);
             Console.WriteLine(closingMessage);
             NativeMethods.StopMessageLoop();
         }

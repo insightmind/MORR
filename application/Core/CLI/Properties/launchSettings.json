@@ -22,21 +22,6 @@
       "commandName": "Project",
       "commandLineArgs": "process --config config.morr --inputFile input.mp4 --verbose",
       "workingDirectory": "$(SolutionDir)\\BuildEnvironment"
-    },
-    "ValidateManaged": {
-      "commandName": "Project",
-      "commandLineArgs": "validate --config config.morr --verbose -m",
-      "workingDirectory": "$(SolutionDir)\\BuildEnvironment"
-    },
-    "RecordManaged": {
-      "commandName": "Project",
-      "commandLineArgs": "record --config config.morr --verbose -m",
-      "workingDirectory": "$(SolutionDir)\\BuildEnvironment"
-    },
-    "ProcessManaged": {
-      "commandName": "Project",
-      "commandLineArgs": "process --config config.morr --inputFile input.mp4 --verbose -m",
-      "workingDirectory": "$(SolutionDir)\\BuildEnvironment"
     }
   }
 }
