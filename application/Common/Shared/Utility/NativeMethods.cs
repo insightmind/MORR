@@ -32,9 +32,9 @@ namespace MORR.Shared.Utility
         /// </summary>
         public static void DoWin32MessageLoop()
         {
-            // We set allowsQueue to true as we expect a call to this method to be purposeful.
-            shouldCancel = true;
-            while (shouldCancel)
+            // We set to false as we expect a call to this method to be purposeful.
+            shouldCancel = false;
+            while (!shouldCancel)
             {
                 if (PeekMessage(out var msg, IntPtr.Zero, 0, 0, 0))
                 {
@@ -46,7 +46,7 @@ namespace MORR.Shared.Utility
 
         public static void StopMessageLoop()
         {
-            shouldCancel = false;
+            shouldCancel = true;
         }
 
         #endregion
