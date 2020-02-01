@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Runtime.Loader;
 
 namespace MORR.Shared.Utility
 {
@@ -34,6 +36,19 @@ namespace MORR.Shared.Utility
             {
                 onFalse();
             }
+        }
+
+        /// <summary>
+        ///     Attempts to load the type with the specified name from any currently loaded assembly.
+        /// </summary>
+        /// <param name="type">The name of the type to load.</param>
+        /// <returns>The <see cref="Type" /> with the corresponding name or <see cref="null" /> on failure.</returns>
+        public static Type? GetTypeFromAnyAssembly(string type)
+        {
+            return Type.GetType(type) ?? AssemblyLoadContext.All
+                                                            .SelectMany(x => x.Assemblies)
+                                                            .Select(x => x.GetType(type))
+                                                            .FirstOrDefault(loadedType => loadedType != null);
         }
     }
 }

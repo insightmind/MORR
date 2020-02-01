@@ -59,7 +59,7 @@ namespace MORR.Core.Session
 
         private static bool TryGetType(JsonElement element, [NotNullWhen(true)] out Type? value)
         {
-            value = Type.GetType(element.ToString());
+            value = Utility.GetTypeFromAnyAssembly(element.ToString());
             return value != null;
         }
     }

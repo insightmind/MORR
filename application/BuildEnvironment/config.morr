@@ -1,12 +1,13 @@
 {
   "MORR.Core.Modules.GlobalModuleConfiguration": {
     "EnabledModules": [
-      "MORR.Core.Data.Capture.Video.Desktop.DesktopCapture",
-      "MORR.Modules.Keyboard.KeyboardModule, Keyboard.MORR-Module, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+      "MORR.Core.Data.IntermediateFormat.Json.JsonIntermediateFormatSerializer",
+      "MORR.Modules.Keyboard.KeyboardModule",
+      "MORR.Modules.WebBrowser.WebBrowserModule"
     ]
   },
   "MORR.Core.Session.SessionConfiguration": {
-    "Encoder": "MORR.Core.Data.Transcoding.Mpeg.MpegEncoder",
+    "Encoder": "MORR.Core.CLI.Output.OutputFormatter",
     "RecordingDirectory": "%userprofile%\\Videos\\MORR"
   },
   "MORR.Core.Data.Capture.Video.Desktop.DesktopCaptureConfiguration": {
@@ -19,5 +20,8 @@
     "KiloBitsPerSecond": 4000,
     "FramesPerSecond": 60,
     "RecordingName": "desktop_capture"
+  },
+  "MORR.Modules.WebBrowser.WebBrowserModuleConfiguration": {
+    "UrlSuffix": "60024/"
   }
 }
