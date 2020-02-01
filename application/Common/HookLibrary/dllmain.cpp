@@ -71,28 +71,36 @@ LRESULT CALLBACK CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
         /* I did opt to go for if..elif instead of switch..case since some types can be checked by range */
         if (type == WM_CREATE)
         {
-            globalMessageBuffer[bufferSlot] = { msg->message, msg->hwnd, 0, {((CREATESTRUCT*)msg->lParam)->x, ((CREATESTRUCT*)msg->lParam)->y } };
+            globalMessageBuffer[bufferSlot].Set(msg->message, msg->hwnd, 0);
+            globalMessageBuffer[bufferSlot].data[0] = ((CREATESTRUCT*)msg->lParam)->x;
+            globalMessageBuffer[bufferSlot].data[1] = ((CREATESTRUCT*)msg->lParam)->y;
         }
         else if (type == WM_MOVE)
         {
-            globalMessageBuffer[bufferSlot] = { msg->message, msg->hwnd, 0, {(int)(short)LOWORD(msg->lParam), (int)(short)HIWORD(msg->lParam)} };
+            globalMessageBuffer[bufferSlot].Set(msg->message, msg->hwnd, 0);
+            globalMessageBuffer[bufferSlot].data[0] = (int)LOWORD(msg->lParam);
+            globalMessageBuffer[bufferSlot].data[1] = (int)HIWORD(msg->lParam);
         }
         else if (type == WM_DESTROY || type == WM_ACTIVATE || ((type >= WM_SETFOCUS) && (type <= WM_ENABLE)))
         {
-            globalMessageBuffer[bufferSlot] = { msg->message, (type == WM_ACTIVATE) ? (HWND)msg->lParam : msg->hwnd, msg->wParam, {0, 0} };
+            globalMessageBuffer[bufferSlot].Set(msg->message, (type == WM_ACTIVATE) ? (HWND)msg->lParam : msg->hwnd, msg->wParam);
         }
         else if (type == WM_SIZE) {
-            globalMessageBuffer[bufferSlot] = { msg->message, msg->hwnd, msg->wParam,  {(int)(short)LOWORD(msg->lParam), (int)(short)HIWORD(msg->lParam)} };
+            globalMessageBuffer[bufferSlot].Set(msg->message, msg->hwnd, msg->wParam);
+            globalMessageBuffer[bufferSlot].data[0] = (int)LOWORD(msg->lParam);
+            globalMessageBuffer[bufferSlot].data[1] = (int)HIWORD(msg->lParam);
         }
         else if (type == WM_SIZING)
         {
-            globalMessageBuffer[bufferSlot] = { msg->message, msg->hwnd, msg->wParam,  0, 0 };
+            globalMessageBuffer[bufferSlot].Set(msg->message, msg->hwnd, msg->wParam);
         }
         else if ((type >= WM_CUT && type <= WM_CLEAR)) {
-            globalMessageBuffer[bufferSlot] = { msg->message, msg->hwnd, 0, 0 };
+            globalMessageBuffer[bufferSlot].Set(msg->message, msg->hwnd, msg->wParam);
         }
         else
         {
+            /* this is only reached by implementation error */
+            globalMessageBuffer[bufferSlot].Type == WM_NULL;
             goto forwardEvent;
         }
         ReleaseSemaphore(semaphore, 1, NULL); /* mark one message as available to the dispatcher running in the MORR AS */
@@ -188,7 +196,7 @@ void DispatchLoop() {
                  && (globalMessageBuffer[localBufferIterator].Type == globalMessageBuffer[previous].Type)) /* discard event if it's obviously a duplicate (works only or events which
                                                                                                               inherently come with a timestamp) */
                 continue;
-            globalCallback(globalMessageBuffer[localBufferIterator % BUFFERSIZE]);
+            globalCallback(globalMessageBuffer[localBufferIterator]);
         }
     }
 }
