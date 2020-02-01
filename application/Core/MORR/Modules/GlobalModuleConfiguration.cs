@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text.Json;
 using MORR.Core.Configuration;
 using MORR.Shared.Configuration;
 using MORR.Shared.Modules;
+using MORR.Shared.Utility;
 
 namespace MORR.Core.Modules
 {
-    [Export(typeof(GlobalModuleConfiguration))]
     public class GlobalModuleConfiguration : IConfiguration
     {
         /// <summary>
@@ -30,7 +29,7 @@ namespace MORR.Core.Modules
 
             foreach (var value in enabledModulesElement.EnumerateArray().Select(x => x.ToString()))
             {
-                var type = Type.GetType(value);
+                var type = Utility.GetTypeFromAnyAssembly(value);
 
                 if (type == null)
                 {

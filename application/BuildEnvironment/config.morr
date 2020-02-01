@@ -1,20 +1,27 @@
 {
   "MORR.Core.Modules.GlobalModuleConfiguration": {
     "EnabledModules": [
-      "MORR.Core.Data.Capture.Metadata.MetadataCapture",
-      "MORR.Core.Data.Capture.Video.WinAPI.DesktopCapture",
-      "MORR.Modules.Keyboard.KeyboardModule, Keyboard.MORR-Module, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
-	  "MORR.Modules.WebBrowser.WebBrowserModule, WebBrowser.MORR-Module, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+      "MORR.Core.Data.IntermediateFormat.Json.JsonIntermediateFormatSerializer",
+      "MORR.Modules.Keyboard.KeyboardModule",
+      "MORR.Modules.WebBrowser.WebBrowserModule"
     ]
   },
-  "MORR.Core.Recording.RecordingConfiguration": {
-    "Encoder": "MORR.Core.CLI.Output.OutputFormatter, CLI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+  "MORR.Core.Session.SessionConfiguration": {
+    "Encoder": "MORR.Core.CLI.Output.OutputFormatter",
+    "RecordingDirectory": "%userprofile%\\Videos\\MORR"
   },
-  "MORR.Core.Data.Capture.Video.WinAPI.DesktopCaptureConfiguration": {
+  "MORR.Core.Data.Capture.Video.Desktop.DesktopCaptureConfiguration": {
     "MonitorIndex": 0,
     "PromptUserForMonitorSelection": false
   },
-    "MORR.Modules.WebBrowser.WebBrowserModuleConfiguration, WebBrowser.MORR-Module, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": {
+  "MORR.Core.Data.Transcoding.Mpeg.MpegEncoderConfiguration": {
+    "Width": 1920,
+    "Height": 1080,
+    "KiloBitsPerSecond": 4000,
+    "FramesPerSecond": 60,
+    "RecordingName": "desktop_capture"
+  },
+  "MORR.Modules.WebBrowser.WebBrowserModuleConfiguration": {
     "UrlSuffix": "60024/"
   }
 }

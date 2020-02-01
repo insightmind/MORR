@@ -1,5 +1,5 @@
 ﻿using MORR.Core.CLI.Output;
-using MORR.Core.Recording;
+using MORR.Core.Session;
 using MORR.Shared.Utility;
 using System;
 using System.IO;
@@ -10,7 +10,7 @@ namespace MORR.Core.CLI.Commands.Process
     {
         private const string loadedFileMessage = "Load configuration file.";
         private const string loadInputMessage = "Load input file.";
-        private const string recordingManagerMessage = "Load recording manager with configuration file.";
+        private const string sessionManagerMessage = "Load session manager with configuration file.";
         private const string startProcessingMessage = "Start processing session:";
 
         public int Execute(ProcessOptions options)
@@ -32,13 +32,13 @@ namespace MORR.Core.CLI.Commands.Process
                 OutputFormatter.PrintDebug(loadInputMessage);
                 var inputPath = new FilePath(Path.GetFullPath(options.InputFile));
 
-                // Start recording manager
-                OutputFormatter.PrintDebug(recordingManagerMessage);
-                IRecordingManager recordingManager = new RecordingManager(configPath);
+                // Start session manager
+                OutputFormatter.PrintDebug(sessionManagerMessage);
+                ISessionManager sessionManager = new SessionManager(configPath);
 
                 // Start processing
                 OutputFormatter.PrintDebug(startProcessingMessage);
-                recordingManager.Process(new[] { inputPath });
+                sessionManager.Process(new[] { inputPath });
 
                 while (true) { }
             }

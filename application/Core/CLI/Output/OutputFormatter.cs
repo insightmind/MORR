@@ -1,14 +1,14 @@
-﻿using MORR.Core.Data.Sample.Metadata;
-using MORR.Core.Data.Transcoding;
-using MORR.Core.Data.Transcoding.Exceptions;
+﻿using MORR.Core.Data.Transcoding.Exceptions;
+using MORR.Core.Data.IntermediateFormat;
 using MORR.Shared.Events.Queue;
 using System;
 using System.ComponentModel.Composition;
 using System.Text;
+using MORR.Core.Data.IntermediateFormat.Json;
+using MORR.Shared.Utility;
 
 namespace MORR.Core.CLI.Output
 {
-    [Export(typeof(IEncoder))]
     public class OutputFormatter : IOutputFormatter
     {
         internal static bool IsVerbose = false;
@@ -17,9 +17,9 @@ namespace MORR.Core.CLI.Output
         private static readonly string DateFormatString = "HH:mm:ss.fff";
 
         [Import]
-        private ITranscodeableEventQueue<MetadataSample> MetadataQueue { get; set; }
+        private IEncodeableEventQueue<JsonIntermediateFormatSample> MetadataQueue { get; set; }
 
-        public async void Encode()
+        public async void Encode(DirectoryPath _)
         {
             if (MetadataQueue == null)
             {
@@ -33,7 +33,7 @@ namespace MORR.Core.CLI.Output
             }
         }
 
-        private static void PrintSample(MetadataSample sample)
+        private static void PrintSample(IntermediateFormatSample sample)
         {
             if (sample == null)
             {

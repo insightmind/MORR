@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
@@ -17,7 +16,7 @@ namespace MORR.Core
     public class Bootstrapper : IBootstrapper
     {
         private const string moduleSubdirectory = "Modules";
-        private const string moduleNamePattern = "*.dll";
+        private const string moduleNamePattern = "*.MORR-Module.dll";
         private CompositionContainer container;
 
         public Bootstrapper()
@@ -39,42 +38,44 @@ namespace MORR.Core
 
         private void LoadFromPath(DirectoryPath path)
         {
-            var alreadyLoadedAssemblies = AssemblyLoadContext.Default.Assemblies.Select(x => x.FullName).ToList();
+            var registrationBuilder = BootstrapperConventions.GetRegistrationBuilder();
+
             var moduleFiles = Directory.GetFiles(path.ToString(), moduleNamePattern);
-            var moduleAssemblies = moduleFiles
-                                   .Select(x => LoadWithReferencesIfNotLoaded(x, alreadyLoadedAssemblies))
-                                   .Where(x => x != null)
-                                   .Select(x => new AssemblyCatalog(x)).ToArray();
+            var moduleCatalogs = moduleFiles.Select(x =>
+            {
+                var loadContext = new ModuleLoadContext(x);
+                var assembly = loadContext.LoadFromAssemblyPath(x);
+                return new AssemblyCatalog(assembly, registrationBuilder) as ComposablePartCatalog;
+            }).ToArray();
 
-            var applicationCatalog = new ApplicationCatalog();
-            var catalogs = moduleAssemblies.Cast<ComposablePartCatalog>().Append(applicationCatalog);
-
-            var aggregateCatalog = new AggregateCatalog(catalogs);
+            var applicationCatalog = new ApplicationCatalog(registrationBuilder);
+            var aggregateCatalog = new AggregateCatalog(moduleCatalogs.Append(applicationCatalog));
 
             container = new CompositionContainer(aggregateCatalog);
         }
 
-        private static Assembly? LoadWithReferencesIfNotLoaded(string path, IEnumerable<string?> alreadyLoadedAssemblies)
+        private class ModuleLoadContext : AssemblyLoadContext
         {
-            var resolver = new AssemblyDependencyResolver(path);
-            var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(path);
+            private readonly AssemblyDependencyResolver resolver;
 
-            if (alreadyLoadedAssemblies.Contains(assembly.FullName))
+            public ModuleLoadContext(string pluginPath)
             {
-                return null;
+                resolver = new AssemblyDependencyResolver(pluginPath);
             }
 
-            foreach (var referencedAssembly in assembly.GetReferencedAssemblies())
+            protected override Assembly? Load(AssemblyName assemblyName)
             {
-                var referencedAssemblyPath = resolver.ResolveAssemblyToPath(referencedAssembly);
-
-                if (referencedAssemblyPath != null)
-                {
-                    AssemblyLoadContext.Default.LoadFromAssemblyPath(referencedAssemblyPath);
-                }
+                var assemblyPath = resolver.ResolveAssemblyToPath(assemblyName);
+                return assemblyPath != null
+                    ? LoadFromAssemblyPath(assemblyPath)
+                    : Default.LoadFromAssemblyName(assemblyName);
             }
 
-            return assembly;
+            protected override IntPtr LoadUnmanagedDll(string unmanagedDllName)
+            {
+                var libraryPath = resolver.ResolveUnmanagedDllToPath(unmanagedDllName);
+                return libraryPath != null ? LoadUnmanagedDllFromPath(libraryPath) : IntPtr.Zero;
+            }
         }
     }
 }

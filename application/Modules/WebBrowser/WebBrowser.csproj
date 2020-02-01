@@ -17,7 +17,16 @@
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\MORR\MORR.csproj" />
+    <ProjectReference Include="..\..\Common\Shared\Shared.csproj">
+      <Private>false</Private>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </ProjectReference>
   </ItemGroup>
-  
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\MORR\MORR.csproj">
+      <Private>false</Private>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </ProjectReference>
+  </ItemGroup>
 </Project>
