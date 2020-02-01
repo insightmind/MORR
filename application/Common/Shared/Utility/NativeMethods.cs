@@ -11,11 +11,15 @@ namespace MORR.Shared.Utility
     /// </summary>
     public static class NativeMethods
     {
+        #region Properties
+
         /// <summary>
         /// Defines whether a current message loop should be cancelled.
         /// We use a bool type for this as it is atomic and should not be problematic concerning threading.
         /// </summary>
         private static volatile bool shouldCancel = true;
+
+        #endregion
 
         #region Windows message loop helper
 
@@ -140,7 +144,7 @@ namespace MORR.Shared.Utility
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool PeekMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax, uint wRemoveMsg);
+        public static extern bool PeekMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax, uint wRemoveMsg);
 
         #endregion
 

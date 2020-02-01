@@ -6,14 +6,14 @@ using System.IO;
 
 namespace MORR.Core.CLI.Commands.Processing
 {
-    internal class ProcessCommand : Command<ProcessOptions>
+    internal class ProcessCommand : ICommand<ProcessOptions>
     {
         private const string loadedFileMessage = "Load configuration file.";
         private const string loadInputMessage = "Load input file.";
         private const string sessionManagerMessage = "Load session manager with configuration file.";
         private const string startProcessingMessage = "Start processing session:";
 
-        internal override int Run(ProcessOptions options)
+        public int Execute(ProcessOptions options)
         {
             try
             {

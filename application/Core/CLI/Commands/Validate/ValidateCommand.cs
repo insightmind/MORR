@@ -6,7 +6,7 @@ using System.IO;
 
 namespace MORR.Core.CLI.Commands.Validate
 {
-    internal class ValidateCommand : Command<ValidateOptions>
+    internal class ValidateCommand : ICommand<ValidateOptions>
     {
         private const string successMessage = "The configuration file is valid!";
         private const string failureMessage = "The configuration file is invalid!";
@@ -14,7 +14,7 @@ namespace MORR.Core.CLI.Commands.Validate
         private const string assemblyMessage = "Load all assemblies.";
         private const string resolveConfigMessage = "Resolving Configuration";
 
-        internal override int Run(ValidateOptions options)
+        public int Execute(ValidateOptions options)
         {
             if (options == null)
             {
