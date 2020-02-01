@@ -27,6 +27,9 @@ jobs:
     - name: Remove WebExtension from Runner solution
       run: dotnet sln application/MORR.sln remove application/BrowserExtension/BrowserExtension.njsproj
 
+    - name: Remove HoobLibrary from Runner solution (temporary)
+      run: dotnet sln application/MORR.sln remove application/Common/HookLibrary/HookLibrary.vcxproj
+
     - name: Clean
       run: dotnet clean application/MORR.sln --nologo
     
