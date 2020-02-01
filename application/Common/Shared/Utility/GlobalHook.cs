@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Linq;
+using MORR.Shared.Utility.Exceptions;
 
 namespace MORR.Shared.Utility
 {
@@ -18,31 +20,50 @@ namespace MORR.Shared.Utility
         public static bool IsActive
         {
             get => isActive;
-            set => Utility.SetAndDispatch(ref isActive, value, Hook, UnHook);
+            set
+            {
+                if(value)
+                {
+                    Hook();
+                }
+                else
+                {
+                    Unhook();
+                }
+            }
         }
 
+        private const string hookLibName = @"HookLibrary64";
         private static bool isActive;
+        private static IntPtr hookLibrary;
         //map message types to lists of interested listeners
         private static readonly Dictionary<NativeMethods.MessageType, List<RetrieveMessageCallBack>> listeners =
             new Dictionary<NativeMethods.MessageType, List<RetrieveMessageCallBack>>();
 
         //this callback will get called by the native DLL code
-        private static CppGetMessageCallback cppCallback = message => Trigger((NativeMethods.MessageType) message.Type, message);
+        private static readonly CppGetMessageCallback cppCallback = message => Trigger((NativeMethods.MessageType) message.Type, message);
 
         #region Imports
 
-        [DllImport(@"HookLibrary64", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Ansi)]
+        static extern IntPtr LoadLibrary([MarshalAs(UnmanagedType.LPStr)]string lpFileName);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool FreeLibrary(IntPtr hModule);
+
+        [DllImport(hookLibName, CallingConvention = CallingConvention.Cdecl)]
         private static extern void
             SetHook([MarshalAs(UnmanagedType.FunctionPtr)] CppGetMessageCallback callbackPointer);
 
-        [DllImport(@"HookLibrary64", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(hookLibName, CallingConvention = CallingConvention.Cdecl)]
         private static extern void RemoveHook();
 
-        [DllImport(@"HookLibrary64", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(hookLibName, CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool Capture([MarshalAs(UnmanagedType.U4)] uint type);
 
-        [DllImport(@"HookLibrary64", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(hookLibName, CallingConvention = CallingConvention.Cdecl)]
         private static extern void StopCapture([MarshalAs(UnmanagedType.U4)] uint type);
         #endregion
 
@@ -53,7 +74,7 @@ namespace MORR.Shared.Utility
         /// </summary>
         /// <param name="callback">The <see cref="RetrieveMessageCallBack" /> function to be called on messages.</param>
         /// <param name="types">An array of the types to listen for.</param>
-        public static void addListener(RetrieveMessageCallBack callback, params NativeMethods.MessageType[] types)
+        public static void AddListener(RetrieveMessageCallBack callback, params NativeMethods.MessageType[] types)
         {
             foreach (var type in types)
             {
@@ -87,12 +108,27 @@ namespace MORR.Shared.Utility
                 if (listeners.ContainsKey(type))
                 {
                     listeners[type].Remove(callback);
-                    if (listeners[type].Count == 0)
+                    if (listeners[type].Any())
                     {
                         listeners.Remove(type);
                         StopCapture((uint)type);
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        ///     Free the loaded library.
+        /// </summary>
+        public static void FreeLibrary()
+        {
+            if (hookLibrary != IntPtr.Zero)
+            {
+                //the library is loaded twice. Once for the DLLImports above, once by LoadLibrary.
+                //LoadLibrary is only used to safely get a handle to the library.
+                FreeLibrary(hookLibrary);
+                FreeLibrary(hookLibrary);
+                hookLibrary = IntPtr.Zero;
             }
         }
 
@@ -104,9 +140,9 @@ namespace MORR.Shared.Utility
         {
             if (listeners.ContainsKey(type))
             {
-                foreach (var cb in listeners[type])
+                foreach (var callback in listeners[type])
                 {
-                    cb(message);
+                    callback(message);
                 }
             }
         }
@@ -115,12 +151,18 @@ namespace MORR.Shared.Utility
         {
             if (!isActive)
             {
+                if (hookLibrary == IntPtr.Zero)
+                {
+                    hookLibrary = LoadLibrary(hookLibName);
+                    if (hookLibrary == IntPtr.Zero)
+                        throw new HookLibraryException($"Error loading {hookLibName}");
+                }
                 SetHook(cppCallback);
                 isActive = true;
             }
         }
 
-        private static void UnHook()
+        private static void Unhook()
         {
             if (isActive)
             {

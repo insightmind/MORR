@@ -305,8 +305,9 @@ namespace MORR.Shared.Utility
             WM_CTLCOLORSCROLLBAR = 0x137,
             WM_CTLCOLORSTATIC = 0x138,
 
-            WM_MOUSEFIRST = 0x200,
+            
             WM_MOUSEMOVE = 0x200,
+            WM_MOUSEFIRST = 0x200,
             WM_LBUTTONDOWN = 0x201,
             WM_LBUTTONUP = 0x202,
             WM_LBUTTONDBLCLK = 0x203,
