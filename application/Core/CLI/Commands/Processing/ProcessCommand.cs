@@ -4,22 +4,17 @@ using MORR.Shared.Utility;
 using System;
 using System.IO;
 
-namespace MORR.Core.CLI.Commands.Process
+namespace MORR.Core.CLI.Commands.Processing
 {
-    internal class ProcessCommand : ICLICommand<ProcessOptions>
+    internal class ProcessCommand : Command<ProcessOptions>
     {
         private const string loadedFileMessage = "Load configuration file.";
         private const string loadInputMessage = "Load input file.";
         private const string sessionManagerMessage = "Load session manager with configuration file.";
         private const string startProcessingMessage = "Start processing session:";
 
-        public int Execute(ProcessOptions options)
+        internal override int Run(ProcessOptions options)
         {
-            if (options == null)
-            {
-                return -1;
-            }
-
             try
             {
                 OutputFormatter.IsVerbose = options.IsVerbose;

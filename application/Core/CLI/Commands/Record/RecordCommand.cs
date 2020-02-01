@@ -6,13 +6,13 @@ using System.IO;
 
 namespace MORR.Core.CLI.Commands.Record
 {
-    internal class RecordCommand : ICLICommand<RecordOptions>
+    internal class RecordCommand : Command<RecordOptions>
     {
         private const string loadedFileMessage = "Load configuration file.";
         private const string sessionManagerMessage = "Load session manager with configuration file.";
         private const string startRecordingMessage = "Start recording session:";
 
-        public int Execute(RecordOptions options)
+        internal override int Run(RecordOptions options)
         {
             if (options == null)
             {
@@ -37,8 +37,10 @@ namespace MORR.Core.CLI.Commands.Record
 
                 // Run message loop required for Windows hooks
                 NativeMethods.DoWin32MessageLoop();
+
                 // To prevent the generated video file from becoming corrupted, recording needs to be stopped manually
-                //recordingManager.StopRecording();
+                sessionManager.StopRecording();
+
                 return 0;
             }
             catch (Exception exception) // I know this is not a recommend way to deal with exception, however this method receives a arbitrary amount of exception types.

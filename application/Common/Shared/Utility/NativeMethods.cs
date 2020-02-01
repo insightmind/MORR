@@ -11,6 +11,12 @@ namespace MORR.Shared.Utility
     /// </summary>
     public static class NativeMethods
     {
+        /// <summary>
+        /// Defines whether a current message loop should be cancelled.
+        /// We use a bool type for this as it is atomic and should not be problematic concerning threading.
+        /// </summary>
+        private static volatile bool shouldCancel = true;
+
         #region Windows message loop helper
 
         /// <summary>
@@ -22,16 +28,22 @@ namespace MORR.Shared.Utility
         /// </summary>
         public static void DoWin32MessageLoop()
         {
-            int status;
-            while ((status = GetMessage(out var msg, IntPtr.Zero, 0, 0)) != 0)
+            // We set allowsQueue to true as we expect a call to this method to be purposeful.
+            shouldCancel = true;
+            while (shouldCancel)
             {
                 // -1 indicates error - do not process such messages
-                if (status != -1)
+                if (PeekMessage(out var msg, IntPtr.Zero, 0, 0, 0))
                 {
                     TranslateMessage(ref msg);
                     DispatchMessage(ref msg);
                 }
             }
+        }
+
+        public static void StopMessageLoop()
+        {
+            shouldCancel = false;
         }
 
         #endregion
@@ -95,9 +107,6 @@ namespace MORR.Shared.Utility
         #region Methods
 
         [DllImport("user32.dll")]
-        public static extern int GetMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
-
-        [DllImport("user32.dll")]
         public static extern bool TranslateMessage([In] ref MSG lpMsg);
 
         [DllImport("user32.dll")]
@@ -128,6 +137,10 @@ namespace MORR.Shared.Utility
 
         [DllImport("user32.dll")]
         public static extern IntPtr GetActiveWindow();
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool PeekMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax, uint wRemoveMsg);
 
         #endregion
 
