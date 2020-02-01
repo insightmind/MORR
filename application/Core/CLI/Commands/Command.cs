@@ -2,6 +2,6 @@
 {
     interface ICommand<in TOptions> where TOptions : CommandOptions
     {
-        public int Execute(TOptions options);
+        int Execute(TOptions options);
     }
 }
