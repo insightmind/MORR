@@ -36,7 +36,6 @@ namespace MORR.Shared.Utility
             shouldCancel = true;
             while (shouldCancel)
             {
-                // -1 indicates error - do not process such messages
                 if (PeekMessage(out var msg, IntPtr.Zero, 0, 0, 0))
                 {
                     TranslateMessage(ref msg);
