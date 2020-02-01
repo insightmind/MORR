@@ -21,8 +21,8 @@ LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
     LRESULT retVal = CallNextHookEx(GetMessageHook, nCode, wParam, lParam);
     //a pointer to hold the MSG structure that is passed as lParam
     MSG* msg;
-    if (semaphore == NULL) {
-        semaphore = CreateSemaphore(NULL, 0, BUFFERSIZE, TEXT(SEMAPHORE_GUID));
+    if (semaphore == nullptr) {
+        semaphore = CreateSemaphore(nullptr, 0, BUFFERSIZE, TEXT(SEMAPHORE_GUID));
     }
 
     //lParam contains pointer to MSG structure.
@@ -44,7 +44,7 @@ LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
             globalMessageBuffer[bufferSlot].Type == WM_NULL;
             goto forwardEvent;
         }
-        ReleaseSemaphore(semaphore, 1, NULL); /* mark one message as available to the dispatcher running in the MORR AS */
+        ReleaseSemaphore(semaphore, 1, nullptr); /* mark one message as available to the dispatcher running in the MORR AS */
     }
 forwardEvent:
     /* pass message onto target application */
@@ -55,8 +55,8 @@ LRESULT CALLBACK CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
     LRESULT retVal = CallNextHookEx(CallWndProcHook, nCode, wParam, lParam);
     CWPSTRUCT* msg;
-    if (semaphore == NULL) {
-        semaphore = CreateSemaphore(NULL, 0, BUFFERSIZE, TEXT(SEMAPHORE_GUID));
+    if (semaphore == nullptr) {
+        semaphore = CreateSemaphore(nullptr, 0, BUFFERSIZE, TEXT(SEMAPHORE_GUID));
     }
 
     msg = (CWPSTRUCT*)lParam;
@@ -103,7 +103,7 @@ LRESULT CALLBACK CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
             globalMessageBuffer[bufferSlot].Type == WM_NULL;
             goto forwardEvent;
         }
-        ReleaseSemaphore(semaphore, 1, NULL); /* mark one message as available to the dispatcher running in the MORR AS */
+        ReleaseSemaphore(semaphore, 1, nullptr); /* mark one message as available to the dispatcher running in the MORR AS */
     }
 forwardEvent:
     /* pass message onto target application */
@@ -140,15 +140,15 @@ DLL void SetHook(WH_MessageCallBack progressCallback) {
     running = true;
     globalBufferIterator = 0;
     globalCallback = progressCallback;
-    if (GetMessageHook == NULL) {
-        if ((GetMessageHook = SetWindowsHookEx(WH_GETMESSAGE, GetMsgProc, hInstHookDll, 0)) == NULL)
+    if (GetMessageHook == nullptr) {
+        if ((GetMessageHook = SetWindowsHookEx(WH_GETMESSAGE, GetMsgProc, hInstHookDll, 0)) == nullptr)
             printf("Error attaching GetMessage hook. Errorcode %d\n", GetLastError());
     }
-    if (CallWndProcHook == NULL) {
-        if ((CallWndProcHook = SetWindowsHookEx(WH_CALLWNDPROC, CallWndProc, hInstHookDll, 0)) == NULL)
+    if (CallWndProcHook == nullptr) {
+        if ((CallWndProcHook = SetWindowsHookEx(WH_CALLWNDPROC, CallWndProc, hInstHookDll, 0)) == nullptr)
             printf("Error attaching WndProc hook. Errorcode %d\n", GetLastError());
     }
-    if (GetMessageHook == NULL || CallWndProcHook == NULL) {
+    if (GetMessageHook == nullptr || CallWndProcHook == nullptr) {
         RemoveHook();
         return;
     }
@@ -158,30 +158,30 @@ DLL void SetHook(WH_MessageCallBack progressCallback) {
 
 DLL void RemoveHook()
 {
-    if (GetMessageHook != NULL) {
+    if (GetMessageHook != nullptr) {
         if (!UnhookWindowsHookEx(GetMessageHook))
             printf("Error unhooking GetMessage hook. Errorcode %d\n", GetLastError());
     }
-    if (CallWndProcHook != NULL) {
+    if (CallWndProcHook != nullptr) {
         if (!UnhookWindowsHookEx(CallWndProcHook))
             printf("Error unhooking CallWndProc hook. Errorcode %d\n", GetLastError());
     }
     running = false;
-    GetMessageHook = NULL;
-    CallWndProcHook = NULL;
-    GetMessageHook = NULL;
+    GetMessageHook = nullptr;
+    CallWndProcHook = nullptr;
+    GetMessageHook = nullptr;
     dispatcherthread->join();
     delete dispatcherthread;
-    dispatcherthread = NULL;
+    dispatcherthread = nullptr;
     CloseHandle(semaphore);
-    semaphore = NULL;
+    semaphore = nullptr;
     printf("GlobalHook: Unhooked\n");
 }
 
 void DispatchLoop() {
     unsigned int localBufferIterator = 0;
     unsigned int previous;
-    semaphore = CreateSemaphore(NULL, 0, BUFFERSIZE, TEXT(SEMAPHORE_GUID));
+    semaphore = CreateSemaphore(nullptr, 0, BUFFERSIZE, TEXT(SEMAPHORE_GUID));
     while (running) {
         {
             while (localBufferIterator == globalBufferIterator % BUFFERSIZE) {

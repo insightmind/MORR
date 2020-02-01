@@ -76,13 +76,9 @@ namespace MORR.Shared.Utility
         /// <param name="types">An array of the types to listen for.</param>
         public static void AddListener(RetrieveMessageCallBack callback, params NativeMethods.MessageType[] types)
         {
-            foreach (var type in types)
-            {
-                if (!Capture((uint) type))
-                {
-                    throw new NotSupportedException(
-                        $"GlobalHook currently does not support this message type ({type})");
-                }
+            if (types.Any(type => !Capture((uint)type)))
+{
+                throw new NotSupportedException();
             }
 
             foreach (var type in types)
