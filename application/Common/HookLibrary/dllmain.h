@@ -5,7 +5,8 @@
 
 #ifndef DLLMAIN_H
 #define DLLMAIN_H
-#include "pch.h"
+#define WIN32_LEAN_AND_MEAN
+
 #include <Windows.h>
 #include <thread>
 #include <synchapi.h>
@@ -13,12 +14,13 @@
 /**
     A serializable structure used for sending message data to the MORR application.
  */
-typedef struct {
+struct WM_Message {
     UINT32 Type;
     HWND Hwnd;
     WPARAM wParam;
     INT32 data[4];
-} WM_Message;
+    void Set(UINT32 type, HWND hwnd, WPARAM wParam);
+};
 
 /**
     Helper definitions for exported and retrieved functions.
@@ -44,8 +46,8 @@ typedef void(__stdcall* WH_MessageCallBack)(WM_Message);
 /**
     Hook handles.
  */
-HHOOK GetMessageHook = NULL;
-HHOOK CallWndProcHook = NULL;
+HHOOK GetMessageHook = nullptr;
+HHOOK CallWndProcHook = nullptr;
 
 /**
     The iterator determining where in the buffer to store the next message.
@@ -82,7 +84,7 @@ bool messageHasListener[MESSAGETABLESIZE] = { 0 };
     Function running in a separate thread in the context of MORR to send event data
     from the C++ part to C#.
  */
-void dispatchLoop();
+void DispatchLoop();
 
 /**
     Check if an event type is captured by this DLL.
@@ -98,13 +100,13 @@ bool IsCaptured(UINT type);
     false if type is unsupported.
     @param type the message type to capture
  */
-DLL bool capture(UINT type);
+DLL bool Capture(UINT type);
 
 /**
     Signal that message of a specific type shall not be captured.
     @param type the message type to capture
  */
-DLL void stopCapture(UINT type);
+DLL void StopCapture(UINT type);
 
 /**
     Set the Hook(s) and capture messages.
@@ -130,12 +132,12 @@ LRESULT CALLBACK CallWndProc(int nCode, WPARAM wParam, LPARAM lParam);
 /**
     The inter-process semaphore. Each process may create this HANDLE itself if necessary.
  */
-HANDLE semaphore = NULL;
+HANDLE semaphore = nullptr;
 
 /**
     Boolean value stating if the hooks are currently attached.
  */
-bool running = 0;
+bool running = false;
 
 /**
     Thread running in the context of MORR, responsible for taking freshly stored messaged from the ringbuffer
@@ -146,5 +148,5 @@ std::thread* dispatcherthread;
 /**
     The instance of this DLL. Needed for setting the hooks.
  */
-HINSTANCE hInstHookDll = NULL;
+HINSTANCE hInstHookDll = nullptr;
 #endif

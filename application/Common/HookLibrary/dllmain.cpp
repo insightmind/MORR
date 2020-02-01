@@ -1,5 +1,5 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
-#include "pch.h"
+
 #include "dllmain.h"
 
 BOOL APIENTRY DllMain(HANDLE hModule, DWORD  ul_reason_for_call,
@@ -33,13 +33,15 @@ LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
         unsigned int bufferSlot = InterlockedIncrement(&globalBufferIterator) % BUFFERSIZE; //atomic increment. overflows should not matter as we modulo it anyways.
         unsigned int type = msg->message;
         globalTimeStamps[bufferSlot] = msg->time;
-        if ((type >= WM_MOUSEMOVE && type <= WM_MOUSEHWHEEL) || type == WM_KEYDOWN) {
-            globalMessageBuffer[bufferSlot] = { msg->message, msg->hwnd, msg->wParam, {0} };
+        if ((type >= WM_MOUSEMOVE && type <= WM_MOUSEWHEEL) || type == WM_KEYDOWN) {
+            globalMessageBuffer[bufferSlot].Set(msg->message, msg->hwnd, msg->wParam);
             globalMessageBuffer[bufferSlot].data[0] = msg->pt.x;
             globalMessageBuffer[bufferSlot].data[1] = msg->pt.y;
         }
         else
         {
+            /* this is only reached by implementation error */
+            globalMessageBuffer[bufferSlot].Type == WM_NULL;
             goto forwardEvent;
         }
         ReleaseSemaphore(semaphore, 1, NULL); /* mark one message as available to the dispatcher running in the MORR AS */
@@ -113,24 +115,21 @@ bool IsCaptured(UINT type) {
         );
 }
 
-bool capture(UINT type) {
+bool Capture(UINT type) {
     if (type < MESSAGETABLESIZE && IsCaptured(type)) {
         messageHasListener[type] = true;
         return true;
     }
-    else
-    {
-        return false;
-    }
+    return false;
 };
 
-void stopCapture(UINT type) {
+void StopCapture(UINT type) {
     if (type < MESSAGETABLESIZE)
         messageHasListener[type] = false;
 };
 
 DLL void SetHook(WH_MessageCallBack progressCallback) {
-    running = 1;
+    running = true;
     globalBufferIterator = 0;
     globalCallback = progressCallback;
     if (GetMessageHook == NULL) {
@@ -145,7 +144,7 @@ DLL void SetHook(WH_MessageCallBack progressCallback) {
         RemoveHook();
         return;
     }
-    dispatcherthread = new std::thread(dispatchLoop);
+    dispatcherthread = new std::thread(DispatchLoop);
     printf("GlobalHook: Hooked\n");
 }
 
@@ -166,10 +165,12 @@ DLL void RemoveHook()
     dispatcherthread->join();
     delete dispatcherthread;
     dispatcherthread = NULL;
+    CloseHandle(semaphore);
+    semaphore = NULL;
     printf("GlobalHook: Unhooked\n");
 }
 
-void dispatchLoop() {
+void DispatchLoop() {
     unsigned int localBufferIterator = 0;
     unsigned int previous;
     semaphore = CreateSemaphore(NULL, 0, BUFFERSIZE, TEXT(SEMAPHORE_GUID));
@@ -182,7 +183,7 @@ void dispatchLoop() {
                     return;
             }
             previous = localBufferIterator;
-            localBufferIterator = ++localBufferIterator % BUFFERSIZE;
+            ++localBufferIterator %= BUFFERSIZE;
             if ((globalTimeStamps[localBufferIterator]) && ((globalTimeStamps[localBufferIterator]) == globalTimeStamps[(previous)])
                  && (globalMessageBuffer[localBufferIterator].Type == globalMessageBuffer[previous].Type)) /* discard event if it's obviously a duplicate (works only or events which
                                                                                                               inherently come with a timestamp) */
@@ -190,4 +191,12 @@ void dispatchLoop() {
             globalCallback(globalMessageBuffer[localBufferIterator % BUFFERSIZE]);
         }
     }
+}
+
+void WM_Message::Set(UINT32 type, HWND hwnd, WPARAM wParam)
+{
+    this->Type = type;
+    this->Hwnd = hwnd;
+    this->wParam = wParam;
+    ZeroMemory(&this->data, sizeof(sizeof(this->data)));
 }

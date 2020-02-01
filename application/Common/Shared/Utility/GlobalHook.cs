@@ -40,10 +40,10 @@ namespace MORR.Shared.Utility
 
         [DllImport(@"HookLibrary64", CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.I1)]
-        private static extern bool capture([MarshalAs(UnmanagedType.U4)] uint type);
+        private static extern bool Capture([MarshalAs(UnmanagedType.U4)] uint type);
 
         [DllImport(@"HookLibrary64", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void stopCapture([MarshalAs(UnmanagedType.U4)] uint type);
+        private static extern void StopCapture([MarshalAs(UnmanagedType.U4)] uint type);
         #endregion
 
         #region Public functions
@@ -57,7 +57,7 @@ namespace MORR.Shared.Utility
         {
             foreach (var type in types)
             {
-                if (!capture((uint) type))
+                if (!Capture((uint) type))
                 {
                     throw new NotSupportedException(
                         $"GlobalHook currently does not support this message type ({type})");
@@ -90,7 +90,7 @@ namespace MORR.Shared.Utility
                     if (listeners[type].Count == 0)
                     {
                         listeners.Remove(type);
-                        stopCapture((uint)type);
+                        StopCapture((uint)type);
                     }
                 }
             }
