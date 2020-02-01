@@ -15,7 +15,6 @@
     "MonitorIndex": 0,
     "PromptUserForMonitorSelection": false
   },
-<<<<<<< HEAD
   "MORR.Core.Data.Transcoding.Mpeg.MpegEncoderConfiguration": {
     "Width": 1920,
     "Height": 1080,
@@ -25,10 +24,9 @@
   },
   "MORR.Modules.WebBrowser.WebBrowserModuleConfiguration": {
     "UrlSuffix": "60024/"
-=======
+  },
   "MORR.Modules.Mouse.MouseModuleConfiguration, Mouse.MORR-Module, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": {
     "SamplingRate": 10,
     "Threshold": 50
->>>>>>> Optimize the code according to suggestions
   }
 }

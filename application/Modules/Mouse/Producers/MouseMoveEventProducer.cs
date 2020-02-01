@@ -1,8 +1,6 @@
-using System.ComponentModel.Composition;
 using System.Threading;
 using System.Windows;
 using MORR.Modules.Mouse.Events;
-using MORR.Shared.Events;
 using MORR.Shared.Events.Queue;
 using MORR.Shared.Utility;
 
@@ -11,11 +9,6 @@ namespace MORR.Modules.Mouse.Producers
     /// <summary>
     ///     Provides a single-writer-multiple-reader queue for MouseMoveEvent
     /// </summary>
-    [Export(typeof(MouseMoveEventProducer))]
-    [Export(typeof(IReadOnlyEventQueue<MouseMoveEvent>))]
-    [Export(typeof(IReadWriteEventQueue<MouseMoveEvent>))]
-    [Export(typeof(IReadOnlyEventQueue<Event>))]
-    [PartCreationPolicy(CreationPolicy.Shared)]
     public class MouseMoveEventProducer : DefaultEventQueue<MouseMoveEvent>
     {
         /// <summary>
@@ -73,8 +66,8 @@ namespace MORR.Modules.Mouse.Producers
 
         public void Configure(int samplingRate, int threshold)
         {
-            this.SamplingRate = samplingRate;
-            this.Threshold = threshold;
+            SamplingRate = samplingRate;
+            Threshold = threshold;
         }
 
         /// <summary>
@@ -84,7 +77,7 @@ namespace MORR.Modules.Mouse.Producers
         {
             NativeMethods.GetCursorPos(out lastMousePosition);
 
-            int samplingTimeIntervalInMilliseconds = (int)(((double)1 / this.SamplingRate)*1000);
+            var samplingTimeIntervalInMilliseconds = (int) ((double) 1 / SamplingRate * 1000);
 
             mousePositionRecordingTimer = new Timer(GetMousePosition, null, 0, samplingTimeIntervalInMilliseconds);
         }

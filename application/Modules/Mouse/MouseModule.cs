@@ -41,9 +41,9 @@ namespace MORR.Modules.Mouse
         public static Guid Identifier => new Guid("EFF894B3-4DC9-4605-9937-F02F400B4A62");
 
         /// <summary>
-        ///     if the module is enabled or not.
-        ///     When a module is being enabled, all the mouse hook in the producers will be set.
-        ///     When a module is being disabled, all the mouse hook in the producers will be released.
+        ///     if the module is active or not.
+        ///     When a module is being activated, all the producers will start to capture user interacts.
+        ///     When a module is being deactivated, all the producers will stop capturing user interacts.
         /// </summary>
         public bool IsActive
         {
@@ -55,7 +55,7 @@ namespace MORR.Modules.Mouse
         Guid IModule.Identifier => Identifier;
 
         /// <summary>
-        ///     Initialize the module unenabled with KeyboardInteractEventProducer.
+        ///     Initialize the module with Configuration and Producers.
         /// </summary>
         public void Initialize()
         {
@@ -63,7 +63,7 @@ namespace MORR.Modules.Mouse
             var samplingRate = MouseModuleConfiguration.SamplingRate;
             var threshold = MouseModuleConfiguration.Threshold;
 
-            // initialize all producers
+            // configure all producers with retrieved parameters
             MouseMoveEventProducer.Configure(samplingRate, threshold);
         }
 

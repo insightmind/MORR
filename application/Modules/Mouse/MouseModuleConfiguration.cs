@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Text.Json;
 using MORR.Core.Configuration;
@@ -36,7 +35,8 @@ namespace MORR.Modules.Mouse
             }
             catch (KeyNotFoundException)
             {
-                throw new InvalidConfigurationException("Failed to parse the sampling rate and the threshold for mouse module.");
+                throw new InvalidConfigurationException(
+                    "Failed to parse the sampling rate and the threshold for mouse module.");
             }
         }
     }
