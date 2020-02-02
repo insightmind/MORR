@@ -41,7 +41,7 @@ namespace MORR.Modules.Mouse.Producers
                 var mousePosition = new Point { X = hookMessage.Data[0], Y = hookMessage.Data[1] };
                 var hwnd = hookMessage.Hwnd.ToString();
                 var @event = new MouseClickEvent
-                    { MouseAction = mouseAction, MousePosition = mousePosition, HWnd = hwnd };
+                    { MouseAction = mouseAction, MousePosition = mousePosition, HWnd = hwnd, IssuingModule = MouseModule.Identifier};
                 Enqueue(@event);
             }
         }

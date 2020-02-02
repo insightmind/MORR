@@ -29,7 +29,7 @@ namespace MORR.Modules.Mouse.Producers
             var mousePosition = new Point { X = hookMessage.Data[0], Y = hookMessage.Data[1] };
             var hwnd = hookMessage.Hwnd.ToString();
             var @event = new MouseScrollEvent
-                { ScrollAmount = scrollAmount, MousePosition = mousePosition, HWnd = hwnd };
+                { ScrollAmount = scrollAmount, MousePosition = mousePosition, HWnd = hwnd, IssuingModule = MouseModule.Identifier};
             Enqueue(@event);
         }
     }
