@@ -4,22 +4,18 @@ using MORR.Shared.Utility;
 using System;
 using System.IO;
 
-namespace MORR.Core.CLI.Commands.Process
+namespace MORR.Core.CLI.Commands.Processing
 {
-    internal class ProcessCommand : ICLICommand<ProcessOptions>
+    internal class ProcessCommand : ICommand<ProcessOptions>
     {
         private const string loadedFileMessage = "Load configuration file.";
         private const string loadInputMessage = "Load input file.";
         private const string sessionManagerMessage = "Load session manager with configuration file.";
         private const string startProcessingMessage = "Start processing session:";
+        private const string completeProcessingMessage = "Processing did complete!";
 
         public int Execute(ProcessOptions options)
         {
-            if (options == null)
-            {
-                return -1;
-            }
-
             try
             {
                 OutputFormatter.IsVerbose = options.IsVerbose;
@@ -39,8 +35,8 @@ namespace MORR.Core.CLI.Commands.Process
                 // Start processing
                 OutputFormatter.PrintDebug(startProcessingMessage);
                 sessionManager.Process(new[] { inputPath });
-
-                while (true) { }
+                OutputFormatter.PrintDebug(completeProcessingMessage);
+                return 0;
             }
             catch (Exception exception) // I know this is not a recommend way to deal with exception, however this method receives a arbitrary amount of exception types.
             {

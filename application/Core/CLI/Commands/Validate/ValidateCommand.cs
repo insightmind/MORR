@@ -6,7 +6,7 @@ using System.IO;
 
 namespace MORR.Core.CLI.Commands.Validate
 {
-    internal class ValidateCommand : ICLICommand<ValidateOptions>
+    internal class ValidateCommand : ICommand<ValidateOptions>
     {
         private const string successMessage = "The configuration file is valid!";
         private const string failureMessage = "The configuration file is invalid!";

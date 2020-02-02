@@ -137,16 +137,23 @@ void StopCapture(UINT type) {
 };
 
 DLL void SetHook(WH_MessageCallBack progressCallback) {
+    if (GetMessageHook || CallWndProcHook) {
+        /* the stored values in this DLL might be persisting even
+           over program restarts if not detached properly */
+        fprintf(stderr, "GlobalHook wasn't properly detached last time, trying to reset before attaching\n");
+        RemoveHook();
+    }
     running = true;
     globalBufferIterator = 0;
     globalCallback = progressCallback;
+
     if (GetMessageHook == nullptr) {
         if ((GetMessageHook = SetWindowsHookEx(WH_GETMESSAGE, GetMsgProc, hInstHookDll, 0)) == nullptr)
-            printf("Error attaching GetMessage hook. Errorcode %d\n", GetLastError());
+            fprintf(stderr, "Error attaching GetMessage hook. Errorcode %d\n", GetLastError());
     }
     if (CallWndProcHook == nullptr) {
         if ((CallWndProcHook = SetWindowsHookEx(WH_CALLWNDPROC, CallWndProc, hInstHookDll, 0)) == nullptr)
-            printf("Error attaching WndProc hook. Errorcode %d\n", GetLastError());
+            fprintf(stderr, "Error attaching WndProc hook. Errorcode %d\n", GetLastError());
     }
     if (GetMessageHook == nullptr || CallWndProcHook == nullptr) {
         RemoveHook();
@@ -158,23 +165,28 @@ DLL void SetHook(WH_MessageCallBack progressCallback) {
 
 DLL void RemoveHook()
 {
+    running = false;
     if (GetMessageHook != nullptr) {
         if (!UnhookWindowsHookEx(GetMessageHook))
-            printf("Error unhooking GetMessage hook. Errorcode %d\n", GetLastError());
+            fprintf(stderr, "Error unhooking GetMessage hook. Errorcode %d\n", GetLastError());
     }
     if (CallWndProcHook != nullptr) {
         if (!UnhookWindowsHookEx(CallWndProcHook))
-            printf("Error unhooking CallWndProc hook. Errorcode %d\n", GetLastError());
+            fprintf(stderr, "Error unhooking CallWndProc hook. Errorcode %d\n", GetLastError());
     }
-    running = false;
     GetMessageHook = nullptr;
     CallWndProcHook = nullptr;
     GetMessageHook = nullptr;
-    dispatcherthread->join();
-    delete dispatcherthread;
+    if (dispatcherthread) {
+        dispatcherthread->join();
+        delete dispatcherthread;
+    }
     dispatcherthread = nullptr;
-    CloseHandle(semaphore);
+    if (semaphore)
+        CloseHandle(semaphore);
     semaphore = nullptr;
+    globalBufferIterator = 0;
+    ZeroMemory(globalMessageBuffer, sizeof(globalMessageBuffer));
     printf("GlobalHook: Unhooked\n");
 }
 

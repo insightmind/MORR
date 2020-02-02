@@ -1,6 +1,6 @@
 ﻿namespace MORR.Core.CLI.Commands
 {
-    internal interface ICLICommand<in TOptions> where TOptions : ICommandOptions
+    interface ICommand<in TOptions> where TOptions : CommandOptions
     {
         int Execute(TOptions options);
     }

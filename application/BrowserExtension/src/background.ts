@@ -29,7 +29,7 @@ class BackgroundScript {
     private isConnected : boolean;
     private static readonly RETRYDELAYMS = 5000;
     private isRecording : boolean;
-
+    private static readonly defaultTitle : string = "MORR Browser Extension"; //default title for the browser extension icon
     /**
      * Creates an instance of background script and initializes the listeners.
      */
@@ -164,7 +164,6 @@ class BackgroundScript {
         throw new Error("Method not implemented.");
     }
 
-
     /**
      * Sets the badge in the browser tray
      * @param status the current status
@@ -174,15 +173,21 @@ class BackgroundScript {
         let color : string;
         switch(status) {
             case(ExtensionState.Disconnected):
+                chrome.browserAction.setIcon({path: "logos/morr_default.png"});
+                chrome.browserAction.setTitle({title: `${BackgroundScript.defaultTitle}\nDisconnected`});
                 label = "DC";
                 color = "#333333"
                 break;
             case(ExtensionState.Ready):
-                label = "RDY";
+                chrome.browserAction.setIcon({path: "logos/morr_default.png"});
+                chrome.browserAction.setTitle({title: `${BackgroundScript.defaultTitle}\nReady`});
+                label = "";
                 color = "#00AA00";
                 break;
             case(ExtensionState.Recording):
-                label = "REC";
+                chrome.browserAction.setIcon({path: "logos/morr_active_recording.png"});
+                chrome.browserAction.setTitle({title: `${BackgroundScript.defaultTitle}\nRecording`});
+                label = "";
                 color = "#AA0000";
                 break;
             default:
