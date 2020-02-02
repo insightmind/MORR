@@ -48,7 +48,7 @@ namespace MORR.Modules.Mouse.Producers
             NativeMethods.POINT currentMousePosition;
             NativeMethods.GetCursorPos(out currentMousePosition);
 
-            Point temp = new Point(currentMousePosition.X, currentMousePosition.Y);
+            var temp = new Point(currentMousePosition.X, currentMousePosition.Y);
             // compare the last and the current mouse position and compute their distance
             var distance = Point.Subtract(new Point(lastMousePosition.X, lastMousePosition.Y), temp).Length;
 

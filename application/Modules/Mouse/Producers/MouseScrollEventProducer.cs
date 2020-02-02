@@ -1,4 +1,3 @@
-using System;
 using System.Windows;
 using MORR.Modules.Mouse.Events;
 using MORR.Shared.Events.Queue;
@@ -28,8 +27,7 @@ namespace MORR.Modules.Mouse.Producers
             //(short)(((long)hookMessage.wParam >> 16) & 0xffff) retrieves the scrollAmount from wParam
             var scrollAmount = (short) (((long) hookMessage.wParam >> 16) & 0xffff);
             var mousePosition = new Point { X = hookMessage.Data[0], Y = hookMessage.Data[1] };
-            var hwnd = hookMessage.Hwnd;
-            Console.WriteLine("{0}", hwnd);
+            var hwnd = hookMessage.Hwnd.ToString();
             var @event = new MouseScrollEvent
                 { ScrollAmount = scrollAmount, MousePosition = mousePosition, HWnd = hwnd };
             Enqueue(@event);

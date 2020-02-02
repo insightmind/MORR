@@ -17,8 +17,8 @@ namespace MORR.Modules.Mouse.Events
         public short ScrollAmount { get; set; }
 
         /// <summary>
-        ///     The handle of the window in which the mouse scroll occurred
+        ///     The handle of the window in which the mouse scroll occurred in String.
         /// </summary>
-        public IntPtr HWnd { get; set; }
+        public string HWnd { get; set; }
     }
 }
