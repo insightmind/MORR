@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using MORR.Modules.Clipboard.Events;
 using MORR.Shared.Events.Queue;
 using MORR.Shared.Utility;
@@ -23,9 +22,10 @@ namespace MORR.Modules.Clipboard.Producers
                 return;
             }
 
-            var text = NativeMethods.getClipboardText();
+            var text = NativeMethods.GetClipboardText();
 
-            var clipboardCopyEvent = new ClipboardCopyEvent { ClipboardText = text, IssuingModule = ClipboardModule.Identifier };
+            var clipboardCopyEvent = new ClipboardCopyEvent
+                { ClipboardText = text, IssuingModule = ClipboardModule.Identifier };
             Enqueue(clipboardCopyEvent);
         }
 
@@ -47,7 +47,7 @@ namespace MORR.Modules.Clipboard.Producers
             /// <param name="lParam">The LPARAM of the message</param>
             public delegate void ClipboardEventHandler(IntPtr hwnd, uint uMsg, IntPtr wParam, IntPtr lParam);
 
-            private ClipboardNativeMethods.WindowProcedureHandler internalWindowMessageHandler;
+            private NativeMethods.WindowProcedureHandler internalWindowMessageHandler;
 
             public ClipboardWindowMessageSink()
             {
@@ -55,7 +55,7 @@ namespace MORR.Modules.Clipboard.Producers
 
                 internalWindowMessageHandler = OnClipboardUpdate;
 
-                ClipboardNativeMethods.WindowClass windowClass;
+                NativeMethods.WindowClass windowClass;
 
                 windowClass.style = 0;
                 windowClass.lpfnWndProc = internalWindowMessageHandler;
@@ -69,21 +69,21 @@ namespace MORR.Modules.Clipboard.Producers
                 windowClass.lpszClassName = className;
 
 
-                ClipboardNativeMethods.RegisterClass(ref windowClass);
+                NativeMethods.RegisterClass(ref windowClass);
 
                 // Creates window to register clipboard update messages
-                WindowHandle = ClipboardNativeMethods.CreateWindowEx(0,
-                                                                     className,
-                                                                     "",
-                                                                     0,
-                                                                     0, 0,
-                                                                     1, 1,
-                                                                     IntPtr.Zero,
-                                                                     IntPtr.Zero,
-                                                                     IntPtr.Zero,
-                                                                     IntPtr.Zero);
+                WindowHandle = NativeMethods.CreateWindowEx(0,
+                                                            className,
+                                                            "",
+                                                            0,
+                                                            0, 0,
+                                                            1, 1,
+                                                            IntPtr.Zero,
+                                                            IntPtr.Zero,
+                                                            IntPtr.Zero,
+                                                            IntPtr.Zero);
 
-                ClipboardNativeMethods.AddClipboardFormatListener(WindowHandle);
+                NativeMethods.AddClipboardFormatListener(WindowHandle);
             }
 
             /// <summary>
@@ -103,7 +103,7 @@ namespace MORR.Modules.Clipboard.Producers
                     ClipboardUpdated?.Invoke(hWnd, messageId, wParam, lParam);
                 }
 
-                return ClipboardNativeMethods.DefWindowProc(hWnd, messageId, wParam, lParam);
+                return NativeMethods.DefWindowProc(hWnd, messageId, wParam, lParam);
             }
 
             #region Dispose
@@ -131,80 +131,10 @@ namespace MORR.Modules.Clipboard.Producers
                 }
 
                 isDisposed = true;
-                ClipboardNativeMethods.RemoveClipboardFormatListener(WindowHandle);
-                ClipboardNativeMethods.DestroyWindow(WindowHandle);
+                NativeMethods.RemoveClipboardFormatListener(WindowHandle);
+                NativeMethods.DestroyWindow(WindowHandle);
                 internalWindowMessageHandler = null;
             }
-
-            #endregion
-        }
-
-        #endregion
-
-        #region Clipboard native methods
-
-        internal static class ClipboardNativeMethods
-        {
-            // Clipboard data format
-            public const int CF_TEXT = 1;
-
-            #region structs
-
-            [StructLayout(LayoutKind.Sequential)]
-            public struct WindowClass
-            {
-                public uint style;
-                public WindowProcedureHandler lpfnWndProc;
-                public int cbClsExtra;
-                public int cbWndExtra;
-                public IntPtr hInstance;
-                public IntPtr hIcon;
-                public IntPtr hCursor;
-                public IntPtr hbrBackground;
-
-                [MarshalAs(UnmanagedType.LPWStr)] public string lpszMenuName;
-
-                [MarshalAs(UnmanagedType.LPWStr)] public string lpszClassName;
-            }
-
-            #endregion
-
-            #region methods
-
-            public delegate IntPtr WindowProcedureHandler(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam);
-
-            [DllImport("user32.dll", EntryPoint = "CreateWindowExW")]
-            public static extern IntPtr CreateWindowEx(int dwExStyle,
-                                                       [MarshalAs(UnmanagedType.LPWStr)] string lpClassName,
-                                                       [MarshalAs(UnmanagedType.LPWStr)] string lpWindowName,
-                                                       int dwStyle,
-                                                       int x,
-                                                       int y,
-                                                       int nWidth,
-                                                       int nHeight,
-                                                       IntPtr hWndParent,
-                                                       IntPtr hMenu,
-                                                       IntPtr hInstance,
-                                                       IntPtr lpParam);
-
-            [DllImport("user32.dll", EntryPoint = "RegisterClassW")]
-            public static extern short RegisterClass(ref WindowClass lpWndClass);
-
-
-            [DllImport("user32.dll")]
-            public static extern bool DestroyWindow(IntPtr hWnd);
-
-            [DllImport("user32.dll")]
-            public static extern IntPtr DefWindowProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
-
-
-            [DllImport("user32.dll", SetLastError = true)]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool AddClipboardFormatListener(IntPtr hwnd);
-
-            [DllImport("user32.dll", SetLastError = true)]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool RemoveClipboardFormatListener(IntPtr hwnd);
 
             #endregion
         }
@@ -229,10 +159,7 @@ namespace MORR.Modules.Clipboard.Producers
         /// </summary>
         public void StopCapture()
         {
-            if (clipboardWindowMessageSink != null)
-            {
-                clipboardWindowMessageSink.Dispose();
-            }
+            clipboardWindowMessageSink?.Dispose();
         }
 
         #endregion

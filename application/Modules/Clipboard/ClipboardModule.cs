@@ -44,22 +44,22 @@ namespace MORR.Modules.Clipboard
         public bool IsActive
         {
             get => isActive;
-            set => Utility.SetAndDispatch(ref isActive, value, startCapture,
-                                          stopCapture);
+            set => Utility.SetAndDispatch(ref isActive, value, StartCapture,
+                                          StopCapture);
         }
 
         Guid IModule.Identifier => Identifier;
 
         public void Initialize() { }
 
-        private void startCapture()
+        private void StartCapture()
         {
             ClipboardCutEventProducer.StartCapture();
             ClipboardPasteEventProducer.StartCapture();
             ClipboardCopyEventProducer.StartCapture();
         }
 
-        private void stopCapture()
+        private void StopCapture()
         {
             ClipboardCutEventProducer.StopCapture();
             ClipboardPasteEventProducer.StopCapture();

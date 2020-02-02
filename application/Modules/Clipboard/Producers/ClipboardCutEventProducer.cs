@@ -24,19 +24,13 @@ namespace MORR.Modules.Clipboard.Producers
 
         #region private methods
 
-        /// <summary>
-        ///     The callback for the clipboard hook
-        /// </summary>
-        /// <param name="nCode">The hook code, if it isn't >= 0, the function shouldn't do anyting</param>
-        /// <param name="wParam">The event type</param>
-        /// <param name="lParam">The clipboard cut event hook information</param>
-        /// <returns></returns>
         private void GlobalHookCallBack(GlobalHook.HookMessage message)
         {
-            var text = NativeMethods.getClipboardText();
+            var text = NativeMethods.GetClipboardText();
 
             //create the corresponding new Event
-            var clipboardCutEvent = new ClipboardCutEvent { ClipboardText = text, IssuingModule = ClipboardModule.Identifier };
+            var clipboardCutEvent = new ClipboardCutEvent
+                { ClipboardText = text, IssuingModule = ClipboardModule.Identifier };
 
             //enqueue the new event.
             Enqueue(clipboardCutEvent);
