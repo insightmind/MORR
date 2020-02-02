@@ -115,6 +115,38 @@ namespace MORR.Shared.Utility
 
         #endregion
 
+        #region Clipboard text helper
+
+        /// <summary>
+        ///     Gets the text from the clipboard
+        /// </summary>
+        /// <param name="hwnd">Pointer to the window that currently has clipboard</param>
+        /// <returns>String representing text from the clipboard</returns>
+        public static string GetClipboardText()
+        {
+            OpenClipboard(GetOpenClipboardWindow());
+
+            //Gets pointer to clipboard data in the selected format
+            var clipboardDataPointer = GetClipboardData((uint) ClipboardFormat.CF_UNICODETEXT);
+
+            var clipboardLock = GlobalLock(clipboardDataPointer);
+
+            var text = Marshal.PtrToStringAuto(clipboardLock);
+
+            GlobalUnlock(clipboardLock);
+
+            CloseClipboard();
+
+            if (text == null)
+            {
+                throw new Exception("Failed to get clipboard text.");
+            }
+
+            return text;
+        }
+
+        #endregion
+
         #region Window for process helper
 
         /// <summary>
@@ -176,7 +208,7 @@ namespace MORR.Shared.Utility
 
         [DllImport("user32.dll")]
         public static extern IntPtr GetActiveWindow();
-
+      
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         static extern uint RegisterWindowMessage(string lpString);
 
@@ -186,6 +218,60 @@ namespace MORR.Shared.Utility
 
         [DllImport("kernel32.dll")]
         public static extern uint GetCurrentThreadId();
+
+        [DllImport("user32.dll")]
+        public static extern bool OpenClipboard(IntPtr hWndNewOwner);
+
+        [DllImport("user32.dll")]
+        public static extern bool CloseClipboard();
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetOpenClipboardWindow();
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetClipboardData(uint uFormat);
+
+        [DllImport("kernel32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GlobalUnlock(IntPtr hMem);
+
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr GlobalLock(IntPtr hMem);
+
+        public delegate IntPtr WindowProcedureHandler(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll", EntryPoint = "CreateWindowExW")]
+        public static extern IntPtr CreateWindowEx(int dwExStyle,
+                                                   [MarshalAs(UnmanagedType.LPWStr)] string lpClassName,
+                                                   [MarshalAs(UnmanagedType.LPWStr)] string lpWindowName,
+                                                   int dwStyle,
+                                                   int x,
+                                                   int y,
+                                                   int nWidth,
+                                                   int nHeight,
+                                                   IntPtr hWndParent,
+                                                   IntPtr hMenu,
+                                                   IntPtr hInstance,
+                                                   IntPtr lpParam);
+
+        [DllImport("user32.dll", EntryPoint = "RegisterClassW")]
+        public static extern short RegisterClass(ref WindowClass lpWndClass);
+
+
+        [DllImport("user32.dll")]
+        public static extern bool DestroyWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr DefWindowProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
+
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool AddClipboardFormatListener(IntPtr hwnd);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool RemoveClipboardFormatListener(IntPtr hwnd);
 
         #endregion
 
@@ -231,6 +317,24 @@ namespace MORR.Shared.Utility
             public int Flags;
             public int Time;
             public int DWExtraInfo;
+        }
+
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct WindowClass
+        {
+            public uint style;
+            public WindowProcedureHandler lpfnWndProc;
+            public int cbClsExtra;
+            public int cbWndExtra;
+            public IntPtr hInstance;
+            public IntPtr hIcon;
+            public IntPtr hCursor;
+            public IntPtr hbrBackground;
+
+            [MarshalAs(UnmanagedType.LPWStr)] public string lpszMenuName;
+
+            [MarshalAs(UnmanagedType.LPWStr)] public string lpszClassName;
         }
 
         #endregion
@@ -434,6 +538,7 @@ namespace MORR.Shared.Utility
             WM_PASTE = 0x302,
             WM_CLEAR = 0x303,
             WM_UNDO = 0x304,
+            WM_CLIPBOARDUPDATE = 0x031D,
 
             WM_RENDERFORMAT = 0x305,
             WM_RENDERALLFORMATS = 0x306,
@@ -482,6 +587,36 @@ namespace MORR.Shared.Utility
             VK_MENU = 0x12,
             VK_LWIN = 0x5B,
             VK_RWIN = 0x5C
+        }
+
+        public enum ClipboardFormat
+        {
+            CF_BITMAP = 2,
+            CF_DIB = 8,
+            CF_DIBV5 = 17,
+            CF_DIF = 5,
+            CF_DSPBITMAP = 0x0082,
+            CF_DSPENHMETAFILE = 0x008E,
+            CF_DSPMETAFILEPICT = 0x0083,
+            CF_DSPTEXT = 0x0081,
+            CF_ENHMETAFILE = 14,
+            CF_GDIOBJFIRST = 0x0300,
+            CF_GDIOBJLAST = 0x03FF,
+            CF_HDROP = 15,
+            CF_LOCALE = 16,
+            CF_METAFILEPICT = 3,
+            CF_OEMTEXT = 7,
+            CF_OWNERDISPLAY = 0x0080,
+            CF_PALETTE = 9,
+            CF_PENDATA = 10,
+            CF_PRIVATEFIRST = 0x0200,
+            CF_PRIVATELAST = 0x02FF,
+            CF_RIFF = 11,
+            CF_SYLK = 4,
+            CF_TEXT = 1,
+            CF_TIFF = 6,
+            CF_UNICODETEXT = 13,
+            CF_WAVE = 12
         }
 
         #endregion

@@ -12,14 +12,22 @@
     <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\Modules</OutDir>
     <AssemblyName>Clipboard.MORR-Module</AssemblyName>
     <Nullable>enable</Nullable>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <CopyLocalLockFileDependencies>true</CopyLocalLockFileDependencies>
   </PropertyGroup>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\MORR\MORR.csproj">
+    <ProjectReference Include="..\..\Common\Shared\Shared.csproj">
       <Private>false</Private>
       <ExcludeAssets>runtime</ExcludeAssets>
     </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="WindowsBase">
+      <HintPath>C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\3.1.1\WindowsBase.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>
