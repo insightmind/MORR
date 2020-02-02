@@ -137,16 +137,35 @@ void StopCapture(UINT type) {
 };
 
 DLL void SetHook(WH_MessageCallBack progressCallback) {
+    if (GetMessageHook || CallWndProcHook) {
+        /* the stored values in this DLL might be persisting even
+           over program restarts if not detached properly */
+        running = false;
+        fprintf(stderr, "GlobalHook wasn't properly detached last time, trying to reset before attaching\n");
+        /* reset shared data */
+        if (GetMessageHook)
+            UnhookWindowsHookEx(GetMessageHook);
+        if (CallWndProcHook)
+            UnhookWindowsHookEx(CallWndProcHook);
+        GetMessageHook = nullptr;
+        CallWndProcHook = nullptr;
+        dispatcherthread = nullptr;
+        globalBufferIterator = 0;
+        ZeroMemory(globalMessageBuffer, sizeof(globalMessageBuffer));
+        if (dispatcherthread)
+            dispatcherthread->join();
+    }
     running = true;
     globalBufferIterator = 0;
     globalCallback = progressCallback;
+
     if (GetMessageHook == nullptr) {
         if ((GetMessageHook = SetWindowsHookEx(WH_GETMESSAGE, GetMsgProc, hInstHookDll, 0)) == nullptr)
-            printf("Error attaching GetMessage hook. Errorcode %d\n", GetLastError());
+            fprintf(stderr, "Error attaching GetMessage hook. Errorcode %d\n", GetLastError());
     }
     if (CallWndProcHook == nullptr) {
         if ((CallWndProcHook = SetWindowsHookEx(WH_CALLWNDPROC, CallWndProc, hInstHookDll, 0)) == nullptr)
-            printf("Error attaching WndProc hook. Errorcode %d\n", GetLastError());
+            fprintf(stderr, "Error attaching WndProc hook. Errorcode %d\n", GetLastError());
     }
     if (GetMessageHook == nullptr || CallWndProcHook == nullptr) {
         RemoveHook();
@@ -160,11 +179,11 @@ DLL void RemoveHook()
 {
     if (GetMessageHook != nullptr) {
         if (!UnhookWindowsHookEx(GetMessageHook))
-            printf("Error unhooking GetMessage hook. Errorcode %d\n", GetLastError());
+            fprintf(stderr, "Error unhooking GetMessage hook. Errorcode %d\n", GetLastError());
     }
     if (CallWndProcHook != nullptr) {
         if (!UnhookWindowsHookEx(CallWndProcHook))
-            printf("Error unhooking CallWndProc hook. Errorcode %d\n", GetLastError());
+            fprintf(stderr, "Error unhooking CallWndProc hook. Errorcode %d\n", GetLastError());
     }
     running = false;
     GetMessageHook = nullptr;
