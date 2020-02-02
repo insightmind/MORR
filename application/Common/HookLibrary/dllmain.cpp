@@ -149,11 +149,11 @@ DLL void SetHook(WH_MessageCallBack progressCallback) {
             UnhookWindowsHookEx(CallWndProcHook);
         GetMessageHook = nullptr;
         CallWndProcHook = nullptr;
+        if (dispatcherthread)
+            dispatcherthread->join();
         dispatcherthread = nullptr;
         globalBufferIterator = 0;
         ZeroMemory(globalMessageBuffer, sizeof(globalMessageBuffer));
-        if (dispatcherthread)
-            dispatcherthread->join();
     }
     running = true;
     globalBufferIterator = 0;
