@@ -39,7 +39,7 @@ namespace MORR.Shared.Utility
         {
             // We register our custom cancel message to receive a non used message
             // identifier
-            uint cancelId = RegisterWindowMessage(cancelMessage);
+            var cancelId = RegisterWindowMessage(cancelMessage);
 
             // We need to store the current thread id to later
             // be able to post the cancel message to the loop.
@@ -48,6 +48,7 @@ namespace MORR.Shared.Utility
             int status;
             while ((status = GetMessage(out var msg, IntPtr.Zero, 0, 0)) != 0) 
             {
+                // -1 indicates error - do not process such messages
                 if (status == -1) continue;
 
                 var msgId = msg.Message;
@@ -66,7 +67,7 @@ namespace MORR.Shared.Utility
         {
             if (!loopThreadId.HasValue) return;
 
-            uint message = RegisterWindowMessage(cancelMessage);
+            var message = RegisterWindowMessage(cancelMessage);
             PostThreadMessage(loopThreadId.Value, message, UIntPtr.Zero, IntPtr.Zero);
             
             loopThreadId = null;
