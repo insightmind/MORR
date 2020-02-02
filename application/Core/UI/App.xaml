@@ -14,7 +14,7 @@
                             <ViewModel:ApplicationViewModel />
                         </Icon:NotifyIcon.DataContext>
                         <Icon:NotifyIcon.IconSource>
-                            <BitmapImage UriSource="Assets/Icon/Icon.ico" />
+                            <BitmapImage UriSource="Assets/Icon/MORR_Default.ico" />
                         </Icon:NotifyIcon.IconSource>
                         <Icon:NotifyIcon.ContextMenu>
                             <ContextMenu>
@@ -22,6 +22,7 @@
                                           Command="{Binding ToggleRecordingCommand}" />
                                 <MenuItem Header="Open recordings directory"
                                           Command="{Binding OpenRecordingsDirectoryCommand}" />
+                                <Separator/>
                                 <MenuItem Header="Exit" Command="{Binding ExitCommand}" />
                             </ContextMenu>
                         </Icon:NotifyIcon.ContextMenu>
