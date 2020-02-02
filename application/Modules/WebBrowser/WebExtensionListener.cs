@@ -2,10 +2,10 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.Json;
-using System.Linq;
 using MORR.Shared.Utility;
 
 namespace MORR.Modules.WebBrowser
@@ -16,8 +16,8 @@ namespace MORR.Modules.WebBrowser
     /// </summary>
     internal class WebExtensionListener : IWebBrowserEventObservable
     {
-        private readonly HttpListener listener;
         private const string serializedTypeField = "type";
+        private readonly HttpListener listener;
 
         //deliberately don't use IList, as RemoveAll function is used later
         private readonly Dictionary<EventLabel, List<IWebBrowserEventObserver>> observers;
@@ -115,8 +115,10 @@ namespace MORR.Modules.WebBrowser
 #pragma warning disable IDE1006
             // ReSharper disable once InconsistentNaming
             public string application { get; } = "MORR";
+
             // ReSharper disable once InconsistentNaming
             public string response { get; }
+
             // ReSharper disable once InconsistentNaming
             public string? config { get; }
 #pragma warning restore IDE1006
@@ -323,24 +325,31 @@ namespace MORR.Modules.WebBrowser
 
         public void Subscribe(IWebBrowserEventObserver observer, params EventLabel[] labels)
         {
-            foreach (EventLabel label in labels)
+            foreach (var label in labels)
             {
                 if (!observers.ContainsKey(label)) //create list for label is nonexistent
+                {
                     observers.Add(label, new List<IWebBrowserEventObserver>());
+                }
+
                 if (!observers[label].Contains(observer))
+                {
                     observers[label].Add(observer);
+                }
             }
         }
 
         public void Unsubscribe(IWebBrowserEventObserver observer, params EventLabel[] labels)
         {
-            foreach (EventLabel label in labels)
+            foreach (var label in labels)
             {
                 if (observers.ContainsKey(label))
                 {
                     observers[label].Remove(observer);
                     if (!observers[label].Any()) //clean up empty lists
+                    {
                         observers.Remove(label);
+                    }
                 }
             }
         }

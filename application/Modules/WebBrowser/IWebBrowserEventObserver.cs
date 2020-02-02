@@ -1,6 +1,4 @@
-﻿using System;
-using System.Text.Json;
-using MORR.Modules.WebBrowser.Events;
+﻿using System.Text.Json;
 
 namespace MORR.Modules.WebBrowser
 {

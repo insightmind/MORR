@@ -8,13 +8,13 @@ namespace MORR.Modules.WebBrowser.Producers
     /// </summary>
     public class OpenTabEventProducer : WebBrowserEventProducer<OpenTabEvent>
     {
+        public override EventLabel HandledEventLabel => EventLabel.OPENTAB;
+
         public override void Notify(JsonElement eventJson)
         {
             var @event = new OpenTabEvent();
             @event.Deserialize(eventJson);
             Enqueue(@event);
         }
-
-        public override EventLabel HandledEventLabel => EventLabel.OPENTAB;
     }
 }

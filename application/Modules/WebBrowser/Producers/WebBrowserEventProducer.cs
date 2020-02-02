@@ -16,7 +16,7 @@ namespace MORR.Modules.WebBrowser.Producers
         /// <summary>
         ///     Simply forward the event to the internal queue if its of the appropriate type. Ignore otherwise.
         /// </summary>
-        /// <param name="event"></param>
+        /// <param name="eventJson">A JsonElement holding an event.</param>
         public virtual void Notify(JsonElement eventJson)
         {
             throw new NotSupportedException("Can not invoke notify() on abstract WebBrowserEventProducer");

@@ -8,12 +8,13 @@ namespace MORR.Modules.WebBrowser.Producers
     /// </summary>
     public class CloseTabEventProducer : WebBrowserEventProducer<CloseTabEvent>
     {
+        public override EventLabel HandledEventLabel => EventLabel.CLOSETAB;
+
         public override void Notify(JsonElement eventJson)
         {
             var @event = new CloseTabEvent();
             @event.Deserialize(eventJson);
             Enqueue(@event);
         }
-        public override EventLabel HandledEventLabel => EventLabel.CLOSETAB;
     }
 }

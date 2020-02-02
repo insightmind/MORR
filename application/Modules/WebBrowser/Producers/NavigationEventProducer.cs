@@ -8,13 +8,13 @@ namespace MORR.Modules.WebBrowser.Producers
     /// </summary>
     public class NavigationEventProducer : WebBrowserEventProducer<NavigationEvent>
     {
+        public override EventLabel HandledEventLabel => EventLabel.NAVIGATION;
+
         public override void Notify(JsonElement eventJson)
         {
             var @event = new NavigationEvent();
             @event.Deserialize(eventJson);
             Enqueue(@event);
         }
-
-        public override EventLabel HandledEventLabel => EventLabel.NAVIGATION;
     }
 }

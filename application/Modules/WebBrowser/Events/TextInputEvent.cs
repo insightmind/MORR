@@ -3,21 +3,22 @@
 namespace MORR.Modules.WebBrowser.Events
 {
     /// <summary>
-    /// A text input user interaction
+    ///     A text input user interaction
     /// </summary>
     public class TextInputEvent : WebBrowserEvent
     {
         private const string serializedTextField = "text";
         private const string serializedTextBoxField = "target";
+
         /// <summary>
-        /// The text that was inputted by the user on the website
+        ///     The text that was inputted by the user on the website
         /// </summary>
         public string InputtedText { get; set; }
 
         /// <summary>
-        /// The textbox where the text was inputted in
+        ///     The textbox where the text was inputted in
         /// </summary>
-       public string Textbox { get; set; }
+        public string Textbox { get; set; }
 
         protected override void DeserializeSpecificAttributes(JsonElement parsed)
         {
@@ -26,4 +27,3 @@ namespace MORR.Modules.WebBrowser.Events
         }
     }
 }
- 

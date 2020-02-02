@@ -24,19 +24,16 @@ namespace MORR.Modules.WebBrowser
 
         [Import] private OpenTabEventProducer openTabEventProducer;
 
-        private List<IWebBrowserEventObserver> producers;
-
         [Import] private SwitchTabEventProducer switchTabEventProducer;
 
         [Import] private TextInputEventProducer textInputEventProducer;
 
         [Import] private TextSelectionEventProducer textSelectionEventProducer;
-
-        [Import]
-        private WebBrowserModuleConfiguration Configuration { get; set; }
+        [Import] private WebBrowserModuleConfiguration Configuration { get; set; }
 
         private bool isActive;
         private WebExtensionListener listener;
+        private List<IWebBrowserEventObserver> producers;
 
         public bool IsActive
         {

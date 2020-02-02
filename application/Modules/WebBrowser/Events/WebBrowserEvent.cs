@@ -5,13 +5,14 @@ using MORR.Shared.Events;
 namespace MORR.Modules.WebBrowser.Events
 {
     /// <summary>
-    /// A generic web browser event which all specific WebBrowserEvents inherit from.
+    ///     A generic web browser event which all specific WebBrowserEvents inherit from.
     /// </summary>
     public abstract class WebBrowserEvent : Event
     {
         private const string serializedTabIdField = "tabID";
         private const string serializedUrlField = "url";
         private const string serializedTimeStampField = "timeStamp";
+
         /// <summary>
         ///     The identifier of the tab where the web browser event occured in
         /// </summary>
@@ -28,7 +29,7 @@ namespace MORR.Modules.WebBrowser.Events
         /// <param name="serialized">The serialized event</param>
         public void Deserialize(string serialized)
         {
-            this.Deserialize(JsonDocument.Parse(serialized).RootElement);
+            Deserialize(JsonDocument.Parse(serialized).RootElement);
         }
 
         /// <summary>
@@ -45,10 +46,7 @@ namespace MORR.Modules.WebBrowser.Events
         ///     Deserialize the attributes specific to the event type.
         /// </summary>
         /// <param name="parsed"></param>
-        protected virtual void DeserializeSpecificAttributes(JsonElement parsed)
-        {
-
-        }
+        protected virtual void DeserializeSpecificAttributes(JsonElement parsed) { }
 
         /// <summary>
         ///     Deserialize the attributes shared by all browser event types.
@@ -59,8 +57,8 @@ namespace MORR.Modules.WebBrowser.Events
             TabID = parsed.GetProperty(serializedTabIdField).GetInt32();
             CurrentURL = new Uri(parsed.GetProperty(serializedUrlField).ToString());
             Timestamp = parsed.GetProperty(serializedTimeStampField).GetDateTime();
-            IssuingModule = new Guid("e9240dc4-f33f-43db-a419-5b36d8279c88"); //TODO: actually obtain this from the module
+            IssuingModule =
+                new Guid("e9240dc4-f33f-43db-a419-5b36d8279c88"); //TODO: actually obtain this from the module
         }
     }
-
 }
