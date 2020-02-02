@@ -65,11 +65,17 @@ namespace MORR.Modules.Mouse.Producers
             return messageType switch
             {
                 NativeMethods.MessageType.WM_RBUTTONDOWN => MouseAction.RightClick,
+                NativeMethods.MessageType.WM_NCRBUTTONDOWN => MouseAction.RightClick,
                 NativeMethods.MessageType.WM_LBUTTONDOWN => MouseAction.LeftClick,
+                NativeMethods.MessageType.WM_NCLBUTTONDOWN => MouseAction.LeftClick,
                 NativeMethods.MessageType.WM_MBUTTONDOWN => MouseAction.MiddleClick,
+                NativeMethods.MessageType.WM_NCMBUTTONDOWN => MouseAction.MiddleClick,
                 NativeMethods.MessageType.WM_RBUTTONDBLCLK => MouseAction.RightDoubleClick,
+                NativeMethods.MessageType.WM_NCRBUTTONDBLCLK => MouseAction.RightDoubleClick,
                 NativeMethods.MessageType.WM_LBUTTONDBLCLK => MouseAction.LeftDoubleClick,
+                NativeMethods.MessageType.WM_NCLBUTTONDBLCLK => MouseAction.LeftDoubleClick,
                 NativeMethods.MessageType.WM_MBUTTONDBLCLK => MouseAction.MiddleDoubleClick,
+                NativeMethods.MessageType.WM_NCMBUTTONDBLCLK => MouseAction.MiddleDoubleClick,
                 _ => MouseAction.None
             };
         }
