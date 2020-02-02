@@ -7,7 +7,7 @@
     ]
   },
   "MORR.Core.Session.SessionConfiguration": {
-    "Encoder": "MORR.Core.CLI.Output.OutputFormatter",
+    "Encoder": "MORR.Core.Data.Transcoding.Json.JsonEncoder",
     "RecordingDirectory": "%userprofile%\\Videos\\MORR"
   },
   "MORR.Core.Data.Capture.Video.Desktop.DesktopCaptureConfiguration": {

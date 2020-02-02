@@ -52,8 +52,8 @@ namespace MORR.Core.Data.IntermediateFormat.Json
 
             var sample = new JsonIntermediateFormatSample
             {
-                EventType = eventType,
-                SerializedData = serializedData,
+                Type = eventType,
+                Data = serializedData,
                 IssuingModule = Identifier
             };
 
