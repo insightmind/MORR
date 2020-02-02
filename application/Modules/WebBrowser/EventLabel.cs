@@ -3,7 +3,7 @@
     /// <summary>
     ///     Enum used to map the incoming serialized data (from the browser extension) to the event classes.
     /// </summary>
-    internal enum EventLabel
+    public enum EventLabel
     {
         BUTTONCLICK,
         CLOSETAB,

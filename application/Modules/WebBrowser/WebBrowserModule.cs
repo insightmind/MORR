@@ -60,7 +60,7 @@ namespace MORR.Modules.WebBrowser
             listener.StartListening();
             foreach (var producer in producers)
             {
-                listener.Subscribe(producer, producer.HandledEventType);
+                listener.Subscribe(producer, producer.HandledEventLabel);
             }
         }
     }
