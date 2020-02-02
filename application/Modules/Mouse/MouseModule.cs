@@ -37,7 +37,7 @@ namespace MORR.Modules.Mouse
         [Import]
         private MouseModuleConfiguration MouseModuleConfiguration { get; set; }
 
-        public static Guid Identifier = new Guid("EFF894B3-4DC9-4605-9937-F02F400B4A62");
+        public static Guid Identifier { get; } = new Guid("EFF894B3-4DC9-4605-9937-F02F400B4A62");
 
         /// <summary>
         ///     if the module is active or not.
@@ -59,11 +59,12 @@ namespace MORR.Modules.Mouse
         public void Initialize()
         {
             // retrieve all parameters from the MouseModuleConfiguration
-            var samplingRate = MouseModuleConfiguration.SamplingRate;
+            var samplingRateInHz = MouseModuleConfiguration.SamplingRateInHz;
             var threshold = MouseModuleConfiguration.Threshold;
 
             // configure all producers with retrieved parameters
-            MouseMoveEventProducer.Configure(samplingRate, threshold);
+            MouseMoveEventProducer.SamplingRateInHz = samplingRateInHz;
+            MouseMoveEventProducer.Threshold = threshold;
         }
 
         private void StartCapture()

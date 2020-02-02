@@ -10,7 +10,7 @@ namespace MORR.Modules.Mouse
         /// <summary>
         ///     The sampling rate of the mouse position capture, in Hz.
         /// </summary>
-        public int SamplingRate { get; set; }
+        public uint SamplingRateInHz { get; set; }
 
         /// <summary>
         ///     The minimal distance(computed with screen coordinates) a mouse move
@@ -21,15 +21,13 @@ namespace MORR.Modules.Mouse
         /// </summary>
         public int Threshold { get; set; }
 
-        public string Identifier { get; } = "MouseModule";
-
         public void Parse(RawConfiguration configuration)
         {
             var element = JsonDocument.Parse(configuration.RawValue).RootElement;
             try
             {
-                SamplingRate = element.GetProperty("SamplingRate").GetInt32();
-                Threshold = element.GetProperty("Threshold").GetInt32();
+                SamplingRateInHz = element.GetProperty(nameof(SamplingRateInHz)).GetUInt32();
+                Threshold = element.GetProperty(nameof(Threshold)).GetInt32();
             }
             catch (KeyNotFoundException)
             {

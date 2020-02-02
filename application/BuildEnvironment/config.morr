@@ -11,7 +11,7 @@
     "RecordingDirectory": "%userprofile%\\Videos\\MORR"
   },
   "MORR.Modules.Mouse.MouseModuleConfiguration": {
-    "SamplingRate": 10,
+    "SamplingRateInHz": 10,
     "Threshold": 50
   }
 }

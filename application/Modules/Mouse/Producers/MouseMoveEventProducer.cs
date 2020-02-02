@@ -26,7 +26,7 @@ namespace MORR.Modules.Mouse.Producers
         /// <summary>
         ///     The sampling rate of the mouse position capture, in Hz.
         /// </summary>
-        private int SamplingRate { get; set; }
+        internal uint SamplingRateInHz { get; set; }
 
         /// <summary>
         ///     The minimal distance(computed with screen coordinates) a mouse move
@@ -35,7 +35,7 @@ namespace MORR.Modules.Mouse.Producers
         ///     in other words, a new MouseMoveEvent will not be generated and
         ///     the mouse position will not be recorded.
         /// </summary>
-        private int Threshold { get; set; }
+        internal int Threshold { get; set; }
 
         /// <summary>
         ///     Get the mouse position and create & enqueue corresponding event
@@ -64,13 +64,6 @@ namespace MORR.Modules.Mouse.Producers
             }
         }
 
-
-        public void Configure(int samplingRate, int threshold)
-        {
-            SamplingRate = samplingRate;
-            Threshold = threshold;
-        }
-
         /// <summary>
         ///     start the mouse movement capture by starting the timer that records mouse position.
         /// </summary>
@@ -78,7 +71,7 @@ namespace MORR.Modules.Mouse.Producers
         {
             NativeMethods.GetCursorPos(out lastMousePosition);
 
-            var samplingTimeIntervalInMilliseconds = (int) ((double) 1 / SamplingRate * 1000);
+            var samplingTimeIntervalInMilliseconds = (int) ((double) 1 / SamplingRateInHz * 1000);
 
             mousePositionRecordingTimer = new Timer(GetMousePosition, null, 0, samplingTimeIntervalInMilliseconds);
         }
@@ -88,7 +81,7 @@ namespace MORR.Modules.Mouse.Producers
         /// </summary>
         public void StopCapture()
         {
-            mousePositionRecordingTimer.Dispose();
+            mousePositionRecordingTimer?.Dispose();
         }
     }
 }

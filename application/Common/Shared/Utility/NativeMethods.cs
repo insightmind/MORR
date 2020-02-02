@@ -123,26 +123,6 @@ namespace MORR.Shared.Utility
             return true;
         }
 
-
-        /// <summary>
-        ///     Sets a low-level mouse hook.
-        /// </summary>
-        /// <param name="callback">The callback of the hook.</param>
-        /// <param name="handle">The handle of the hook. Valid if the method returns <see langword="true" /></param>
-        /// <returns><see langword="true" /> if the hook could successfully be set, <see langword="false" /> otherwise.</returns>
-        public static bool TrySetMouseHook(LowLevelMouseProc callback, out IntPtr handle)
-        {
-            if (!TryGetCurrentModuleHandle(out var moduleHandle))
-            {
-                handle = IntPtr.Zero;
-                return false;
-            }
-
-
-            handle = SetWindowsHookEx(HookType.WH_MOUSE_LL, callback, moduleHandle, 0);
-            return true;
-        }
-
         #endregion
 
         #region Window for process helper
