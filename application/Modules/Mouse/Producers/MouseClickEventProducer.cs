@@ -46,7 +46,7 @@ namespace MORR.Modules.Mouse.Producers
 
         private void MouseHookCallback(GlobalHook.HookMessage hookMessage)
         {
-            var messageType = (NativeMethods.MessageType) hookMessage.wParam;
+            var messageType = (NativeMethods.MessageType) hookMessage.Type;
             var mouseAction = GetMouseAction(messageType);
             if (mouseAction != MouseAction.None)
             {
