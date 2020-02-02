@@ -11,6 +11,21 @@ namespace MORR.Shared.Utility
     /// </summary>
     public static class NativeMethods
     {
+        #region Properties
+
+        /// <summary>
+        /// This value is used to temporarily store the thread 
+        /// </summary>
+        private static uint? loopThreadId;
+
+        /// <summary>
+        /// This is the message identifier for our custom cancel message,
+        /// which is used to register a custom message for the MessageLoop.
+        /// </summary>
+        private const string cancelMessage = "MORR.LOOP.MESSAGE.CANCEL";
+
+        #endregion
+
         #region Windows message loop helper
 
         /// <summary>
@@ -22,16 +37,40 @@ namespace MORR.Shared.Utility
         /// </summary>
         public static void DoWin32MessageLoop()
         {
+            // We register our custom cancel message to receive a non used message
+            // identifier
+            var cancelId = RegisterWindowMessage(cancelMessage);
+
+            // We need to store the current thread id to later
+            // be able to post the cancel message to the loop.
+            loopThreadId = GetCurrentThreadId();
+
             int status;
-            while ((status = GetMessage(out var msg, IntPtr.Zero, 0, 0)) != 0)
+            while ((status = GetMessage(out var msg, IntPtr.Zero, 0, 0)) != 0) 
             {
                 // -1 indicates error - do not process such messages
-                if (status != -1)
-                {
-                    TranslateMessage(ref msg);
-                    DispatchMessage(ref msg);
-                }
+                if (status == -1) continue;
+
+                var msgId = msg.Message;
+
+                TranslateMessage(ref msg); 
+                DispatchMessage(ref msg);
+
+                if (msgId == cancelId) break;
             }
+        }
+
+        /// <summary>
+        /// Stops a currently running message loop.
+        /// </summary>
+        public static void StopMessageLoop()
+        {
+            if (!loopThreadId.HasValue) return;
+
+            var message = RegisterWindowMessage(cancelMessage);
+            PostThreadMessage(loopThreadId.Value, message, UIntPtr.Zero, IntPtr.Zero);
+            
+            loopThreadId = null;
         }
 
         #endregion
@@ -169,6 +208,16 @@ namespace MORR.Shared.Utility
 
         [DllImport("user32.dll")]
         public static extern IntPtr GetActiveWindow();
+      
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        static extern uint RegisterWindowMessage(string lpString);
+
+        [return: MarshalAs(UnmanagedType.Bool)]
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool PostThreadMessage(uint threadId, uint msg, UIntPtr wParam, IntPtr lParam);
+
+        [DllImport("kernel32.dll")]
+        public static extern uint GetCurrentThreadId();
 
         [DllImport("user32.dll")]
         public static extern bool OpenClipboard(IntPtr hWndNewOwner);

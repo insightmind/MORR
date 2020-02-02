@@ -114,10 +114,11 @@ namespace MORR.Shared.Utility
         }
 
         /// <summary>
-        ///     Free the loaded library.
+        ///     Free the loaded library. To be called when this application terminates.
         /// </summary>
         public static void FreeLibrary()
         {
+            Unhook();
             if (hookLibrary != IntPtr.Zero)
             {
                 //the library is loaded twice. Once for the DLLImports above, once by LoadLibrary.
