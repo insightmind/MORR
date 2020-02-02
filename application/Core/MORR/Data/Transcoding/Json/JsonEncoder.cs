@@ -21,15 +21,15 @@ namespace MORR.Core.Data.Transcoding.Json
         private async void EncodeEvents(DirectoryPath recordingDirectoryPath)
         {
             await using var fileStream = GetFileStreamForOutput(recordingDirectoryPath);
-            var writer = new Utf8JsonWriter(fileStream);
+            await using var writer = new Utf8JsonWriter(fileStream);
             writer.WriteStartArray();
 
             await foreach (var sample in IntermediateFormatSampleQueue.GetEvents())
             {
                 writer.WriteStartObject();
-                writer.WriteString(nameof(sample.Type), sample.JsonEncodedType);
+                writer.WriteString(nameof(JsonIntermediateFormatSample.Type), sample.JsonEncodedType);
                 // As there is no WriteRaw method on Utf8JsonWriter, we have to use a workaround to write the data
-                writer.WritePropertyName(nameof(sample.Data));
+                writer.WritePropertyName(nameof(JsonIntermediateFormatSample.Data));
                 sample.JsonEncodedData.WriteTo(writer);
                 writer.WriteEndObject();
             }

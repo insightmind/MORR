@@ -29,8 +29,8 @@ namespace MORR.Shared.Events.Queue
     /// <typeparam name="T">The type of <see cref="Event" /> in this queue.</typeparam>
     public abstract class DefaultDecodeableEventQueue<T> : DecodeableEventQueue<T> where T : Event
     {
-        protected DefaultDecodeableEventQueue(int bufferCapacity = 1024) : base(
-            new BoundedSingleConsumerChannelStrategy<T>(bufferCapacity)) { }
+        protected DefaultDecodeableEventQueue(int bufferCapacity = 1024, uint? maxConsumers = null) : base(
+            new BoundedMultiConsumerChannelStrategy<T>(bufferCapacity, maxConsumers)) { }
     }
 
     /// <summary>
