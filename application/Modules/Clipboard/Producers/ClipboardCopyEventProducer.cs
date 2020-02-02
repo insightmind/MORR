@@ -25,7 +25,7 @@ namespace MORR.Modules.Clipboard.Producers
 
             var text = NativeMethods.getClipboardText();
 
-            var clipboardCopyEvent = new ClipboardCopyEvent { ClipboardText = text };
+            var clipboardCopyEvent = new ClipboardCopyEvent { ClipboardText = text, IssuingModule = ClipboardModule.Identifier };
             Enqueue(clipboardCopyEvent);
         }
 
@@ -210,7 +210,6 @@ namespace MORR.Modules.Clipboard.Producers
         }
 
         #endregion
-
 
         #region Public methods
 

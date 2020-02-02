@@ -36,7 +36,7 @@ namespace MORR.Modules.Clipboard.Producers
             var text = NativeMethods.getClipboardText();
 
             //create the corresponding new Event
-            var clipboardPasteEvent = new ClipboardPasteEvent { ClipboardText = text };
+            var clipboardPasteEvent = new ClipboardPasteEvent { ClipboardText = text, IssuingModule = ClipboardModule.Identifier };
 
             //enqueue the new event.
             Enqueue(clipboardPasteEvent);
