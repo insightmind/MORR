@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using MORR.Modules.WebBrowser.Producers;
 using MORR.Shared.Modules;
 using MORR.Shared.Utility;
 
@@ -11,16 +12,31 @@ namespace MORR.Modules.WebBrowser
     /// </summary>
     public class WebBrowserModule : ICollectingModule
     {
-        private bool isActive;
-        private WebExtensionListener listener;
+        [Import] private ButtonClickEventProducer buttonClickEventProducer;
 
+        [Import] private CloseTabEventProducer closeTabEventProducer;
 
-        [ImportMany]
-        private IEnumerable<IWebBrowserEventObserver> Producers { get; set; }
+        [Import] private FileDownloadEventProducer fileDownloadEventProducer;
 
+        [Import] private HoverEventProducer hoverEventProducer;
+
+        [Import] private NavigationEventProducer navigationEventProducer;
+
+        [Import] private OpenTabEventProducer openTabEventProducer;
+
+        private List<IWebBrowserEventObserver> producers;
+
+        [Import] private SwitchTabEventProducer switchTabEventProducer;
+
+        [Import] private TextInputEventProducer textInputEventProducer;
+
+        [Import] private TextSelectionEventProducer textSelectionEventProducer;
 
         [Import]
         private WebBrowserModuleConfiguration Configuration { get; set; }
+
+        private bool isActive;
+        private WebExtensionListener listener;
 
         public bool IsActive
         {
@@ -34,9 +50,15 @@ namespace MORR.Modules.WebBrowser
 
         public void Initialize()
         {
+            producers = new List<IWebBrowserEventObserver>
+            {
+                buttonClickEventProducer, closeTabEventProducer, fileDownloadEventProducer,
+                hoverEventProducer, navigationEventProducer, openTabEventProducer,
+                switchTabEventProducer, textInputEventProducer, textSelectionEventProducer
+            };
             listener = new WebExtensionListener(Configuration.UrlSuffix);
             listener.StartListening();
-            foreach (var producer in Producers)
+            foreach (var producer in producers)
             {
                 listener.Subscribe(producer, producer.HandledEventType);
             }
