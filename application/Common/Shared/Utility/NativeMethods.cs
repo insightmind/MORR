@@ -76,6 +76,37 @@ namespace MORR.Shared.Utility
 
         #endregion
 
+        #region Clipboard text helper
+        /// <summary>
+        ///     Gets the text from the clipboard
+        /// </summary>
+        /// <param name="hwnd">Pointer to the window that currently has clipboard</param>
+        /// <returns>String representing text from the clipboard</returns>
+        public static string getClipboardText()
+        {
+            uint CF_TEXT = 1;
+            uint CF_UNICODETEXT = 13;
+
+            OpenClipboard(GetOpenClipboardWindow());
+
+            //Gets pointer to clipboard data in the selected format
+            IntPtr ClipboardDataPointer = GetClipboardData(CF_UNICODETEXT);
+
+            IntPtr gLock = GlobalLock(ClipboardDataPointer);
+
+            string text;
+
+            text = Marshal.PtrToStringAuto(gLock);
+
+            GlobalUnlock(gLock);
+
+            CloseClipboard();
+
+            return text;
+        }
+
+        #endregion
+
         #region Window for process helper
 
         /// <summary>
@@ -137,6 +168,26 @@ namespace MORR.Shared.Utility
 
         [DllImport("user32.dll")]
         public static extern IntPtr GetActiveWindow();
+
+        [DllImport("user32.dll")]
+        public static extern bool OpenClipboard(IntPtr hWndNewOwner);
+
+        [DllImport("user32.dll")]
+        public static extern bool CloseClipboard();
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetOpenClipboardWindow();
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetClipboardData(uint uFormat);
+
+        [DllImport("kernel32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GlobalUnlock(IntPtr hMem);
+
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr GlobalLock(IntPtr hMem);
+
 
         #endregion
 
@@ -385,6 +436,7 @@ namespace MORR.Shared.Utility
             WM_PASTE = 0x302,
             WM_CLEAR = 0x303,
             WM_UNDO = 0x304,
+            WM_CLIPBOARDUPDATE = 0x031D,
 
             WM_RENDERFORMAT = 0x305,
             WM_RENDERALLFORMATS = 0x306,
