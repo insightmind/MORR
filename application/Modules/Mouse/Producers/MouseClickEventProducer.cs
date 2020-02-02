@@ -1,3 +1,4 @@
+using System;
 using System.Windows;
 using System.Windows.Input;
 using MORR.Modules.Mouse.Events;
@@ -18,18 +19,30 @@ namespace MORR.Modules.Mouse.Producers
                                    NativeMethods.MessageType.WM_MBUTTONDOWN,
                                    NativeMethods.MessageType.WM_RBUTTONDBLCLK,
                                    NativeMethods.MessageType.WM_LBUTTONDBLCLK,
-                                   NativeMethods.MessageType.WM_MBUTTONDBLCLK);
+                                   NativeMethods.MessageType.WM_MBUTTONDBLCLK,
+                                   NativeMethods.MessageType.WM_NCRBUTTONDOWN,
+                                   NativeMethods.MessageType.WM_NCLBUTTONDOWN,
+                                   NativeMethods.MessageType.WM_NCMBUTTONDOWN,
+                                   NativeMethods.MessageType.WM_NCRBUTTONDBLCLK,
+                                   NativeMethods.MessageType.WM_NCLBUTTONDBLCLK,
+                                   NativeMethods.MessageType.WM_NCMBUTTONDBLCLK);
             GlobalHook.IsActive = true;
         }
 
         public void StopCapture()
         {
-            GlobalHook.AddListener(MouseHookCallback, NativeMethods.MessageType.WM_RBUTTONDOWN,
-                                   NativeMethods.MessageType.WM_LBUTTONDOWN,
-                                   NativeMethods.MessageType.WM_MBUTTONDOWN,
-                                   NativeMethods.MessageType.WM_RBUTTONDBLCLK,
-                                   NativeMethods.MessageType.WM_LBUTTONDBLCLK,
-                                   NativeMethods.MessageType.WM_MBUTTONDBLCLK);
+            GlobalHook.RemoveListener(MouseHookCallback, NativeMethods.MessageType.WM_RBUTTONDOWN,
+                                      NativeMethods.MessageType.WM_LBUTTONDOWN,
+                                      NativeMethods.MessageType.WM_MBUTTONDOWN,
+                                      NativeMethods.MessageType.WM_RBUTTONDBLCLK,
+                                      NativeMethods.MessageType.WM_LBUTTONDBLCLK,
+                                      NativeMethods.MessageType.WM_MBUTTONDBLCLK,
+                                      NativeMethods.MessageType.WM_NCRBUTTONDOWN,
+                                      NativeMethods.MessageType.WM_NCLBUTTONDOWN,
+                                      NativeMethods.MessageType.WM_NCMBUTTONDOWN,
+                                      NativeMethods.MessageType.WM_NCRBUTTONDBLCLK,
+                                      NativeMethods.MessageType.WM_NCLBUTTONDBLCLK,
+                                      NativeMethods.MessageType.WM_NCMBUTTONDBLCLK);
         }
 
         private void MouseHookCallback(GlobalHook.HookMessage hookMessage)
@@ -49,32 +62,32 @@ namespace MORR.Modules.Mouse.Producers
 
         private MouseAction GetMouseAction(NativeMethods.MessageType messageType)
         {
-            if (messageType == NativeMethods.MessageType.WM_RBUTTONDOWN)
+            if (messageType == NativeMethods.MessageType.WM_RBUTTONDOWN || messageType == NativeMethods.MessageType.WM_NCRBUTTONDOWN)
             {
                 return MouseAction.RightClick;
             }
 
-            if (messageType == NativeMethods.MessageType.WM_LBUTTONDOWN)
+            if (messageType == NativeMethods.MessageType.WM_LBUTTONDOWN || messageType == NativeMethods.MessageType.WM_NCLBUTTONDOWN)
             {
                 return MouseAction.LeftClick;
             }
 
-            if (messageType == NativeMethods.MessageType.WM_MBUTTONDOWN)
+            if (messageType == NativeMethods.MessageType.WM_MBUTTONDOWN || messageType == NativeMethods.MessageType.WM_NCMBUTTONDOWN)
             {
                 return MouseAction.MiddleClick;
             }
 
-            if (messageType == NativeMethods.MessageType.WM_RBUTTONDBLCLK)
+            if (messageType == NativeMethods.MessageType.WM_RBUTTONDBLCLK || messageType == NativeMethods.MessageType.WM_NCRBUTTONDBLCLK)
             {
                 return MouseAction.RightDoubleClick;
             }
 
-            if (messageType == NativeMethods.MessageType.WM_LBUTTONDBLCLK)
+            if (messageType == NativeMethods.MessageType.WM_LBUTTONDBLCLK || messageType == NativeMethods.MessageType.WM_NCLBUTTONDBLCLK)
             {
                 return MouseAction.LeftDoubleClick;
             }
 
-            if (messageType == NativeMethods.MessageType.WM_MBUTTONDBLCLK)
+            if (messageType == NativeMethods.MessageType.WM_MBUTTONDBLCLK || messageType == NativeMethods.MessageType.WM_NCMBUTTONDOWN)
             {
                 return MouseAction.MiddleDoubleClick;
             }

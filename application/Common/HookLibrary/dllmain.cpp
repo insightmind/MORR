@@ -33,14 +33,13 @@ LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
         unsigned int bufferSlot = InterlockedIncrement(&globalBufferIterator) % BUFFERSIZE; //atomic increment. overflows should not matter as we modulo it anyways.
         unsigned int type = msg->message;
         globalTimeStamps[bufferSlot] = msg->time;
-        if ((type >= WM_MOUSEMOVE && type <= WM_MOUSEWHEEL) || type == WM_KEYDOWN) {
+        if ((type >= WM_MOUSEMOVE && type <= WM_MOUSEWHEEL) || (type >= WM_NCMOUSEMOVE && type <= WM_NCMBUTTONDBLCLK)|| type == WM_KEYDOWN) {
             globalMessageBuffer[bufferSlot].Set(msg->message, msg->hwnd, msg->wParam);
             globalMessageBuffer[bufferSlot].data[0] = msg->pt.x;
             globalMessageBuffer[bufferSlot].data[1] = msg->pt.y;
         }
         else
         {
-            /* this is only reached by implementation error */
             globalMessageBuffer[bufferSlot].Type == WM_NULL;
             goto forwardEvent;
         }
@@ -99,7 +98,6 @@ LRESULT CALLBACK CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
         }
         else
         {
-            /* this is only reached by implementation error */
             globalMessageBuffer[bufferSlot].Type == WM_NULL;
             goto forwardEvent;
         }
@@ -120,6 +118,7 @@ bool IsCaptured(UINT type) {
         || (type >= WM_CREATE && type <= WM_ENABLE)
         || (type >= WM_CUT && type <= WM_CLEAR)
         || (type == WM_SIZING)
+        || (type >= WM_NCMOUSEMOVE && type <= WM_NCMBUTTONDBLCLK)
         );
 }
 
