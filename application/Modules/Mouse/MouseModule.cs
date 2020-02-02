@@ -9,7 +9,6 @@ namespace MORR.Modules.Mouse
     /// <summary>
     ///     The <see cref="MouseModule" /> is responsible for recording all mouse related user interactions
     /// </summary>
-    [Export(typeof(IModule))]
     public class MouseModule : ICollectingModule
     {
         private bool isActive;

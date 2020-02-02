@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Text.Json;
 using MORR.Core.Configuration;
 using MORR.Shared.Configuration;
 
 namespace MORR.Modules.Mouse
 {
-    [Export(typeof(MouseModuleConfiguration))]
     public class MouseModuleConfiguration : IConfiguration
     {
         /// <summary>

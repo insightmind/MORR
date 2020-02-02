@@ -41,7 +41,7 @@ namespace MORR.Modules.Mouse.Producers
         ///     Get the mouse position and create & enqueue corresponding event
         ///     if the Threshold is reached.
         /// </summary>
-        /// <param name="stateInfo"></param>
+        /// <param name="stateInfo"> state object</param>
         private void GetMousePosition(object stateInfo)
         {
             // get the current mouse position as Point
