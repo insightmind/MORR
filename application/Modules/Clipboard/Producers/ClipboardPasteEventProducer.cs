@@ -1,5 +1,4 @@
-﻿using System;
-using MORR.Modules.Clipboard.Events;
+﻿using MORR.Modules.Clipboard.Events;
 using MORR.Shared.Events.Queue;
 using MORR.Shared.Utility;
 
@@ -37,7 +36,7 @@ namespace MORR.Modules.Clipboard.Producers
             var text = NativeMethods.getClipboardText();
 
             //create the corresponding new Event
-            var clipboardPasteEvent = new ClipboardPasteEvent { Text = text };
+            var clipboardPasteEvent = new ClipboardPasteEvent { ClipboardText = text };
 
             //enqueue the new event.
             Enqueue(clipboardPasteEvent);

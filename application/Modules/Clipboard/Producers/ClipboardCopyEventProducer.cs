@@ -25,7 +25,7 @@ namespace MORR.Modules.Clipboard.Producers
 
             var text = NativeMethods.getClipboardText();
 
-            var clipboardCopyEvent = new ClipboardCopyEvent { Text = text };
+            var clipboardCopyEvent = new ClipboardCopyEvent { ClipboardText = text };
             Enqueue(clipboardCopyEvent);
         }
 

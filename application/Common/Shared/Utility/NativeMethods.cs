@@ -77,6 +77,7 @@ namespace MORR.Shared.Utility
         #endregion
 
         #region Clipboard text helper
+
         /// <summary>
         ///     Gets the text from the clipboard
         /// </summary>
@@ -90,9 +91,9 @@ namespace MORR.Shared.Utility
             OpenClipboard(GetOpenClipboardWindow());
 
             //Gets pointer to clipboard data in the selected format
-            IntPtr ClipboardDataPointer = GetClipboardData(CF_UNICODETEXT);
+            var ClipboardDataPointer = GetClipboardData(CF_UNICODETEXT);
 
-            IntPtr gLock = GlobalLock(ClipboardDataPointer);
+            var gLock = GlobalLock(ClipboardDataPointer);
 
             string text;
 
@@ -187,7 +188,6 @@ namespace MORR.Shared.Utility
 
         [DllImport("kernel32.dll")]
         public static extern IntPtr GlobalLock(IntPtr hMem);
-
 
         #endregion
 
