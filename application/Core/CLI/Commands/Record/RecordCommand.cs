@@ -40,6 +40,8 @@ namespace MORR.Core.CLI.Commands.Record
                 // We start our interactive commandline so the user
                 // can still interact with the application.
                 var commandLine = new InteractiveCommandLine();
+
+                // If the user cancels via the command line we need to stop the message loop.
                 commandLine.Launch(NativeMethods.StopMessageLoop);
 
                 // Run message loop required for Windows hooks
