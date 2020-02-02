@@ -14,10 +14,15 @@ namespace MORR.Shared.Utility
         #region Properties
 
         /// <summary>
-        /// Defines whether a current message loop should be cancelled.
-        /// We use a bool type for this as it is atomic and should not be problematic concerning threading.
+        /// This value is used to temporarily store the thread 
         /// </summary>
-        private static volatile bool shouldCancel = true;
+        private static uint? loopThreadId;
+
+        /// <summary>
+        /// This is the message identifier for our custom cancel message,
+        /// which is used to register a custom message for the MessageLoop.
+        /// </summary>
+        private const string cancelMessage = "MORR.LOOP.MESSAGE.CANCEL";
 
         #endregion
 
@@ -32,21 +37,39 @@ namespace MORR.Shared.Utility
         /// </summary>
         public static void DoWin32MessageLoop()
         {
-            // We set to false as we expect a call to this method to be purposeful.
-            shouldCancel = false;
-            while (!shouldCancel)
+            // We register our custom cancel message to receive a non used message
+            // identifier
+            uint cancelId = RegisterWindowMessage(cancelMessage);
+
+            // We need to store the current thread id to later
+            // be able to post the cancel message to the loop.
+            loopThreadId = GetCurrentThreadId();
+
+            int status;
+            while ((status = GetMessage(out var msg, IntPtr.Zero, 0, 0)) != 0) 
             {
-                if (PeekMessage(out var msg, IntPtr.Zero, 0, 0, 0))
-                {
-                    TranslateMessage(ref msg);
-                    DispatchMessage(ref msg);
-                }
+                if (status == -1) continue;
+
+                var msgId = msg.Message;
+
+                TranslateMessage(ref msg); 
+                DispatchMessage(ref msg);
+
+                if (msgId == cancelId) break;
             }
         }
 
+        /// <summary>
+        /// Stops a currently running message loop.
+        /// </summary>
         public static void StopMessageLoop()
         {
-            shouldCancel = true;
+            if (!loopThreadId.HasValue) return;
+
+            uint message = RegisterWindowMessage(cancelMessage);
+            PostThreadMessage(loopThreadId.Value, message, UIntPtr.Zero, IntPtr.Zero);
+            
+            loopThreadId = null;
         }
 
         #endregion
@@ -110,6 +133,9 @@ namespace MORR.Shared.Utility
         #region Methods
 
         [DllImport("user32.dll")]
+        public static extern int GetMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
+
+        [DllImport("user32.dll")]
         public static extern bool TranslateMessage([In] ref MSG lpMsg);
 
         [DllImport("user32.dll")]
@@ -141,9 +167,15 @@ namespace MORR.Shared.Utility
         [DllImport("user32.dll")]
         public static extern IntPtr GetActiveWindow();
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        static extern uint RegisterWindowMessage(string lpString);
+
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool PeekMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax, uint wRemoveMsg);
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool PostThreadMessage(uint threadId, uint msg, UIntPtr wParam, IntPtr lParam);
+
+        [DllImport("kernel32.dll")]
+        public static extern uint GetCurrentThreadId();
 
         #endregion
 
