@@ -37,7 +37,7 @@ namespace MORR.Modules.Mouse
         [Import]
         private MouseModuleConfiguration MouseModuleConfiguration { get; set; }
 
-        public static Guid Identifier => new Guid("EFF894B3-4DC9-4605-9937-F02F400B4A62");
+        public static Guid Identifier = new Guid("EFF894B3-4DC9-4605-9937-F02F400B4A62");
 
         /// <summary>
         ///     if the module is active or not.
