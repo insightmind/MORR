@@ -140,20 +140,8 @@ DLL void SetHook(WH_MessageCallBack progressCallback) {
     if (GetMessageHook || CallWndProcHook) {
         /* the stored values in this DLL might be persisting even
            over program restarts if not detached properly */
-        running = false;
         fprintf(stderr, "GlobalHook wasn't properly detached last time, trying to reset before attaching\n");
-        /* reset shared data */
-        if (GetMessageHook)
-            UnhookWindowsHookEx(GetMessageHook);
-        if (CallWndProcHook)
-            UnhookWindowsHookEx(CallWndProcHook);
-        GetMessageHook = nullptr;
-        CallWndProcHook = nullptr;
-        if (dispatcherthread)
-            dispatcherthread->join();
-        dispatcherthread = nullptr;
-        globalBufferIterator = 0;
-        ZeroMemory(globalMessageBuffer, sizeof(globalMessageBuffer));
+        RemoveHook();
     }
     running = true;
     globalBufferIterator = 0;
@@ -177,6 +165,7 @@ DLL void SetHook(WH_MessageCallBack progressCallback) {
 
 DLL void RemoveHook()
 {
+    running = false;
     if (GetMessageHook != nullptr) {
         if (!UnhookWindowsHookEx(GetMessageHook))
             fprintf(stderr, "Error unhooking GetMessage hook. Errorcode %d\n", GetLastError());
@@ -185,15 +174,19 @@ DLL void RemoveHook()
         if (!UnhookWindowsHookEx(CallWndProcHook))
             fprintf(stderr, "Error unhooking CallWndProc hook. Errorcode %d\n", GetLastError());
     }
-    running = false;
     GetMessageHook = nullptr;
     CallWndProcHook = nullptr;
     GetMessageHook = nullptr;
-    dispatcherthread->join();
-    delete dispatcherthread;
+    if (dispatcherthread) {
+        dispatcherthread->join();
+        delete dispatcherthread;
+    }
     dispatcherthread = nullptr;
-    CloseHandle(semaphore);
+    if (semaphore)
+        CloseHandle(semaphore);
     semaphore = nullptr;
+    globalBufferIterator = 0;
+    ZeroMemory(globalMessageBuffer, sizeof(globalMessageBuffer));
     printf("GlobalHook: Unhooked\n");
 }
 
