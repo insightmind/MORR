@@ -45,12 +45,12 @@ namespace MORR.Modules.Mouse.Producers
         private void GetMousePosition(object stateInfo)
         {
             // get the current mouse position as Point
-            NativeMethods.POINT currentMousePosition;
-            NativeMethods.GetCursorPos(out currentMousePosition);
+            NativeMethods.GetCursorPos(out var currentMousePosition);
 
-            var temp = new Point(currentMousePosition.X, currentMousePosition.Y);
+            var currentMousePositionAsPoint = new Point(currentMousePosition.X, currentMousePosition.Y);
+            var lastMousePositionAsPoint = new Point(lastMousePosition.X, lastMousePosition.Y);
             // compare the last and the current mouse position and compute their distance
-            var distance = Point.Subtract(new Point(lastMousePosition.X, lastMousePosition.Y), temp).Length;
+            var distance = Point.Subtract(lastMousePositionAsPoint, currentMousePositionAsPoint).Length;
 
             // replace the last mouse position with the current mouse position
             lastMousePosition = currentMousePosition;
@@ -59,7 +59,7 @@ namespace MORR.Modules.Mouse.Producers
             //record the new Position in the created MouseMoveEvent and enqueue it
             if (distance >= Threshold)
             {
-                var @event = new MouseMoveEvent { MousePosition = temp, IssuingModule = MouseModule.Identifier};
+                var @event = new MouseMoveEvent { MousePosition = currentMousePositionAsPoint, IssuingModule = MouseModule.Identifier};
                 Enqueue(@event);
             }
         }

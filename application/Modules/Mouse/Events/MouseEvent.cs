@@ -1,5 +1,3 @@
-using MORR.Modules.Mouse.Producers;
-using MORR.Shared;
 using MORR.Shared.Events;
 using System.Windows;
 

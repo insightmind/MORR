@@ -58,13 +58,9 @@ namespace MORR.Modules.Mouse
         /// </summary>
         public void Initialize()
         {
-            // retrieve all parameters from the MouseModuleConfiguration
-            var samplingRateInHz = MouseModuleConfiguration.SamplingRateInHz;
-            var threshold = MouseModuleConfiguration.Threshold;
-
             // configure all producers with retrieved parameters
-            MouseMoveEventProducer.SamplingRateInHz = samplingRateInHz;
-            MouseMoveEventProducer.Threshold = threshold;
+            MouseMoveEventProducer.SamplingRateInHz = MouseModuleConfiguration.SamplingRateInHz;
+            MouseMoveEventProducer.Threshold = MouseModuleConfiguration.Threshold;
         }
 
         private void StartCapture()

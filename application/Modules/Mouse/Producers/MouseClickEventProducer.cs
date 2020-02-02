@@ -62,37 +62,16 @@ namespace MORR.Modules.Mouse.Producers
 
         private MouseAction GetMouseAction(NativeMethods.MessageType messageType)
         {
-            if (messageType == NativeMethods.MessageType.WM_RBUTTONDOWN || messageType == NativeMethods.MessageType.WM_NCRBUTTONDOWN)
+            return messageType switch
             {
-                return MouseAction.RightClick;
-            }
-
-            if (messageType == NativeMethods.MessageType.WM_LBUTTONDOWN || messageType == NativeMethods.MessageType.WM_NCLBUTTONDOWN)
-            {
-                return MouseAction.LeftClick;
-            }
-
-            if (messageType == NativeMethods.MessageType.WM_MBUTTONDOWN || messageType == NativeMethods.MessageType.WM_NCMBUTTONDOWN)
-            {
-                return MouseAction.MiddleClick;
-            }
-
-            if (messageType == NativeMethods.MessageType.WM_RBUTTONDBLCLK || messageType == NativeMethods.MessageType.WM_NCRBUTTONDBLCLK)
-            {
-                return MouseAction.RightDoubleClick;
-            }
-
-            if (messageType == NativeMethods.MessageType.WM_LBUTTONDBLCLK || messageType == NativeMethods.MessageType.WM_NCLBUTTONDBLCLK)
-            {
-                return MouseAction.LeftDoubleClick;
-            }
-
-            if (messageType == NativeMethods.MessageType.WM_MBUTTONDBLCLK || messageType == NativeMethods.MessageType.WM_NCMBUTTONDOWN)
-            {
-                return MouseAction.MiddleDoubleClick;
-            }
-
-            return MouseAction.None;
+                NativeMethods.MessageType.WM_RBUTTONDOWN => MouseAction.RightClick,
+                NativeMethods.MessageType.WM_LBUTTONDOWN => MouseAction.LeftClick,
+                NativeMethods.MessageType.WM_MBUTTONDOWN => MouseAction.MiddleClick,
+                NativeMethods.MessageType.WM_RBUTTONDBLCLK => MouseAction.RightDoubleClick,
+                NativeMethods.MessageType.WM_LBUTTONDBLCLK => MouseAction.LeftDoubleClick,
+                NativeMethods.MessageType.WM_MBUTTONDBLCLK => MouseAction.MiddleDoubleClick,
+                _ => MouseAction.None
+            };
         }
     }
 }

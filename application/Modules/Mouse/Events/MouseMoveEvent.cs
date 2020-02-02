@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MORR.Modules.Mouse.Events
+﻿namespace MORR.Modules.Mouse.Events
 {
     /// <summary>
     ///     A mouse move user interaction
