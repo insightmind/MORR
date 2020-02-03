@@ -23,7 +23,7 @@ LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
 //this is the hook procedure
 {
     LRESULT retVal = CallNextHookEx(GetMessageHook, nCode, wParam, lParam);
-    if (!hMapFile)
+    if (!mappedFileHandle)
         MapSharedMemory();
     //a pointer to hold the MSG structure that is passed as lParam
     MSG* msg;
@@ -59,7 +59,7 @@ forwardEvent:
 LRESULT CALLBACK CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
     LRESULT retVal = CallNextHookEx(CallWndProcHook, nCode, wParam, lParam);
-    if (!hMapFile)
+    if (!mappedFileHandle)
         MapSharedMemory();
     CWPSTRUCT* msg;
     if (semaphore == nullptr) {
@@ -248,29 +248,29 @@ void DispatchLoop() {
 #endif
 
 bool MapSharedMemory() {
-    if (!hMapFile) {
-        hMapFile = CreateFileMapping(
+    if (!mappedFileHandle) {
+        mappedFileHandle = CreateFileMapping(
             INVALID_HANDLE_VALUE,    // use paging file
             NULL,                    // default security
             PAGE_READWRITE,          // read/write access
             0,                       // maximum object size (high-order DWORD)
             SHAREDBUFFERSIZE,                // maximum object size (low-order DWORD)
             TEXT(SHARED_MEMORY_GUID));                 // name of mapping object
-        if (!hMapFile) {
+        if (!mappedFileHandle) {
             fprintf(stderr, "Error creating shared memory segment. Errorcode %d\n", GetLastError());
             return false;
         }
         else
         {
-            sharedBuffer = (BYTE*)MapViewOfFile(hMapFile,
+            sharedBuffer = (BYTE*)MapViewOfFile(mappedFileHandle,
                 FILE_MAP_ALL_ACCESS,
                 0,
                 0,
                 SHAREDBUFFERSIZE);
             if (!sharedBuffer) {
                 fprintf(stderr, "Error mapping shared memory segment. Errorcode %d\n", GetLastError());
-                CloseHandle(hMapFile);
-                hMapFile = NULL;
+                CloseHandle(mappedFileHandle);
+                mappedFileHandle = NULL;
                 return false;
             }
             else
@@ -291,16 +291,16 @@ void UnmapSharedMemory() {
         UnmapViewOfFile(sharedBuffer);
         sharedBuffer = nullptr;
     }
-    if (hMapFile) {
-        CloseHandle(hMapFile);
-        hMapFile = nullptr;
+    if (mappedFileHandle) {
+        CloseHandle(mappedFileHandle);
+        mappedFileHandle = nullptr;
     }
     globalBufferIterator = nullptr;
     globalMessageBuffer = nullptr;
     globalTimeStamps = nullptr;
     messageHasListener = nullptr;
     running = nullptr;
-    hMapFile = nullptr;
+    mappedFileHandle = nullptr;
     sharedBuffer = nullptr;
 }
 

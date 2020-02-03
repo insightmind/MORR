@@ -13,6 +13,7 @@
 
 /**
     A serializable structure used for sending message data to the MORR application.
+    Do not use pointer-types for HWND and WPARAM as this would complicate 32bit interoperability.
  */
 struct WM_Message {
     UINT64 Hwnd;
@@ -29,25 +30,48 @@ struct WM_Message {
 typedef void(__stdcall* WH_MessageCallBack)(WM_Message);
 
 /**
-    Size of the message buffer.
+    Amount of array entries in the message ringbuffer.
  */
 #define BUFFERSIZE 2048
-#define MESSAGEBUFFEROFFSET 64
+
+ /**
+     Size of the message table, which indicates which messages shall be captured/forwarded to MORR.
+     As currently no relevant message has an integer value of over 1025, that is the current choice.
+  */
 #define MESSAGETABLESIZE 1025
+
+/**
+    Starting indices of the message buffer, timestamp buffer
+    and hasListener array in the shared buffer. First 64 bytes
+    are used for global primitives.
+ */
+#define MESSAGEBUFFEROFFSET 64
 #define TIMESTAMPSBUFFEROFFSET (MESSAGEBUFFEROFFSET + BUFFERSIZE * sizeof(WM_Message))
 #define HASLISTENEROFFSET (TIMESTAMPSBUFFEROFFSET + BUFFERSIZE * sizeof(DWORD))
+
+/**
+    The required size of the shared memory region in bytes.
+ */
 #define SHAREDBUFFERSIZE (HASLISTENEROFFSET + MESSAGETABLESIZE * sizeof(bool))
+
  /**
-     Identifier of the inter-process semaphore.
+     Identifier of the inter-process named semaphore.
   */
 #define SEMAPHORE_GUID "7c4db072-3baf-457f-8259-da0c369e3ec8"
+  /**
+      Identifier of the named shared memory region.
+   */
 #define SHARED_MEMORY_GUID "b8befd3b-318a-4ab7-9601-0d098cafae0b"
 
+/**
+    Define string contants used in debug output.
+ */
 #ifdef _WIN64
 #define ARCH "64bit"
 #else
 #define ARCH "32bit"
 #endif
+
   /**
       The iterator determining where in the buffer to store the next message.
   */
@@ -147,8 +171,14 @@ LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam);
  */
 LRESULT CALLBACK CallWndProc(int nCode, WPARAM wParam, LPARAM lParam);
 
+/**
+    Map the shared memory region and define the respective pointers.
+ */
 bool MapSharedMemory();
 
+/**
+    Unmap the shared memory region and null all respective pointers.
+ */
 void UnmapSharedMemory();
 
 /**
@@ -167,13 +197,31 @@ std::thread* dispatcherthread;
  */
 HINSTANCE hInstHookDll = nullptr;
 
-HANDLE hMapFile = nullptr;
+/**
+    Handles for the shared memory region.
+    Sharedbuffer will point to the first address of the shared memory region.
+ */
+HANDLE mappedFileHandle = nullptr;
 BYTE* sharedBuffer = nullptr;
 
 #ifdef _WIN64
+/**
+    Variables and functions used to manage the Win32HookHelper.
+    As the Win32HookHelper is a child of the 64bit process,
+    those must only exist in the 64bit version.
+ */
 STARTUPINFO win32HelperStartupInfo;
 PROCESS_INFORMATION win32HelperProcessInformation;
+
+/**
+    Start the 32bit child process.
+ */
 bool StartWin32Helper();
+
+/**
+    Join the 32bit subprocess and close the handles.
+    Will only succeed if *running  is not true
+ */
 void JoinWin32Helper();
 #endif
 
