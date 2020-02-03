@@ -75,7 +75,7 @@ typedef void(__stdcall* WH_MessageCallBack)(WM_Message);
   /**
       The iterator determining where in the buffer to store the next message.
   */
-UINT* globalBufferIterator = nullptr;
+UINT* shared_globalBufferIterator = nullptr;
 
 /**
     Ringbuffers for the stored messages and their timestamps.
@@ -85,24 +85,24 @@ UINT* globalBufferIterator = nullptr;
     to identify if the currently inspected event is a duplicate
     of the last one by matching their exact timestamps.
  */
-DWORD* globalTimeStamps = nullptr;
-WM_Message* globalMessageBuffer = nullptr;
+DWORD* shared_globalTimeStamps = nullptr;
+WM_Message* shared_globalMessageBuffer = nullptr;
 
 /**
     An individual table entry has to be set to true if any listener wants this message information.
     Used to prevent unnecessary processing of undesired messages.
  */
-bool* messageHasListener = nullptr;
+bool* shared_messageHasListener = nullptr;
 
 /**
     Boolean value stating if the hooks are currently attached.
  */
-bool* running = nullptr;
+bool* shared_running = nullptr;
 
-#pragma data_seg("Shared")
 /**
     Shared data segment accessible by all injected applications and MORR itself.
  */
+#pragma data_seg("Shared")
 
 /**
     Hook handles.

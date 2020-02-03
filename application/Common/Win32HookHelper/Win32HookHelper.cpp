@@ -1,10 +1,8 @@
 #include "Win32HookHelper.h"
 
-HMODULE Win32HookHelper::hookLibrary = NULL;
-pInitFunc Win32HookHelper::SetHook = NULL;
-pVoidFunc Win32HookHelper::RemoveHook = NULL;
-pBoolFunc Win32HookHelper::Capture = NULL;
-HANDLE Win32HookHelper::sharedMemory = NULL;
+HMODULE Win32HookHelper::hookLibrary = nullptr;
+pInitFunc Win32HookHelper::SetHook = nullptr;
+pVoidFunc Win32HookHelper::RemoveHook = nullptr;
 
 
 bool Win32HookHelper::init() {
@@ -28,9 +26,6 @@ void Win32HookHelper::freeResources() {
     RemoveHook();
     if (hookLibrary)
         FreeLibrary(hookLibrary);
-    if (sharedMemory)
-        CloseHandle(sharedMemory);
-    sharedMemory = nullptr;
     hookLibrary = nullptr;
     SetHook = nullptr;
     RemoveHook = nullptr;

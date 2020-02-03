@@ -8,13 +8,12 @@ BOOL APIENTRY DllMain(HANDLE hModule, DWORD  ul_reason_for_call,
     switch (ul_reason_for_call)
     {
     case DLL_PROCESS_ATTACH:
-        
         hInstHookDll = (HINSTANCE)hModule;
         MapSharedMemory();
-
         break;
     case DLL_PROCESS_DETACH:
         UnmapSharedMemory();
+        break;
     }
     return TRUE;
 }
@@ -34,19 +33,19 @@ LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
     //lParam contains pointer to MSG structure.
     msg = (MSG*)lParam;
     /* see https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/ms644981(v=vs.85) */
-    if (nCode >= 0 && nCode == HC_ACTION && msg->message < MESSAGETABLESIZE && messageHasListener[msg->message])
+    if (nCode >= 0 && nCode == HC_ACTION && msg->message < MESSAGETABLESIZE && shared_messageHasListener[msg->message])
     {
-        unsigned int bufferSlot = InterlockedIncrement(globalBufferIterator) % BUFFERSIZE; //atomic increment. overflows should not matter as we modulo it anyways.
+        unsigned int bufferSlot = InterlockedIncrement(shared_globalBufferIterator) % BUFFERSIZE; //atomic increment. overflows should not matter as we modulo it anyways.
         unsigned int type = msg->message;
-        globalTimeStamps[bufferSlot] = msg->time;
+        shared_globalTimeStamps[bufferSlot] = msg->time;
         if ((type >= WM_MOUSEMOVE && type <= WM_MOUSEWHEEL) || (type >= WM_NCMOUSEMOVE && type <= WM_NCMBUTTONDBLCLK) || type == WM_KEYDOWN) {
-            globalMessageBuffer[bufferSlot].Set(msg->message, msg->hwnd, msg->wParam);
-            globalMessageBuffer[bufferSlot].data[0] = msg->pt.x;
-            globalMessageBuffer[bufferSlot].data[1] = msg->pt.y;
+            shared_globalMessageBuffer[bufferSlot].Set(msg->message, msg->hwnd, msg->wParam);
+            shared_globalMessageBuffer[bufferSlot].data[0] = msg->pt.x;
+            shared_globalMessageBuffer[bufferSlot].data[1] = msg->pt.y;
         }
         else
         {
-            globalMessageBuffer[bufferSlot].Type = WM_NULL;
+            shared_globalMessageBuffer[bufferSlot].Type = WM_NULL;
             goto forwardEvent;
         }
         ReleaseSemaphore(semaphore, 1, nullptr); /* mark one message as available to the dispatcher running in the MORR AS */
@@ -69,44 +68,44 @@ LRESULT CALLBACK CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
     msg = (CWPSTRUCT*)lParam;
 
     /* see https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/ms644981(v=vs.85) */
-    if (nCode >= 0 && nCode == HC_ACTION && msg->message < MESSAGETABLESIZE && messageHasListener[msg->message])
+    if (nCode >= 0 && nCode == HC_ACTION && msg->message < MESSAGETABLESIZE && shared_messageHasListener[msg->message])
     {
-        unsigned int bufferSlot = InterlockedIncrement(globalBufferIterator) % BUFFERSIZE;
-        globalTimeStamps[bufferSlot] = 0;
+        unsigned int bufferSlot = InterlockedIncrement(shared_globalBufferIterator) % BUFFERSIZE;
+        shared_globalTimeStamps[bufferSlot] = 0;
         unsigned int type = msg->message;
 
         /* I did opt to go for if..elif instead of switch..case since some types can be checked by range */
         if (type == WM_CREATE)
         {
-            globalMessageBuffer[bufferSlot].Set(msg->message, msg->hwnd, 0);
-            globalMessageBuffer[bufferSlot].data[0] = ((CREATESTRUCT*)msg->lParam)->x;
-            globalMessageBuffer[bufferSlot].data[1] = ((CREATESTRUCT*)msg->lParam)->y;
+            shared_globalMessageBuffer[bufferSlot].Set(msg->message, msg->hwnd, 0);
+            shared_globalMessageBuffer[bufferSlot].data[0] = ((CREATESTRUCT*)msg->lParam)->x;
+            shared_globalMessageBuffer[bufferSlot].data[1] = ((CREATESTRUCT*)msg->lParam)->y;
         }
         else if (type == WM_MOVE)
         {
-            globalMessageBuffer[bufferSlot].Set(msg->message, msg->hwnd, 0);
-            globalMessageBuffer[bufferSlot].data[0] = (int)LOWORD(msg->lParam);
-            globalMessageBuffer[bufferSlot].data[1] = (int)HIWORD(msg->lParam);
+            shared_globalMessageBuffer[bufferSlot].Set(msg->message, msg->hwnd, 0);
+            shared_globalMessageBuffer[bufferSlot].data[0] = (int)LOWORD(msg->lParam);
+            shared_globalMessageBuffer[bufferSlot].data[1] = (int)HIWORD(msg->lParam);
         }
         else if (type == WM_DESTROY || type == WM_ACTIVATE || ((type >= WM_SETFOCUS) && (type <= WM_ENABLE)))
         {
-            globalMessageBuffer[bufferSlot].Set(msg->message, (type == WM_ACTIVATE) ? (HWND)msg->lParam : msg->hwnd, msg->wParam);
+            shared_globalMessageBuffer[bufferSlot].Set(msg->message, (type == WM_ACTIVATE) ? (HWND)msg->lParam : msg->hwnd, msg->wParam);
         }
         else if (type == WM_SIZE) {
-            globalMessageBuffer[bufferSlot].Set(msg->message, msg->hwnd, msg->wParam);
-            globalMessageBuffer[bufferSlot].data[0] = (int)LOWORD(msg->lParam);
-            globalMessageBuffer[bufferSlot].data[1] = (int)HIWORD(msg->lParam);
+            shared_globalMessageBuffer[bufferSlot].Set(msg->message, msg->hwnd, msg->wParam);
+            shared_globalMessageBuffer[bufferSlot].data[0] = (int)LOWORD(msg->lParam);
+            shared_globalMessageBuffer[bufferSlot].data[1] = (int)HIWORD(msg->lParam);
         }
         else if (type == WM_SIZING)
         {
-            globalMessageBuffer[bufferSlot].Set(msg->message, msg->hwnd, msg->wParam);
+            shared_globalMessageBuffer[bufferSlot].Set(msg->message, msg->hwnd, msg->wParam);
         }
         else if ((type >= WM_CUT && type <= WM_CLEAR)) {
-            globalMessageBuffer[bufferSlot].Set(msg->message, msg->hwnd, msg->wParam);
+            shared_globalMessageBuffer[bufferSlot].Set(msg->message, msg->hwnd, msg->wParam);
         }
         else
         {
-            globalMessageBuffer[bufferSlot].Type = WM_NULL;
+            shared_globalMessageBuffer[bufferSlot].Type = WM_NULL;
             goto forwardEvent;
         }
         ReleaseSemaphore(semaphore, 1, nullptr); /* mark one message as available to the dispatcher running in the MORR AS */
@@ -132,7 +131,7 @@ bool IsCaptured(UINT type) {
 
 bool Capture(UINT type) {
     if (type < MESSAGETABLESIZE && IsCaptured(type)) {
-        messageHasListener[type] = true;
+        shared_messageHasListener[type] = true;
         return true;
     }
     return false;
@@ -140,7 +139,7 @@ bool Capture(UINT type) {
 
 void StopCapture(UINT type) {
     if (type < MESSAGETABLESIZE)
-        messageHasListener[type] = false;
+        shared_messageHasListener[type] = false;
 };
 
 DLL void SetHook(WH_MessageCallBack progressCallback, bool blocking) {
@@ -154,8 +153,15 @@ DLL void SetHook(WH_MessageCallBack progressCallback, bool blocking) {
     if (!MapSharedMemory()) {
         fprintf(stderr, "Could not set %s GlobalHook (shared memory inaccessible).\n", ARCH);
     }
-    *running = true;
-    *globalBufferIterator = 0;
+    /**
+        Only set shared variables in 64bit version to avoid racecondition.
+        (The 64bit hook might already overwrite these values before the 32 bit child would
+        set these values).
+     */
+#ifdef _WIN64
+    *shared_running = true;
+    *shared_globalBufferIterator = 0;
+#endif
     globalCallback = progressCallback;
 
     if (GetMessageHook == nullptr) {
@@ -188,8 +194,8 @@ DLL void SetHook(WH_MessageCallBack progressCallback, bool blocking) {
 
 DLL void RemoveHook()
 {
-    if (running != nullptr)
-        *running = false;
+    if (shared_running != nullptr)
+        *shared_running = false;
     if (GetMessageHook != nullptr) {
         if (!UnhookWindowsHookEx(GetMessageHook))
             fprintf(stderr, "Error unhooking %s GetMessage hook. Errorcode %d\n", ARCH, GetLastError());
@@ -209,7 +215,7 @@ DLL void RemoveHook()
     if (semaphore)
         CloseHandle(semaphore);
     semaphore = nullptr;
-    globalBufferIterator = nullptr;
+    shared_globalBufferIterator = nullptr;
 #ifdef _WIN64
     JoinWin32Helper();
 #endif
@@ -222,27 +228,27 @@ void DispatchLoop() {
     unsigned int localBufferIterator = 0;
     unsigned int previous;
     semaphore = CreateSemaphore(nullptr, 0, BUFFERSIZE, TEXT(SEMAPHORE_GUID));
-    while (*running) {
+    while (*shared_running) {
         {
-            while (localBufferIterator == *globalBufferIterator % BUFFERSIZE) {
-                if (*running)
+            while (localBufferIterator == *shared_globalBufferIterator % BUFFERSIZE) {
+                if (*shared_running)
                     WaitForSingleObject(semaphore, 1000); /* wake up every second so we could react to RemoveHook call.*/
                 else
                     return;
             }
             previous = localBufferIterator;
             ++localBufferIterator %= BUFFERSIZE;
-            if ((globalTimeStamps[localBufferIterator]) && ((globalTimeStamps[localBufferIterator]) == globalTimeStamps[(previous)])
-                 && (globalMessageBuffer[localBufferIterator].Type == globalMessageBuffer[previous].Type)) /* discard event if it's obviously a duplicate (works only or events which
+            if ((shared_globalTimeStamps[localBufferIterator]) && ((shared_globalTimeStamps[localBufferIterator]) == shared_globalTimeStamps[(previous)])
+                 && (shared_globalMessageBuffer[localBufferIterator].Type == shared_globalMessageBuffer[previous].Type)) /* discard event if it's obviously a duplicate (works only or events which
                                                                                                               inherently come with a timestamp) */
                 continue;
-            globalCallback(globalMessageBuffer[localBufferIterator]);
+            globalCallback(shared_globalMessageBuffer[localBufferIterator]);
         }
     }
 }
 #else
 void DispatchLoop() {
-    while (running != nullptr && *running)
+    while (shared_running != nullptr && *shared_running)
         Sleep(1000);
 }
 #endif
@@ -275,11 +281,11 @@ bool MapSharedMemory() {
             }
             else
             {
-                running = (bool*)&sharedBuffer[0];
-                globalBufferIterator = (UINT*)&sharedBuffer[4];
-                globalMessageBuffer = (WM_Message*)&sharedBuffer[MESSAGEBUFFEROFFSET];
-                globalTimeStamps = (DWORD*)&sharedBuffer[TIMESTAMPSBUFFEROFFSET];
-                messageHasListener = (bool*)&sharedBuffer[HASLISTENEROFFSET];
+                shared_running = (bool*)&sharedBuffer[0];
+                shared_globalBufferIterator = (UINT*)&sharedBuffer[4];
+                shared_globalMessageBuffer = (WM_Message*)&sharedBuffer[MESSAGEBUFFEROFFSET];
+                shared_globalTimeStamps = (DWORD*)&sharedBuffer[TIMESTAMPSBUFFEROFFSET];
+                shared_messageHasListener = (bool*)&sharedBuffer[HASLISTENEROFFSET];
             }
         }
     }
@@ -295,11 +301,11 @@ void UnmapSharedMemory() {
         CloseHandle(mappedFileHandle);
         mappedFileHandle = nullptr;
     }
-    globalBufferIterator = nullptr;
-    globalMessageBuffer = nullptr;
-    globalTimeStamps = nullptr;
-    messageHasListener = nullptr;
-    running = nullptr;
+    shared_globalBufferIterator = nullptr;
+    shared_globalMessageBuffer = nullptr;
+    shared_globalTimeStamps = nullptr;
+    shared_messageHasListener = nullptr;
+    shared_running = nullptr;
     mappedFileHandle = nullptr;
     sharedBuffer = nullptr;
 }

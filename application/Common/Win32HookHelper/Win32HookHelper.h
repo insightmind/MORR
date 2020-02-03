@@ -6,28 +6,30 @@
 #include <stdio.h>
 #include <tchar.h>
 
-typedef void(__cdecl* pVoidFunc)(void);
-typedef bool(__cdecl* pBoolFunc)(UINT);
-typedef int(__cdecl* pIntFunc)(void);
+/**
+    Copy of the struct definition found in HookLibrary.
+ */
 typedef struct {
-    INT64 Hwnd;
-    INT64 wParam;
+    UINT64 Hwnd;
+    UINT64 wParam;
     UINT32 Type;
     INT32 data[4];
 } WM_Message;
 
+typedef void(__cdecl* pVoidFunc)(void);
 typedef void(__cdecl* pInitFunc)(void(__stdcall* pFunc)(WM_Message), bool);
 
 class Win32HookHelper {
 public:
+    /**
+        Attach the hook and block as long as GlobalHook is active.
+     */
     static bool init();
     static void freeResources();
 private:
     static HMODULE hookLibrary;
     static pInitFunc SetHook;
     static pVoidFunc RemoveHook;
-    static pBoolFunc Capture;
-    static HANDLE sharedMemory;
     static void __stdcall callback(WM_Message message);
 };
 
