@@ -15,8 +15,8 @@
     A serializable structure used for sending message data to the MORR application.
  */
 struct WM_Message {
-    HWND Hwnd;
-    WPARAM wParam;
+    UINT64 Hwnd;
+    UINT64 wParam;
     UINT32 Type;
     INT32 data[4];
     void Set(UINT32 type, HWND hwnd, WPARAM wParam);
@@ -43,6 +43,11 @@ typedef void(__stdcall* WH_MessageCallBack)(WM_Message);
 #define SEMAPHORE_GUID "7c4db072-3baf-457f-8259-da0c369e3ec8"
 #define SHARED_MEMORY_GUID "b8befd3b-318a-4ab7-9601-0d098cafae0b"
 
+#ifdef _WIN64
+#define ARCH "64bit"
+#else
+#define ARCH "32bit"
+#endif
   /**
       The iterator determining where in the buffer to store the next message.
   */
@@ -63,12 +68,12 @@ WM_Message* globalMessageBuffer = nullptr;
     An individual table entry has to be set to true if any listener wants this message information.
     Used to prevent unnecessary processing of undesired messages.
  */
-bool* messageHasListener;
+bool* messageHasListener = nullptr;
 
 /**
     Boolean value stating if the hooks are currently attached.
  */
-bool* running;
+bool* running = nullptr;
 
 #pragma data_seg("Shared")
 /**
@@ -166,11 +171,10 @@ HANDLE hMapFile = nullptr;
 BYTE* sharedBuffer = nullptr;
 
 #ifdef _WIN64
-/*STARTUPINFO si;
-PROCESS_INFORMATION pi;
-bool startWin32Helper();
-void joinWin32Helper();
-*/
+STARTUPINFO win32HelperStartupInfo;
+PROCESS_INFORMATION win32HelperProcessInformation;
+bool StartWin32Helper();
+void JoinWin32Helper();
 #endif
 
 #endif

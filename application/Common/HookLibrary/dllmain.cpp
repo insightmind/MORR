@@ -147,12 +147,12 @@ DLL void SetHook(WH_MessageCallBack progressCallback, bool blocking) {
     if (GetMessageHook || CallWndProcHook) {
         /* the stored values in this DLL might be persisting even
            over program restarts if not detached properly */
-        fprintf(stderr, "GlobalHook wasn't properly detached last time, trying to reset before attaching\n");
+        fprintf(stderr, "%s GlobalHook wasn't properly detached last time, trying to reset before attaching\n", ARCH);
         UnmapSharedMemory();
         RemoveHook();
     }
     if (!MapSharedMemory()) {
-        fprintf(stderr, "Could not set GlobalHook (shared memory inaccessible).\n");
+        fprintf(stderr, "Could not set %s GlobalHook (shared memory inaccessible).\n", ARCH);
     }
     *running = true;
     *globalBufferIterator = 0;
@@ -160,17 +160,22 @@ DLL void SetHook(WH_MessageCallBack progressCallback, bool blocking) {
 
     if (GetMessageHook == nullptr) {
         if ((GetMessageHook = SetWindowsHookEx(WH_GETMESSAGE, GetMsgProc, hInstHookDll, 0)) == nullptr)
-            fprintf(stderr, "Error attaching GetMessage hook. Errorcode %d\n", GetLastError());
+            fprintf(stderr, "Error attaching %s GetMessage hook. Errorcode %d\n", ARCH, GetLastError());
     }
     if (CallWndProcHook == nullptr) {
         if ((CallWndProcHook = SetWindowsHookEx(WH_CALLWNDPROC, CallWndProc, hInstHookDll, 0)) == nullptr)
-            fprintf(stderr, "Error attaching WndProc hook. Errorcode %d\n", GetLastError());
+            fprintf(stderr, "Error attaching %s WndProc hook. Errorcode %d\n", ARCH, GetLastError());
     }
     if (GetMessageHook == nullptr || CallWndProcHook == nullptr) {
         RemoveHook();
         return;
     }
-    printf("GlobalHook: Hooked\n");
+#ifdef _WIN64
+    if (!StartWin32Helper()) {
+        fprintf(stderr, "Could not launch Win32HookHelper.\n");
+    }
+#endif
+    printf("%s GlobalHook: Hooked\n", ARCH);
     if (!blocking)
     {
         dispatcherthread = new std::thread(DispatchLoop);
@@ -187,11 +192,11 @@ DLL void RemoveHook()
         *running = false;
     if (GetMessageHook != nullptr) {
         if (!UnhookWindowsHookEx(GetMessageHook))
-            fprintf(stderr, "Error unhooking GetMessage hook. Errorcode %d\n", GetLastError());
+            fprintf(stderr, "Error unhooking %s GetMessage hook. Errorcode %d\n", ARCH, GetLastError());
     }
     if (CallWndProcHook != nullptr) {
         if (!UnhookWindowsHookEx(CallWndProcHook))
-            fprintf(stderr, "Error unhooking CallWndProc hook. Errorcode %d\n", GetLastError());
+            fprintf(stderr, "Error unhooking %s CallWndProc hook. Errorcode %d\n", ARCH, GetLastError());
     }
     GetMessageHook = nullptr;
     CallWndProcHook = nullptr;
@@ -205,10 +210,14 @@ DLL void RemoveHook()
         CloseHandle(semaphore);
     semaphore = nullptr;
     globalBufferIterator = nullptr;
+#ifdef _WIN64
+    JoinWin32Helper();
+#endif
     UnmapSharedMemory();
-    printf("GlobalHook: Unhooked\n");
+    printf("%s GlobalHook: Unhooked\n", ARCH);
 }
 
+#ifdef _WIN64
 void DispatchLoop() {
     unsigned int localBufferIterator = 0;
     unsigned int previous;
@@ -231,6 +240,12 @@ void DispatchLoop() {
         }
     }
 }
+#else
+void DispatchLoop() {
+    while (running != nullptr && *running)
+        Sleep(1000);
+}
+#endif
 
 bool MapSharedMemory() {
     if (!hMapFile) {
@@ -289,10 +304,45 @@ void UnmapSharedMemory() {
     sharedBuffer = nullptr;
 }
 
+#ifdef _WIN64
+bool StartWin32Helper() {
+    ZeroMemory(&win32HelperStartupInfo, sizeof(win32HelperStartupInfo));
+    win32HelperStartupInfo.cb = sizeof(win32HelperStartupInfo);
+    ZeroMemory(&win32HelperProcessInformation, sizeof(win32HelperProcessInformation));
+    wchar_t pathName[] = L"Win32HookHelper.exe";
+
+    if (!CreateProcess(NULL,   // No module name (use command line)
+        pathName,        // Command line
+        NULL,           // Process handle not inheritable
+        NULL,           // Thread handle not inheritable
+        FALSE,          // Set handle inheritance to FALSE
+        0,              // No creation flags
+        NULL,           // Use parent's environment block
+        NULL,           // Use parent's starting directory 
+        &win32HelperStartupInfo,            // Pointer to STARTUPINFO structure
+        &win32HelperProcessInformation)           // Pointer to PROCESS_INFORMATION structure
+        )
+    {
+        return false;
+    }
+    return true;
+
+}
+
+void JoinWin32Helper() {
+    WaitForSingleObject(win32HelperProcessInformation.hProcess, 5000); //wait for child to close, but for a maximum of 5 seconds
+
+    // Close process and thread handles.
+    CloseHandle(win32HelperProcessInformation.hProcess);
+    CloseHandle(win32HelperProcessInformation.hThread);
+}
+
+#endif
+
 void WM_Message::Set(UINT32 type, HWND hwnd, WPARAM wParam)
 {
     this->Type = type;
-    this->Hwnd = hwnd;
-    this->wParam = wParam;
+    this->Hwnd = (UINT64)hwnd;
+    this->wParam = (UINT64)wParam;
     ZeroMemory(&this->data, sizeof(sizeof(this->data)));
 }
