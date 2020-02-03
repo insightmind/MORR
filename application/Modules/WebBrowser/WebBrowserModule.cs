@@ -35,6 +35,9 @@ namespace MORR.Modules.WebBrowser
         private WebExtensionListener listener;
         private List<IWebBrowserEventObserver> producers;
 
+        public static Guid Identifier { get; } = new Guid("e9240dc4-f33f-43db-a419-5b36d8279c88");
+        Guid IModule.Identifier => Identifier;
+
         public bool IsActive
         {
             get => isActive;
@@ -42,8 +45,6 @@ namespace MORR.Modules.WebBrowser
                                           () => listener.RecordingActive = true,
                                           () => listener.RecordingActive = false);
         }
-
-        public Guid Identifier { get; } = new Guid("e9240dc4-f33f-43db-a419-5b36d8279c88");
 
         public void Initialize()
         {

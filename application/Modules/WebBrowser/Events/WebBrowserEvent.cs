@@ -57,8 +57,7 @@ namespace MORR.Modules.WebBrowser.Events
             TabID = parsed.GetProperty(serializedTabIdField).GetInt32();
             CurrentURL = new Uri(parsed.GetProperty(serializedUrlField).ToString());
             Timestamp = parsed.GetProperty(serializedTimeStampField).GetDateTime();
-            IssuingModule =
-                new Guid("e9240dc4-f33f-43db-a419-5b36d8279c88"); //TODO: actually obtain this from the module
+            IssuingModule = WebBrowserModule.Identifier;
         }
     }
 }
