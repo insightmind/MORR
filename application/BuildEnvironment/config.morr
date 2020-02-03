@@ -15,5 +15,8 @@
   "MORR.Modules.Mouse.MouseModuleConfiguration": {
     "SamplingRateInHz": 10,
     "Threshold": 50
+  },
+  "MORR.Modules.WebBrowser.WebBrowserModuleConfiguration": {
+    "UrlSuffix": "60024/"
   }
 }

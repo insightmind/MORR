@@ -54,7 +54,7 @@ namespace MORR.Shared.Utility
 
         [DllImport(hookLibName, CallingConvention = CallingConvention.Cdecl)]
         private static extern void
-            SetHook([MarshalAs(UnmanagedType.FunctionPtr)] CppGetMessageCallback callbackPointer);
+            SetHook([MarshalAs(UnmanagedType.FunctionPtr)] CppGetMessageCallback callbackPointer, [MarshalAs(UnmanagedType.Bool)] bool blocking);
 
         [DllImport(hookLibName, CallingConvention = CallingConvention.Cdecl)]
         private static extern void RemoveHook();
@@ -154,7 +154,7 @@ namespace MORR.Shared.Utility
                     if (hookLibrary == IntPtr.Zero)
                         throw new HookLibraryException($"Error loading {hookLibName}");
                 }
-                SetHook(cppCallback);
+                SetHook(cppCallback, false);
                 isActive = true;
             }
         }
@@ -178,10 +178,9 @@ namespace MORR.Shared.Utility
         [StructLayout(LayoutKind.Sequential)]
         public struct HookMessage
         {
-            [MarshalAs(UnmanagedType.U4)] public uint Type;
             [MarshalAs(UnmanagedType.SysInt)] public IntPtr Hwnd;
             [MarshalAs(UnmanagedType.SysInt)] public IntPtr wParam;
-
+            [MarshalAs(UnmanagedType.U4)] public uint Type;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4, ArraySubType = UnmanagedType.I4)]
             public int[] Data; //General purpose fields for message specific data
         }

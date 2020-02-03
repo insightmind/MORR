@@ -10,7 +10,11 @@ BOOL APIENTRY DllMain(HANDLE hModule, DWORD  ul_reason_for_call,
     case DLL_PROCESS_ATTACH:
         
         hInstHookDll = (HINSTANCE)hModule;
+        MapSharedMemory();
+
         break;
+    case DLL_PROCESS_DETACH:
+        UnmapSharedMemory();
     }
     return TRUE;
 }
@@ -19,6 +23,8 @@ LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
 //this is the hook procedure
 {
     LRESULT retVal = CallNextHookEx(GetMessageHook, nCode, wParam, lParam);
+    if (!hMapFile)
+        MapSharedMemory();
     //a pointer to hold the MSG structure that is passed as lParam
     MSG* msg;
     if (semaphore == nullptr) {
@@ -30,17 +36,17 @@ LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
     /* see https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/ms644981(v=vs.85) */
     if (nCode >= 0 && nCode == HC_ACTION && msg->message < MESSAGETABLESIZE && messageHasListener[msg->message])
     {
-        unsigned int bufferSlot = InterlockedIncrement(&globalBufferIterator) % BUFFERSIZE; //atomic increment. overflows should not matter as we modulo it anyways.
+        unsigned int bufferSlot = InterlockedIncrement(globalBufferIterator) % BUFFERSIZE; //atomic increment. overflows should not matter as we modulo it anyways.
         unsigned int type = msg->message;
         globalTimeStamps[bufferSlot] = msg->time;
-        if ((type >= WM_MOUSEMOVE && type <= WM_MOUSEWHEEL) || (type >= WM_NCMOUSEMOVE && type <= WM_NCMBUTTONDBLCLK)|| type == WM_KEYDOWN) {
+        if ((type >= WM_MOUSEMOVE && type <= WM_MOUSEWHEEL) || (type >= WM_NCMOUSEMOVE && type <= WM_NCMBUTTONDBLCLK) || type == WM_KEYDOWN) {
             globalMessageBuffer[bufferSlot].Set(msg->message, msg->hwnd, msg->wParam);
             globalMessageBuffer[bufferSlot].data[0] = msg->pt.x;
             globalMessageBuffer[bufferSlot].data[1] = msg->pt.y;
         }
         else
         {
-            globalMessageBuffer[bufferSlot].Type == WM_NULL;
+            globalMessageBuffer[bufferSlot].Type = WM_NULL;
             goto forwardEvent;
         }
         ReleaseSemaphore(semaphore, 1, nullptr); /* mark one message as available to the dispatcher running in the MORR AS */
@@ -53,6 +59,8 @@ forwardEvent:
 LRESULT CALLBACK CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
     LRESULT retVal = CallNextHookEx(CallWndProcHook, nCode, wParam, lParam);
+    if (!hMapFile)
+        MapSharedMemory();
     CWPSTRUCT* msg;
     if (semaphore == nullptr) {
         semaphore = CreateSemaphore(nullptr, 0, BUFFERSIZE, TEXT(SEMAPHORE_GUID));
@@ -63,7 +71,7 @@ LRESULT CALLBACK CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
     /* see https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/ms644981(v=vs.85) */
     if (nCode >= 0 && nCode == HC_ACTION && msg->message < MESSAGETABLESIZE && messageHasListener[msg->message])
     {
-        unsigned int bufferSlot = InterlockedIncrement(&globalBufferIterator) % BUFFERSIZE;
+        unsigned int bufferSlot = InterlockedIncrement(globalBufferIterator) % BUFFERSIZE;
         globalTimeStamps[bufferSlot] = 0;
         unsigned int type = msg->message;
 
@@ -98,7 +106,7 @@ LRESULT CALLBACK CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
         }
         else
         {
-            globalMessageBuffer[bufferSlot].Type == WM_NULL;
+            globalMessageBuffer[bufferSlot].Type = WM_NULL;
             goto forwardEvent;
         }
         ReleaseSemaphore(semaphore, 1, nullptr); /* mark one message as available to the dispatcher running in the MORR AS */
@@ -135,15 +143,19 @@ void StopCapture(UINT type) {
         messageHasListener[type] = false;
 };
 
-DLL void SetHook(WH_MessageCallBack progressCallback) {
+DLL void SetHook(WH_MessageCallBack progressCallback, bool blocking) {
     if (GetMessageHook || CallWndProcHook) {
         /* the stored values in this DLL might be persisting even
            over program restarts if not detached properly */
         fprintf(stderr, "GlobalHook wasn't properly detached last time, trying to reset before attaching\n");
+        UnmapSharedMemory();
         RemoveHook();
     }
-    running = true;
-    globalBufferIterator = 0;
+    if (!MapSharedMemory()) {
+        fprintf(stderr, "Could not set GlobalHook (shared memory inaccessible).\n");
+    }
+    *running = true;
+    *globalBufferIterator = 0;
     globalCallback = progressCallback;
 
     if (GetMessageHook == nullptr) {
@@ -158,13 +170,21 @@ DLL void SetHook(WH_MessageCallBack progressCallback) {
         RemoveHook();
         return;
     }
-    dispatcherthread = new std::thread(DispatchLoop);
     printf("GlobalHook: Hooked\n");
+    if (!blocking)
+    {
+        dispatcherthread = new std::thread(DispatchLoop);
+    }
+    else {
+        DispatchLoop();
+        RemoveHook();
+    }
 }
 
 DLL void RemoveHook()
 {
-    running = false;
+    if (running != nullptr)
+        *running = false;
     if (GetMessageHook != nullptr) {
         if (!UnhookWindowsHookEx(GetMessageHook))
             fprintf(stderr, "Error unhooking GetMessage hook. Errorcode %d\n", GetLastError());
@@ -184,8 +204,8 @@ DLL void RemoveHook()
     if (semaphore)
         CloseHandle(semaphore);
     semaphore = nullptr;
-    globalBufferIterator = 0;
-    ZeroMemory(globalMessageBuffer, sizeof(globalMessageBuffer));
+    globalBufferIterator = nullptr;
+    UnmapSharedMemory();
     printf("GlobalHook: Unhooked\n");
 }
 
@@ -193,10 +213,10 @@ void DispatchLoop() {
     unsigned int localBufferIterator = 0;
     unsigned int previous;
     semaphore = CreateSemaphore(nullptr, 0, BUFFERSIZE, TEXT(SEMAPHORE_GUID));
-    while (running) {
+    while (*running) {
         {
-            while (localBufferIterator == globalBufferIterator % BUFFERSIZE) {
-                if (running)
+            while (localBufferIterator == *globalBufferIterator % BUFFERSIZE) {
+                if (*running)
                     WaitForSingleObject(semaphore, 1000); /* wake up every second so we could react to RemoveHook call.*/
                 else
                     return;
@@ -210,6 +230,63 @@ void DispatchLoop() {
             globalCallback(globalMessageBuffer[localBufferIterator]);
         }
     }
+}
+
+bool MapSharedMemory() {
+    if (!hMapFile) {
+        hMapFile = CreateFileMapping(
+            INVALID_HANDLE_VALUE,    // use paging file
+            NULL,                    // default security
+            PAGE_READWRITE,          // read/write access
+            0,                       // maximum object size (high-order DWORD)
+            SHAREDBUFFERSIZE,                // maximum object size (low-order DWORD)
+            TEXT(SHARED_MEMORY_GUID));                 // name of mapping object
+        if (!hMapFile) {
+            fprintf(stderr, "Error creating shared memory segment. Errorcode %d\n", GetLastError());
+            return false;
+        }
+        else
+        {
+            sharedBuffer = (BYTE*)MapViewOfFile(hMapFile,
+                FILE_MAP_ALL_ACCESS,
+                0,
+                0,
+                SHAREDBUFFERSIZE);
+            if (!sharedBuffer) {
+                fprintf(stderr, "Error mapping shared memory segment. Errorcode %d\n", GetLastError());
+                CloseHandle(hMapFile);
+                hMapFile = NULL;
+                return false;
+            }
+            else
+            {
+                running = (bool*)&sharedBuffer[0];
+                globalBufferIterator = (UINT*)&sharedBuffer[4];
+                globalMessageBuffer = (WM_Message*)&sharedBuffer[MESSAGEBUFFEROFFSET];
+                globalTimeStamps = (DWORD*)&sharedBuffer[TIMESTAMPSBUFFEROFFSET];
+                messageHasListener = (bool*)&sharedBuffer[HASLISTENEROFFSET];
+            }
+        }
+    }
+    return true;
+}
+
+void UnmapSharedMemory() {
+    if (sharedBuffer) {
+        UnmapViewOfFile(sharedBuffer);
+        sharedBuffer = nullptr;
+    }
+    if (hMapFile) {
+        CloseHandle(hMapFile);
+        hMapFile = nullptr;
+    }
+    globalBufferIterator = nullptr;
+    globalMessageBuffer = nullptr;
+    globalTimeStamps = nullptr;
+    messageHasListener = nullptr;
+    running = nullptr;
+    hMapFile = nullptr;
+    sharedBuffer = nullptr;
 }
 
 void WM_Message::Set(UINT32 type, HWND hwnd, WPARAM wParam)
