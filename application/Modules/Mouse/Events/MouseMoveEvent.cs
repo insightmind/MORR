@@ -1,15 +1,11 @@
-﻿using System.Numerics;
-
-namespace MORR.Modules.Mouse.Events
+﻿namespace MORR.Modules.Mouse.Events
 {
     /// <summary>
     ///     A mouse move user interaction
+    ///     This class is empty because the MousePosition is the only field needed
+    ///     to describe this event, which is already defined in the base class MouseEvent.
     /// </summary>
     public class MouseMoveEvent : MouseEvent
     {
-        /// <summary>
-        ///     The movement of the mouse
-        /// </summary>
-        public Vector2 Movement { get; set; }
     }
 }

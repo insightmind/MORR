@@ -1,40 +1,80 @@
 ﻿using System;
-using MORR.Shared.Modules;
-using MORR.Modules.Mouse.Producers;
 using System.ComponentModel.Composition;
+using MORR.Modules.Mouse.Producers;
+using MORR.Shared.Modules;
+using MORR.Shared.Utility;
 
 namespace MORR.Modules.Mouse
 {
     /// <summary>
-    /// The <see cref="MouseModule"/> is responsible for recording all mouse related user interactions
+    ///     The <see cref="MouseModule" /> is responsible for recording all mouse related user interactions
     /// </summary>
     public class MouseModule : ICollectingModule
     {
-        public bool IsActive { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        public Guid Identifier => throw new NotImplementedException();
+        private bool isActive;
 
         /// <summary>
-        /// A single-writer-multiple-reader queue for MouseClickEvent
+        ///     A single-writer-multiple-reader queue for MouseClickEvent
         /// </summary>
         [Import]
-        public MouseClickEventProducer MouseClickEventProducer { get; private set; }
+        private MouseClickEventProducer MouseClickEventProducer { get; set; }
 
         /// <summary>
-        /// A single-writer-multiple-reader queue for MouseScrollEvent
+        ///     A single-writer-multiple-reader queue for MouseScrollEvent
         /// </summary>
         [Import]
-        public MouseScrollEventProducer MouseScrollEventProducer { get; private set; }
+        private MouseScrollEventProducer MouseScrollEventProducer { get; set; }
 
         /// <summary>
-        /// A single-writer-multiple-reader queue for MouseMoveEvent
+        ///     A single-writer-multiple-reader queue for MouseMoveEvent
         /// </summary>
         [Import]
-        public MouseMoveEventProducer MouseMoveEventProducer { get; private set; }
+        private MouseMoveEventProducer MouseMoveEventProducer { get; set; }
 
+        /// <summary>
+        ///     Configuration of the MouseModule.
+        /// </summary>
+        [Import]
+        private MouseModuleConfiguration MouseModuleConfiguration { get; set; }
+
+        public static Guid Identifier { get; } = new Guid("EFF894B3-4DC9-4605-9937-F02F400B4A62");
+
+        /// <summary>
+        ///     if the module is active or not.
+        ///     When a module is being activated, all the producers will start to capture user interacts.
+        ///     When a module is being deactivated, all the producers will stop capturing user interacts.
+        /// </summary>
+        public bool IsActive
+        {
+            get => isActive;
+            set => Utility.SetAndDispatch(ref isActive, value, StartCapture,
+                                          StopCapture);
+        }
+
+        Guid IModule.Identifier => Identifier;
+
+        /// <summary>
+        ///     Initialize the module with Configuration and Producers.
+        /// </summary>
         public void Initialize()
         {
-            throw new NotImplementedException();
+            // configure all producers with retrieved parameters
+            MouseMoveEventProducer.SamplingRateInHz = MouseModuleConfiguration.SamplingRateInHz;
+            MouseMoveEventProducer.Threshold = MouseModuleConfiguration.Threshold;
+        }
+
+        private void StartCapture()
+        {
+            MouseClickEventProducer.StartCapture();
+            MouseScrollEventProducer.StartCapture();
+            MouseMoveEventProducer.StartCapture();
+        }
+
+        private void StopCapture()
+        {
+            MouseClickEventProducer.StopCapture();
+            MouseScrollEventProducer.StopCapture();
+            MouseMoveEventProducer.StopCapture();
         }
     }
 }

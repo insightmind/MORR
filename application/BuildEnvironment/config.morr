@@ -3,6 +3,7 @@
     "EnabledModules": [
       "MORR.Core.Data.IntermediateFormat.Json.JsonIntermediateFormatSerializer",
       "MORR.Modules.Keyboard.KeyboardModule",
+      "MORR.Modules.Mouse.MouseModule",
       "MORR.Modules.WebBrowser.WebBrowserModule",
       "MORR.Modules.Clipboard.ClipboardModule"
     ]
@@ -11,18 +12,8 @@
     "Encoder": "MORR.Core.CLI.Output.OutputFormatter",
     "RecordingDirectory": "%userprofile%\\Videos\\MORR"
   },
-  "MORR.Core.Data.Capture.Video.Desktop.DesktopCaptureConfiguration": {
-    "MonitorIndex": 0,
-    "PromptUserForMonitorSelection": false
-  },
-  "MORR.Core.Data.Transcoding.Mpeg.MpegEncoderConfiguration": {
-    "Width": 1920,
-    "Height": 1080,
-    "KiloBitsPerSecond": 4000,
-    "FramesPerSecond": 60,
-    "RecordingName": "desktop_capture"
-  },
-  "MORR.Modules.WebBrowser.WebBrowserModuleConfiguration": {
-    "UrlSuffix": "60024/"
+  "MORR.Modules.Mouse.MouseModuleConfiguration": {
+    "SamplingRateInHz": 10,
+    "Threshold": 50
   }
 }

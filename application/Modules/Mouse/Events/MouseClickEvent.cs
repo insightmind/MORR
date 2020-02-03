@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 
 namespace MORR.Modules.Mouse.Events
 {
@@ -9,18 +8,13 @@ namespace MORR.Modules.Mouse.Events
     public class MouseClickEvent : MouseEvent
     {
         /// <summary>
-        ///     The button that was clicked
+        ///     Specifies constants that define actions performed by the mouse.
         /// </summary>
-        public MouseButton Button { get; set; }
+        public MouseAction MouseAction { get; set; }
 
         /// <summary>
-        ///     The state of the button that was clicked
+        ///     The handle of the window in which the mouse click occurred in String.
         /// </summary>
-        public MouseButtonState State { get; set; }
-
-        /// <summary>
-        ///     The handle of the window in which the mouse click occurred
-        /// </summary>
-        public IntPtr HWnd { get; set; }
+        public string HWnd { get; set; }
     }
 }
