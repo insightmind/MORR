@@ -3,7 +3,9 @@
     "EnabledModules": [
       "MORR.Core.Data.IntermediateFormat.Json.JsonIntermediateFormatSerializer",
       "MORR.Modules.Keyboard.KeyboardModule",
-      "MORR.Modules.Mouse.MouseModule"
+      "MORR.Modules.Mouse.MouseModule",
+      "MORR.Modules.WebBrowser.WebBrowserModule",
+      "MORR.Modules.Clipboard.ClipboardModule"
     ]
   },
   "MORR.Core.Session.SessionConfiguration": {
