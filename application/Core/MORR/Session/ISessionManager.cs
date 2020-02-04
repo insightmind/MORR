@@ -15,6 +15,11 @@ namespace MORR.Core.Session
         DirectoryPath? CurrentRecordingDirectory { get; }
 
         /// <summary>
+        ///     The path to the top-level folder containing the recording subdirectories.
+        /// </summary>
+        DirectoryPath? RecordingsFolder { get; }
+
+        /// <summary>
         ///     Starts a recording if no session is currently being recorded.
         /// </summary>
         void StartRecording();

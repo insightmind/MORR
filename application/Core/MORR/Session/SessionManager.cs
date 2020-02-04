@@ -50,6 +50,9 @@ namespace MORR.Core.Session
 
         public DirectoryPath? CurrentRecordingDirectory { get; private set; }
 
+        // Nullable to prevent issues with calling this before the configuration has been parsed
+        public DirectoryPath? RecordingsFolder => Configuration?.RecordingDirectory;
+
         private DirectoryPath CreateNewRecordingDirectory()
         {
             var sessionId = Guid.NewGuid();
