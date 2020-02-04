@@ -46,7 +46,7 @@ namespace MORR.Core.Data.Transcoding.Mpeg
                 throw new InvalidConfigurationException("Failed to parse relative file path.");
             }
 
-            RelativeFilePath = new FilePath(recordingElement.GetString());
+            RelativeFilePath = new FilePath(recordingElement.GetString(), true);
         }
 
         private static uint GetUintFromProperty(JsonElement element, string propertyName)

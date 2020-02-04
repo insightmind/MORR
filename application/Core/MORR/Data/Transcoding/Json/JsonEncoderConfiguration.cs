@@ -21,7 +21,7 @@ namespace MORR.Core.Data.Transcoding.Json
                 throw new InvalidConfigurationException("Failed to parse relative file path.");
             }
 
-            RelativeFilePath = new FilePath(relativeFilePathElement.GetString());
+            RelativeFilePath = new FilePath(relativeFilePathElement.GetString(), true);
         }
     }
 }

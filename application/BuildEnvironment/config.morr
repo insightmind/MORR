@@ -16,9 +16,5 @@
   },
   "MORR.Core.Data.Transcoding.Json.JsonDecoderConfiguration": {
     "RelativeFilePath": "event_data.json"
-  },
-  "MORR.Modules.Mouse.MouseModuleConfiguration": {
-    "SamplingRateInHz": 10,
-    "Threshold": 50
   }
 }
