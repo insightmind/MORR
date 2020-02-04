@@ -43,7 +43,16 @@ namespace MORR.Modules.WebBrowser
             get => isActive;
             set => Utility.SetAndDispatch(ref isActive, value,
                                           () => listener.RecordingActive = true,
-                                          () => listener.RecordingActive = false);
+                                          StopRecording);
+        }
+
+        private void StopRecording()
+        {
+            listener.RecordingActive = false;
+            foreach (var producer in producers)
+            {
+                producer.EnqueueFinished();
+            }
         }
 
         public void Initialize()
