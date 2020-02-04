@@ -646,7 +646,7 @@ package MORR {
 
         together {
             class InteractiveCommandLine {
-                + Launch(cancelAction: action) : void
+                + Launch(cancelAction: Action) : void
             }
         }
 
