@@ -1,4 +1,5 @@
-﻿using MORR.Shared.Utility;
+﻿using System.Threading;
+using MORR.Shared.Utility;
 
 namespace MORR.Core.Data.Transcoding
 {
@@ -7,6 +8,11 @@ namespace MORR.Core.Data.Transcoding
     /// </summary>
     public interface IEncoder
     {
+        /// <summary>
+        ///     An event raised when encoding finishes.
+        /// </summary>
+        ManualResetEvent EncodeFinished { get; }
+
         /// <summary>
         ///     Encodes the provided samples to a file.
         /// </summary>

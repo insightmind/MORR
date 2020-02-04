@@ -83,6 +83,7 @@ namespace MORR.Core.Session
             isRecording = false;
 
             moduleManager.NotifyModulesOnSessionStop();
+            encoder.EncodeFinished.WaitOne();
         }
 
         public void Process(IEnumerable<DirectoryPath> recordings)
@@ -99,6 +100,9 @@ namespace MORR.Core.Session
                 CurrentRecordingDirectory = CreateNewRecordingDirectory();
                 decoder.Decode(recording);
                 encoder.Encode(CurrentRecordingDirectory);
+
+                decoder.DecodeFinished.WaitOne();
+                encoder.EncodeFinished.WaitOne();
             }
 
             moduleManager.NotifyModulesOnSessionStop();

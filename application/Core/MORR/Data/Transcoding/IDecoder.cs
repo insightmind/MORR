@@ -1,4 +1,5 @@
-﻿using MORR.Shared.Utility;
+﻿using System.Threading;
+using MORR.Shared.Utility;
 
 namespace MORR.Core.Data.Transcoding
 {
@@ -7,6 +8,11 @@ namespace MORR.Core.Data.Transcoding
     /// </summary>
     public interface IDecoder
     {
+        /// <summary>
+        ///     An event raised when decoding finishes.
+        /// </summary>
+        ManualResetEvent DecodeFinished { get; }
+
         /// <summary>
         ///     Decodes the recording and provides the decoded samples.
         /// </summary>

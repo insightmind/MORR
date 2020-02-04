@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.Composition;
 using System.IO;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using MORR.Core.Data.IntermediateFormat.Json;
 using MORR.Shared.Events.Queue;
@@ -16,6 +17,8 @@ namespace MORR.Core.Data.Transcoding.Json
         [Import]
         private JsonEncoderConfiguration Configuration { get; set; }
 
+        public ManualResetEvent EncodeFinished { get; } = new ManualResetEvent(false);
+
         public void Encode(DirectoryPath recordingDirectoryPath)
         {
             Task.Run(() => EncodeEvents(recordingDirectoryPath));
@@ -28,6 +31,8 @@ namespace MORR.Core.Data.Transcoding.Json
             await using var writer = new Utf8JsonWriter(fileStream);
             writer.WriteStartArray();
 
+            EncodeFinished.Reset();
+
             await foreach (var sample in IntermediateFormatSampleQueue.GetEvents())
             {
                 writer.WriteStartObject();
@@ -39,6 +44,7 @@ namespace MORR.Core.Data.Transcoding.Json
             }
 
             writer.WriteEndArray();
+            EncodeFinished.Set();
         }
 
         private FileStream GetFileStream(DirectoryPath recordingDirectoryPath)
