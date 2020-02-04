@@ -94,7 +94,7 @@ package MORR {
                 }
 
                 abstract class "DefaultDecodableEventQueue<T: Event>" {
-                    # <<create>> DefaultDecodableEventQueue(bufferCapacity: int)
+                    # <<create>> DefaultDecodableEventQueue(bufferCapacity: int, maxConsumers: uint?)
                 }
 
                 abstract class "NonDeserializableEventQueue<T: Event>" {
@@ -171,7 +171,7 @@ package MORR {
 
                 "BoundedMultiConsumerChannelStrategy<T: Event>" <.. "DefaultEventQueue<T: Event>" : "uses"
                 "BoundedMultiConsumerChannelStrategy<T: Event>" <.. "NonDeserializableEventQueue<T: Event>" : "uses"
-                "BoundedSingleConsumerChannelStrategy<T: Event>" <.. "DefaultDecodableEventQueue<T: Event>" : "uses"
+                "BoundedMultiConsumerChannelStrategy<T: Event>" <.. "DefaultDecodableEventQueue<T: Event>" : "uses"
                 "BoundedSingleConsumerChannelStrategy<T: Event>" <.. "DefaultEncodableEventQueue<T: Event>" : "uses"
 
                 ' EventQueue
@@ -417,8 +417,8 @@ package MORR {
 
             together {
                 class IntermediateFormatSample {
-                    + EventType : Type <<get>> <<set>>
-                    + SerializedData : byte[] <<get>> <<set>>
+                    + Type : Type <<get>> <<set>>
+                    + Data : byte[] <<get>> <<set>>
                 }
 
                 together {
@@ -429,7 +429,8 @@ package MORR {
                     }
 
                     class JsonIntermediateFormatSample {
-
+                        + JsonEncodedData: JsonDocument <<get>>
+                        + JsonEncodedType: JsondEncodedText <<get>>
                     }
 
                     class JsonIntermediateFormatSerializer {
@@ -451,7 +452,7 @@ package MORR {
                     + Encode(directoryRecordingPath: DirectoryPath) : void
                 }
 
-                together {
+                package MPEG <<Rectangle>> #BFBFBF {
                     class MpegEncoder {
                         + Encode(directoryRecordingPath: DirectoryPath) : void
                     }
@@ -466,7 +467,20 @@ package MORR {
                     }
                 }
 
+                package Json <<Rectangle>> #BFBFBF {
+                    class JsonDecoder {
+                        + {static} Identifier: Guid <<get>>
+                        + Decode(path: FilePath) : void
+                    }
+
+                    class JsonEncoder {
+                        + Encode(directoryRecordingPath: DirectoryPath) : void
+                    }
+                }
+
                 IEncoder <|.. MpegEncoder
+                IDecoder <|.. JsonDecoder
+                IEncoder <|-- JsonEncoder
                 MpegEncoder --* "1 Configuration" MpegEncoderConfiguration
                 MpegEncoder --* "1 VideoQueue" "IEncodableEventQueue<T: Event>"
             }
@@ -500,6 +514,8 @@ package MORR {
     JsonIntermediateFormatSerializer --* "* EventQueues" "IReadOnlyEventQueue<T: Event>"
 
     MpegEncoderConfiguration ..|> IConfiguration
+    JsonDecoder --|> "DefaultDecodableEventQueue<T: Event>"
+    JsonEncoder --* "1 IntermediateFormatSampleQueue" "IEncodableEventQueue<T: Event>"
 
     !startsub UI
     package "UI" #E6E6E6 {
