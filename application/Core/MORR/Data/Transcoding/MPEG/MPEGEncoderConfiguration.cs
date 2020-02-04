@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using MORR.Core.Configuration;
 using MORR.Shared.Configuration;
+using MORR.Shared.Utility;
 
 namespace MORR.Core.Data.Transcoding.Mpeg
 {
@@ -27,9 +28,9 @@ namespace MORR.Core.Data.Transcoding.Mpeg
         public uint FramesPerSecond { get; set; }
 
         /// <summary>
-        ///     The name of the recording file.
+        ///     The path to the file to store the data in relative to the recording directory.
         /// </summary>
-        public string RecordingName { get; set; }
+        public FilePath RelativeFilePath { get; set; }
 
         public void Parse(RawConfiguration configuration)
         {
@@ -40,12 +41,12 @@ namespace MORR.Core.Data.Transcoding.Mpeg
             KiloBitsPerSecond = GetUintFromProperty(element, nameof(KiloBitsPerSecond));
             FramesPerSecond = GetUintFromProperty(element, nameof(FramesPerSecond));
 
-            if (!element.TryGetProperty(nameof(RecordingName), out var recordingElement))
+            if (!element.TryGetProperty(nameof(RelativeFilePath), out var recordingElement))
             {
-                throw new InvalidConfigurationException("Failed to parse directory path.");
+                throw new InvalidConfigurationException("Failed to parse relative file path.");
             }
 
-            RecordingName = recordingElement.GetString();
+            RelativeFilePath = new FilePath(recordingElement.GetString());
         }
 
         private static uint GetUintFromProperty(JsonElement element, string propertyName)
