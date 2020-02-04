@@ -42,11 +42,11 @@ The \textbf{CORE} package contains the central initializing logic to be called w
 \packobj{IModuleManager}
 \packobj{IBootstrapper}
 \packobj{IConfigurationManager}
-\packobj{IRecordingsManager}
+\packobj{ISessionManager}
 \end{packif}
 
 \begin{packclass}
-\packobj{RecordingManager}
+\packobj{SessionManager}
 \packobj{Bootstrapper}
 \packobj{ModuleManager}
 \packobj{ConfigurationManager}
@@ -78,12 +78,13 @@ The \textbf{CORE.TRANSCODING} package is responsible for serialization and deser
 \packobj{DecodingException}
 \packobj{EncodingException}
 \packobj{CaptureException}
-\packobj{MetadataDecodingException}
-\packobj{VideoDecodingException}
-\packobj{MetadataEncodingException}
-\packobj{VideoEncodingException}
+\packobj{IntermediateFormatSample}
+\packobj{IntermediateFormatSerializer}
+\packobj{IntermediateFormatDeserializer}
+\packobj{JsonIntermediateFormatSample}
 \packobj{VideoCaptureException}
-\packobj{MetadataDeserializer}
+\packobj{VideoSample}
+\packobj{MonitorEnumerationHelper}
 \end{packclass}
 
 \begin{packpack}
@@ -91,20 +92,19 @@ The \textbf{CORE.TRANSCODING} package is responsible for serialization and deser
 \packobj{MPEG}
 \end{packpack}
 
-\section*{MORR.CORE.TRANSCODING.CSV}
-The \textbf{CORE.TRANSCODING.CSV} package is responsible for providing functionality which allows for encoding of event data to CSV (comma separated values) format.
+\section*{MORR.CORE.TRANSCODING.Json}
+The \textbf{CORE.TRANSCODING.Json} package is responsible for providing functionality which allows for encoding of event data to Json format.
 
 \begin{packclass}
-\packobj{CSVEncoder}
+\packobj{JsonEncoder}
+\packobj{JsonDecoder}
 \end{packclass}
 
 \section*{MORR.CORE.TRANSCODING.MPEG}
 The \textbf{CORE.TRANSCODING.MPEG} package allows for storing video-, audio- and event-data in a MPEG container and also retrieving this data again from such a container.
 
 \begin{packclass}
-\packobj{MPEGEncoder}
 \packobj{MPEGDecoder}
-\packobj{MPEGEncoderConfiguration}
 \packobj{MPEGDecoderConfiguration}
 \end{packclass}
 
@@ -122,11 +122,9 @@ The \textbf{CORE.CAPTURE} package is responsible for capturing and supplying sam
 \packobj{DesktopCaptureConfiguration}
 \packobj{CaptureHelper}
 \packobj{Direct3D11Helper}
-\packobj{MonitorInfo}
-\packobj{MonitorEnumerationHelper}
+\packobj{DirectXVideoSample}
 \packobj{CaptureException}
 \packobj{VideoCaptureException}
-\packobj{MetadataCapture}
 \end{packclass}
 
 \newpage
@@ -139,14 +137,21 @@ The \textbf{CORE.CAPTURE} package is responsible for capturing and supplying sam
 The \textbf{CLI} package contains all logic exclusively needed for the command line interface which allows for the extraction of event data from saved recordings.
 
 \begin{packif}
-\packobj{ICLICommand}
+\packobj{ICommand<T: CommandOptions>}
+\packobj{IOutputFormatter}
 \end{packif}
 
 \begin{packclass}
+\packobj{OutputFormatter}
+\packobj{CommandOptions}
+\packobj{RecordCommand}
+\packobj{RecordOptions}
+\packobj{ValidateCommand}
+\packobj{ValidateOptions}
 \packobj{ProcessCommand}
 \packobj{ProcessOptions}
-\packobj{OutputFormatter}
-\packobj{Options}
+\packobj{InteractiveCommandLine}
+\packobj{ProcessOptions}
 \packobj{Program}
 \end{packclass}
 
@@ -162,19 +167,38 @@ The \textbf{SHARED} package provides interfaces and classes which have to be kno
 \begin{packif}
 \packobj{IConfiguration}
 \packobj{IModule}
-\packobj{ITransformingModule}
-\packobj{ICollectingModule}
-\packobj{IReceivingModule}
-\packobj{IReadOnlyEventQueue<out T>}
-\packobj{IEventQueueStorageStrategy<T>}
+\packobj{IReadOnlyEventQueue<T: Event>}
+\packobj{ISupportDeserializationEventQueue<T: Event>}
+\packobj{IEventQueueStorageStrategy<T: Event>}
+\packobj{IDecodableEventQueue<T: Event>}
+\packobj{IEncodableEventQueue<T: Event>}
 \end{packif}
 
 \begin{packclass}
-\packobj{\abstract{EventQueue<T>}}
+\packobj{RawConfiguration}
 \packobj{\abstract{Event}}
-\packobj{RingBufferStorageStrategy<T>}
-\packobj{RefCountedListStorageStrategy<T>}
-\packobj{KeepAllStorageStrategy<T>}
+\packobj{InvalidConfigurationException}
+\packobj{\abstract{ReadOnlyEventQueue<T: Event>}}
+\packobj{\abstract{SupportDeserializationEventQueue<T: Event>}}
+\packobj{DefaultEventQueue<T: Event>}
+\packobj{NonDeserializableEventQueue<T: Event>}
+\packobj{\abstract{MultiConsumerChannelStrategy<T: Event>}}
+\packobj{\abstract{SingleConsumerChannelStrategy<T: Event>}}
+\packobj{BoundedMultiConsumerChannelStrategy<T: Event>}
+\packobj{UnboundedMultiConsumerChannelStrategy<T: Event>}
+\packobj{BoundedSingleConsumerChannelStrategy<T: Event>}
+\packobj{UnboundedSingleConsumerChannelStrategy<T: Event>}
+\packobj{ChannelConsumingException}
+\packobj{\abstract{DecodableEventQueue<T: Event>}}
+\packobj{\abstract{EncodableEventQueue<T: Event>}}
+\packobj{DefaultEncodableEventQueue<T: Event>}
+\packobj{DefaultDecodableEventQueue<T: Event>}
+\packobj{FilePath}
+\packobj{DirectoryPath}
+\packobj{GlobalHook}
+\packobj{Utility}
+\packobj{HookLibraryException}
+\packobj{NativeMethods}
 \end{packclass}
 
 \newpage
