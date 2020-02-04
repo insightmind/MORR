@@ -3,13 +3,14 @@
 namespace MORR.Modules.WebBrowser.Events
 {
     /// <summary>
-    /// A text selection user interaction
+    ///     A text selection user interaction
     /// </summary>
     public class TextSelectionEvent : WebBrowserEvent
     {
         private const string serializedTextField = "textSelection";
+
         /// <summary>
-        /// The text that was selected on the website
+        ///     The text that was selected on the website
         /// </summary>
         public string SelectedText { get; set; }
 

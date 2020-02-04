@@ -3,13 +3,14 @@
 namespace MORR.Modules.WebBrowser.Events
 {
     /// <summary>
-    /// A hover user interaction
+    ///     A hover user interaction
     /// </summary>
     public class HoverEvent : WebBrowserEvent
     {
         private const string serializedHoveredElementField = "target";
+
         /// <summary>
-        /// The element on the website that has been hovered
+        ///     The element on the website that has been hovered
         /// </summary>
         public string HoveredElement { get; set; }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using MORR.Modules.WebBrowser.Producers;
 using MORR.Shared.Modules;
 using MORR.Shared.Utility;
 
@@ -11,16 +12,31 @@ namespace MORR.Modules.WebBrowser
     /// </summary>
     public class WebBrowserModule : ICollectingModule
     {
+        [Import] private ButtonClickEventProducer buttonClickEventProducer;
+
+        [Import] private CloseTabEventProducer closeTabEventProducer;
+
+        [Import] private FileDownloadEventProducer fileDownloadEventProducer;
+
+        [Import] private HoverEventProducer hoverEventProducer;
+
+        [Import] private NavigationEventProducer navigationEventProducer;
+
+        [Import] private OpenTabEventProducer openTabEventProducer;
+
+        [Import] private SwitchTabEventProducer switchTabEventProducer;
+
+        [Import] private TextInputEventProducer textInputEventProducer;
+
+        [Import] private TextSelectionEventProducer textSelectionEventProducer;
+        [Import] private WebBrowserModuleConfiguration Configuration { get; set; }
+
         private bool isActive;
         private WebExtensionListener listener;
+        private List<IWebBrowserEventObserver> producers;
 
-
-        [ImportMany]
-        private IEnumerable<IWebBrowserEventObserver> Producers { get; set; }
-
-
-        [Import]
-        private WebBrowserModuleConfiguration Configuration { get; set; }
+        public static Guid Identifier { get; } = new Guid("e9240dc4-f33f-43db-a419-5b36d8279c88");
+        Guid IModule.Identifier => Identifier;
 
         public bool IsActive
         {
@@ -30,15 +46,19 @@ namespace MORR.Modules.WebBrowser
                                           () => listener.RecordingActive = false);
         }
 
-        public Guid Identifier { get; } = new Guid("e9240dc4-f33f-43db-a419-5b36d8279c88");
-
         public void Initialize()
         {
+            producers = new List<IWebBrowserEventObserver>
+            {
+                buttonClickEventProducer, closeTabEventProducer, fileDownloadEventProducer,
+                hoverEventProducer, navigationEventProducer, openTabEventProducer,
+                switchTabEventProducer, textInputEventProducer, textSelectionEventProducer
+            };
             listener = new WebExtensionListener(Configuration.UrlSuffix);
             listener.StartListening();
-            foreach (var producer in Producers)
+            foreach (var producer in producers)
             {
-                listener.Subscribe(producer, producer.HandledEventType);
+                listener.Subscribe(producer, producer.HandledEventLabel);
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json;
 using MORR.Modules.WebBrowser.Events;
 using MORR.Shared.Events.Queue;
 
@@ -12,20 +13,18 @@ namespace MORR.Modules.WebBrowser.Producers
     /// <typeparam name="T">The BrowserEvent type to produce.</typeparam>
     public abstract class WebBrowserEventProducer<T> : DefaultEventQueue<T>, IWebBrowserEventObserver where T : WebBrowserEvent
     {
-
         /// <summary>
         ///     Simply forward the event to the internal queue if its of the appropriate type. Ignore otherwise.
         /// </summary>
-        /// <param name="event"></param>
-        public void Notify(WebBrowserEvent @event)
+        /// <param name="eventJson">A JsonElement holding an event.</param>
+        public virtual void Notify(JsonElement eventJson)
         {
-            if (@event is T specificEvent)
-                Enqueue(specificEvent);
+            throw new NotSupportedException("Can not invoke notify() on abstract WebBrowserEventProducer");
         }
 
         /// <summary>
-        ///     The BrowserEvent type to be handled by this producer.
+        ///     The BrowserEvent label to be handled by this producer.
         /// </summary>
-        public Type HandledEventType => typeof(T);
+        public virtual EventLabel HandledEventLabel => throw new NotSupportedException("Cannot get property from abstract WebBrowserEventProducer");
     }
 }

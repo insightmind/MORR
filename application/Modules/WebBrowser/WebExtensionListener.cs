@@ -2,10 +2,10 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.Json;
-using MORR.Modules.WebBrowser.Events;
 using MORR.Shared.Utility;
 
 namespace MORR.Modules.WebBrowser
@@ -16,11 +16,11 @@ namespace MORR.Modules.WebBrowser
     /// </summary>
     internal class WebExtensionListener : IWebBrowserEventObservable
     {
-        private readonly HttpListener listener;
         private const string serializedTypeField = "type";
+        private readonly HttpListener listener;
 
         //deliberately don't use IList, as RemoveAll function is used later
-        private readonly List<Tuple<IWebBrowserEventObserver, Type>> observers;
+        private readonly Dictionary<EventLabel, List<IWebBrowserEventObserver>> observers;
 
         //i am not 100% positive that i need a threadsafe collection here
         //depends on the way the asynchronous BeginGetContext is handled internally
@@ -50,7 +50,7 @@ namespace MORR.Modules.WebBrowser
                                       .ToString()); //the short conversion to Uri is just to check URL validity
             startQueue = new ConcurrentQueue<HttpListenerResponse>();
             stopQueue = new ConcurrentQueue<HttpListenerResponse>();
-            observers = new List<Tuple<IWebBrowserEventObserver, Type>>();
+            observers = new Dictionary<EventLabel, List<IWebBrowserEventObserver>>();
         }
 
         public bool RecordingActive
@@ -115,8 +115,10 @@ namespace MORR.Modules.WebBrowser
 #pragma warning disable IDE1006
             // ReSharper disable once InconsistentNaming
             public string application { get; } = "MORR";
+
             // ReSharper disable once InconsistentNaming
             public string response { get; }
+
             // ReSharper disable once InconsistentNaming
             public string? config { get; }
 #pragma warning restore IDE1006
@@ -313,52 +315,7 @@ namespace MORR.Modules.WebBrowser
                 return false;
             }
 
-            WebBrowserEvent @event;
-            //choose event class based on type label
-            //there may be some smoother way to map from string to class
-            switch (label)
-            {
-                case EventLabel.BUTTONCLICK:
-                    @event = new ButtonClickEvent();
-                    break;
-                case EventLabel.CLOSETAB:
-                    @event = new CloseTabEvent();
-                    break;
-                case EventLabel.OPENTAB:
-                    @event = new OpenTabEvent();
-                    break;
-                case EventLabel.SWITCHTAB:
-                    @event = new SwitchTabEvent();
-                    break;
-                case EventLabel.NAVIGATION:
-                    @event = new NavigationEvent();
-                    break;
-                case EventLabel.TEXTINPUT:
-                    @event = new TextInputEvent();
-                    break;
-                case EventLabel.TEXTSELECTION:
-                    @event = new TextSelectionEvent();
-                    break;
-                case EventLabel.DOWNLOAD:
-                    @event = new FileDownloadEvent();
-                    break;
-                case EventLabel.HOVER:
-                    @event = new HoverEvent();
-                    break;
-                default:
-                    return false;
-            }
-
-            try
-            {
-                @event.Deserialize(parsed);
-            }
-            catch (KeyNotFoundException)
-            {
-                return false;
-            }
-
-            NotifyAll(@event);
+            NotifyAll(parsed, label);
             return true;
         }
 
@@ -366,22 +323,42 @@ namespace MORR.Modules.WebBrowser
 
         #region Observer pattern implementation
 
-        public void Subscribe(IWebBrowserEventObserver observer, Type eventType)
+        public void Subscribe(IWebBrowserEventObserver observer, params EventLabel[] labels)
         {
-            observers.RemoveAll(tuple => tuple.Item1 == observer);
-            observers.Add(new Tuple<IWebBrowserEventObserver, Type>(observer, eventType));
-        }
-
-        public void Unsubscribe(IWebBrowserEventObserver observer)
-        {
-            observers.RemoveAll(tuple => tuple.Item1 == observer);
-        }
-
-        private void NotifyAll(WebBrowserEvent @event)
-        {
-            foreach (var tuple in observers.FindAll(tuple => tuple.Item2 == @event.GetType()))
+            foreach (var label in labels)
             {
-                tuple.Item1.Notify(@event);
+                if (!observers.ContainsKey(label)) //create list for label is nonexistent
+                {
+                    observers.Add(label, new List<IWebBrowserEventObserver>());
+                }
+
+                if (!observers[label].Contains(observer))
+                {
+                    observers[label].Add(observer);
+                }
+            }
+        }
+
+        public void Unsubscribe(IWebBrowserEventObserver observer, params EventLabel[] labels)
+        {
+            foreach (var label in labels)
+            {
+                if (observers.ContainsKey(label))
+                {
+                    observers[label].Remove(observer);
+                    if (!observers[label].Any()) //clean up empty lists
+                    {
+                        observers.Remove(label);
+                    }
+                }
+            }
+        }
+
+        private void NotifyAll(JsonElement eventJson, EventLabel label)
+        {
+            foreach (var observer in observers[label])
+            {
+                observer.Notify(eventJson);
             }
         }
 

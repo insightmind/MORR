@@ -1,4 +1,4 @@
-using System.ComponentModel.Composition;
+using System.Text.Json;
 using MORR.Modules.WebBrowser.Events;
 
 namespace MORR.Modules.WebBrowser.Producers
@@ -6,7 +6,15 @@ namespace MORR.Modules.WebBrowser.Producers
     /// <summary>
     ///     Provides a single-writer-multiple-reader queue for SwitchTabEvent
     /// </summary>
-    [Export(typeof(WebBrowserEventProducer<SwitchTabEvent>))]
-    [Export(typeof(IWebBrowserEventObserver))]
-    public class SwitchTabEventProducer : WebBrowserEventProducer<SwitchTabEvent> { }
+    public class SwitchTabEventProducer : WebBrowserEventProducer<SwitchTabEvent>
+    {
+        public override EventLabel HandledEventLabel => EventLabel.SWITCHTAB;
+
+        public override void Notify(JsonElement eventJson)
+        {
+            var @event = new SwitchTabEvent();
+            @event.Deserialize(eventJson);
+            Enqueue(@event);
+        }
+    }
 }
