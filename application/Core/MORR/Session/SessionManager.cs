@@ -16,6 +16,7 @@ namespace MORR.Core.Session
         private readonly IDecoder? decoder;
         private readonly IEncoder encoder;
         private readonly IModuleManager moduleManager;
+        private bool isRecording;
 
         public SessionManager(FilePath configurationPath) : this(configurationPath, new Bootstrapper(),
                                                                  new ConfigurationManager(), new ModuleManager()) { }
@@ -47,7 +48,7 @@ namespace MORR.Core.Session
         [Import]
         private SessionConfiguration Configuration { get; set; }
 
-        public bool IsRecording { get; private set; }
+        public DirectoryPath? CurrentRecordingDirectory { get; private set; }
 
         private DirectoryPath CreateNewRecordingDirectory()
         {
@@ -59,30 +60,32 @@ namespace MORR.Core.Session
 
         public void StartRecording()
         {
-            if (IsRecording)
+            if (isRecording)
             {
                 throw new AlreadyRecordingException();
             }
 
-            IsRecording = true;
+            isRecording = true;
 
-            encoder.Encode(CreateNewRecordingDirectory());
+            CurrentRecordingDirectory = CreateNewRecordingDirectory();
+
+            encoder.Encode(CurrentRecordingDirectory);
             moduleManager.NotifyModulesOnSessionStart();
         }
 
         public void StopRecording()
         {
-            if (!IsRecording)
+            if (!isRecording)
             {
                 throw new NotRecordingException();
             }
 
-            IsRecording = false;
+            isRecording = false;
 
             moduleManager.NotifyModulesOnSessionStop();
         }
 
-        public void Process(IEnumerable<FilePath> files)
+        public void Process(IEnumerable<DirectoryPath> recordings)
         {
             if (decoder == null)
             {
@@ -91,10 +94,11 @@ namespace MORR.Core.Session
 
             moduleManager.NotifyModulesOnSessionStart();
 
-            foreach (var file in files)
+            foreach (var recording in recordings)
             {
-                decoder.Decode(file);
-                encoder.Encode(CreateNewRecordingDirectory());
+                CurrentRecordingDirectory = CreateNewRecordingDirectory();
+                decoder.Decode(recording);
+                encoder.Encode(CurrentRecordingDirectory);
             }
 
             moduleManager.NotifyModulesOnSessionStop();

@@ -9,10 +9,10 @@ namespace MORR.Core.Session
     public interface ISessionManager
     {
         /// <summary>
-        ///     Indicates whether a session is currently being recorded. <see langword="true" /> if a session is currently being
-        ///     recorded, <see langword="false" /> otherwise.
+        ///     The path to the directory containing the most recent recording or <see langword="null" /> if no recording has been
+        ///     created yet.
         /// </summary>
-        bool IsRecording { get; }
+        DirectoryPath? CurrentRecordingDirectory { get; }
 
         /// <summary>
         ///     Starts a recording if no session is currently being recorded.
@@ -25,8 +25,8 @@ namespace MORR.Core.Session
         void StopRecording();
 
         /// <summary>
-        ///     Starts the decoding process.
+        ///     Processes the specified recordings.
         /// </summary>
-        void Process(IEnumerable<FilePath> files);
+        void Process(IEnumerable<DirectoryPath> recordings);
     }
 }

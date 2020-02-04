@@ -12,16 +12,16 @@ namespace MORR.Core.Data.Transcoding.Json
 {
     public class JsonDecoder : DefaultDecodeableEventQueue<JsonIntermediateFormatSample>, IDecoder
     {
-        public static Guid Identifier { get; } = new Guid("E943EACB-5AD1-49A7-92CE-C42E7AD8995B");
+        private static Guid Identifier { get; } = new Guid("E943EACB-5AD1-49A7-92CE-C42E7AD8995B");
 
-        public void Decode(FilePath path)
+        public void Decode(DirectoryPath path)
         {
             Task.Run(() => DecodeEvents(path));
         }
 
-        private async void DecodeEvents(FilePath path)
+        private async void DecodeEvents(DirectoryPath path)
         {
-            await using var fileStream = File.OpenRead(path.ToString());
+            await using var fileStream = File.OpenRead(path.ToString()); // TODO This is incorrect - instead load from configuration
             var document = JsonDocument.Parse(fileStream).RootElement;
 
             foreach (var eventElement in document.EnumerateArray())
