@@ -7,10 +7,10 @@ namespace MORR.Modules.WindowManagement.Producers
     /// <summary>
     ///     Provides a single-writer-multiple-reader queue for WindowResizingEvent
     /// </summary>
-    [Export(typeof(WindowResizingEventProducer))]
-    [Export(typeof(IReadOnlyEventQueue<WindowResizingEvent>))]
     public class WindowResizingEventProducer : DefaultEventQueue<WindowResizingEvent>
     {
-        // TODO: Implement this
+        public void StartCapture() { }
+
+        public void StopCapture() { }
     }
 }

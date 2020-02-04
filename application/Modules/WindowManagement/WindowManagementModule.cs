@@ -2,6 +2,7 @@
 using MORR.Shared.Modules;
 using MORR.Modules.WindowManagement.Producers;
 using System.ComponentModel.Composition;
+using MORR.Shared.Utility;
 
 namespace MORR.Modules.WindowManagement
 {
@@ -10,9 +11,7 @@ namespace MORR.Modules.WindowManagement
     /// </summary>
     public class WindowManagementModule : ICollectingModule
     {
-        public bool IsActive { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        public Guid Identifier => throw new NotImplementedException();
+        private bool isActive;
 
         /// <summary>
         /// A single-writer-multiple-reader queue for WindowFocusEvent
@@ -38,9 +37,44 @@ namespace MORR.Modules.WindowManagement
         [Import]
         public WindowStateChangedEventProducer WindowStateChangedEventProducer { get; private set; }
 
+        public static Guid Identifier { get; } = new Guid("FAB5BC0D-8B33-4DFD-9FA3-C58E0F1435B5");
+
+        /// <summary>
+        ///     if the module is active or not.
+        ///     When a module is being activated, all the producers will start to capture user interacts.
+        ///     When a module is being deactivated, all the producers will stop capturing user interacts.
+        /// </summary>
+        public bool IsActive
+        {
+            get => isActive;
+            set => Utility.SetAndDispatch(ref isActive, value, StartCapture,
+                                          StopCapture);
+        }
+
+        Guid IModule.Identifier => Identifier;
+
+        /// <summary>
+        ///     Initialize the module with Configuration and Producers.
+        /// </summary>
         public void Initialize()
         {
-            throw new NotImplementedException();
+        }
+
+        private void StartCapture()
+        {
+            WindowFocusEventProducer.StartCapture();
+            WindowMovementEventProducer.StartCapture();
+            WindowResizingEventProducer.StartCapture();
+            WindowStateChangedEventProducer.StartCapture();
+        }
+
+        private void StopCapture()
+        {
+            WindowFocusEventProducer.StopCapture();
+            WindowMovementEventProducer.StopCapture();
+            WindowResizingEventProducer.StopCapture();
+            WindowStateChangedEventProducer.StopCapture();
         }
     }
+}
 }

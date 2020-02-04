@@ -7,10 +7,10 @@ namespace MORR.Modules.WindowManagement.Producers
     /// <summary>
     ///     Provides a single-writer-multiple-reader queue for WindowFocusEvent
     /// </summary>
-    [Export(typeof(WindowFocusEventProducer))]
-    [Export(typeof(IReadOnlyEventQueue<WindowFocusEvent>))]
     public class WindowFocusEventProducer : DefaultEventQueue<WindowFocusEvent>
     {
-        // TODO: Implement this
+        public void StartCapture() { }
+
+        public void StopCapture() { }
     }
 }

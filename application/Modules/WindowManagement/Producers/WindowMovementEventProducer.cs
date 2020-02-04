@@ -7,10 +7,10 @@ namespace MORR.Modules.WindowManagement.Producers
     /// <summary>
     ///     Provides a single-writer-multiple-reader queue for WindowMovementEvent
     /// </summary>
-    [Export(typeof(WindowMovementEventProducer))]
-    [Export(typeof(IReadOnlyEventQueue<WindowMovementEvent>))]
     public class WindowMovementEventProducer : DefaultEventQueue<WindowMovementEvent>
     {
-        // TODO: Implement this
+        public void StartCapture() { }
+
+        public void StopCapture() { }
     }
 }

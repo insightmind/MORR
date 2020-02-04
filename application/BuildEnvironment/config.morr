@@ -2,9 +2,9 @@
   "MORR.Core.Modules.GlobalModuleConfiguration": {
     "EnabledModules": [
       "MORR.Core.Data.IntermediateFormat.Json.JsonIntermediateFormatSerializer",
-      "MORR.Core.Data.IntermediateFormat.Json.JsonIntermediateFormatDeserializer",
-      "MORR.Core.Data.Capture.Video.Desktop.DesktopCapture",
-      "MORR.Modules.Keyboard.KeyboardModule"
+      "MORR.Modules.Keyboard.KeyboardModule",
+      "MORR.Modules.Mouse.MouseModule",
+      "MORR.Modules.Clipboard.ClipboardModule"
     ]
   },
   "MORR.Core.Session.SessionConfiguration": {

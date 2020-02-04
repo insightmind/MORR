@@ -7,10 +7,10 @@ namespace MORR.Modules.WindowManagement.Producers
     /// <summary>
     ///     Provides a single-writer-multiple-reader queue for WindowStateChangedEvent
     /// </summary>
-    [Export(typeof(WindowStateChangedEventProducer))]
-    [Export(typeof(IReadOnlyEventQueue<WindowStateChangedEvent>))]
     public class WindowStateChangedEventProducer : DefaultEventQueue<WindowStateChangedEvent>
     {
-        // TODO: Implement this
+        public void StartCapture() { }
+
+        public void StopCapture() { }
     }
 }
