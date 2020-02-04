@@ -25,5 +25,10 @@ namespace MORR.Shared.Events.Queue
         {
             storageStrategy.Enqueue(@event);
         }
+
+        protected void NotifyOnEnqueueFinished()
+        {
+            storageStrategy.NotifyOnEnqueueFinished();
+        }
     }
 }
