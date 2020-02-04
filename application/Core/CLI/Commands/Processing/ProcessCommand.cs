@@ -26,7 +26,7 @@ namespace MORR.Core.CLI.Commands.Processing
 
                 // Load input file
                 OutputFormatter.PrintDebug(loadInputMessage);
-                var inputPath = new FilePath(Path.GetFullPath(options.InputFile));
+                var inputPath = new DirectoryPath(Path.GetFullPath(options.InputFile));
 
                 // Start session manager
                 OutputFormatter.PrintDebug(sessionManagerMessage);

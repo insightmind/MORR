@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.Text;
 using System.Text.Json;
@@ -12,16 +13,25 @@ namespace MORR.Core.Data.Transcoding.Json
 {
     public class JsonDecoder : DefaultDecodeableEventQueue<JsonIntermediateFormatSample>, IDecoder
     {
+        [Import]
+        private JsonDecoderConfiguration Configuration { get; set; }
+
         private static Guid Identifier { get; } = new Guid("E943EACB-5AD1-49A7-92CE-C42E7AD8995B");
 
-        public void Decode(DirectoryPath path)
+        public void Decode(DirectoryPath recordingDirectoryPath)
         {
-            Task.Run(() => DecodeEvents(path));
+            Task.Run(() => DecodeEvents(recordingDirectoryPath));
         }
 
-        private async void DecodeEvents(DirectoryPath path)
+        private FileStream GetFileStream(DirectoryPath recordingDirectoryPath)
         {
-            await using var fileStream = File.OpenRead(path.ToString()); // TODO This is incorrect - instead load from configuration
+            var fullPath = Path.Combine(recordingDirectoryPath.ToString(), Configuration.RelativeFilePath.ToString());
+            return File.OpenRead(fullPath);
+        }
+
+        private async void DecodeEvents(DirectoryPath recordingDirectoryPath)
+        {
+            await using var fileStream = GetFileStream(recordingDirectoryPath);
             var document = JsonDocument.Parse(fileStream).RootElement;
 
             foreach (var eventElement in document.EnumerateArray())

@@ -19,7 +19,7 @@ namespace MORR.Core.CLI.Output
         [Import]
         private IEncodeableEventQueue<JsonIntermediateFormatSample> MetadataQueue { get; set; }
 
-        public async void Encode(DirectoryPath _)
+        public async void Encode(DirectoryPath recordingDirectoryPath)
         {
             if (MetadataQueue == null)
             {
