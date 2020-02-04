@@ -10,7 +10,7 @@ hide empty fields
 package MORR {
     !startsub SHARED
     package SHARED #E6E6E6 {
-        package Configuration <<Rectangle>> {
+        package Configuration <<Rectangle>> #BFBFBF {
             interface IConfiguration {
                 + Parse(configuration:RawConfiguration) : void
             }
@@ -29,7 +29,7 @@ package MORR {
             IConfiguration ..> RawConfiguration : "uses"
         }
 
-        package Modules <<Rectangle>> {
+        together {
             interface IModule {
                 + Identifier : Guid <<get>>
                 + IsActive : bool <<get>> <<set>>
@@ -37,13 +37,13 @@ package MORR {
             }
         }
 
-        package Events <<Rectangle>> {
+        together {
             abstract class Event {
                 + Timestamp : DateTime <<get>>
                 + IssuingModule : Guid <<get>>
             }
 
-            package Queue <<Rectangle>> {
+            package Queue <<Rectangle>> #BFBFBF {
                 interface "IDecodableEventQueue<T: Event>" {
                     + GetEvents(cancellationToken: CancellationToken) : IAsyncEnumerable<T: Event>
                 }
@@ -101,7 +101,7 @@ package MORR {
                     # <<create>> NonDeserializableEventQueue(bufferCapacity: int, maxConsumers: uint?)
                 }
 
-                package Strategy <<Rectangle>> {
+                package StorageStrategy <<Rectangle>> #E6E6E6 {
                     class ChannelConsumingException {
                         + <<create>> ChannelConsumingException()
                         + <<create>> ChannelConsumingException(message: string)
@@ -113,13 +113,13 @@ package MORR {
                         + Enqueue(event: T) : void
                     }
 
-                    package MultiConsumer <<Rectangle>> {
+                    together {
                         abstract class "MultiConsumerChannelStrategy<T: Event>" {
                             # StartReceiving(maxChannelConsumers: uint?) : void
                             + GetEvents(token: CancellationToken) : IAsyncEnumerable<T: Event>
                             + Enqueue(event: T) : void
-                            # abstract CreateOfferingChannel() : Channel<T: Event>
-                            # abstract CreateReceivingChannel() : Channel<T: Event>
+                            # {abstract} CreateOfferingChannel() : Channel<T: Event>
+                            # {abstract} CreateReceivingChannel() : Channel<T: Event>
                         }
 
                         class "BoundedMultiConsumerChannelStrategy<T: Event>" {
@@ -140,12 +140,12 @@ package MORR {
                         "BoundedMultiConsumerChannelStrategy<T: Event>" ..> ChannelConsumingException: "throws"
                     }
                     
-                    package SingleConsumer <<Rectangle>> {
+                    together {
                         abstract class "SingleConsumerChannelStrategy<T: Event>" {
                             # StartReceiving() : void
                             + GetEvents(token: CancellationToken) : IAsyncEnumerable<T: Event>
                             + Enqueue(event: T) : void
-                            # abstract CreateChannel() : Channel<T: Event>
+                            # {abstract} CreateChannel() : Channel<T: Event>
                         }
 
                         class "BoundedSingleConsumerChannelStrategy<T: Event>" {
@@ -180,302 +180,331 @@ package MORR {
                 "IReadOnlyEventQueue<T: Event>" <|.. "ReadOnlyEventQueue<T: Event>"
                 "ISupportDeserializationEventQueue<T: Event>" <|.. "SupportDeserializationEventQueue<T: Event>"
                 "ReadOnlyEventQueue<T: Event>" <|-- "SupportDeserializationEventQueue<T: Event>"
+                "SupportDeserializationEventQueue<T: Event>" <|-- "DefaultEventQueue<T: Event>"
+                "EncodableEventQueue<T: Event>" <|-- "DefaultEncodableEventQueue<T: Event>"
+                "DecodableEventQueue<T: Event>" <|-- "DefaultDecodableEventQueue<T: Event>"
+                "ReadOnlyEventQueue<T: Event>" <|-- "NonDeserializableEventQueue<T: Event>"
             }
+        }
+
+        package Utility <<Rectangle>> #BFBFBF {
+            class DirectoryPath {
+                + <<create>> DirectoryPath(value: string)
+                + ToString() : string
+            }
+
+            class FilePath {
+                + <<create>> FilePath(value: string)
+                +  ToString() : string
+            }
+
+            class GlobalHook {
+                + {static} IsActive : bool <<get>> <<set>>
+                + {static} AddListener(callback: RetrieveMessageCallBack, types: NativeMethods.MessageType[])
+                + {static} RemoveListener(callback: RetrieveMessageCallBack, types: NativeMethods.MessageType[])
+                + {static} FreeLibrary()
+            }
+
+            class NativeMethods {
+                + {static} DoWin32MessageLoop()
+                + {static} StopMessageLoop()
+                + {static} IsKeyPressed(VirtualKeyCode virtualKeyCode)
+                + {static} TrySetKeyboardHook(callback: LowLevelKeyboardProc, handle: IntPtr)
+                + {static} GetClipboardText()
+                + {static} GetAssociatedWindow()
+            }
+
+            class Utility {
+                + {static} SetAndDispatch(variable: bool, value: bool, onTrue: Action, onFalse: Action)
+                + {static} GetTypeFromAnyAssembly(type: string)
+            }
+
+            together {
+                class HookLibraryException {
+                    + <<create>> HookLibraryException()
+                    + <<create>> HookLibraryException(message: string)
+                }
+            }
+
+            GlobalHook ..> HookLibraryException : "throws"
+            GlobalHook ..> NativeMethods : "uses"
         }
     }
     !endsub 
 
     !startsub CORE
     package "CORE" #E6E6E6 {
-        interface IRecordingManager {
-            + IsRecording : bool <<get>>
-            + StartRecording() : void
-            + StopRecording() : void
-            + StartDecoding() : void
-            + StopDecoding() : void
-        }
-
-        class RecordingManager {
-            - encoder : IEncoder
-            - decoder : IDecoder
-            - videoCapture : IVideoCapture
-            + IsRecording : bool <<get>> <<private set>>
-            + EventQueues : IEnumerable<EventQueue<Event>> <<get>> <<private set>>
-            + StartRecording() : void
-            + StopRecording() : void
-            + StartDecoding() : void
-            + StopDecoding() : void
-        }
-
-        interface IModuleManager {
-            + Modules : IEnumerable<IModule> <<get>>
-            + CollectingModules : IEnumerable<ICollectingModule> <<get>>
-            + ModuleConfiguration : GlobalModuleConfiguration <<get>>
-            + InitializeModules() : void
-        }
-
-        class ModuleManager {
-            + Modules : IEnumerable<IModule> <<get>> <<private set>>
-            + CollectingModules : IEnumerable<ICollectingModule> <<get>> <<private set>>
-            + ModuleConfiguration : GlobalModuleConfiguration <<get>> <<private set>>
-            + InitializeModules() : void
-        }
-
         interface IBootstrapper {
-            + ComposeImports(@object:object) : void
+            + ComposeImports(object:object) : void
         }
 
         class Bootstrapper {
-            + ComposeImports(@object:object) : void
+            + <<create> Bootstrapper()
+            + ComposeImports(object:object) : void
         }
 
-        interface IConfigurationManager {
-            + LoadConfiguration(path:string) : void
-            + Configurations : IEnumerable<IConfiguration> <<get>>
+        class BootstrapperConventions {
+            + {static} GetRegistrationBuilder() : RegistrationBuilder
         }
 
-        class ConfigurationManager {
-            + LoadConfiguration(path:string) : void
-            + Configurations : IEnumerable<IConfiguration> <<get>> <<private set>>
+        package ConfigurationManagement <<Rectangle>> #BFBFBF {
+            interface IConfigurationManager {
+                + LoadConfiguration(path:FilePath) : void
+            }
+
+            class ConfigurationManager {
+                + LoadConfiguration(path:FilePath) : void
+            }
+
+            class InvalidConfigurationException {
+                + <<create>> InvalidConfigurationException()
+                + <<create>> InvalidConfigurationException(message: string)
+                + <<create>> InvalidConfigurationException(message: string, innerException: Exception)
+            }
+
+            IConfigurationManager <|.. ConfigurationManager
+            ConfigurationManager ..> InvalidConfigurationException : "throws"
         }
 
-        class GlobalModuleConfiguration {
-            + EnabledModules : IEnumerable<Type> <<get>> <<set>>
-            + Parse(string configuration) : void
-        }
-
-        class RecordingException {
-        }
-
-        class AlreadyRecordingException {
-        }
-
-        class NotRecordingException {
-        }
-
-        package "CAPTURE" #BFBFBF {
-            interface IVideoCapture {
-                + NextSample() : VideoSample
+        package Session <<Rectangle>> #BFBFBF {
+            interface ISessionManager {
+                + IsRecording : bool <<get>>
+                + StartRecording() : void
+                + StopRecording() : void
+                + Process(files: IEnumerable<FilePath>) : void
             }
 
-            class DesktopCapture {
-                + CaptureConfiguration : DesktopCaptureConfiguration <<get>> <<set>>
-                + NextSample() : VideoSample
+            class SessionManager {
+                - videoCapture : IVideoCapture
+                + IsRecording : bool <<get>> <<private set>>
+                + StartRecording() : void
+                + StopRecording() : void
+                + Process(files: IEnumerable<FilePath>) : void
             }
 
-            class DesktopCaptureConfiguration {
-                + DeviceToRecord : string <<get>> <<set>>
-                + Parse(string configuration) : void
-            }
+            together {
+                abstract class RecordingException {
 
-            class CaptureHelper {
-                + {static} CanCreateItemWithoutPicker : bool
-                + {static} CreateItemForMonitor(IntPtr hMon) : GraphicsCaptureItem
-            }
-
-            class Direct3D11Helper {
-                + {static} CreateDevice(bool useWARP = false) : IDirect3DDevice
-                + {static} CreateDirect3DSurfaceFromSharpDXTexture(Texture2D texture) : IDirect3DSurface
-                + {static} CreatesharpDXDevice(IDirect3DDevice device) : Device
-                + {static} CreateSharpDXTexture2D(IDirect3DSurface surface) : Texture2D
-            }
-
-            class MonitorInfo {
-                + IsPrimary : bool <<get>> <<set>>
-                + ScreenSize : Vector2 <<get>> <<set>>
-                + MonitorArea : Rect <<get>> <<set>>
-                + WorkArea : Rect <<get>> <<set>>
-                + DeviceName : string <<get>> <<set>>
-                + HMon : IntPtr <<get>> <<set>>
-            }
-
-            class MonitorEnumerationHelper {
-                + {static} GetMonitors() : IEnumerable<MonitorInfo>
-            }
-
-            class CaptureException {
-            }
-
-            class VideoCaptureException {
-            }
-
-            interface IMetadataCapture {
-                + NextSample() : MetadataSample
-            }
-
-            class MetadataCapture {
-                + EventQueues : IEnumerable<EventQueue<Event>> <<get>> <<private set>>
-                + NextSample() : MetadataSample
-            }
-        }
-
-        package "TRANSCODING" #BFBFBF {
-            package "MPEG" #8F8F8F {
-                class MPEGDecoder {
-                    + Decode(string path) : void <<throws DecodingException>>
-                    + DecoderConfiguration : MPEGDecoderConfiguration <<get>> <<set>>
-                    + <<event>> VideoSampleDecoded : VideoSampleDecodedEventHandler 
-                    + <<event>> MetadataSampleDecoded : MetadataSampleDecodedEventHandler 
                 }
 
-                class MPEGDecoderConfiguration {
-                    + ShouldExtractVideo : bool <<get>> <<set>>
-                    + Parse(string configuration) : void
+                class AlreadyRecordingException {
+
                 }
 
-                class MPEGEncoder {
-                    + Encode() : void <<throws EncodingException>>
-                    + EncoderConfiguration : MPEGEncoderConfiguration <<get>> <<set>>
-                    + <<event>> VideoSampleRequested : VideoSampleRequestedEventHandler 
-                    + <<event>> MetadataSampleRequested : MetadataSampleRequestedEventHandler 
+                class NotRecordingException {
+
                 }
 
-                class MPEGEncoderConfiguration {
-                    + Bitrate : ushort <<get>> <<set>>
-                    + Framerate : byte <<get>> <<set>>
-                    + Resolution : Size <<get>> <<set>>
-                    + Directory : string <<get>> <<set>>
-                    + Parse(string configuration) : void
+                RecordingException <|-- AlreadyRecordingException
+                RecordingException <|-- NotRecordingException
+            }
+
+            ISessionManager <|-- SessionManager
+            SessionManager ..> AlreadyRecordingException : "throws"
+            SessionManager ..> NotRecordingException : "throws
+        }
+
+        package Modules <<Rectangle>> #BFBFBF {
+            interface IModuleManager {
+                + InitializeModules() : void
+                + NotifyModulesOnSessionStart() : void
+                + NotifyModulesOnSessionStop() : void
+            }
+
+            class ModuleManager {
+                + InitializeModules() : void
+                + NotifyModulesOnSessionStart() : void
+                + NotifyModulesOnSessionStop() : void
+            }
+
+            class GlobalModuleConfiguration {
+                + Parse(RawConfiguration: configuration) : void
+            }
+
+            IModuleManager <|-- ModuleManager
+            ModuleManager *-- "1" GlobalModuleConfiguration
+        }
+
+        package Data <<Rectangle>> #BFBFBF {
+            together {
+                class CaptureException {
+                    + <<create>> CaptureException()
+                    + <<create>> CaptureException(message: string)
+                    + <<create>> CaptureException(message: string, innerException: Exception)
+                }
+
+                together {
+                    class DirectXVideoSample {
+                        + Surface : IDirect3DSurface <<get>> <<set>>
+                    }
+
+                    class VideoSample {
+
+                    }
+
+                    together {
+                        class VideoCaptureException {
+                            + <<create>> VideoCaptureException()
+                            + <<create>> VideoCaptureException(message: string)
+                            + <<create>> VideoCaptureException(message: string, innerException: Exception)
+                        }
+
+                        CaptureException <|-- VideoCaptureException
+                    }
+
+                    package Desktop <<Rectangle>> #E6E6E6 {
+                        class DesktopCapture {
+                            + IsActive : bool
+                            + Identifier: Guid
+                            + Initialize() : void
+                            - StartCapture() : void
+                            - StopCapture() : void
+                        }
+
+                        class DesktopCaptureConfiguration {
+                            + Index: MonitorIndex <<get>> <<private set>>
+                            + PromptUserForMonitorSelection: bool <<get>> <<private set>>
+                            + Parse(RawConfiguration: configuration) : void
+                        }
+
+                        class VideoSampleProducer {
+                            + <<create>> VideoSampleProducer()
+                            + StartCapture(item: GraphicsCaptureItem) : void
+                            + StopCapture() : void
+                            + Dispose() : void
+                        }
+
+                        together {
+                            class Direct3D11Helper {
+                                ~ {static} CreateDevice(useWARP: bool) : IDirect3DDevice?
+                                ~ {static} CreateDirect3DSurfaceFromSharpDXTexture(texture: Texture2D) : IDirect3DSurface?
+                                ~ {static} CreateSharpDXDevice(device: IDirect3DDevice) : Device?
+                                ~ {static} CreateSharpDXTexture2D(surface: IDirect3DSurface) : Texture2D?
+                            }
+
+                            class GraphicsCaptureHelper {
+                                ~ {static} CanCreateItemWithoutPicker: bool <<get>>
+                                ~ {static} SetWindow(picker: GraphicsCapturePicker, hWnd: IntPtr) : void
+                                ~ {static} CreateItemForMonitor(hMon: IntPtr) : GraphicsCaptureItem?
+                            }
+
+                            class MonitorInfo {
+                                + IsPrimary: bool <<get>> <<set>>
+                                + ScreenSize: Vector2 <<get>> <<set>>
+                                + MonitorArea: Rect <<get>> <<set>>
+                                + WorkArea: Rect <<get>> <<set>>
+                                + DeviceName: string <<get>> <<set>>
+                                + Hmon: IntPtr <<get>> <<set>>
+                            }
+
+                            class MonitorEnumerationHelper {
+                                + {static} GetMonitors() : IEnumerable<MonitorInfo>
+                            }
+
+                            MonitorEnumerationHelper ..> MonitorInfo : "uses"
+                        }
+
+                        DesktopCapture --* "1 VideoSampleProducer" VideoSampleProducer
+                        DesktopCapture --* "1 Configuration" DesktopCaptureConfiguration
+                        DesktopCapture ..> MonitorEnumerationHelper : "uses"
+                        VideoSampleProducer ..> Direct3D11Helper : "uses"
+                    }
+
+                    DesktopCapture ..> VideoCaptureException: "throws"
+                    DirectXVideoSample --|> VideoSample
                 }
             }
 
-            package "CSV" #8F8F8F {
-                class CSVEncoder {
-                    + Encode() : void <<throws EncodingException>>
-                    + <<event>> MetadataSampleRequested : MetadataSampleRequestedEventHandler 
+            together {
+                class IntermediateFormatSample {
+                    + EventType : Type <<get>> <<set>>
+                    + SerializedData : byte[] <<get>> <<set>>
                 }
-            } 
 
-            abstract class MetadataSample {
+                together {
+                    class JsonIntermediateFormatDeserializer {
+                        + IsActive: Bool <<get>> <<set>>
+                        + Identifier: Guid <<get>>
+                        + Initialize() : void
+                    }
+
+                    class JsonIntermediateFormatSample {
+
+                    }
+
+                    class JsonIntermediateFormatSerializer {
+                        + IsActive: Bool <<get>> <<set>>
+                        + Identifier: Guid <<get>>
+                        + Initialize() : void
+                    }
+                }
+
+                IntermediateFormatSample <|-- JsonIntermediateFormatSample
             }
 
-            abstract class VideoSample {
-            }
+            package Transcoding <<Rectangle>> #E6E6E6 {
+                interface IDecoder {
+                    + Decode(path: FilePath) : void
+                }
 
-            class VideoDecodingException {
-            }
+                interface IEncoder {
+                    + Encode(directoryRecordingPath: DirectoryPath) : void
+                }
 
-            class MetadataDecodingException {
-            }
+                together {
+                    class MpegEncoder {
+                        + Encode(directoryRecordingPath: DirectoryPath) : void
+                    }
+                    
+                    class MpegEncoderConfiguration {
+                        + Width: uint <<get>> <<set>>
+                        + Height: uint <<get>> <<set>>
+                        + KiloBitsPerSecond: uint <<get>> <<set>>
+                        + FramesPerSecond: uint <<get>> <<set>>
+                        + RecordingName: string <<get>> <<set>>
+                        + Parse(RawConfiguration: configuration)
+                    }
+                }
 
-            class VideoEncodingException {
-            }
-
-            class MetadataEncodingException {
-            }
-
-            class DecodingException {
-            }
-
-            class EncodingException {
-            }
-
-            "Func<VideoSample, void>" <|-- VideoSampleDecodedEventHandler
-
-            "Func<VideoSample?>" <|-- VideoSampleRequestedEventHandler
-
-            "Func<MetadataSample, void>" <|-- MetadataSampleDecodedEventHandler
-
-            "Func<MetadataSample?>" <|-- MetadataSampleRequestedEventHandler
-
-            interface IMetadataDeserializer {
-            }
-
-            class MetadataDeserializer {
-                + EventQueues : IEnumerable<EventQueue<Event>> <<get>> <<private set>>
-            }
-
-            interface IDecoder {
-                + Decode(string path) : void <<throws DecodingException>>
-                + <<event>> VideoSampleDecoded : VideoSampleDecodedEventHandler 
-                + <<event>> MetadataSampleDecoded : MetadataSampleDecodedEventHandler 
-            }
-        
-            interface IEncoder {
-                + Encode(string path) : void <<throws EncodingException>>
-                + <<event>> VideoSampleRequested : VideoSampleRequestedEventHandler 
-                + <<event>> MetadataSampleRequested : MetadataSampleRequestedEventHandler 
-            }
-
-            class DecodingException {
-            }
-
-            class EncodingException {
+                IEncoder <|.. MpegEncoder
+                MpegEncoder --* "1 Configuration" MpegEncoderConfiguration
+                MpegEncoder --* "1 VideoQueue" "IEncodableEventQueue<T: Event>"
             }
         }
+
+        SessionManager --* "1" IEncoder
+        SessionManager --* "0..1" IDecoder
+        SessionManager --* "1" IModuleManager
+        Bootstrapper ..> BootstrapperConventions : "uses"
+        IBootstrapper <|.. Bootstrapper
     }
-
-    ' CORE
-
-    Exception <|-- RecordingException
-    RecordingException <|-- AlreadyRecordingException
-    RecordingException <|-- NotRecordingException
-
-    Exception <|-- InvalidConfigurationException
-    IBootstrapper <|-- Bootstrapper
-
-    IConfigurationManager <|.. ConfigurationManager
-    IConfiguration <|.. GlobalModuleConfiguration
-    IModuleManager <|.. ModuleManager
-    IRecordingManager <|.. RecordingManager
-
-    Exception <|.. CaptureException
-
-    IVideoCapture <|.. DesktopCapture
-    IConfiguration <|.. DesktopCaptureConfiguration
-
-    CaptureException <|-- VideoCaptureException
-
-    IReceivingModule <|.. IMetadataCapture
-    IMetadataCapture <|.. MetadataCapture
-
-    IEncoder <|.. CSVEncoder
-
-    Exception <|-- DecodingException
-    Exception <|-- EncodingException
-
-    DecodingException <|-- MetadataDecodingException
-    EncodingException <|-- MetadataEncodingException
-
-    IMetadataDeserializer <|.. MetadataDeserializer
-
-    DecodingException <|-- VideoDecodingException
-    EncodingException <|-- VideoEncodingException
-
-    IDecoder <|.. MPEGDecoder
-    IEncoder <|.. MPEGEncoder
-
-    IConfiguration <|.. MPEGDecoderConfiguration
-    IConfiguration <|.. MPEGEncoderConfiguration
-
-    ConfigurationManager --> "*" IConfiguration
-    ConfigurationManager --> InvalidConfigurationException : throws
-    ModuleManager --> "*" IModule
-    ModuleManager --> "*" ICollectingModule
-
-    RecordingManager --> "encoder" IEncoder
-    RecordingManager --> "decoder" IDecoder
-    RecordingManager --> "videoCapture" DesktopCapture
-    RecordingManager --> "metadataCapture" MetadataCapture
-    RecordingManager --> "metadataDeserializer" MetadataDeserializer
-    RecordingManager --> "ConfigurationManager" ConfigurationManager
-    RecordingManager --> "ModuleManager" ModuleManager
-    RecordingManager ..> IBootstrapper : uses
-
-    ' Transcoding
-    IDecoder ..> MetadataSample : uses
-    IEncoder ..> MetadataSample : uses
-    IVideoCapture ..> VideoSample : <<creates>>
-    IVideoCapture ..> VideoCaptureException : throws >
-
-    ' MPEG
-    DesktopCapture ..> Direct3D11Helper : uses
-    DesktopCapture ..> CaptureHelper : uses
-
-    MPEGEncoder ..> DesktopCapture : uses
-    MPEGEncoder ..> MonitorEnumerationHelper : uses
-    MonitorEnumerationHelper ..> MonitorInfo : uses
     !endsub
+
+    VideoSample --|> Event
+    DesktopCapture ..|> IModule
+    DesktopCaptureConfiguration ..|> IConfiguration
+
+    GlobalModuleConfiguration ..|> IConfiguration
+    GlobalModuleConfiguration --* "* EnabledModules" IModule
+    ModuleManager --* "* Modules" IModule
+
+    ISessionManager ..> FilePath : "uses"
+
+    IConfigurationManager ..> FilePath : "uses"
+    IConfigurationManager --* "*" IConfiguration
+
+    IntermediateFormatSample --|> Event
+    JsonIntermediateFormatDeserializer ..|> IModule
+    JsonIntermediateFormatDeserializer --* "* EventQueues" "ISupportDeserializationEventQueue<T: Event>"
+    JsonIntermediateFormatDeserializer --* "1 IntermediateFormatSampleQueue" "IDecodableEventQueue<T: Event>"
+    JsonIntermediateFormatSerializer ..|> IModule
+    JsonIntermediateFormatSerializer --|> "DefaultEncodableEventQueue<T: Event>"
+    JsonIntermediateFormatSerializer --* "* EventQueues" "IReadOnlyEventQueue<T: Event>"
+
+    IDecoder ..> FilePath : "uses"
+    IEncoder ..> FilePath : "uses"
+
+    MpegEncoderConfiguration ..|> IConfiguration
 
     !startsub UI
     package "UI" #E6E6E6 {
