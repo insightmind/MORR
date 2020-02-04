@@ -181,7 +181,7 @@ namespace MORR.Shared.Utility
             [MarshalAs(UnmanagedType.SysInt)] public IntPtr Hwnd;
             [MarshalAs(UnmanagedType.SysInt)] public IntPtr wParam;
             [MarshalAs(UnmanagedType.U4)] public uint Type;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4, ArraySubType = UnmanagedType.I4)]
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5, ArraySubType = UnmanagedType.I4)]
             public int[] Data; //General purpose fields for message specific data
         }
 

@@ -350,5 +350,5 @@ void WM_Message::Set(UINT32 type, HWND hwnd, WPARAM wParam)
     this->Type = type;
     this->Hwnd = (UINT64)hwnd;
     this->wParam = (UINT64)wParam;
-    ZeroMemory(&this->data, sizeof(sizeof(this->data)));
+    ZeroMemory(&this->data, sizeof(this->data));
 }

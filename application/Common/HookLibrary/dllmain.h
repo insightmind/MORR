@@ -19,7 +19,7 @@ struct WM_Message {
     UINT64 Hwnd;
     UINT64 wParam;
     UINT32 Type;
-    INT32 data[4];
+    INT32 data[5];
     void Set(UINT32 type, HWND hwnd, WPARAM wParam);
 };
 

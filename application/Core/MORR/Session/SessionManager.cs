@@ -80,6 +80,7 @@ namespace MORR.Core.Session
             IsRecording = false;
 
             moduleManager.NotifyModulesOnSessionStop();
+            GlobalHook.IsActive = false;
         }
 
         public void Process(IEnumerable<FilePath> files)
