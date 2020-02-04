@@ -11,7 +11,7 @@
 
 int main() {
     printf("Win32HookHelper started\n");
-    if (Win32HookHelper::init()) {
+    if (!Win32HookHelper::init()) {
         fprintf(stderr, "Closing Win32HookHelper (unknown error encountered)\n");
     }
     Win32HookHelper::freeResources();
