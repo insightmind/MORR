@@ -96,6 +96,11 @@ namespace MORR.Core.Data.Transcoding.Mpeg
                 nextSample = videoSample;
                 nextSampleReady.Set();
             }
+
+            // Stop encoding by sending null sample
+            sampleProcessed.WaitOne();
+            nextSample = null;
+            nextSampleReady.Set();
         }
 
         #region Transcoder setup

@@ -82,6 +82,7 @@ namespace MORR.Modules.Mouse.Producers
         public void StopCapture()
         {
             mousePositionRecordingTimer?.Dispose();
+            NotifyOnEnqueueFinished();
         }
     }
 }

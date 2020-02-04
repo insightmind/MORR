@@ -160,6 +160,7 @@ namespace MORR.Modules.Clipboard.Producers
         public void StopCapture()
         {
             clipboardWindowMessageSink?.Dispose();
+            NotifyOnEnqueueFinished();
         }
 
         #endregion

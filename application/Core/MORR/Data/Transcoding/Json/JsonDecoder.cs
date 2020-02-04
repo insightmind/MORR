@@ -56,6 +56,8 @@ namespace MORR.Core.Data.Transcoding.Json
 
                 Enqueue(intermediateFormatSample);
             }
+
+            NotifyOnEnqueueFinished();
         }
     }
 }
