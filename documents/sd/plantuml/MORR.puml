@@ -475,6 +475,7 @@ package MORR {
         SessionManager --* "1" IEncoder
         SessionManager --* "0..1" IDecoder
         SessionManager --* "1" IModuleManager
+        SessionManager ..> IBootstrapper : "uses"
         Bootstrapper ..> BootstrapperConventions : "uses"
         IBootstrapper <|.. Bootstrapper
     }
@@ -488,9 +489,6 @@ package MORR {
     GlobalModuleConfiguration --* "* EnabledModules" IModule
     ModuleManager --* "* Modules" IModule
 
-    ISessionManager ..> FilePath : "uses"
-
-    IConfigurationManager ..> FilePath : "uses"
     IConfigurationManager --* "*" IConfiguration
 
     IntermediateFormatSample --|> Event
@@ -500,9 +498,6 @@ package MORR {
     JsonIntermediateFormatSerializer ..|> IModule
     JsonIntermediateFormatSerializer --|> "DefaultEncodableEventQueue<T: Event>"
     JsonIntermediateFormatSerializer --* "* EventQueues" "IReadOnlyEventQueue<T: Event>"
-
-    IDecoder ..> FilePath : "uses"
-    IEncoder ..> FilePath : "uses"
 
     MpegEncoderConfiguration ..|> IConfiguration
 
@@ -572,46 +567,106 @@ package MORR {
     !startsub CLI
     package "CLI" #E6E6E6 {
         class Program {
-            {static} Main(args:string[]) : void
-        }
-        
-        class Options {
-
+            + {static} Main(args:string[]) : int
         }
 
-        interface ICLICommand {
-            + ExecuteCommand(options: Options)
+        together {
+            interface "ICommand<T: CommandOptions>" {
+                + Execute(options: T) : int
+            }
+
+            abstract class CommandOptions {
+                + IsVerbose: bool <<get>> <<set>>
+            }
+
+            together {
+                class ProcessCommand {
+                    + Execute(options: ProcessOptions) : int
+                }
+
+                class ProcessOptions {
+                    + IsVerbose: bool <<get>> <<set>>
+                    + ConfigPath: string <<get>> <<set>>
+                    + InputFile: string <<get>> <<set>>
+                }
+
+                ProcessCommand ..> ProcessOptions : "uses"
+            }
+
+            together {
+                class RecordCommand {
+                    + Execute(options: RecordOptions) : int
+                }
+
+                class RecordOptions {
+                    + IsVerbose: bool <<get>> <<set>>
+                    + ConfigPath: string <<get>> <<set>>
+                }
+
+                RecordCommand ..> RecordOptions : "uses"
+            }
+
+            together {
+                class ValidateCommand {
+                    + Execute(options: ValidateOptions) : int
+                }
+
+                class ValidateOptions {
+                    + IsVerbose: bool <<get>> <<set>>
+                    + ConfigPath: string <<get>> <<set>>
+                }
+
+                ValidateCommand ..> ValidateOptions : "uses"
+            }
+
+            RecordCommand ..|> "ICommand<T: CommandOptions>"
+            ValidateCommand ..|> "ICommand<T: CommandOptions>"
+            ProcessCommand ..|> "ICommand<T: CommandOptions>"
+
+            RecordOptions --|> CommandOptions
+            ValidateOptions --|> CommandOptions
+            ProcessOptions --|> CommandOptions
         }
 
-        class ProcessOptions {
-            + Input : string
-            + Output : string
-            + ProcessingEnabled: bool
-            + Verbose: bool
+        together {
+            class InteractiveCommandLine {
+                + Launch(cancelAction: action) : void
+            }
         }
-    
-        class OutputFormatter {
-            + PrintMessage(message: string, verbose: bool) : void
-            + PrintException(exception: Exception) : void
+
+        together {
+            class IOutputFormatter {
+
+            }
+
+            class OutputFormatter {
+                ~ IsVerbose: bool <<get>> <<set>>
+                + Encode(path: DirectoryPath) : void
+                ~ {static} PrintError(exception: Exception) : void
+                ~ {static} PrintDebug(message: string) : void
+            }
+
+            OutputFormatter ..|> IOutputFormatter
         }
-    
-        class ProcessCommand {
-            + ProcessCommand(recordingManager : IRecordingManager)
-            + ExecuteCommand(options: ProcessOptions)
-        }
+
+        ProcessCommand ..> OutputFormatter : "uses"
+        ValidateCommand ..> OutputFormatter : "uses"
+        RecordCommand ..> OutputFormatter : "uses"
+        RecordCommand ..> InteractiveCommandLine :"uses"
+
+        Program ..> ProcessCommand : "uses"
+        Program ..> ValidateCommand : "uses"
+        Program ..> RecordCommand : "uses"
     }
-
-    ' CLI
-    IRecordingManager <-- ProcessCommand
-    Program --> IRecordingManager
-
-    Program --> "1" OutputFormatter
-    Program o--> ICLICommand
-    ICLICommand ..> Options : uses
-    ICLICommand <|.. ProcessCommand
-    Options <|-- ProcessOptions
-    ProcessCommand ..> ProcessOptions: uses
     !endsub
+
+    ProcessCommand ..> ISessionManager : "uses"
+    RecordCommand ..> ISessionManager : "uses"
+    RecordCommand ..> NativeMethods : "uses"
+    ValidateCommand ..> IBootstrapper : "uses"
+    ValidateCommand ..> IModuleManager : "uses"
+    IOutputFormatter --|> IEncoder
+    OutputFormatter --* "1 MetadataQueue" "IEncodableEventQueue<T: Event>"
 
     package "MODULES" #E6E6E6 {
         !startsub MODULES_CLIPBOARD
@@ -637,7 +692,7 @@ package MORR {
         }
 
         'Clipboard
-        ICollectingModule <|.. ClipboardModule
+        IModule <|.. ClipboardModule
         Event <|-- ClipboardEvent
         ClipboardEvent <|-- ClipBoardInteractEvent
         ClipBoardInteractEvent --> "Interaction" InteractionType
@@ -660,7 +715,7 @@ package MORR {
 
         ' Keyboard
         Event <|-- KeyboardEvent
-        ICollectingModule <|.. KeyboardModule
+        IModule <|.. KeyboardModule
         KeyboardEvent <|-- KeyBoardInteractEvent
         !endsub
 
@@ -700,7 +755,7 @@ package MORR {
 
         ' Mouse
         Event <|-- MouseEvent
-        ICollectingModule <|.. MouseModule
+        IModule <|.. MouseModule
         MouseEvent <|-- MouseClickEvent
         MouseEvent <|-- MouseScrollEvent
         MouseEvent <|-- MouseMoveEvent
@@ -757,7 +812,7 @@ package MORR {
 
         ' WebBrowser
         Event <|-- WebBrowserEvent
-        ICollectingModule <|.. WebBrowserModule
+        IModule <|.. WebBrowserModule
         WebBrowserEvent <|-- ButtonClickEvent
         WebBrowserEvent <|-- CloseTabEvent
         WebBrowserEvent <|-- FileDownloadEvent
@@ -801,22 +856,12 @@ package MORR {
 
         ' WindowManagement
         Event <|-- WindowEvent
-        ICollectingModule <|.. WindowManagementModule
+        IModule <|.. WindowManagementModule
         WindowEvent <|-- WindowFocusEvent
         WindowEvent <|-- WindowMovementEvent
         WindowEvent <|-- WindowResizingEvent
         WindowEvent <|-- WindowStateChangedEvent
         !endsub
     }
-
-    ' Exceptions
-    !startsub EXCEPTIONS
-
-    IEncoder ..> VideoEncodingException : throws >
-    IEncoder ..> MetadataEncodingException : throws >
-
-    IDecoder ..> VideoDecodingException : throws >
-    IDecoder ..> MetadataDecodingException : throws >
-    !endsub
 }
 @enduml
