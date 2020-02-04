@@ -40,7 +40,7 @@ namespace MORR.Core.CLI.Output
                 throw new EncodingException();
             }
 
-            var output = Encoding.UTF8.GetString(sample.SerializedData);
+            var output = Encoding.UTF8.GetString(sample.Data);
             var timestamp = DateTime.Now.ToString(DateFormatString);
 
             Console.WriteLine($"{timestamp}: {output}");
