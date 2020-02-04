@@ -2,80 +2,187 @@
 skinparam monochrome true
 skinparam linetype ortho
 skinparam classAttributeIconSize 0
+!pragma useNewPackage
 
 left to right direction
 hide empty fields
 
-package "MORR" {
+package MORR {
     !startsub SHARED
-    package "SHARED" #E6E6E6 {
-        interface IConfiguration {
-            + Parse(configuration:string) : void
+    package SHARED #E6E6E6 {
+        package Configuration <<Rectangle>> {
+            interface IConfiguration {
+                + Parse(configuration:RawConfiguration) : void
+            }
+
+            class InvalidConfigurationException {
+                + <<create>> InvalidConfigurationException()
+                + <<create>> InvalidConfigurationException(message: string)
+                + <<create>> InvalidConfigurationException(message: string, innerException: exception)
+            }
+
+            class RawConfiguration {
+                + RawValue: string
+                + <<create>> RawConfiguration(rawValue: string)
+            }
+
+            IConfiguration ..> RawConfiguration : "uses"
         }
 
-        abstract class Event {
-            + Timestamp : DateTime
-            + IssuingModule : Guid
-            + Serialize() : string
-            + Deserialize(string serialized) : void
+        package Modules <<Rectangle>> {
+            interface IModule {
+                + Identifier : Guid <<get>>
+                + IsActive : bool <<get>> <<set>>
+                + Initialize() : void
+            }
         }
 
-        interface IModule {
-            + Identifier : Guid
-            + IsEnabled : bool <<get>> <<set>>
-            + Initialize() : void
-        }
+        package Events <<Rectangle>> {
+            abstract class Event {
+                + Timestamp : DateTime <<get>>
+                + IssuingModule : Guid <<get>>
+            }
 
-        interface ICollectingModule {    
-        }
+            package Queue <<Rectangle>> {
+                interface "IDecodableEventQueue<T: Event>" {
+                    + GetEvents(cancellationToken: CancellationToken) : IAsyncEnumerable<T: Event>
+                }
 
-        interface IReceivingModule {     
-        }
+                interface "IEncodableEventQueue<T: Event>" {
+                    + GetEvents(cancellationToken: CancellationToken) : IAsyncEnumerable<T: Event>
+                }
 
-        interface ITransformingModule {  
-        }
+                interface "IReadOnlyEventQueue<T: Event>" {
+                    + EventType: Type
+                    + GetEvents() : IAsyncEnumerable<T: Event>
+                }
 
-        abstract class "EventQueue<T> where T : Event" {
-            + StorageStrategy : IEventQueueStorageStrategy<T> <<get>> <<set>>
-            + {abstract} GetEvents() : IAsyncEnumerable<T>
-            # {abstract} Enqueue(T @event) : void
-        }
+                interface "ISupportDeserializationEventQueue<T: Event>" {
+                    + EventType: Type
+                    + Enqueue(event: object): void
+                }
 
-        interface "IReadOnlyEventQueue<out T> where T : Event" {
-            + GetEvents() : IAsyncEnumerable<T>
-        }
+                abstract class "DecodableEventQueue<T: Event>" {
+                    # <<create>> DecodableEventQueue(storageStrategy: IEventQueueStorageStrategy<T: Event>)
+                    + GetEvents(cancellationToken: CancellationToken) : IAsyncEnumerable<T: Event>
+                    + Enqueue(event: T) : void
+                }
 
-        interface "IEventQueueStorageStrategy<T> where T : Event" {
-            + GetEvents() : IAsyncEnumerable<T>
-            + Enqueue(T @event) : void
-        }
+                abstract class "EncodableEventQueue<T: Event>" {
+                    # <<create>> EncodableEventQueue(storageStrategy: IEventQueueStorageStrategy<T: Event>)
+                    + GetEvents(cancellationToken: CancellationToken) : IAsyncEnumerable<T: Event>
+                    + Enqueue(event: T) : void
+                }
 
-        class "KeepAllStorageStrategy<T> where T : Event" {
-            + GetEvents() : IAsyncEnumerable<T>
-            + Enqueue(T @event) : void
-        }
-        class "RefCountedListStorageStrategy<T> where T : Event" {
-            + GetEvents() : IAsyncEnumerable<T>
-            + Enqueue(T @event) : void
-        }
-        class "RingBufferStorageStrategy<T> where T : Event" {
-            + Capacity : uint <<get>> <<set>>
-            + GetEvents() : IAsyncEnumerable<T>
-            + Enqueue(T @event) : void
+                abstract class "ReadOnlyEventQueue<T: Event>" {
+                    # <<create>> ReadOnlyEventQueue(storageStrategy: IEventQueueStorageStrategy<T: Event>)
+                    + GetEvents(cancellationToken: CancellationToken) : IAsyncEnumerable<T: Event>
+                    + Enqueue(event: T) : void
+                }
+
+                abstract class "SupportDeserializationEventQueue<T: Event>" {
+                    # <<create>> SupportDeserializationEventQueue(storageStrategy: IEventQueueStorageStrategy<T: Event>)
+                    + Enqueue(event: T) : void
+                }
+
+                abstract class "DefaultEventQueue<T: Event>" {
+                    # <<create>> DefaultEventQueue(bufferCapacity: int, maxConsumers: uint?)
+                }
+
+                abstract class "DefaultEncodableEventQueue<T: Event>" {
+                    # <<create>> DefaultEncodableEventQueue(bufferCapacity: int)
+                }
+
+                abstract class "DefaultDecodableEventQueue<T: Event>" {
+                    # <<create>> DefaultDecodableEventQueue(bufferCapacity: int)
+                }
+
+                abstract class "NonDeserializableEventQueue<T: Event>" {
+                    # <<create>> NonDeserializableEventQueue(bufferCapacity: int, maxConsumers: uint?)
+                }
+
+                package Strategy <<Rectangle>> {
+                    class ChannelConsumingException {
+                        + <<create>> ChannelConsumingException()
+                        + <<create>> ChannelConsumingException(message: string)
+                        + <<create>> ChannelConsumingException(message: string, innerException: exception)
+                    }
+
+                    interface "IEventQueueStorageStrategy<T: Event>" {
+                        + GetEvents(cancellationToken: CancellationToken) : IAsyncEnumerable<T: Event>
+                        + Enqueue(event: T) : void
+                    }
+
+                    package MultiConsumer <<Rectangle>> {
+                        abstract class "MultiConsumerChannelStrategy<T: Event>" {
+                            # StartReceiving(maxChannelConsumers: uint?) : void
+                            + GetEvents(token: CancellationToken) : IAsyncEnumerable<T: Event>
+                            + Enqueue(event: T) : void
+                            # abstract CreateOfferingChannel() : Channel<T: Event>
+                            # abstract CreateReceivingChannel() : Channel<T: Event>
+                        }
+
+                        class "BoundedMultiConsumerChannelStrategy<T: Event>" {
+                            + <<create>> BoundedMultiConsumerChannelStrategy(bufferCapacity: int, maxChannelConsumers: uint?)
+                            # CreateOfferingChannel() : Channel<T: Event>
+                            # CreateReceivingChannel() : Channel<T: Event>
+                        }
+
+                        class "UnboundedMultiConsumerChannelStrategy<T: Event>" {
+                            + <<create>> UnboundedMultiConsumerChannelStrategy(maxChannelConsumers: uint?)
+                            # CreateOfferingChannel() : Channel<T: Event>
+                            # CreateReceivingChannel() : Channel<T: Event>
+                        }
+
+                        "IEventQueueStorageStrategies<T: Event>" <|.. "MultiConsumerChannelStrategy<T: Event>"
+                        "MultiConsumerChannelStrategy<T: Event>" <|-- "BoundedMultiConsumerChannelStrategy<T: Event>"
+                        "MultiConsumerChannelStrategy<T: Event>" <|-- "UnboundedMultiConsumerChannelStrategy<T: Event>"
+                        "BoundedMultiConsumerChannelStrategy<T: Event>" ..> ChannelConsumingException: "throws"
+                    }
+                    
+                    package SingleConsumer <<Rectangle>> {
+                        abstract class "SingleConsumerChannelStrategy<T: Event>" {
+                            # StartReceiving() : void
+                            + GetEvents(token: CancellationToken) : IAsyncEnumerable<T: Event>
+                            + Enqueue(event: T) : void
+                            # abstract CreateChannel() : Channel<T: Event>
+                        }
+
+                        class "BoundedSingleConsumerChannelStrategy<T: Event>" {
+                            + <<create>> BoundedSingleConsumerChannelStrategy(bufferCapacity: int)
+                            # CreateChannel() : Channel<T: Event>
+                        }
+
+                        class "UnboundedSingleConsumerChannelStrategy<T: Event>" {
+                            + <<create>> UnboundedSingleConsumerChannelStrategy()
+                            # CreateChannel() : Channel<T: Event>
+                        }
+
+                        "IEventQueueStorageStrategies<T: Event>" <|.. "SingleConsumerChannelStrategy<T: Event>"
+                        "SingleConsumerChannelStrategy<T: Event>" <|-- "BoundedSingleConsumerChannelStrategy<T: Event>"
+                        "SingleConsumerChannelStrategy<T: Event>" <|-- "UnboundedSingleConsumerChannelStrategy<T: Event>"
+                        "BoundedSingleConsumerChannelStrategy<T: Event>" ..> ChannelConsumingException : "throws"
+                    }
+                }
+
+                "IEventQueueStorageStrategy<T: Event>" "1" *-- "ReadOnlyEventQueue<T: Event>"
+                "IEventQueueStorageStrategy<T: Event>" "1" *-- "EncodableEventQueue<T: Event>"
+                "IEventQueueStorageStrategy<T: Event>" "1" *-- "DecodableEventQueue<T: Event>"
+
+                "BoundedMultiConsumerChannelStrategy<T: Event>" <.. "DefaultEventQueue<T: Event>" : "uses"
+                "BoundedMultiConsumerChannelStrategy<T: Event>" <.. "NonDeserializableEventQueue<T: Event>" : "uses"
+                "BoundedSingleConsumerChannelStrategy<T: Event>" <.. "DefaultDecodableEventQueue<T: Event>" : "uses"
+                "BoundedSingleConsumerChannelStrategy<T: Event>" <.. "DefaultEncodableEventQueue<T: Event>" : "uses"
+
+                ' EventQueue
+                "IDecodableEventQueue<T: Event>" <|.. "DecodableEventQueue<T: Event>"
+                "IEncodableEventQueue<T: Event>" <|.. "EncodableEventQueue<T: Event>"
+                "IReadOnlyEventQueue<T: Event>" <|.. "ReadOnlyEventQueue<T: Event>"
+                "ISupportDeserializationEventQueue<T: Event>" <|.. "SupportDeserializationEventQueue<T: Event>"
+                "ReadOnlyEventQueue<T: Event>" <|-- "SupportDeserializationEventQueue<T: Event>"
+            }
         }
     }
-
-    ' EventQueue
-    "IReadOnlyEventQueue<out T> where T : Event" <|-- "EventQueue<T> where T : Event"
-    "IEventQueueStorageStrategy<T> where T : Event" <|-- "KeepAllStorageStrategy<T> where T : Event"
-    "IEventQueueStorageStrategy<T> where T : Event" <|-- "RefCountedListStorageStrategy<T> where T : Event"
-    "IEventQueueStorageStrategy<T> where T : Event" <|-- "RingBufferStorageStrategy<T> where T : Event"
-    "EventQueue<T> where T : Event" --> "IEventQueueStorageStrategy<T> where T : Event"
-
-    ' Modules
-    IModule <|.. ICollectingModule
-    IModule <|.. IReceivingModule
-    IModule <|.. ITransformingModule
     !endsub 
 
     !startsub CORE
@@ -138,9 +245,6 @@ package "MORR" {
         }
 
         class RecordingException {
-        }
-
-        class InvalidConfigurationException {
         }
 
         class AlreadyRecordingException {
