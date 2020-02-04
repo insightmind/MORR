@@ -670,9 +670,8 @@ package MORR {
         RecordCommand ..> OutputFormatter : "uses"
         RecordCommand ..> InteractiveCommandLine :"uses"
 
-        Program ..> ProcessCommand : "uses"
-        Program ..> ValidateCommand : "uses"
-        Program ..> RecordCommand : "uses"
+        Program ..> "ICommand<T: CommandOptions>" : "uses"
+        Program ..> CommandOptions : "uses"
     }
     !endsub
 
