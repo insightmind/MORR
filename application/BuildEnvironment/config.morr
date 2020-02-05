@@ -2,9 +2,7 @@
   "MORR.Core.Modules.GlobalModuleConfiguration": {
     "EnabledModules": [
       "MORR.Core.Data.IntermediateFormat.Json.JsonIntermediateFormatSerializer",
-      "MORR.Modules.Keyboard.KeyboardModule",
-      "MORR.Modules.Mouse.MouseModule",
-      "MORR.Modules.Clipboard.ClipboardModule"
+      "MORR.Modules.WindowManagement.WindowManagementModule"
     ]
   },
   "MORR.Core.Session.SessionConfiguration": {
@@ -16,28 +14,5 @@
       "MORR.Core.Data.Transcoding.Json.JsonDecoder"
     ],
     "RecordingDirectory": "%userprofile%\\Videos\\MORR"
-  },
-  "MORR.Modules.Mouse.MouseModuleConfiguration": {
-    "SamplingRateInHz": 10,
-    "Threshold": 50
-  },
-  "MORR.Modules.WebBrowser.WebBrowserModuleConfiguration": {
-    "UrlSuffix": "60024/"
-  "MORR.Core.Data.Transcoding.Json.JsonEncoderConfiguration": {
-    "RelativeFilePath": "event_data.json"
-  },
-  "MORR.Core.Data.Transcoding.Json.JsonDecoderConfiguration": {
-    "RelativeFilePath": "event_data.json"
-  },
-  "MORR.Core.Data.Transcoding.Mpeg.MpegEncoderConfiguration": {
-    "Width": 1920,
-    "Height": 1080,
-    "KiloBitsPerSecond": 4000,
-    "FramesPerSecond": 60,
-    "RelativeFilePath": "desktop_capture.mp4"
-  },
-  "MORR.Core.Data.Capture.Video.Desktop.DesktopCaptureConfiguration": {
-    "PromptUserForMonitorSelection": false,
-    "MonitorIndex": 0
   }
 }

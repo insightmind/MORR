@@ -1,6 +1,7 @@
-﻿using System.ComponentModel.Composition;
+﻿using System;
 using MORR.Modules.WindowManagement.Events;
 using MORR.Shared.Events.Queue;
+using MORR.Shared.Utility;
 
 namespace MORR.Modules.WindowManagement.Producers
 {
@@ -9,8 +10,29 @@ namespace MORR.Modules.WindowManagement.Producers
     /// </summary>
     public class WindowFocusEventProducer : DefaultEventQueue<WindowFocusEvent>
     {
-        public void StartCapture() { }
+        private const int WA_ACTIVE = 1;
 
-        public void StopCapture() { }
+        public void StartCapture()
+        {
+            GlobalHook.AddListener(cb, NativeMethods.MessageType.WM_ACTIVATE);
+            GlobalHook.IsActive = true;
+        }
+
+        public void StopCapture()
+        {
+            GlobalHook.RemoveListener(cb, NativeMethods.MessageType.WM_ACTIVATE);
+        }
+
+        private void cb(GlobalHook.HookMessage msg)
+        {
+            if ((int)msg.wParam == WA_ACTIVE)
+            {
+                IntPtr hwnd = NativeMethods.GetForegroundWindow();
+                string processName = Utility.GetProcessNameFromHwnd(hwnd);
+                string windowTitle = Utility.GetWindowTitleFromHwnd(hwnd);
+                WindowFocusEvent @event = new WindowFocusEvent(){IssuingModule = WindowManagementModule.Identifier, ProcessName = processName, Title = windowTitle};
+                Enqueue(@event);
+            }
+        }
     }
 }
