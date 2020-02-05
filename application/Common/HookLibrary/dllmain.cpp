@@ -100,11 +100,10 @@ LRESULT CALLBACK CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
             }
 
         }
-        else if (type == WM_SIZING)
+        else if (type == WM_SIZING
+                || (type >= WM_CUT && type <= WM_CLEAR)
+                || (type == WM_ENTERSIZEMOVE || type == WM_EXITSIZEMOVE))
         {
-            shared_globalMessageBuffer[bufferSlot].Set(msg->message, msg->hwnd, msg->wParam);
-        }
-        else if ((type >= WM_CUT && type <= WM_CLEAR)) {
             shared_globalMessageBuffer[bufferSlot].Set(msg->message, msg->hwnd, msg->wParam);
         }
         else
@@ -130,6 +129,7 @@ bool IsCaptured(UINT type) {
         || (type >= WM_CUT && type <= WM_CLEAR)
         || (type == WM_SIZING)
         || (type >= WM_NCMOUSEMOVE && type <= WM_NCMBUTTONDBLCLK)
+        || (type == WM_EXITSIZEMOVE || type == WM_ENTERSIZEMOVE)
         );
 }
 
@@ -246,7 +246,8 @@ void DispatchLoop() {
                  && (shared_globalMessageBuffer[localBufferIterator].Type == shared_globalMessageBuffer[previous].Type)) /* discard event if it's obviously a duplicate (works only or events which
                                                                                                               inherently come with a timestamp) */
                 continue;
-            globalCallback(shared_globalMessageBuffer[localBufferIterator]);
+            if (shared_globalMessageBuffer[localBufferIterator].Type != WM_NULL)
+                globalCallback(shared_globalMessageBuffer[localBufferIterator]);
         }
     }
 }
@@ -354,5 +355,7 @@ void WM_Message::Set(UINT32 type, HWND hwnd, WPARAM wParam)
     this->Type = type;
     this->Hwnd = (UINT64)hwnd;
     this->wParam = (UINT64)wParam;
-    ZeroMemory((void*)&this->data[0], sizeof(this->data));
+    /* zero out buffer. ZeroMemory and memset do not support volatile memory areas and might get optimized away. */
+    for (INT32 i = 0; i < (sizeof(this->data) / sizeof(this->data[0])); i++)
+        this->data[i] = 0;
 }
