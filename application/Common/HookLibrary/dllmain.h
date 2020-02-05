@@ -16,10 +16,10 @@
     Do not use pointer-types for HWND and WPARAM as this would complicate 32bit interoperability.
  */
 struct WM_Message {
-    UINT64 Hwnd;
-    UINT64 wParam;
-    UINT32 Type;
-    INT32 data[5];
+    volatile UINT64 Hwnd;
+    volatile UINT64 wParam;
+    volatile UINT32 Type;
+    volatile INT32 data[5];
     void Set(UINT32 type, HWND hwnd, WPARAM wParam);
 };
 
@@ -75,7 +75,7 @@ typedef void(__stdcall* WH_MessageCallBack)(WM_Message);
   /**
       The iterator determining where in the buffer to store the next message.
   */
-UINT* shared_globalBufferIterator = nullptr;
+volatile UINT* shared_globalBufferIterator = nullptr;
 
 /**
     Ringbuffers for the stored messages and their timestamps.
@@ -85,19 +85,19 @@ UINT* shared_globalBufferIterator = nullptr;
     to identify if the currently inspected event is a duplicate
     of the last one by matching their exact timestamps.
  */
-DWORD* shared_globalTimeStamps = nullptr;
+volatile DWORD* shared_globalTimeStamps = nullptr;
 WM_Message* shared_globalMessageBuffer = nullptr;
 
 /**
     An individual table entry has to be set to true if any listener wants this message information.
     Used to prevent unnecessary processing of undesired messages.
  */
-bool* shared_messageHasListener = nullptr;
+volatile bool* shared_messageHasListener = nullptr;
 
 /**
     Boolean value stating if the hooks are currently attached.
  */
-bool* shared_running = nullptr;
+volatile bool* shared_running = nullptr;
 
 /**
     Shared data segment accessible by all injected applications and MORR itself.

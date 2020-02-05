@@ -10,6 +10,10 @@
 #include "Win32HookHelper.h"
 
 int main() {
+#ifdef _WIN64
+    fprintf(stderr, "Win32Helper error: Was compiled in 64bit mode, needs to be 32bit\n");
+    return 1;
+#endif
     printf("Win32HookHelper started\n");
     if (!Win32HookHelper::init()) {
         fprintf(stderr, "Closing Win32HookHelper (unknown error encountered)\n");

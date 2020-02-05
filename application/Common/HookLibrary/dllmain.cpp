@@ -22,8 +22,8 @@ LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
 //this is the hook procedure
 {
     LRESULT retVal = CallNextHookEx(GetMessageHook, nCode, wParam, lParam);
-    if (!mappedFileHandle)
-        MapSharedMemory();
+    if (!mappedFileHandle && !MapSharedMemory())
+        goto forwardEvent;
     //a pointer to hold the MSG structure that is passed as lParam
     MSG* msg;
     if (semaphore == nullptr) {
@@ -58,8 +58,8 @@ forwardEvent:
 LRESULT CALLBACK CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
     LRESULT retVal = CallNextHookEx(CallWndProcHook, nCode, wParam, lParam);
-    if (!mappedFileHandle)
-        MapSharedMemory();
+    if (!mappedFileHandle && !MapSharedMemory())
+        goto forwardEvent;
     CWPSTRUCT* msg;
     if (semaphore == nullptr) {
         semaphore = CreateSemaphore(nullptr, 0, BUFFERSIZE, TEXT(SEMAPHORE_GUID));
@@ -91,7 +91,10 @@ LRESULT CALLBACK CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
         {
             shared_globalMessageBuffer[bufferSlot].Set(msg->message, msg->hwnd, msg->wParam);
             if (type == WM_ACTIVATE)
+            {
                 *((HWND*)&shared_globalMessageBuffer[bufferSlot].data[0]) = (HWND)msg->lParam;
+            }
+
         }
         else if (type == WM_SIZING)
         {
@@ -347,5 +350,5 @@ void WM_Message::Set(UINT32 type, HWND hwnd, WPARAM wParam)
     this->Type = type;
     this->Hwnd = (UINT64)hwnd;
     this->wParam = (UINT64)wParam;
-    ZeroMemory(&this->data, sizeof(this->data));
+    ZeroMemory((void*)&this->data[0], sizeof(this->data));
 }
