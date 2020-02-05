@@ -81,20 +81,17 @@ LRESULT CALLBACK CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
             shared_globalMessageBuffer[bufferSlot].data[0] = ((CREATESTRUCT*)msg->lParam)->x;
             shared_globalMessageBuffer[bufferSlot].data[1] = ((CREATESTRUCT*)msg->lParam)->y;
         }
-        else if (type == WM_MOVE)
+        else if (type == WM_MOVE || type == WM_SIZE)
         {
-            shared_globalMessageBuffer[bufferSlot].Set(msg->message, msg->hwnd, 0);
-            shared_globalMessageBuffer[bufferSlot].data[0] = (int)LOWORD(msg->lParam);
-            shared_globalMessageBuffer[bufferSlot].data[1] = (int)HIWORD(msg->lParam);
+            shared_globalMessageBuffer[bufferSlot].Set(msg->message, msg->hwnd, msg->wParam);
+            shared_globalMessageBuffer[bufferSlot].data[0] = (INT16)LOWORD(msg->lParam);
+            shared_globalMessageBuffer[bufferSlot].data[1] = (INT16)HIWORD(msg->lParam);
         }
         else if (type == WM_DESTROY || type == WM_ACTIVATE || ((type >= WM_SETFOCUS) && (type <= WM_ENABLE)))
         {
-            shared_globalMessageBuffer[bufferSlot].Set(msg->message, (type == WM_ACTIVATE) ? (HWND)msg->lParam : msg->hwnd, msg->wParam);
-        }
-        else if (type == WM_SIZE) {
             shared_globalMessageBuffer[bufferSlot].Set(msg->message, msg->hwnd, msg->wParam);
-            shared_globalMessageBuffer[bufferSlot].data[0] = (int)LOWORD(msg->lParam);
-            shared_globalMessageBuffer[bufferSlot].data[1] = (int)HIWORD(msg->lParam);
+            if (type == WM_ACTIVATE)
+                *((HWND*)&shared_globalMessageBuffer[bufferSlot].data[0]) = (HWND)msg->lParam;
         }
         else if (type == WM_SIZING)
         {
