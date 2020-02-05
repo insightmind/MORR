@@ -46,8 +46,12 @@
 \end{constructor}
 \end{constructors}
 \begin{methods}
-\begin{method}{public serialize() : string}{Serialize the event to a JSON string.}
+\begin{method}{public serialize(noUnderScore : boolean) : string}{Serialize the event to a JSON string.}
 \return{string}{The JSON string encoding the event.}
+\begin{parameters}
+\para{noUnderScore : boolean}{Define whether the underscore '\_' internally prefixed before class members should be omitted. It is recommended
+to set this to true when the serialized data should be used outside of the Webextension and false for internal use.}
+\end{parameters}
 \end{method}
 \end{methods}
 \end{class}
