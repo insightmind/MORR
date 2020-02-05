@@ -28,6 +28,8 @@ LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
     MSG* msg;
     if (semaphore == nullptr) {
         semaphore = CreateSemaphore(nullptr, 0, BUFFERSIZE, TEXT(SEMAPHORE_GUID));
+        if (semaphore == nullptr)
+            goto forwardEvent;
     }
 
     //lParam contains pointer to MSG structure.
@@ -63,6 +65,8 @@ LRESULT CALLBACK CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
     CWPSTRUCT* msg;
     if (semaphore == nullptr) {
         semaphore = CreateSemaphore(nullptr, 0, BUFFERSIZE, TEXT(SEMAPHORE_GUID));
+        if (semaphore == nullptr)
+            goto forwardEvent;
     }
 
     msg = (CWPSTRUCT*)lParam;
