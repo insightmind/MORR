@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using System.Windows;
 
 namespace MORR.Modules.WindowManagement.Events
 {
@@ -10,11 +11,11 @@ namespace MORR.Modules.WindowManagement.Events
         /// <summary>
         ///     The old location of the window
         /// </summary>
-        public Vector2 OldLocation { get; set; }
+        public Point OldLocation { get; set; }
 
         /// <summary>
         ///     The new location of the window
         /// </summary>
-        public Vector2 NewLocation { get; set; }
+        public Point NewLocation { get; set; }
     }
 }

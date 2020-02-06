@@ -14,16 +14,16 @@ namespace MORR.Modules.WindowManagement.Producers
 
         public void StartCapture()
         {
-            GlobalHook.AddListener(cb, NativeMethods.MessageType.WM_ACTIVATE);
+            GlobalHook.AddListener(WindowHookCallback, NativeMethods.MessageType.WM_ACTIVATE);
             GlobalHook.IsActive = true;
         }
 
         public void StopCapture()
         {
-            GlobalHook.RemoveListener(cb, NativeMethods.MessageType.WM_ACTIVATE);
+            GlobalHook.RemoveListener(WindowHookCallback, NativeMethods.MessageType.WM_ACTIVATE);
         }
 
-        private void cb(GlobalHook.HookMessage msg)
+        private void WindowHookCallback(GlobalHook.HookMessage msg)
         {
             if ((int)msg.wParam == WA_ACTIVE)
             {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.Loader;
 using System.Text;
@@ -77,6 +78,20 @@ namespace MORR.Shared.Utility
             NativeMethods.GetWindowThreadProcessId(hwnd, out var pid);
             Process process = Process.GetProcessById((int)pid);
             return process.ProcessName;
+        }
+
+        public static bool IsRectSizeEqual(Rectangle rectA, Rectangle rectB) 
+        {
+            return GetWindowWidth(rectA) == GetWindowWidth(rectB) && GetWindowHeight(rectA) == GetWindowHeight(rectB);
+        }
+
+        public static int GetWindowWidth(Rectangle rect) {
+            return rect.Width - rect.X;
+        }
+
+        public static int GetWindowHeight(Rectangle rect)
+        {
+            return rect.Height - rect.Y;
         }
     }
 }

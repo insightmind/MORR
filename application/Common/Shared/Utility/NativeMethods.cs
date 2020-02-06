@@ -233,6 +233,9 @@ namespace MORR.Shared.Utility
 
         [DllImport("user32.dll")]
         public static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll")]
+        public static extern long GetWindowRect(int hWnd, ref Rectangle lpRect);
         #endregion
 
         #region Structs
