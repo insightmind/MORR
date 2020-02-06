@@ -65,5 +65,10 @@ namespace MORR.Core.CLI.Output
                 Console.WriteLine(DebugPrefix + message);
             }
         }
+
+        public string Read()
+        {
+            return Console.ReadLine();
+        }
     }
 }

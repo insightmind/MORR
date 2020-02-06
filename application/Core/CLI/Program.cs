@@ -5,6 +5,7 @@ using MORR.Core.CLI.Commands.Record;
 using MORR.Core.CLI.Commands.Validate;
 using MORR.Core.CLI.Interactive;
 using MORR.Core.CLI.Output;
+using MORR.Core.CLI.Utility;
 using MORR.Core.Configuration;
 using MORR.Core.Session;
 using MORR.Shared.Utility;
@@ -28,6 +29,7 @@ namespace MORR.Core.CLI
                        {
                            var configurationManager = new ConfigurationManager();
                            var bootstrapper = new Bootstrapper();
+
                            var command = new ValidateCommand(configurationManager, output, bootstrapper);
                            return command.Execute(opts);
                        },
@@ -35,14 +37,17 @@ namespace MORR.Core.CLI
                        {
                            var configPath = new FilePath(Path.GetFullPath(opts.ConfigPath));
                            var sessionManager = new SessionManager(configPath);
-                           var commandLine = new InteractiveCommandLine();
-                           var command = new RecordCommand(sessionManager, output, commandLine);
+                           var commandLine = new InteractiveCommandLine(output);
+                           var messageLoop = new MessageLoop();
+
+                           var command = new RecordCommand(sessionManager, output, commandLine, messageLoop);
                            return command.Execute(opts);
                        },
                        (ProcessOptions opts) => // Loads and executes the ProcessCommand
                        {
                            var configPath = new FilePath(Path.GetFullPath(opts.ConfigPath));
                            var sessionManager = new SessionManager(configPath);
+
                            var command = new ProcessCommand(sessionManager, output);
                            return command.Execute(opts);
                        },

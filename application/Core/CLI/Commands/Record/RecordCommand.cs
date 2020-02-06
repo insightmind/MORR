@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using MORR.Core.CLI.Interactive;
+using MORR.Core.CLI.Utility;
 
 namespace MORR.Core.CLI.Commands.Record
 {
@@ -24,6 +25,7 @@ namespace MORR.Core.CLI.Commands.Record
         private readonly ISessionManager sessionManager;
         private readonly IOutputFormatter outputFormatter;
         private readonly IInteractiveCommandLine commandLine;
+        private readonly IMessageLoop messageLoop;
 
         #endregion
 
@@ -32,11 +34,13 @@ namespace MORR.Core.CLI.Commands.Record
         public RecordCommand(
             ISessionManager sessionManager, 
             IOutputFormatter outputFormatter,
-            IInteractiveCommandLine commandLine)
+            IInteractiveCommandLine commandLine,
+            IMessageLoop messageLoop)
         {
             this.sessionManager = sessionManager;
             this.outputFormatter = outputFormatter;
             this.commandLine = commandLine;
+            this.messageLoop = messageLoop;
         }
 
         #endregion
@@ -47,6 +51,7 @@ namespace MORR.Core.CLI.Commands.Record
             Debug.Assert(outputFormatter != null, nameof(outputFormatter) + " != null");
             Debug.Assert(sessionManager != null, nameof(sessionManager) + " != null");
             Debug.Assert(commandLine != null, nameof(commandLine) + " != null");
+            Debug.Assert(messageLoop != null, nameof(messageLoop) + " != null");
 
             if (options == null) return -1;
 
@@ -66,10 +71,10 @@ namespace MORR.Core.CLI.Commands.Record
                 sessionManager.StartRecording();
 
                 // If the user cancels via the command line we need to stop the message loop.
-                commandLine.Launch(NativeMethods.StopMessageLoop);
+                commandLine.Launch(messageLoop.Stop);
 
                 // Run message loop required for Windows hooks
-                NativeMethods.DoWin32MessageLoop();
+                messageLoop.Start();
 
                 // To prevent the generated video file from becoming corrupted, recording needs to be stopped manually
                 sessionManager.StopRecording();

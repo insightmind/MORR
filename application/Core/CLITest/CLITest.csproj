@@ -22,4 +22,8 @@
     <ProjectReference Include="..\CLI\CLI.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Utility\" />
+  </ItemGroup>
+
 </Project>

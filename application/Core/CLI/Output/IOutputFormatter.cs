@@ -8,5 +8,7 @@ namespace MORR.Core.CLI.Output
         void PrintError(Exception exception);
         void PrintDebug(string message);
         void Print(string message);
+
+        string Read();
     }
 }
