@@ -1,9 +1,12 @@
-﻿using MORR.Core.Data.Transcoding;
-
+﻿using System;
 namespace MORR.Core.CLI.Output
 {
-    public interface IOutputFormatter : IEncoder
+    internal interface IOutputFormatter
     {
-        // This is supposed to be empty
+        bool IsVerbose { get; set; }
+
+        void PrintError(Exception exception);
+        void PrintDebug(string message);
+        void Print(string message);
     }
 }

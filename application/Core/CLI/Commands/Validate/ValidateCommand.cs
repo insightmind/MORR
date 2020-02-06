@@ -2,20 +2,52 @@
 using MORR.Core.Configuration;
 using MORR.Shared.Utility;
 using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace MORR.Core.CLI.Commands.Validate
 {
     internal class ValidateCommand : ICommand<ValidateOptions>
     {
+        #region Constants
+
         private const string successMessage = "The configuration file is valid!";
         private const string failureMessage = "The configuration file is invalid!";
         private const string loadedFileMessage = "Load configuration file.";
         private const string assemblyMessage = "Load all assemblies.";
         private const string resolveConfigMessage = "Resolving Configuration";
 
+        #endregion
+
+        #region Dependencies
+
+        private readonly IConfigurationManager configurationManager;
+        private readonly IOutputFormatter outputFormatter;
+        private readonly IBootstrapper bootstrapper;
+
+        #endregion
+
+        #region LifeCycle
+
+        internal ValidateCommand(
+            IConfigurationManager configurationManager, 
+            IOutputFormatter outputFormatter,
+            IBootstrapper bootstrapper) 
+        {
+            this.configurationManager = configurationManager;
+            this.outputFormatter = outputFormatter;
+            this.bootstrapper = bootstrapper;
+        }
+
+        #endregion
+
+        #region Execution
+
         public int Execute(ValidateOptions options)
         {
+            Debug.Assert(outputFormatter != null, nameof(outputFormatter) + " != null");
+            Debug.Assert(bootstrapper != null, nameof(bootstrapper) + " != null");
+
             if (options == null)
             {
                 return -1;
@@ -23,21 +55,19 @@ namespace MORR.Core.CLI.Commands.Validate
 
             try
             {
-                OutputFormatter.IsVerbose = options.IsVerbose;
+                
+                outputFormatter.IsVerbose = options.IsVerbose;
 
                 // Load Configuration File
-                OutputFormatter.PrintDebug(loadedFileMessage);
+                outputFormatter.PrintDebug(loadedFileMessage);
                 var filePath = new FilePath(Path.GetFullPath(options.ConfigPath));
 
                 // Start Configuration Manager and Bootstrapper
-                OutputFormatter.PrintDebug(assemblyMessage);
-                IConfigurationManager configurationManager = new ConfigurationManager();
-
-                IBootstrapper bootstrapper = new Bootstrapper();
+                outputFormatter.PrintDebug(assemblyMessage);
                 bootstrapper.ComposeImports(configurationManager);
 
                 // Resolve Configuration File
-                OutputFormatter.PrintDebug(resolveConfigMessage);
+                outputFormatter.PrintDebug(resolveConfigMessage);
                 configurationManager.LoadConfiguration(filePath);
 
                 Console.WriteLine(successMessage);
@@ -45,15 +75,17 @@ namespace MORR.Core.CLI.Commands.Validate
             }
             catch (InvalidConfigurationException exception)
             {
-                OutputFormatter.PrintError(exception);
+                outputFormatter.PrintError(exception);
                 Console.WriteLine(failureMessage);
                 return 1;
             }
-            catch (Exception exception) // I know this is not a recommend way to deal with exception, however this method receives a arbitrary amount of exception types.
+            catch (Exception exception)
             {
-                OutputFormatter.PrintError(exception);
+                outputFormatter.PrintError(exception);
                 return -1;
             }
         }
+
+        #endregion
     }
 }
