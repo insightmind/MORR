@@ -23,6 +23,7 @@ namespace MORR.Modules.WindowManagement.Producers
         public void StopCapture()
         {
             GlobalHook.RemoveListener(WindowHookCallback, NativeMethods.MessageType.WM_ACTIVATE);
+            NotifyOnEnqueueFinished();
         }
 
         /// <summary>

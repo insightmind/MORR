@@ -46,6 +46,7 @@ namespace MORR.Modules.WindowManagement.Producers
             GlobalHook.RemoveListener(WindowHookCallback, NativeMethods.MessageType.WM_SIZE,
                                       NativeMethods.MessageType.WM_ENTERSIZEMOVE,
                                       NativeMethods.MessageType.WM_EXITSIZEMOVE);
+            NotifyOnEnqueueFinished();
         }
 
         private void WindowHookCallback(GlobalHook.HookMessage msg)
