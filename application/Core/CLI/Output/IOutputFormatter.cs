@@ -1,7 +1,7 @@
 ﻿using System;
 namespace MORR.Core.CLI.Output
 {
-    internal interface IOutputFormatter
+    public interface IOutputFormatter
     {
         bool IsVerbose { get; set; }
 

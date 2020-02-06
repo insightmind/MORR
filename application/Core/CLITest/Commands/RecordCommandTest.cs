@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CLITest.Commands
+﻿namespace CLITest.Commands
 {
-    class RecordTest
+    class RecordCommandTest
     {
     }
 }

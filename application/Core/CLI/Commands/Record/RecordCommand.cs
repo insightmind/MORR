@@ -3,13 +3,12 @@ using MORR.Core.Session;
 using MORR.Shared.Utility;
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using MORR.Core.CLI.Interactive;
 
 namespace MORR.Core.CLI.Commands.Record
 {
-    internal class RecordCommand : ICommand<RecordOptions>
+    public class RecordCommand : ICommand<RecordOptions>
     {
         #region Constants
         
@@ -30,7 +29,10 @@ namespace MORR.Core.CLI.Commands.Record
 
         #region LifeCycle
 
-        internal RecordCommand(ISessionManager sessionManager, IOutputFormatter outputFormatter, InteractiveCommandLine commandLine)
+        public RecordCommand(
+            ISessionManager sessionManager, 
+            IOutputFormatter outputFormatter,
+            IInteractiveCommandLine commandLine)
         {
             this.sessionManager = sessionManager;
             this.outputFormatter = outputFormatter;

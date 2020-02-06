@@ -4,7 +4,7 @@ using MORR.Shared.Utility;
 namespace MORR.Core.CLI.Commands.Processing
 {
     [Verb("process", HelpText = "Starts the processing from a container file to a new output file using the configuration.")]
-    internal class ProcessOptions : CommandOptions
+    public class ProcessOptions : CommandOptions
     {
         [Option('c', "config", Required = true, HelpText = "Path to configuration file")]
         public string ConfigPath { get; set; }

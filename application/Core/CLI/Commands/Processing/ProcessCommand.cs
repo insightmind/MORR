@@ -7,7 +7,7 @@ using System.IO;
 
 namespace MORR.Core.CLI.Commands.Processing
 {
-    internal class ProcessCommand : ICommand<ProcessOptions>
+    public class ProcessCommand : ICommand<ProcessOptions>
     {
         #region Constants
 
@@ -28,7 +28,9 @@ namespace MORR.Core.CLI.Commands.Processing
 
         #region LifeCycle
 
-        internal ProcessCommand(ISessionManager sessionManager, IOutputFormatter outputFormatter)
+        public ProcessCommand(
+            ISessionManager sessionManager,
+            IOutputFormatter outputFormatter)
         {
             this.sessionManager = sessionManager;
             this.outputFormatter = outputFormatter;

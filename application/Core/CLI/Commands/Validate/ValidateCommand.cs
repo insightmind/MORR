@@ -7,7 +7,7 @@ using System.IO;
 
 namespace MORR.Core.CLI.Commands.Validate
 {
-    internal class ValidateCommand : ICommand<ValidateOptions>
+    public class ValidateCommand : ICommand<ValidateOptions>
     {
         #region Constants
 
@@ -29,7 +29,7 @@ namespace MORR.Core.CLI.Commands.Validate
 
         #region LifeCycle
 
-        internal ValidateCommand(
+        public ValidateCommand(
             IConfigurationManager configurationManager, 
             IOutputFormatter outputFormatter,
             IBootstrapper bootstrapper) 

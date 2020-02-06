@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MORR.Core.CLI.Interactive
 {
-    internal interface IInteractiveCommandLine
+    public interface IInteractiveCommandLine
     {
         void Launch(Action completionAction);
     }
