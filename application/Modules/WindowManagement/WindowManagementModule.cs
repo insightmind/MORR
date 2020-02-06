@@ -62,18 +62,18 @@ namespace MORR.Modules.WindowManagement
 
         private void StartCapture()
         {
-            WindowFocusEventProducer.StartCapture();
-            WindowMovementEventProducer.StartCapture();
-            WindowResizingEventProducer.StartCapture();
-            //WindowStateChangedEventProducer.StartCapture();
+            //WindowFocusEventProducer.StartCapture();
+            //WindowMovementEventProducer.StartCapture();
+            //WindowResizingEventProducer.StartCapture();
+            WindowStateChangedEventProducer.StartCapture();
         }
 
         private void StopCapture()
         {
-            WindowFocusEventProducer.StopCapture();
-            WindowMovementEventProducer.StopCapture();
-            WindowResizingEventProducer.StopCapture();
-         //   WindowStateChangedEventProducer.StopCapture();
+            //WindowFocusEventProducer.StopCapture();
+            //WindowMovementEventProducer.StopCapture();
+            //WindowResizingEventProducer.StopCapture();
+            WindowStateChangedEventProducer.StopCapture();
         }
     }
 }

@@ -10,6 +10,6 @@ namespace MORR.Modules.WindowManagement.Events
         /// <summary>
         /// The new state of the window
         /// </summary>
-        public WindowState State;
+        public WindowState WindowState;
     }
 }
