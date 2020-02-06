@@ -1,6 +1,4 @@
-﻿using System;
-using System.ComponentModel.Composition;
-using System.Drawing;
+﻿using System.Drawing;
 using MORR.Modules.WindowManagement.Events;
 using MORR.Shared.Events.Queue;
 using MORR.Shared.Utility;
@@ -18,17 +16,15 @@ namespace MORR.Modules.WindowManagement.Producers
 
         public void StartCapture()
         {
-            GlobalHook.AddListener(WindowHookCallback, NativeMethods.MessageType.WM_MOVE,
-                                                       NativeMethods.MessageType.WM_ENTERSIZEMOVE,
+            GlobalHook.AddListener(WindowHookCallback, NativeMethods.MessageType.WM_ENTERSIZEMOVE,
                                                        NativeMethods.MessageType.WM_EXITSIZEMOVE);
             GlobalHook.IsActive = true;
         }
 
         public void StopCapture()
         {
-            GlobalHook.RemoveListener(WindowHookCallback, NativeMethods.MessageType.WM_MOVE,
-                                                       NativeMethods.MessageType.WM_ENTERSIZEMOVE,
-                                                       NativeMethods.MessageType.WM_EXITSIZEMOVE);
+            GlobalHook.RemoveListener(WindowHookCallback, NativeMethods.MessageType.WM_ENTERSIZEMOVE,
+                                                          NativeMethods.MessageType.WM_EXITSIZEMOVE);
         }
 
         private void WindowHookCallback(GlobalHook.HookMessage msg)
@@ -44,23 +40,20 @@ namespace MORR.Modules.WindowManagement.Producers
             {
                 windowRecAfterChange = new Rectangle();
                 NativeMethods.GetWindowRect(windowUnderChangeHwnd, ref windowRecAfterChange);
-                if (Utility.IsRectSizeEqual(windowRecBeforeChange, windowRecAfterChange))
+                if (!Utility.IsRectSizeEqual(windowRecBeforeChange, windowRecAfterChange))
                 {
-                    Console.WriteLine("The Window is moved, the old location is x: {0}, y: {1} and the new location is x:{2}, y: {3}",
-                                                    windowRecBeforeChange.X,
-                                                    windowRecBeforeChange.Y,
-                                                    windowRecAfterChange.X,
-                                                    windowRecAfterChange.Y);
+                    Size oldSize = new Size() {Width = Utility.GetWindowWidth(windowRecBeforeChange),Height = Utility.GetWindowHeight(windowRecBeforeChange)};
+                    Size newSize = new Size() { Width = Utility.GetWindowWidth(windowRecAfterChange), Height = Utility.GetWindowHeight(windowRecAfterChange)};
+                    WindowResizingEvent @event = new WindowResizingEvent
+                    {
+                        IssuingModule = WindowManagementModule.Identifier,
+                        OldSize = oldSize,
+                        NewSize = newSize,
+                        Title = Utility.GetWindowTitleFromHwnd(msg.Hwnd),
+                        ProcessName = Utility.GetProcessNameFromHwnd(msg.Hwnd)
+                    };
+                    Enqueue(@event);
                 }
-                else
-                {
-                    Console.WriteLine("The Window is resized, the old size is {0} * {1} and the new size is x:{2} * {3}",
-                                        Utility.GetWindowWidth(windowRecBeforeChange),
-                                        Utility.GetWindowHeight(windowRecBeforeChange),
-                                        Utility.GetWindowWidth(windowRecAfterChange),
-                                        Utility.GetWindowHeight(windowRecAfterChange));
-                }
-                Console.WriteLine("");
             }
         }
     }
