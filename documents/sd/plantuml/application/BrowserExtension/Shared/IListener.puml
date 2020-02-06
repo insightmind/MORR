@@ -8,10 +8,10 @@ class BrowserEvent {
     + timeStamp : Date
     + issuingModule : number
     + type : EventType
-    + serialize() : string
     + tabID : number
     + url : URL
     + windowID : number
+    + serialize(noUnderScore : boolean) : string
 }
 
 IListener .DOWN.> BrowserEvent : creates

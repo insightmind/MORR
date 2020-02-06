@@ -3,10 +3,10 @@ skinparam linetype ortho
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 class TabEventFactory {
-	+ createEvent(tabId : number, changeInfo : tabs.TabChangeInfo, tab : tabs.Tab) : BrowserEvent
-	+ createEvent(activeInfo : tabs.TabActiveInfo) : BrowserEvent
-	+ createEvent(tabId : number, removeInfo: tabs.TabRemoveInfo) : BrowserEvent
-	+ createEvent(tab : tabs.Tab) : BrowserEvent
+	+ createNavigationEvent(tabId : number, changeInfo : tabs.TabChangeInfo, tab : tabs.Tab) : NavigationEvent
+	+ createSwitchTabEvent(activeInfo : tabs.TabActiveInfo, tabs.Tab) : BrowserEvent
+	+ createCloseTabEvent(tabId : number, removeInfo: tabs.TabRemoveInfom tab : tabs.Tab) : CloseTabEvent
+	+ createOpenTabEvent(tab : tabs.Tab) : OpenTabEvent
 }
 TabListener *-- TabEventFactory
 TabEventFactory .DOWN.> OpenTabEvent : creates

@@ -12,14 +12,15 @@ interface IEvent {
 IEvent .RIGHT.> EventType : uses
 
 enum EventType {
-    Navigation,
-    OpenTab,
-    CloseTab,
-    SwitchTab,
-    TextInput,
-    ButtonClick,
-    Hover,
-    TextSelection,
+    Navigation
+    OpenTab
+    CloseTab
+    SwitchTab
+    TextInput
+    ButtonClick
+    Hover
+    TextSelection
     Download
+    Generic
 }
 @enduml

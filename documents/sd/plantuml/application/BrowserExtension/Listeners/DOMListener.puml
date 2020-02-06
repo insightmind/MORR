@@ -17,6 +17,6 @@ DOMListener ..> TextInputEvent : creates
 DOMListener ..> ButtonClickEvent : creates
 DOMListener ..> HoverEvent : creates
 DOMListener ..> TextSelectionEvent : creates
-DOMListener ..> ContentScript : injects
+DOMListener ..> DOMEventRecorder : injects
 
 @enduml

@@ -3,8 +3,9 @@ skinparam linetype ortho
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 class DOMEventRecorder {
-    start() : void
-    stop() : void
+    + DomEventRecorder()
+    + start() : void
+    + stop() : void
 }
 DOMEventRecorder .RIGHT.> DOMEventType : uses
 DOMEventRecorder .DOWN.> DOMListener : messages through browser API
@@ -13,11 +14,8 @@ enum DOMEventType {
     CHANGE
     DBCLICK
     KEYUP
-    KEYDOWN
-    INPUT
     MOUSEENTER
     MOUSEUP
-    MOUSEDOWN
     SELECT
     SUBMIT
     SEARCH

@@ -11,15 +11,16 @@ interface IEvent {
 IEvent .RIGHT.> EventType : uses
 
 enum EventType {
-    Navigation,
-    OpenTab,
-    CloseTab,
-    SwitchTab,
-    TextInput,
-    ButtonClick,
-    Hover,
-    TextSelection,
+    Navigation
+    OpenTab
+    CloseTab
+    SwitchTab
+    TextInput
+    ButtonClick
+    Hover
+    TextSelection
     Download
+    Generic
 }
 IEvent <|.DOWN. BrowserEvent : implements
 class BrowserEvent {
@@ -27,10 +28,10 @@ class BrowserEvent {
     + timeStamp : Date
     + issuingModule : number
     + type : EventType
-    + serialize() : string
     + tabID : number
     + url : URL
     + windowID : number
+    + serialize(noUnderScore : boolean) : string
 }
 
 @enduml

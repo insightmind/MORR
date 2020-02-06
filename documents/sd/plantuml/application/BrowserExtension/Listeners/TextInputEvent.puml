@@ -6,6 +6,7 @@ class TextInputEvent extends BrowserEvent {
     + text : string
     + target : string
     + TextInputEvent(tabID : number, windowID : number, text : string, target : string, url : string)
+    + {static} deserialize(parsed : any, sender? : chrome.runtime.MessageSender) : TextInputEvent
 }
 interface IEvent {
     + timeStamp : Date
@@ -20,9 +21,9 @@ class BrowserEvent {
     + timeStamp : Date
     + issuingModule : number
     + type : EventType
-    + serialize() : string
     + tabID : number
     + url : URL
     + windowID : number
+    + serialize(noUnderScore : boolean) : string
 }
 @enduml
