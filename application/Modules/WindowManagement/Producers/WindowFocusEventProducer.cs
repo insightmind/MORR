@@ -12,6 +12,8 @@ namespace MORR.Modules.WindowManagement.Producers
     {
         private const int WA_ACTIVE = 1;
 
+        private IntPtr lastHwnd = IntPtr.Zero;
+
         public void StartCapture()
         {
             GlobalHook.AddListener(WindowHookCallback, NativeMethods.MessageType.WM_ACTIVATE);
@@ -28,10 +30,14 @@ namespace MORR.Modules.WindowManagement.Producers
             if ((int)msg.wParam == WA_ACTIVE)
             {
                 IntPtr hwnd = NativeMethods.GetForegroundWindow();
-                string processName = Utility.GetProcessNameFromHwnd(hwnd);
-                string windowTitle = Utility.GetWindowTitleFromHwnd(hwnd);
-                WindowFocusEvent @event = new WindowFocusEvent(){IssuingModule = WindowManagementModule.Identifier, ProcessName = processName, Title = windowTitle};
-                Enqueue(@event);
+                if (lastHwnd != hwnd)
+                {
+                    string processName = Utility.GetProcessNameFromHwnd(hwnd);
+                    string windowTitle = Utility.GetWindowTitleFromHwnd(hwnd);
+                    WindowFocusEvent @event = new WindowFocusEvent() { IssuingModule = WindowManagementModule.Identifier, ProcessName = processName, Title = windowTitle };
+                    Enqueue(@event);
+                }
+                lastHwnd = hwnd;
             }
         }
     }
