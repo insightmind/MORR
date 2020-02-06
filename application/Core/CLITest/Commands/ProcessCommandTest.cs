@@ -1,10 +1,12 @@
-using System.Diagnostics;
-using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using MORR.Core.CLI.Commands.Processing;
 using MORR.Core.CLI.Output;
 using MORR.Core.Session;
+using MORR.Shared.Utility;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Reflection;
 
 namespace CLITest.Commands
 {
@@ -44,6 +46,27 @@ namespace CLITest.Commands
 
             // We test if the command was successful and returned code 0.
             Assert.AreEqual(0, returnCode);
+            managerMock.Verify(manager => manager.Process(It.IsAny<IEnumerable<FilePath>>()), Times.Exactly(1));
+        }
+
+        [TestMethod]
+        public void TestProcessCommand_NullOptions()
+        {
+            // Preconditions
+            Debug.Assert(managerMock != null);
+            Debug.Assert(outputMock != null);
+
+            /* GIVEN */
+            var command = new ProcessCommand(managerMock.Object, outputMock.Object);
+
+            /* WHEN */
+            var returnCode = command.Execute(null);
+
+            /* THEN */
+
+            // We test if the command was successful and returned code 0.
+            Assert.AreEqual(-1, returnCode);
+            managerMock.Verify(manager => manager.Process(It.IsAny<IEnumerable<FilePath>>()), Times.Exactly(0));
         }
 
         [TestMethod]
