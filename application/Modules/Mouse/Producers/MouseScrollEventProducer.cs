@@ -19,6 +19,7 @@ namespace MORR.Modules.Mouse.Producers
         public void StopCapture()
         {
             GlobalHook.RemoveListener(MouseHookCallback, NativeMethods.MessageType.WM_MOUSEWHEEL);
+            NotifyOnEnqueueFinished();
         }
 
         private void MouseHookCallback(GlobalHook.HookMessage hookMessage)

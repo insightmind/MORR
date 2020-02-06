@@ -28,6 +28,8 @@ namespace MORR.Core.Data.Transcoding.Mpeg
         [Import]
         private IEncodeableEventQueue<DirectXVideoSample> VideoQueue { get; set; }
 
+        public ManualResetEvent EncodeFinished { get; } = new ManualResetEvent(false);
+
         public void Encode(DirectoryPath recordingDirectoryPath)
         {
             encodingStart = DateTime.Now;
@@ -59,6 +61,7 @@ namespace MORR.Core.Data.Transcoding.Mpeg
 
             await using var destinationFile = GetFileStream(recordingDirectoryPath);
 
+            EncodeFinished.Reset();
             var prepareTranscodeResult =
                 await transcoder.PrepareMediaStreamSourceTranscodeAsync(
                     mediaStreamSource, destinationFile.AsRandomAccessStream(), encodingProfile);
@@ -69,7 +72,7 @@ namespace MORR.Core.Data.Transcoding.Mpeg
                     $"Failed to start transcoding operation. Reason: {prepareTranscodeResult.FailureReason}");
             }
 
-            await prepareTranscodeResult.TranscodeAsync();
+            await prepareTranscodeResult.TranscodeAsync().AsTask().ContinueWith(_ => EncodeFinished.Set());
         }
 
         private async Task ConsumeVideoSamples()
@@ -96,6 +99,11 @@ namespace MORR.Core.Data.Transcoding.Mpeg
                 nextSample = videoSample;
                 nextSampleReady.Set();
             }
+
+            // Stop encoding by sending null sample
+            sampleProcessed.WaitOne();
+            nextSample = null;
+            nextSampleReady.Set();
         }
 
         #region Transcoder setup

@@ -13,8 +13,8 @@ namespace MORR.Core.Session
 {
     public class SessionManager : ISessionManager
     {
-        private readonly IDecoder? decoder;
-        private readonly IEncoder encoder;
+        private readonly IEnumerable<IEncoder> encoders;
+        private readonly IEnumerable<IDecoder> decoders;
         private readonly IModuleManager moduleManager;
         private bool isRecording;
 
@@ -33,8 +33,8 @@ namespace MORR.Core.Session
 
             configurationManager.LoadConfiguration(configurationPath);
 
-            encoder = Encoders.Single(x => x.GetType() == Configuration.Encoder);
-            decoder = Decoders.SingleOrDefault(x => x.GetType() == Configuration.Decoder);
+            encoders = Encoders.Where(x => Configuration.Encoders.Contains(x.GetType()));
+            decoders = Decoders.Where(x => Configuration.Decoders?.Contains(x.GetType()) ?? false);
 
             moduleManager.InitializeModules();
         }
@@ -72,7 +72,11 @@ namespace MORR.Core.Session
 
             CurrentRecordingDirectory = CreateNewRecordingDirectory();
 
-            encoder.Encode(CurrentRecordingDirectory);
+            foreach (var encoder in encoders)
+            {
+                encoder.Encode(CurrentRecordingDirectory);
+            }
+
             moduleManager.NotifyModulesOnSessionStart();
         }
 
@@ -86,11 +90,18 @@ namespace MORR.Core.Session
             isRecording = false;
 
             moduleManager.NotifyModulesOnSessionStop();
+
+            foreach (var encoder in encoders)
+            {
+                // IEncoder.EncodeFinished will not be reset before IEncoder.Encode gets called again
+                // We may therefore wait on this event sequentially without risk of blocking indefinitely
+                encoder.EncodeFinished.WaitOne();
+            }
         }
 
         public void Process(IEnumerable<DirectoryPath> recordings)
         {
-            if (decoder == null)
+            if (!decoders.Any())
             {
                 throw new InvalidConfigurationException("No decoder specified for processing operation.");
             }
@@ -100,8 +111,26 @@ namespace MORR.Core.Session
             foreach (var recording in recordings)
             {
                 CurrentRecordingDirectory = CreateNewRecordingDirectory();
-                decoder.Decode(recording);
-                encoder.Encode(CurrentRecordingDirectory);
+
+                foreach (var decoder in decoders)
+                {
+                    decoder.Decode(recording);
+                }
+
+                foreach (var encoder in encoders)
+                {
+                    encoder.Encode(CurrentRecordingDirectory);
+                }
+
+                foreach (var decoder in decoders)
+                {
+                    decoder.DecodeFinished.WaitOne();
+                }
+
+                foreach (var encoder in encoders)
+                {
+                    encoder.EncodeFinished.WaitOne();
+                }
             }
 
             moduleManager.NotifyModulesOnSessionStop();

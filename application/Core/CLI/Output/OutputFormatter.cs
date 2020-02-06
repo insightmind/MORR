@@ -4,6 +4,7 @@ using MORR.Shared.Events.Queue;
 using System;
 using System.ComponentModel.Composition;
 using System.Text;
+using System.Threading;
 using MORR.Core.Data.IntermediateFormat.Json;
 using MORR.Shared.Utility;
 
@@ -16,6 +17,8 @@ namespace MORR.Core.CLI.Output
         private static readonly string ErrorPrefix = "ERROR: ";
         private static readonly string DateFormatString = "HH:mm:ss.fff";
 
+        public ManualResetEvent EncodeFinished { get; } = new ManualResetEvent(false);
+
         [Import]
         private IEncodeableEventQueue<JsonIntermediateFormatSample> MetadataQueue { get; set; }
 
@@ -26,11 +29,15 @@ namespace MORR.Core.CLI.Output
                 throw new EncodingException();
             }
 
+            EncodeFinished.Reset();
+
             await foreach (var sample in MetadataQueue.GetEvents())
             {
 
                 PrintSample(sample);
             }
+
+            EncodeFinished.Set();
         }
 
         private static void PrintSample(IntermediateFormatSample sample)

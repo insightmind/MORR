@@ -19,6 +19,7 @@ namespace MORR.Modules.Clipboard.Producers
         public void StopCapture()
         {
             GlobalHook.RemoveListener(GlobalHookCallBack, NativeMethods.MessageType.WM_CUT);
+            NotifyOnEnqueueFinished();
         }
 
 

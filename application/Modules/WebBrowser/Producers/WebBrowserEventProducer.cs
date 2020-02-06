@@ -23,6 +23,14 @@ namespace MORR.Modules.WebBrowser.Producers
         }
 
         /// <summary>
+        ///     Lets consumers know that no more events will be enqueued.
+        /// </summary>
+        public void EnqueueFinished()
+        {
+            NotifyOnEnqueueFinished();
+        }
+
+        /// <summary>
         ///     The BrowserEvent label to be handled by this producer.
         /// </summary>
         public virtual EventLabel HandledEventLabel => throw new NotSupportedException("Cannot get property from abstract WebBrowserEventProducer");

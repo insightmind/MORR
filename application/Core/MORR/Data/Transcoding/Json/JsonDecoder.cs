@@ -3,6 +3,7 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using MORR.Core.Data.IntermediateFormat.Json;
 using MORR.Core.Data.Transcoding.Exceptions;
@@ -17,6 +18,8 @@ namespace MORR.Core.Data.Transcoding.Json
         private JsonDecoderConfiguration Configuration { get; set; }
 
         private static Guid Identifier { get; } = new Guid("E943EACB-5AD1-49A7-92CE-C42E7AD8995B");
+
+        public ManualResetEvent DecodeFinished { get; } = new ManualResetEvent(false);
 
         public void Decode(DirectoryPath recordingDirectoryPath)
         {
@@ -33,6 +36,8 @@ namespace MORR.Core.Data.Transcoding.Json
         {
             await using var fileStream = GetFileStream(recordingDirectoryPath);
             var document = JsonDocument.Parse(fileStream).RootElement;
+
+            DecodeFinished.Reset();
 
             foreach (var eventElement in document.EnumerateArray())
             {
@@ -56,6 +61,9 @@ namespace MORR.Core.Data.Transcoding.Json
 
                 Enqueue(intermediateFormatSample);
             }
+
+            NotifyOnEnqueueFinished();
+            DecodeFinished.Set();
         }
     }
 }
