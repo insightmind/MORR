@@ -4,6 +4,12 @@ using System.Runtime.InteropServices;
 
 namespace MORR.Core.CLI.Utility
 {
+    /// <summary>
+    /// A MessageLoop instantiates a cancelable Win32 message loop.
+    /// 
+    /// Make sure to start the loop only on the main thread!
+    /// Keep in mind that the message loop does block its calling thread, so you have to cancel it via a separate thread!
+    /// </summary>
     public class MessageLoop : IMessageLoop
     {
         #region Properties
