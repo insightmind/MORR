@@ -25,18 +25,30 @@ namespace MORR.Modules.WindowManagement.Producers
             GlobalHook.RemoveListener(WindowHookCallback, NativeMethods.MessageType.WM_ACTIVATE);
         }
 
+        /// <summary>
+        ///     Everytime a WM_ACTIVATE is received, check if this message contains the information
+        ///     of a window being activated (by (int)msg.wParam == WA_ACTIVE) and if the Message
+        ///     contains new information (by lastHwnd != hwnd). If the both requirements are met,
+        ///     record the information of the activated window in a WindowFocusEvent.
+        /// </summary>
+        /// <param name="msg">the hook message</param>
         private void WindowHookCallback(GlobalHook.HookMessage msg)
         {
-            if ((int)msg.wParam == WA_ACTIVE)
+            if ((int) msg.wParam == WA_ACTIVE)
             {
-                IntPtr hwnd = NativeMethods.GetForegroundWindow();
+                var hwnd = NativeMethods.GetForegroundWindow();
                 if (lastHwnd != hwnd)
                 {
-                    string processName = Utility.GetProcessNameFromHwnd(hwnd);
-                    string windowTitle = Utility.GetWindowTitleFromHwnd(hwnd);
-                    WindowFocusEvent @event = new WindowFocusEvent() { IssuingModule = WindowManagementModule.Identifier, ProcessName = processName, Title = windowTitle };
+                    var processName = Utility.GetProcessNameFromHwnd(hwnd);
+                    var windowTitle = Utility.GetWindowTitleFromHwnd(hwnd);
+                    var @event = new WindowFocusEvent
+                    {
+                        IssuingModule = WindowManagementModule.Identifier, ProcessName = processName,
+                        Title = windowTitle
+                    };
                     Enqueue(@event);
                 }
+
                 lastHwnd = hwnd;
             }
         }

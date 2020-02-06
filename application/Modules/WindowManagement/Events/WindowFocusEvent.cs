@@ -7,7 +7,5 @@
     ///     the name of the process associated with the window,
     ///     which is included in the base class WindowEvent.
     /// </summary>
-    public class WindowFocusEvent : WindowEvent
-    {
-    }
+    public class WindowFocusEvent : WindowEvent { }
 }

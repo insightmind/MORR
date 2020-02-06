@@ -1,38 +1,38 @@
 ﻿using System;
-using MORR.Shared.Modules;
-using MORR.Modules.WindowManagement.Producers;
 using System.ComponentModel.Composition;
+using MORR.Modules.WindowManagement.Producers;
+using MORR.Shared.Modules;
 using MORR.Shared.Utility;
 
 namespace MORR.Modules.WindowManagement
 {
     /// <summary>
-    /// The <see cref="WindowManagementModule"/> is responsible for recording all window related user interactions
+    ///     The <see cref="WindowManagementModule" /> is responsible for recording all window related user interactions
     /// </summary>
     public class WindowManagementModule : ICollectingModule
     {
         private bool isActive;
 
         /// <summary>
-        /// A single-writer-multiple-reader queue for WindowFocusEvent
+        ///     A single-writer-multiple-reader queue for WindowFocusEvent
         /// </summary>
         [Import]
         public WindowFocusEventProducer WindowFocusEventProducer { get; private set; }
 
         /// <summary>
-        /// A single-writer-multiple-reader queue for WindowMovementEvent
+        ///     A single-writer-multiple-reader queue for WindowMovementEvent
         /// </summary>
         [Import]
         public WindowMovementEventProducer WindowMovementEventProducer { get; private set; }
 
         /// <summary>
-        /// A single-writer-multiple-reader queue for WindowResizingEvent
+        ///     A single-writer-multiple-reader queue for WindowResizingEvent
         /// </summary>
         [Import]
         public WindowResizingEventProducer WindowResizingEventProducer { get; private set; }
 
         /// <summary>
-        /// A single-writer-multiple-reader queue for WindowStateChangedEvent
+        ///     A single-writer-multiple-reader queue for WindowStateChangedEvent
         /// </summary>
         [Import]
         public WindowStateChangedEventProducer WindowStateChangedEventProducer { get; private set; }
@@ -56,23 +56,21 @@ namespace MORR.Modules.WindowManagement
         /// <summary>
         ///     Initialize the module with Configuration and Producers.
         /// </summary>
-        public void Initialize()
-        {
-        }
+        public void Initialize() { }
 
         private void StartCapture()
         {
-            //WindowFocusEventProducer.StartCapture();
-            //WindowMovementEventProducer.StartCapture();
-            //WindowResizingEventProducer.StartCapture();
+            WindowFocusEventProducer.StartCapture();
+            WindowMovementEventProducer.StartCapture();
+            WindowResizingEventProducer.StartCapture();
             WindowStateChangedEventProducer.StartCapture();
         }
 
         private void StopCapture()
         {
-            //WindowFocusEventProducer.StopCapture();
-            //WindowMovementEventProducer.StopCapture();
-            //WindowResizingEventProducer.StopCapture();
+            WindowFocusEventProducer.StopCapture();
+            WindowMovementEventProducer.StopCapture();
+            WindowResizingEventProducer.StopCapture();
             WindowStateChangedEventProducer.StopCapture();
         }
     }

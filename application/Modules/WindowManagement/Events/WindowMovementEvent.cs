@@ -1,5 +1,4 @@
-﻿using System.Numerics;
-using System.Windows;
+﻿using System.Windows;
 
 namespace MORR.Modules.WindowManagement.Events
 {

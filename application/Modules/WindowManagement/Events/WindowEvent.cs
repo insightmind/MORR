@@ -5,7 +5,7 @@ namespace MORR.Modules.WindowManagement.Events
     /// <summary>
     ///     A window management event which all specific WindowEvents inherit from.
     /// </summary>
-    public abstract class WindowEvent: Event
+    public abstract class WindowEvent : Event
     {
         /// <summary>
         ///     The title of the interacted window
