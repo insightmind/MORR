@@ -1,4 +1,5 @@
-﻿using MORR.Shared.Utility;
+﻿using System.Threading;
+using MORR.Shared.Utility;
 
 namespace MORR.Core.Data.Transcoding
 {
@@ -8,9 +9,14 @@ namespace MORR.Core.Data.Transcoding
     public interface IDecoder
     {
         /// <summary>
-        ///     Decodes the file and provides the decoded samples.
+        ///     An event raised when decoding finishes.
         /// </summary>
-        /// <param name="path">The <see cref="FilePath" /> of the file to decode from.</param>
-        void Decode(FilePath path);
+        ManualResetEvent DecodeFinished { get; }
+
+        /// <summary>
+        ///     Decodes the recording and provides the decoded samples.
+        /// </summary>
+        /// <param name="recordingDirectoryPath">The <see cref="DirectoryPath" /> of the file to decode from.</param>
+        void Decode(DirectoryPath recordingDirectoryPath);
     }
 }

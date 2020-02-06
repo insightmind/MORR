@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.Composition;
 using System.IO;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using MORR.Core.Data.IntermediateFormat.Json;
 using MORR.Shared.Events.Queue;
@@ -13,16 +14,24 @@ namespace MORR.Core.Data.Transcoding.Json
         [Import]
         private IEncodeableEventQueue<JsonIntermediateFormatSample> IntermediateFormatSampleQueue { get; set; }
 
-        public void Encode(DirectoryPath directoryRecordingPath)
+        [Import]
+        private JsonEncoderConfiguration Configuration { get; set; }
+
+        public ManualResetEvent EncodeFinished { get; } = new ManualResetEvent(false);
+
+        public void Encode(DirectoryPath recordingDirectoryPath)
         {
-            Task.Run(() => EncodeEvents(directoryRecordingPath));
+            Task.Run(() => EncodeEvents(recordingDirectoryPath));
         }
 
         private async void EncodeEvents(DirectoryPath recordingDirectoryPath)
         {
-            await using var fileStream = GetFileStreamForOutput(recordingDirectoryPath);
+            await using var fileStream = GetFileStream(recordingDirectoryPath);
+            // using statement with IDisposable will close writer at end of scope
             await using var writer = new Utf8JsonWriter(fileStream);
             writer.WriteStartArray();
+
+            EncodeFinished.Reset();
 
             await foreach (var sample in IntermediateFormatSampleQueue.GetEvents())
             {
@@ -35,13 +44,13 @@ namespace MORR.Core.Data.Transcoding.Json
             }
 
             writer.WriteEndArray();
+            EncodeFinished.Set();
         }
 
-        private static FileStream GetFileStreamForOutput(DirectoryPath directoryPath)
+        private FileStream GetFileStream(DirectoryPath recordingDirectoryPath)
         {
-            var filePath = Path.Combine(directoryPath.ToString(), "event_data.json"); // TODO Make this configurable?
-            var fileStream = File.OpenWrite(filePath);
-            return fileStream;
+            var fullPath = Path.Combine(recordingDirectoryPath.ToString(), Configuration.RelativeFilePath.ToString());
+            return File.OpenWrite(fullPath);
         }
     }
 }

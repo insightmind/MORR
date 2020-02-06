@@ -51,6 +51,8 @@ namespace MORR.Core.Data.IntermediateFormat.Json
                     eventQueue.Enqueue(@event);
                 }
             }
+
+            eventQueue.NotifyOnEnqueueFinished();
         }
     }
 }

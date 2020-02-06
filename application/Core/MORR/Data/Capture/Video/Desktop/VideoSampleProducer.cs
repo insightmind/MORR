@@ -37,18 +37,17 @@ namespace MORR.Core.Data.Capture.Video.Desktop
             closedEvent.Set();
             canCleanupNonPersistentResourcesEvent.WaitOne();
             CleanupSessionResources();
+            NotifyOnEnqueueFinished();
         }
 
         private void EnqueueFrames()
         {
             DirectXVideoSample? currentSample;
 
-            do
+            while ((currentSample = GetNextFrame()) != null)
             {
-                currentSample = GetNextFrame();
-                Enqueue(currentSample); // Intentionally enqueue null to stop encoder
+                Enqueue(currentSample);
             }
-            while (currentSample != null);
         }
 
         private DirectXVideoSample? GetNextFrame()

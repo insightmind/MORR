@@ -15,9 +15,17 @@ namespace MORR.Shared.Utility
         ///     Creates a new <see cref="FilePath" /> with the provided value.
         /// </summary>
         /// <param name="value">The value to create the <see cref="FilePath" /> with.</param>
-        public FilePath(string value)
+        /// <param name="skipValidation">
+        ///     Whether to skip path validation. <see langword="true" /> to skip validation,
+        ///     <see langword="false" /> otherwise.
+        /// </param>
+        public FilePath(string value, bool skipValidation = false)
         {
-            if (!TryGetLocalFilePath(value, out this.value))
+            if (skipValidation)
+            {
+                this.value = value;
+            }
+            else if (!TryGetLocalFilePath(value, out this.value))
             {
                 throw new ArgumentException($"The specified value \"{value}\" is not a valid file path.");
             }

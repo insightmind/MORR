@@ -1,7 +1,9 @@
 ﻿using System;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using MORR.Core.Data.IntermediateFormat.Json;
 using MORR.Core.Data.Transcoding.Exceptions;
@@ -12,17 +14,30 @@ namespace MORR.Core.Data.Transcoding.Json
 {
     public class JsonDecoder : DefaultDecodeableEventQueue<JsonIntermediateFormatSample>, IDecoder
     {
-        public static Guid Identifier { get; } = new Guid("E943EACB-5AD1-49A7-92CE-C42E7AD8995B");
+        [Import]
+        private JsonDecoderConfiguration Configuration { get; set; }
 
-        public void Decode(FilePath path)
+        private static Guid Identifier { get; } = new Guid("E943EACB-5AD1-49A7-92CE-C42E7AD8995B");
+
+        public ManualResetEvent DecodeFinished { get; } = new ManualResetEvent(false);
+
+        public void Decode(DirectoryPath recordingDirectoryPath)
         {
-            Task.Run(() => DecodeEvents(path));
+            Task.Run(() => DecodeEvents(recordingDirectoryPath));
         }
 
-        private async void DecodeEvents(FilePath path)
+        private FileStream GetFileStream(DirectoryPath recordingDirectoryPath)
         {
-            await using var fileStream = File.OpenRead(path.ToString());
+            var fullPath = Path.Combine(recordingDirectoryPath.ToString(), Configuration.RelativeFilePath.ToString());
+            return File.OpenRead(fullPath);
+        }
+
+        private async void DecodeEvents(DirectoryPath recordingDirectoryPath)
+        {
+            await using var fileStream = GetFileStream(recordingDirectoryPath);
             var document = JsonDocument.Parse(fileStream).RootElement;
+
+            DecodeFinished.Reset();
 
             foreach (var eventElement in document.EnumerateArray())
             {
@@ -46,6 +61,9 @@ namespace MORR.Core.Data.Transcoding.Json
 
                 Enqueue(intermediateFormatSample);
             }
+
+            NotifyOnEnqueueFinished();
+            DecodeFinished.Set();
         }
     }
 }

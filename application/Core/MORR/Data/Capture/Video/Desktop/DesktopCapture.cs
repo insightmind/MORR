@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Windows.Graphics.Capture;
 using MORR.Core.Data.Capture.Video.Desktop.Utility;
@@ -30,7 +31,7 @@ namespace MORR.Core.Data.Capture.Video.Desktop
         // TODO This also appears to be empty somewhat often - we could provide an empty implementation in the interface
         public void Initialize() { }
 
-        private GraphicsCaptureItem? GetGraphicsCaptureItem()
+        private bool TryGetGraphicsCaptureItem([NotNullWhen(true)] out GraphicsCaptureItem? item)
         {
             // On versions prior to 1903, the user will always have to manually select the window/monitor to capture
             if (!GraphicsCaptureHelper.CanCreateItemWithoutPicker || Configuration.PromptUserForMonitorSelection)
@@ -39,13 +40,15 @@ namespace MORR.Core.Data.Capture.Video.Desktop
                 var handle = NativeMethods.GetAssociatedWindow();
 
                 picker.SetWindow(handle);
-                return picker.PickSingleItemAsync().GetAwaiter().GetResult();
+                item = picker.PickSingleItemAsync().GetAwaiter().GetResult();
+                return item != null;
             }
 
             var monitors = MonitorEnumerationHelper.GetMonitors();
             var monitor = monitors.ElementAtOrDefault(Configuration.MonitorIndex.Value);
 
-            return monitor != null ? GraphicsCaptureHelper.CreateItemForMonitor(monitor.Hmon) : null;
+            item = monitor != null ? GraphicsCaptureHelper.CreateItemForMonitor(monitor.Hmon) : null;
+            return item != null;
         }
 
         private void StartCapture()
@@ -55,11 +58,13 @@ namespace MORR.Core.Data.Capture.Video.Desktop
                 throw new VideoCaptureException("Screen capture is not supported on this device.");
             }
 
-            var item = GetGraphicsCaptureItem();
-
-            if (item != null)
+            if (TryGetGraphicsCaptureItem(out var item))
             {
                 VideoSampleProducer.StartCapture(item);
+            }
+            else
+            {
+                throw new VideoCaptureException("Failed to acquire capture item.");
             }
         }
 

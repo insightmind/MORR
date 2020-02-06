@@ -29,6 +29,8 @@ namespace MORR.Modules.Keyboard.Producers
             {
                 throw new Exception("Failed to unhook keyboard.");
             }
+
+            NotifyOnEnqueueFinished();
         }
 
         private int KeyboardHookCallback(int nCode,
