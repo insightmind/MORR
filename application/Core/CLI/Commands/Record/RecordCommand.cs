@@ -66,7 +66,6 @@ namespace MORR.Core.CLI.Commands.Record
 
                 // Load Configuration File
                 consoleFormatter.PrintDebug(loadedFileMessage);
-                var configPath = new FilePath(Path.GetFullPath(options.ConfigPath));
 
                 // Load Session Manager
                 consoleFormatter.PrintDebug(sessionManagerMessage);

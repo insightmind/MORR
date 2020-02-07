@@ -1,5 +1,4 @@
 ﻿using CommandLine;
-using MORR.Shared.Utility;
 
 namespace MORR.Core.CLI.Commands.Validate
 {
