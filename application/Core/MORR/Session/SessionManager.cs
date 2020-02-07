@@ -90,13 +90,14 @@ namespace MORR.Core.Session
             isRecording = false;
 
             moduleManager.NotifyModulesOnSessionStop();
-
             foreach (var encoder in encoders)
             {
                 // IEncoder.EncodeFinished will not be reset before IEncoder.Encode gets called again
                 // We may therefore wait on this event sequentially without risk of blocking indefinitely
                 encoder.EncodeFinished.WaitOne();
             }
+            
+            GlobalHook.IsActive = false;
         }
 
         public void Process(IEnumerable<DirectoryPath> recordings)

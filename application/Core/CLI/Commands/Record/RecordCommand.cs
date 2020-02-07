@@ -50,7 +50,7 @@ namespace MORR.Core.CLI.Commands.Record
                 // To prevent the generated video file from becoming corrupted, recording needs to be stopped manually
                 sessionManager.StopRecording();
                 Console.WriteLine(stopRecordingMessage);
-
+                GlobalHook.FreeLibrary();
                 return 0;
             }
             catch (Exception exception) // I know this is not a recommend way to deal with exception, however this method receives a arbitrary amount of exception types.
