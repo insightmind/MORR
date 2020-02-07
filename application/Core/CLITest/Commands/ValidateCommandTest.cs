@@ -171,7 +171,7 @@ namespace CLITest.Commands
 
             // We test if the command was successful and returned code 0.
             Assert.AreEqual(-1, returnCode);
-            managerMock.Verify(manager => manager.LoadConfiguration(It.IsAny<FilePath>()), Times.Exactly(0));
+            managerMock.Verify(manager => manager.LoadConfiguration(It.IsAny<FilePath>()), Times.Never);
         }
 
         [TestMethod]
