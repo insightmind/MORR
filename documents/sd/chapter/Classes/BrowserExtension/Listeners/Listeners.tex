@@ -109,11 +109,11 @@ As newly created tabs have not set an URL yet, the URL of the OpenTabEvent will 
 
 \clsdcl{class TabEventFactory}
 
-\clsdsp{The TabEventFactory is responsible for creating BrowserEvent objects from the information a TabListener gathers. As different listeners get different input parameters, the createEvent method is overloaded several times to account for the possible combinations of parameters.}
+\clsdsp{The TabEventFactory is responsible for creating BrowserEvent objects from the information a TabListener gathers.}
 
 \begin{methods}
 \begin{method}{public createNavigationEvent(tabId : number, changeInfo : tabs.TabChangeInfo, tab : tabs.Tab) : NavigationEvent}{Create a new NavigationEvent from the input parameters.}
-\return{BrowserEvent}{A BrowserEvent.}
+\return{NavigationEvent}{A NavigationEvent.}
 \begin{parameters}
 \para{tabID : number}{The ID of the tab which provided the TabChangeInfo.}
 \para{changeInfo : tabs.TabChangeInfo}{The TabChangeInfo object created by the browser when navgiation occurs.}
@@ -137,7 +137,7 @@ the created CloseTabEvent will be set to 'url:unknown'.}
 \end{parameters}
 \end{method}
 \begin{method}{public createOpenTabEvent(tab : tabs.Tab) : OpenTabEvent}{Create a new OpenTabEvent from the input parameters.}
-\return{OpenTabEvent}{A OpenTabEvent.}
+\return{OpenTabEvent}{An OpenTabEvent.}
 \begin{parameters}
 \para{tab : tabs.Tab}{The tab to create the event from.}
 \end{parameters}
