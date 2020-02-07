@@ -77,7 +77,7 @@ namespace MORR.Shared.Utility
         public static void AddListener(RetrieveMessageCallBack callback, params NativeMethods.MessageType[] types)
         {
             if (types.Any(type => !Capture((uint)type)))
-{
+            {
                 throw new NotSupportedException();
             }
 
