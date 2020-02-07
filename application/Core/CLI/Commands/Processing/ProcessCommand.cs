@@ -28,12 +28,14 @@ namespace MORR.Core.CLI.Commands.Processing
 
         #region LifeCycle
 
+        public ProcessCommand(ISessionManager sessionManager) : this(sessionManager, new ConsoleFormatter()) { }
+
         public ProcessCommand(
             ISessionManager sessionManager,
             IConsoleFormatter consoleFormatter)
         {
             this.sessionManager = sessionManager;
-            this.consoleFormatter = consoleFormatter;
+            if (consoleFormatter != null) this.consoleFormatter = consoleFormatter;
         }
 
         #endregion

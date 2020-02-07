@@ -29,6 +29,8 @@ namespace MORR.Core.CLI.Commands.Validate
 
         #region LifeCycle
 
+        public ValidateCommand() : this(new ConfigurationManager(), new ConsoleFormatter(), new Bootstrapper()) { }
+
         public ValidateCommand(
             IConfigurationManager configurationManager, 
             IConsoleFormatter consoleFormatter,

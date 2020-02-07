@@ -19,36 +19,21 @@ namespace MORR.Core.CLI
     {
         public static int Main(string[] args)
         {
-            var output = new ConsoleFormatter();
-
             return Parser
                    .Default
                    .ParseArguments<ValidateOptions, RecordOptions, ProcessOptions>(args)
                    .MapResult(
-                       (ValidateOptions opts) => // Loads and executes the Validate Command
-                       {
-                           var configurationManager = new ConfigurationManager();
-                           var bootstrapper = new Bootstrapper();
-
-                           var command = new ValidateCommand(configurationManager, output, bootstrapper);
-                           return command.Execute(opts);
-                       },
+                       (ValidateOptions opts) => new ValidateCommand().Execute(opts),
                        (RecordOptions opts) => // Loads and executes the Record Command
                        {
                            var configPath = new FilePath(Path.GetFullPath(opts.ConfigPath));
-                           var sessionManager = new SessionManager(configPath);
-                           var commandLine = new InteractiveCommandLine(output);
-                           var messageLoop = new MessageLoop();
-
-                           var command = new RecordCommand(sessionManager, output, commandLine, messageLoop);
+                           var command = new RecordCommand(new SessionManager(configPath));
                            return command.Execute(opts);
                        },
                        (ProcessOptions opts) => // Loads and executes the ProcessCommand
                        {
                            var configPath = new FilePath(Path.GetFullPath(opts.ConfigPath));
-                           var sessionManager = new SessionManager(configPath);
-
-                           var command = new ProcessCommand(sessionManager, output);
+                           var command = new ProcessCommand(new SessionManager(configPath));
                            return command.Execute(opts);
                        },
                        errs => 1);

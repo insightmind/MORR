@@ -31,6 +31,11 @@ namespace MORR.Core.CLI.Commands.Record
 
         #region LifeCycle
 
+        public RecordCommand(ISessionManager sessionManager) : this(sessionManager, new ConsoleFormatter()) { }
+
+        public RecordCommand(ISessionManager sessionManager, IConsoleFormatter console) :
+            this(sessionManager, console, new InteractiveCommandLine(console), new MessageLoop()) { }
+
         public RecordCommand(
             ISessionManager sessionManager, 
             IConsoleFormatter consoleFormatter,
