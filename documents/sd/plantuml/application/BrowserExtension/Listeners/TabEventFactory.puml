@@ -4,7 +4,7 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 class TabEventFactory {
 	+ createNavigationEvent(tabId : number, changeInfo : tabs.TabChangeInfo, tab : tabs.Tab) : NavigationEvent
-	+ createSwitchTabEvent(activeInfo : tabs.TabActiveInfo, tabs.Tab) : BrowserEvent
+	+ createSwitchTabEvent(activeInfo : tabs.TabActiveInfo, tabs.Tab) : SwitchTabEvent
 	+ createCloseTabEvent(tabId : number, removeInfo: tabs.TabRemoveInfom tab : tabs.Tab) : CloseTabEvent
 	+ createOpenTabEvent(tab : tabs.Tab) : OpenTabEvent
 }
