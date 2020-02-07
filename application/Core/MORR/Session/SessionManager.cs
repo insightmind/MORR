@@ -13,9 +13,10 @@ namespace MORR.Core.Session
 {
     public class SessionManager : ISessionManager
     {
-        private readonly IDecoder? decoder;
-        private readonly IEncoder encoder;
+        private readonly IEnumerable<IEncoder> encoders;
+        private readonly IEnumerable<IDecoder> decoders;
         private readonly IModuleManager moduleManager;
+        private bool isRecording;
 
         public SessionManager(FilePath configurationPath) : this(configurationPath, new Bootstrapper(),
                                                                  new ConfigurationManager(), new ModuleManager()) { }
@@ -32,8 +33,8 @@ namespace MORR.Core.Session
 
             configurationManager.LoadConfiguration(configurationPath);
 
-            encoder = Encoders.Single(x => x.GetType() == Configuration.Encoder);
-            decoder = Decoders.SingleOrDefault(x => x.GetType() == Configuration.Decoder);
+            encoders = Encoders.Where(x => Configuration.Encoders.Contains(x.GetType()));
+            decoders = Decoders.Where(x => Configuration.Decoders?.Contains(x.GetType()) ?? false);
 
             moduleManager.InitializeModules();
         }
@@ -47,7 +48,10 @@ namespace MORR.Core.Session
         [Import]
         private SessionConfiguration Configuration { get; set; }
 
-        public bool IsRecording { get; private set; }
+        public DirectoryPath? CurrentRecordingDirectory { get; private set; }
+
+        // Nullable to prevent issues with calling this before the configuration has been parsed
+        public DirectoryPath? RecordingsFolder => Configuration?.RecordingDirectory;
 
         private DirectoryPath CreateNewRecordingDirectory()
         {
@@ -59,43 +63,75 @@ namespace MORR.Core.Session
 
         public void StartRecording()
         {
-            if (IsRecording)
+            if (isRecording)
             {
                 throw new AlreadyRecordingException();
             }
 
-            IsRecording = true;
+            isRecording = true;
 
-            encoder.Encode(CreateNewRecordingDirectory());
+            CurrentRecordingDirectory = CreateNewRecordingDirectory();
+
+            foreach (var encoder in encoders)
+            {
+                encoder.Encode(CurrentRecordingDirectory);
+            }
+
             moduleManager.NotifyModulesOnSessionStart();
         }
 
         public void StopRecording()
         {
-            if (!IsRecording)
+            if (!isRecording)
             {
                 throw new NotRecordingException();
             }
 
-            IsRecording = false;
+            isRecording = false;
 
             moduleManager.NotifyModulesOnSessionStop();
+            foreach (var encoder in encoders)
+            {
+                // IEncoder.EncodeFinished will not be reset before IEncoder.Encode gets called again
+                // We may therefore wait on this event sequentially without risk of blocking indefinitely
+                encoder.EncodeFinished.WaitOne();
+            }
+            
             GlobalHook.IsActive = false;
         }
 
-        public void Process(IEnumerable<FilePath> files)
+        public void Process(IEnumerable<DirectoryPath> recordings)
         {
-            if (decoder == null)
+            if (!decoders.Any())
             {
                 throw new InvalidConfigurationException("No decoder specified for processing operation.");
             }
 
             moduleManager.NotifyModulesOnSessionStart();
 
-            foreach (var file in files)
+            foreach (var recording in recordings)
             {
-                decoder.Decode(file);
-                encoder.Encode(CreateNewRecordingDirectory());
+                CurrentRecordingDirectory = CreateNewRecordingDirectory();
+
+                foreach (var decoder in decoders)
+                {
+                    decoder.Decode(recording);
+                }
+
+                foreach (var encoder in encoders)
+                {
+                    encoder.Encode(CurrentRecordingDirectory);
+                }
+
+                foreach (var decoder in decoders)
+                {
+                    decoder.DecodeFinished.WaitOne();
+                }
+
+                foreach (var encoder in encoders)
+                {
+                    encoder.EncodeFinished.WaitOne();
+                }
             }
 
             moduleManager.NotifyModulesOnSessionStop();

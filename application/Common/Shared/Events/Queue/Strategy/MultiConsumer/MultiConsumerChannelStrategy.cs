@@ -60,6 +60,19 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
             await EnqueueAsync(receivingChannel, @event);
         }
 
+        public void NotifyOnEnqueueFinished()
+        {
+            receivingChannel.Writer.Complete();
+
+            foreach (var channel in offeringChannels)
+            {
+                channel.Writer.Complete();
+            }
+
+            offeringChannels.Clear();
+            receivingChannel = CreateReceivingChannel();
+        }
+
         private ValueTask EnqueueAsync(Channel<TEvent> channel, TEvent @event)
         {
             async Task AsyncSlowPath(TEvent @event)

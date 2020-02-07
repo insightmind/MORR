@@ -43,6 +43,7 @@ namespace MORR.Modules.Mouse.Producers
                                       NativeMethods.MessageType.WM_NCRBUTTONDBLCLK,
                                       NativeMethods.MessageType.WM_NCLBUTTONDBLCLK,
                                       NativeMethods.MessageType.WM_NCMBUTTONDBLCLK);
+            NotifyOnEnqueueFinished();
         }
 
         private void MouseHookCallback(GlobalHook.HookMessage hookMessage)

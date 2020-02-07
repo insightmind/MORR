@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using MORR.Shared.Events;
 using MORR.Shared.Events.Queue;
@@ -15,6 +17,8 @@ namespace MORR.Core.Data.IntermediateFormat.Json
     {
         private bool isActive;
 
+        private CountdownEvent resetCounter;
+
         [ImportMany]
         private IEnumerable<IReadOnlyEventQueue<Event>> EventQueues { get; set; }
 
@@ -23,16 +27,15 @@ namespace MORR.Core.Data.IntermediateFormat.Json
         public bool IsActive
         {
             get => isActive;
-            set => Utility.SetAndDispatch(ref isActive, value, LinkAllQueues, delegate
-            {
-                /* TODO Cancel iteration */
-            });
+            set => Utility.SetAndDispatch(ref isActive, value, LinkAllQueues, () => { });
         }
 
         public Guid Identifier { get; } = new Guid("2D61FFB2-9CC1-4AAD-B1B9-A362FCF022A0");
 
         private void LinkAllQueues()
         {
+            resetCounter = new CountdownEvent(EventQueues.Count());
+
             foreach (var eventQueue in EventQueues)
             {
                 Task.Run(() => LinkSingleQueue(eventQueue));
@@ -52,8 +55,8 @@ namespace MORR.Core.Data.IntermediateFormat.Json
 
             var sample = new JsonIntermediateFormatSample
             {
-                EventType = eventType,
-                SerializedData = serializedData,
+                Type = eventType,
+                Data = serializedData,
                 IssuingModule = Identifier
             };
 
@@ -64,9 +67,13 @@ namespace MORR.Core.Data.IntermediateFormat.Json
         {
             await foreach (var @event in eventQueue.GetEvents())
             {
-                // TODO Cancel iteration once module is deactivated
                 var sample = MakeSample(@event);
                 Enqueue(sample);
+            }
+
+            if (resetCounter.Signal())
+            {
+                NotifyOnEnqueueFinished();
             }
         }
     }

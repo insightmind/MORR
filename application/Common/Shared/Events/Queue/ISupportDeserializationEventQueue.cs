@@ -3,7 +3,7 @@
 namespace MORR.Shared.Events.Queue
 {
     /// <summary>
-    ///     Provides a single-writer-multiple-reader queue for <see cref="Event"/> types with support for deserialization.
+    ///     Provides a single-writer-multiple-reader queue for <see cref="Event" /> types with support for deserialization.
     /// </summary>
     /// <typeparam name="T">The type of the event</typeparam>
     public interface ISupportDeserializationEventQueue<out T> where T : Event
@@ -18,5 +18,10 @@ namespace MORR.Shared.Events.Queue
         /// </summary>
         /// <param name="event">The event to enqueue</param>
         void Enqueue(object @event);
+
+        /// <summary>
+        ///     Notifies the event queue that no more events will be enqueued.
+        /// </summary>
+        void NotifyOnEnqueueFinished();
     }
 }

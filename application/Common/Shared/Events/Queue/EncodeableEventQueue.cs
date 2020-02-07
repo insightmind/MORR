@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Threading;
 using MORR.Shared.Events.Queue.Strategy;
 
 namespace MORR.Shared.Events.Queue
@@ -17,14 +16,19 @@ namespace MORR.Shared.Events.Queue
             this.storageStrategy = storageStrategy;
         }
 
-        public IAsyncEnumerable<T> GetEvents(CancellationToken cancellationToken = default)
+        public IAsyncEnumerable<T> GetEvents()
         {
-            return storageStrategy.GetEvents(cancellationToken);
+            return storageStrategy.GetEvents();
         }
 
         protected void Enqueue(T @event)
         {
             storageStrategy.Enqueue(@event);
+        }
+
+        protected void NotifyOnEnqueueFinished()
+        {
+            storageStrategy.NotifyOnEnqueueFinished();
         }
     }
 }

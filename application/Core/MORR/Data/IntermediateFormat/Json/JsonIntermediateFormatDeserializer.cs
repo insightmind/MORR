@@ -45,12 +45,14 @@ namespace MORR.Core.Data.IntermediateFormat.Json
         {
             await foreach (var sample in IntermediateFormatSampleQueue.GetEvents())
             {
-                if (sample.EventType == eventQueue.EventType)
+                if (sample.Type == eventQueue.EventType)
                 {
-                    var @event = JsonSerializer.Deserialize(sample.SerializedData, sample.EventType);
+                    var @event = JsonSerializer.Deserialize(sample.Data, sample.Type);
                     eventQueue.Enqueue(@event);
                 }
             }
+
+            eventQueue.NotifyOnEnqueueFinished();
         }
     }
 }

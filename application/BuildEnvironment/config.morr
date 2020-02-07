@@ -2,14 +2,19 @@
   "MORR.Core.Modules.GlobalModuleConfiguration": {
     "EnabledModules": [
       "MORR.Core.Data.IntermediateFormat.Json.JsonIntermediateFormatSerializer",
-      "MORR.Modules.Keyboard.KeyboardModule",
-      "MORR.Modules.Mouse.MouseModule",
-      "MORR.Modules.WebBrowser.WebBrowserModule",
-      "MORR.Modules.Clipboard.ClipboardModule"
+      "MORR.Core.Data.IntermediateFormat.Json.JsonIntermediateFormatDeserializer",
+      "MORR.Core.Data.Capture.Video.Desktop.DesktopCapture",
+      "MORR.Modules.Keyboard.KeyboardModule"
     ]
   },
   "MORR.Core.Session.SessionConfiguration": {
-    "Encoder": "MORR.Core.CLI.Output.OutputFormatter",
+    "Encoders": [
+      "MORR.Core.Data.Transcoding.Json.JsonEncoder",
+      "MORR.Core.Data.Transcoding.Mpeg.MpegEncoder"
+    ],
+    "Decoders": [
+      "MORR.Core.Data.Transcoding.Json.JsonDecoder"
+    ],
     "RecordingDirectory": "%userprofile%\\Videos\\MORR"
   },
   "MORR.Modules.Mouse.MouseModuleConfiguration": {
@@ -18,5 +23,21 @@
   },
   "MORR.Modules.WebBrowser.WebBrowserModuleConfiguration": {
     "UrlSuffix": "60024/"
+  "MORR.Core.Data.Transcoding.Json.JsonEncoderConfiguration": {
+    "RelativeFilePath": "event_data.json"
+  },
+  "MORR.Core.Data.Transcoding.Json.JsonDecoderConfiguration": {
+    "RelativeFilePath": "event_data.json"
+  },
+  "MORR.Core.Data.Transcoding.Mpeg.MpegEncoderConfiguration": {
+    "Width": 1920,
+    "Height": 1080,
+    "KiloBitsPerSecond": 4000,
+    "FramesPerSecond": 60,
+    "RelativeFilePath": "desktop_capture.mp4"
+  },
+  "MORR.Core.Data.Capture.Video.Desktop.DesktopCaptureConfiguration": {
+    "PromptUserForMonitorSelection": false,
+    "MonitorIndex": 0
   }
 }

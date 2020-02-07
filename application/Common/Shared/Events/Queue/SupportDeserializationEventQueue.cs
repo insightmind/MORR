@@ -23,5 +23,10 @@ namespace MORR.Shared.Events.Queue
 
             base.Enqueue(typedEvent);
         }
+
+        public new void NotifyOnEnqueueFinished()
+        {
+            base.NotifyOnEnqueueFinished();
+        }
     }
 }

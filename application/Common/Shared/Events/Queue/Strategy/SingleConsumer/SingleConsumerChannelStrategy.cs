@@ -47,6 +47,13 @@ namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
             await EnqueueAsync(@event);
         }
 
+        public void NotifyOnEnqueueFinished()
+        {
+            eventChannel.Writer.Complete();
+            FreeReading();
+            eventChannel = CreateChannel();
+        }
+
         private ValueTask EnqueueAsync(TEvent @event)
         {
             async Task AsyncSlowPath(TEvent @event)

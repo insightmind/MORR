@@ -15,9 +15,17 @@ namespace MORR.Shared.Utility
         ///     Creates a new <see cref="DirectoryPath" /> with the provided value.
         /// </summary>
         /// <param name="value">The value to create the <see cref="DirectoryPath" /> with.</param>
-        public DirectoryPath(string value)
+        /// <param name="skipValidation">
+        ///     Whether to skip path validation. <see langword="true" /> to skip validation,
+        ///     <see langword="false" /> otherwise.
+        /// </param>
+        public DirectoryPath(string value, bool skipValidation = false)
         {
-            if (!TryGetDirectoryPath(value, out this.value))
+            if (skipValidation)
+            {
+                this.value = value;
+            }
+            else if (!TryGetDirectoryPath(value, out this.value))
             {
                 throw new ArgumentException($"The specified value \"{value}\" is not a valid directory path.");
             }

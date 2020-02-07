@@ -1,4 +1,4 @@
-using System.ComponentModel.Composition;
+using System.Text.Json;
 using MORR.Modules.WebBrowser.Events;
 
 namespace MORR.Modules.WebBrowser.Producers
@@ -6,7 +6,15 @@ namespace MORR.Modules.WebBrowser.Producers
     /// <summary>
     ///     Provides a single-writer-multiple-reader queue for OpenTabEvent
     /// </summary>
-    [Export(typeof(WebBrowserEventProducer<OpenTabEvent>))]
-    [Export(typeof(IWebBrowserEventObserver))]
-    public class OpenTabEventProducer : WebBrowserEventProducer<OpenTabEvent> { }
+    public class OpenTabEventProducer : WebBrowserEventProducer<OpenTabEvent>
+    {
+        public override EventLabel HandledEventLabel => EventLabel.OPENTAB;
+
+        public override void Notify(JsonElement eventJson)
+        {
+            var @event = new OpenTabEvent();
+            @event.Deserialize(eventJson);
+            Enqueue(@event);
+        }
+    }
 }

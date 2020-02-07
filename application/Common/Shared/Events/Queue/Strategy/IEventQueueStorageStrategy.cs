@@ -17,5 +17,10 @@ namespace MORR.Shared.Events.Queue.Strategy
         /// </summary>
         /// <param name="event">The event to enqueue</param>
         void Enqueue(T @event);
+
+        /// <summary>
+        /// Notifies the event queue that no more events will be enqueued.
+        /// </summary>
+        void NotifyOnEnqueueFinished();
     }
 }
