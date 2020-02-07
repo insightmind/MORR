@@ -58,7 +58,7 @@ namespace MORR.Core.CLI.Commands.Processing
                 var configPath = new FilePath(Path.GetFullPath(options.ConfigPath));
 
                 // Load input file
-                outputFormatter.PrintDebug(loadInputMessage);
+                consoleFormatter.PrintDebug(loadInputMessage);
                 var inputPath = new DirectoryPath(Path.GetFullPath(options.InputFile));
 
                 // Start session manager

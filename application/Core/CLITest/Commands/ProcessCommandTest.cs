@@ -40,7 +40,7 @@ namespace CLITest.Commands
             {
                 IsVerbose = false,
                 ConfigPath = Assembly.GetExecutingAssembly().Location,
-                InputFile = Assembly.GetExecutingAssembly().Location
+                InputFile = "C:/"
             };
 
             /* WHEN */
@@ -50,7 +50,7 @@ namespace CLITest.Commands
 
             // We test if the command was successful and returned code 0.
             Assert.AreEqual(successCode, returnCode);
-            managerMock.Verify(manager => manager.Process(It.IsAny<IEnumerable<FilePath>>()), Times.Exactly(1));
+            managerMock.Verify(manager => manager.Process(It.IsAny<IEnumerable<DirectoryPath>>()), Times.Exactly(1));
         }
 
         [TestMethod]
@@ -62,7 +62,7 @@ namespace CLITest.Commands
 
             /* GIVEN */
             managerMock.
-                Setup(manager => manager.Process(It.IsAny<IEnumerable<FilePath>>()))?
+                Setup(manager => manager.Process(It.IsAny<IEnumerable<DirectoryPath>>()))?
                 .Throws(new InvalidOperationException());
 
             var command = new ProcessCommand(managerMock.Object, outputMock.Object);
@@ -70,7 +70,7 @@ namespace CLITest.Commands
             {
                 IsVerbose = false,
                 ConfigPath = Assembly.GetExecutingAssembly().Location,
-                InputFile = Assembly.GetExecutingAssembly().Location
+                InputFile = "C:/"
             };
 
             /* WHEN */
@@ -81,7 +81,7 @@ namespace CLITest.Commands
             // We test if the command failed and returned code -1.
             Assert.AreEqual(failCode, returnCode);
 
-            managerMock.Verify(manager => manager.Process(It.IsAny<IEnumerable<FilePath>>()), Times.Once);
+            managerMock.Verify(manager => manager.Process(It.IsAny<IEnumerable<DirectoryPath>>()), Times.Once);
             outputMock.Verify(output => output.PrintError(It.IsAny<InvalidOperationException>()), Times.Once);
         }
 
@@ -103,7 +103,7 @@ namespace CLITest.Commands
             // We test if the command was unsuccessful and returned code -1.
             Assert.AreEqual(failCode, returnCode);
 
-            managerMock.Verify(manager => manager.Process(It.IsAny<IEnumerable<FilePath>>()), Times.Never);
+            managerMock.Verify(manager => manager.Process(It.IsAny<IEnumerable<DirectoryPath>>()), Times.Never);
         }
 
         [TestMethod]
