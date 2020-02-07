@@ -19,7 +19,7 @@ namespace MORR.Core.CLI
     {
         public static int Main(string[] args)
         {
-            var output = new OutputFormatter();
+            var output = new ConsoleFormatter();
 
             return Parser
                    .Default

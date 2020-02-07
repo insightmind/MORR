@@ -22,7 +22,7 @@ namespace MORR.Core.CLI.Commands.Processing
         #region Dependencies
 
         private readonly ISessionManager sessionManager;
-        private readonly IOutputFormatter outputFormatter;
+        private readonly IConsoleFormatter consoleFormatter;
 
         #endregion
 
@@ -30,10 +30,10 @@ namespace MORR.Core.CLI.Commands.Processing
 
         public ProcessCommand(
             ISessionManager sessionManager,
-            IOutputFormatter outputFormatter)
+            IConsoleFormatter consoleFormatter)
         {
             this.sessionManager = sessionManager;
-            this.outputFormatter = outputFormatter;
+            this.consoleFormatter = consoleFormatter;
         }
 
         #endregion
@@ -42,17 +42,17 @@ namespace MORR.Core.CLI.Commands.Processing
 
         public int Execute(ProcessOptions options)
         {
-            Debug.Assert(outputFormatter != null, nameof(outputFormatter) + " != null");
+            Debug.Assert(consoleFormatter != null, nameof(consoleFormatter) + " != null");
             Debug.Assert(sessionManager != null, nameof(sessionManager) + " != null");
 
             if (options == null) return -1;
 
             try
             {
-                outputFormatter.IsVerbose = options.IsVerbose;
+                consoleFormatter.IsVerbose = options.IsVerbose;
 
                 // Load configuration file
-                outputFormatter.PrintDebug(loadedFileMessage);
+                consoleFormatter.PrintDebug(loadedFileMessage);
                 var configPath = new FilePath(Path.GetFullPath(options.ConfigPath));
 
                 // Load input file
@@ -60,18 +60,18 @@ namespace MORR.Core.CLI.Commands.Processing
                 var inputPath = new DirectoryPath(Path.GetFullPath(options.InputFile));
 
                 // Start session manager
-                outputFormatter.PrintDebug(sessionManagerMessage);
+                consoleFormatter.PrintDebug(sessionManagerMessage);
 
                 // Start processing
-                outputFormatter.PrintDebug(startProcessingMessage);
+                consoleFormatter.PrintDebug(startProcessingMessage);
                 sessionManager.Process(new[] { inputPath });
-                outputFormatter.PrintDebug(completeProcessingMessage);
+                consoleFormatter.PrintDebug(completeProcessingMessage);
 
                 return 0;
             }
             catch (Exception exception)
             {
-                outputFormatter.PrintError(exception);
+                consoleFormatter.PrintError(exception);
 
                 return -1;
             }

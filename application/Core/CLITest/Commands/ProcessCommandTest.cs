@@ -18,13 +18,13 @@ namespace CLITest.Commands
         private const int successCode = 0;
 
         private Mock<ISessionManager> managerMock;
-        private Mock<IOutputFormatter> outputMock;
+        private Mock<IConsoleFormatter> outputMock;
 
         [TestInitialize]
         public void BeforeTest()
         {
             managerMock = new Mock<ISessionManager>();
-            outputMock = new Mock<IOutputFormatter>();
+            outputMock = new Mock<IConsoleFormatter>();
         }
 
         [TestMethod]

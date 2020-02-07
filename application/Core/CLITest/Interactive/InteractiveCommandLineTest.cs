@@ -12,12 +12,12 @@ namespace CLITest.Interactive
     {
         private const int waitTimeInMilliseconds = 1000;
 
-        private Mock<IOutputFormatter> outputMock;
+        private Mock<IConsoleFormatter> outputMock;
 
         [TestInitialize]
-        public void Prepare()
+        public void BeforeTest()
         {
-            outputMock = new Mock<IOutputFormatter>();
+            outputMock = new Mock<IConsoleFormatter>();
         }
 
         [TestMethod]

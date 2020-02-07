@@ -19,14 +19,14 @@ namespace CLITest.Commands
         private const int invalidCode = 1;
 
         private Mock<IBootstrapper> bootstrapperMock;
-        private Mock<IOutputFormatter> outputMock;
+        private Mock<IConsoleFormatter> outputMock;
         private Mock<IConfigurationManager> managerMock;
 
         [TestInitialize]
         public void BeforeTest()
         {
             bootstrapperMock = new Mock<IBootstrapper>();
-            outputMock = new Mock<IOutputFormatter>();
+            outputMock = new Mock<IConsoleFormatter>();
             managerMock = new Mock<IConfigurationManager>();
         }
 

@@ -18,7 +18,7 @@ namespace CLITest.Commands
         private const int successCode = 0;
 
         private Mock<ISessionManager> managerMock;
-        private Mock<IOutputFormatter> outputMock;
+        private Mock<IConsoleFormatter> outputMock;
         private Mock<IInteractiveCommandLine> commandLineMock;
         private Mock<IMessageLoop> messageLoopMock;
 
@@ -26,7 +26,7 @@ namespace CLITest.Commands
         public void BeforeTest()
         {
             managerMock = new Mock<ISessionManager>();
-            outputMock = new Mock<IOutputFormatter>();
+            outputMock = new Mock<IConsoleFormatter>();
             commandLineMock = new Mock<IInteractiveCommandLine>();
             messageLoopMock = new Mock<IMessageLoop>();
         }

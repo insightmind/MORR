@@ -22,7 +22,7 @@ namespace MORR.Core.CLI.Commands.Validate
         #region Dependencies
 
         private readonly IConfigurationManager configurationManager;
-        private readonly IOutputFormatter outputFormatter;
+        private readonly IConsoleFormatter consoleFormatter;
         private readonly IBootstrapper bootstrapper;
 
         #endregion
@@ -31,11 +31,11 @@ namespace MORR.Core.CLI.Commands.Validate
 
         public ValidateCommand(
             IConfigurationManager configurationManager, 
-            IOutputFormatter outputFormatter,
+            IConsoleFormatter consoleFormatter,
             IBootstrapper bootstrapper) 
         {
             this.configurationManager = configurationManager;
-            this.outputFormatter = outputFormatter;
+            this.consoleFormatter = consoleFormatter;
             this.bootstrapper = bootstrapper;
         }
 
@@ -45,7 +45,7 @@ namespace MORR.Core.CLI.Commands.Validate
 
         public int Execute(ValidateOptions options)
         {
-            Debug.Assert(outputFormatter != null, nameof(outputFormatter) + " != null");
+            Debug.Assert(consoleFormatter != null, nameof(consoleFormatter) + " != null");
             Debug.Assert(bootstrapper != null, nameof(bootstrapper) + " != null");
 
             if (options == null)
@@ -56,18 +56,18 @@ namespace MORR.Core.CLI.Commands.Validate
             try
             {
                 
-                outputFormatter.IsVerbose = options.IsVerbose;
+                consoleFormatter.IsVerbose = options.IsVerbose;
 
                 // Load Configuration File
-                outputFormatter.PrintDebug(loadedFileMessage);
+                consoleFormatter.PrintDebug(loadedFileMessage);
                 var filePath = new FilePath(Path.GetFullPath(options.ConfigPath));
 
                 // Start Configuration Manager and Bootstrapper
-                outputFormatter.PrintDebug(assemblyMessage);
+                consoleFormatter.PrintDebug(assemblyMessage);
                 bootstrapper.ComposeImports(configurationManager);
 
                 // Resolve Configuration File
-                outputFormatter.PrintDebug(resolveConfigMessage);
+                consoleFormatter.PrintDebug(resolveConfigMessage);
                 configurationManager.LoadConfiguration(filePath);
 
                 Console.WriteLine(successMessage);
@@ -75,13 +75,13 @@ namespace MORR.Core.CLI.Commands.Validate
             }
             catch (InvalidConfigurationException exception)
             {
-                outputFormatter.PrintError(exception);
+                consoleFormatter.PrintError(exception);
                 Console.WriteLine(failureMessage);
                 return 1;
             }
             catch (Exception exception)
             {
-                outputFormatter.PrintError(exception);
+                consoleFormatter.PrintError(exception);
                 return -1;
             }
         }

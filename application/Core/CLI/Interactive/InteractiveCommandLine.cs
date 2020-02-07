@@ -11,11 +11,11 @@ namespace MORR.Core.CLI.Interactive
         private const string closingMessage = "Closing MORR. This may take some time!";
 
         private Action? completionAction;
-        private readonly IOutputFormatter outputFormatter;
+        private readonly IConsoleFormatter consoleFormatter;
 
-        public InteractiveCommandLine(IOutputFormatter outputFormatter)
+        public InteractiveCommandLine(IConsoleFormatter consoleFormatter)
         {
-            this.outputFormatter = outputFormatter;
+            this.consoleFormatter = consoleFormatter;
         }
 
         /// <summary>
@@ -35,14 +35,14 @@ namespace MORR.Core.CLI.Interactive
         /// </summary>
         private void Start()
         {
-            if (outputFormatter == null)
+            if (consoleFormatter == null)
             {
                 completionAction?.Invoke();
             }
 
-            outputFormatter.Print(startMessage);
-            while (outputFormatter.Read() != exitCommand);
-            outputFormatter.Print(closingMessage);
+            consoleFormatter?.Print(startMessage);
+            while (consoleFormatter?.Read() != exitCommand);
+            consoleFormatter?.Print(closingMessage);
 
             completionAction?.Invoke();
         }

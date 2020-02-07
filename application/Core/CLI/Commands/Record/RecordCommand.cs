@@ -23,7 +23,7 @@ namespace MORR.Core.CLI.Commands.Record
         #region Dependencies
 
         private readonly ISessionManager sessionManager;
-        private readonly IOutputFormatter outputFormatter;
+        private readonly IConsoleFormatter consoleFormatter;
         private readonly IInteractiveCommandLine commandLine;
         private readonly IMessageLoop messageLoop;
 
@@ -33,12 +33,12 @@ namespace MORR.Core.CLI.Commands.Record
 
         public RecordCommand(
             ISessionManager sessionManager, 
-            IOutputFormatter outputFormatter,
+            IConsoleFormatter consoleFormatter,
             IInteractiveCommandLine commandLine,
             IMessageLoop messageLoop)
         {
             this.sessionManager = sessionManager;
-            this.outputFormatter = outputFormatter;
+            this.consoleFormatter = consoleFormatter;
             this.commandLine = commandLine;
             this.messageLoop = messageLoop;
         }
@@ -48,7 +48,7 @@ namespace MORR.Core.CLI.Commands.Record
         #region Execution
         public int Execute(RecordOptions options)
         {
-            Debug.Assert(outputFormatter != null, nameof(outputFormatter) + " != null");
+            Debug.Assert(consoleFormatter != null, nameof(consoleFormatter) + " != null");
             Debug.Assert(sessionManager != null, nameof(sessionManager) + " != null");
             Debug.Assert(commandLine != null, nameof(commandLine) + " != null");
             Debug.Assert(messageLoop != null, nameof(messageLoop) + " != null");
@@ -57,17 +57,17 @@ namespace MORR.Core.CLI.Commands.Record
 
             try
             {
-                outputFormatter.IsVerbose = options.IsVerbose;
+                consoleFormatter.IsVerbose = options.IsVerbose;
 
                 // Load Configuration File
-                outputFormatter.PrintDebug(loadedFileMessage);
+                consoleFormatter.PrintDebug(loadedFileMessage);
                 var configPath = new FilePath(Path.GetFullPath(options.ConfigPath));
 
                 // Load Session Manager
-                outputFormatter.PrintDebug(sessionManagerMessage);
+                consoleFormatter.PrintDebug(sessionManagerMessage);
 
                 // Start Recording
-                outputFormatter.PrintDebug(startRecordingMessage);
+                consoleFormatter.PrintDebug(startRecordingMessage);
                 sessionManager.StartRecording();
 
                 // If the user cancels via the command line we need to stop the message loop.
@@ -84,7 +84,7 @@ namespace MORR.Core.CLI.Commands.Record
             }
             catch (Exception exception) // I know this is not a recommend way to deal with exception, however this method receives a arbitrary amount of exception types.
             {
-                outputFormatter.PrintError(exception);
+                consoleFormatter.PrintError(exception);
                 return -1;
             }
         }
