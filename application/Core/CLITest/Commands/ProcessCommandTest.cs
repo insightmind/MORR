@@ -50,7 +50,7 @@ namespace CLITest.Commands
 
             // We test if the command was successful and returned code 0.
             Assert.AreEqual(successCode, returnCode);
-            managerMock.Verify(manager => manager.Process(It.IsAny<IEnumerable<DirectoryPath>>()), Times.Exactly(1));
+            managerMock.Verify(manager => manager.Process(It.IsAny<IEnumerable<DirectoryPath>>()), Times.Once);
         }
 
         [TestMethod]
