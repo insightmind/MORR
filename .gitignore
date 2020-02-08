@@ -17,6 +17,7 @@
 
 documents/fsd/FunctionalSpecifications.pdf
 documents/sd/SoftwareDesign.pdf
+documents/implementation/ImplementationReport.pdf
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
