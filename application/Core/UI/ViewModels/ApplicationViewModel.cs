@@ -1,12 +1,21 @@
-﻿using System.Windows;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
+using System.Windows;
 using System.Windows.Input;
+using Windows.Devices.Printers;
+using MORR.Core.Configuration;
+using MORR.Core.Session;
 using Morr.Core.UI.Dialogs;
 using MORR.Core.UI.ViewModels.Utility;
+using MORR.Shared.Utility;
 
 namespace MORR.Core.UI.ViewModels
 {
     public class ApplicationViewModel : DependencyObject
     {
+        private static SessionManager sessionManager;
+
         public ApplicationViewModel()
         {
             Initialize();
@@ -14,16 +23,16 @@ namespace MORR.Core.UI.ViewModels
 
         private void Initialize()
         {
-            // TODO Configure application here
-
-            var configurationSuccessful = true;
-
-            if (!configurationSuccessful)
+            try
             {
-                // Invalid configuration
+                sessionManager = new SessionManager(new FilePath(Environment.GetCommandLineArgs()[1]));
+            }
+            catch (InvalidConfigurationException)
+            {
                 new ErrorDialog("The configuration could not be loaded. \nPlease check the configuration file or contact an administrator.").ShowDialog();
                 Exit();
             }
+
         }
 
         private static void Exit()
@@ -33,8 +42,15 @@ namespace MORR.Core.UI.ViewModels
 
         private static void OnOpenRecordingsDirectory(object _)
         {
-            // TODO Get correct file path
-            // Process.Start("explorer.exe", "file-path-here");
+            var recordingsFolder = sessionManager.RecordingsFolder;
+
+            if (recordingsFolder == null)
+            {
+                new ErrorDialog("The recordings folder could not be found. \nPlease contact an administrator.").ShowDialog();
+                Exit();  
+            }
+            
+            Process.Start("explorer.exe", recordingsFolder.ToString());
         }
 
         private void OnExitApplication(object _)
@@ -64,18 +80,20 @@ namespace MORR.Core.UI.ViewModels
             if (new InformationDialog().ShowDialog() ?? false)
             {
                 IsRecording = true;
-                // TODO Start recording
+                sessionManager.StartRecording();
             }
         }
 
         private void StopRecording()
         {
-            // TODO Stop recording
-
             IsRecording = false;
-            if (new SaveDialog().ShowDialog() ?? false)
+            sessionManager.StopRecording();
+
+            
+
+            if (!new SaveDialog().ShowDialog() ?? false)
             {
-                // TODO Save recording
+                Directory.Delete(sessionManager.CurrentRecordingDirectory?.ToString(), true);
             }
         }
 
