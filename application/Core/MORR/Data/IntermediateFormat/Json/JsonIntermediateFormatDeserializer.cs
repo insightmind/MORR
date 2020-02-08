@@ -10,7 +10,7 @@ using MORR.Shared.Utility;
 
 namespace MORR.Core.Data.IntermediateFormat.Json
 {
-    public class JsonIntermediateFormatDeserializer : ITransformingModule
+    public class JsonIntermediateFormatDeserializer : IModule
     {
         private bool isActive;
 

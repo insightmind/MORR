@@ -13,7 +13,7 @@ using MORR.Shared.Utility;
 namespace MORR.Core.Data.IntermediateFormat.Json
 {
     public class JsonIntermediateFormatSerializer
-        : DefaultEncodeableEventQueue<JsonIntermediateFormatSample>, ITransformingModule
+        : DefaultEncodeableEventQueue<JsonIntermediateFormatSample>, IModule
     {
         private bool isActive;
 

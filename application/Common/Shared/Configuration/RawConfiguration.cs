@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.Json;
-
-namespace MORR.Shared.Configuration
+﻿namespace MORR.Shared.Configuration
 {
     public class RawConfiguration
     {
