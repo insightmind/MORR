@@ -61,10 +61,10 @@ namespace MORR.Shared.Utility
         /// <returns>the title of the window in string</returns>
         public static string GetWindowTitleFromHwnd(IntPtr hwnd)
         {
-            int length1 = NativeMethods.GetWindowTextLength(hwnd);
-            StringBuilder sb1 = new StringBuilder(length1 + 1);
-            NativeMethods.GetWindowText(hwnd, sb1, sb1.Capacity);
-            return sb1.ToString();
+            var textLength = NativeMethods.GetWindowTextLength(hwnd);
+            var windowTextStringBuilder = new StringBuilder(textLength + 1);
+            NativeMethods.GetWindowText(hwnd, windowTextStringBuilder, windowTextStringBuilder.Capacity);
+            return windowTextStringBuilder.ToString();
         }
 
         /// <summary>
@@ -76,16 +76,17 @@ namespace MORR.Shared.Utility
         public static string GetProcessNameFromHwnd(IntPtr hwnd)
         {
             NativeMethods.GetWindowThreadProcessId(hwnd, out var pid);
-            Process process = Process.GetProcessById((int)pid);
+            var process = Process.GetProcessById((int) pid);
             return process.ProcessName;
         }
 
-        public static bool IsRectSizeEqual(Rectangle rectA, Rectangle rectB) 
+        public static bool IsRectSizeEqual(Rectangle rectA, Rectangle rectB)
         {
             return GetWindowWidth(rectA) == GetWindowWidth(rectB) && GetWindowHeight(rectA) == GetWindowHeight(rectB);
         }
 
-        public static int GetWindowWidth(Rectangle rect) {
+        public static int GetWindowWidth(Rectangle rect)
+        {
             return rect.Width - rect.X;
         }
 
