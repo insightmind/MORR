@@ -101,8 +101,8 @@ LRESULT CALLBACK CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
 
         }
         else if (type == WM_SIZING
-                || (type >= WM_CUT && type <= WM_CLEAR)
-                || (type == WM_ENTERSIZEMOVE || type == WM_EXITSIZEMOVE))
+            || (type >= WM_CUT && type <= WM_CLEAR)
+            || (type == WM_ENTERSIZEMOVE || type == WM_EXITSIZEMOVE))
         {
             shared_globalMessageBuffer[bufferSlot].Set(msg->message, msg->hwnd, msg->wParam);
         }

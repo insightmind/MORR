@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.Loader;
+using System.Text;
 
 namespace MORR.Shared.Utility
 {
@@ -49,6 +52,47 @@ namespace MORR.Shared.Utility
                                                             .SelectMany(x => x.Assemblies)
                                                             .Select(x => x.GetType(type))
                                                             .FirstOrDefault(loadedType => loadedType != null);
+        }
+
+        /// <summary>
+        ///     Get the title of a window from it's Hwnd
+        /// </summary>
+        /// <param name="hwnd"> Hwnd of the window</param>
+        /// <returns>the title of the window in string</returns>
+        public static string GetWindowTitleFromHwnd(IntPtr hwnd)
+        {
+            var textLength = NativeMethods.GetWindowTextLength(hwnd);
+            var windowTextStringBuilder = new StringBuilder(textLength + 1);
+            NativeMethods.GetWindowText(hwnd, windowTextStringBuilder, windowTextStringBuilder.Capacity);
+            return windowTextStringBuilder.ToString();
+        }
+
+        /// <summary>
+        ///     Get the The name of the process associated with a window
+        ///     from the window's Hwnd
+        /// </summary>
+        /// <param name="hwnd">Hwnd of the window</param>
+        /// <returns>the name of the process associated with the window</returns>
+        public static string GetProcessNameFromHwnd(IntPtr hwnd)
+        {
+            NativeMethods.GetWindowThreadProcessId(hwnd, out var pid);
+            var process = Process.GetProcessById((int) pid);
+            return process.ProcessName;
+        }
+
+        public static bool IsRectSizeEqual(Rectangle rectA, Rectangle rectB)
+        {
+            return GetWindowWidth(rectA) == GetWindowWidth(rectB) && GetWindowHeight(rectA) == GetWindowHeight(rectB);
+        }
+
+        public static int GetWindowWidth(Rectangle rect)
+        {
+            return rect.Width - rect.X;
+        }
+
+        public static int GetWindowHeight(Rectangle rect)
+        {
+            return rect.Height - rect.Y;
         }
     }
 }

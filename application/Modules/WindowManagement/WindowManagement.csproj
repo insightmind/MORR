@@ -24,8 +24,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Shared\Shared.csproj">
+      <Private>false</Private>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="PresentationFramework">
       <HintPath>C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\3.1.1\PresentationFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase">
+      <HintPath>C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\3.1.1\WindowsBase.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>
