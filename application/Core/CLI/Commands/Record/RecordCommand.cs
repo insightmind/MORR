@@ -2,50 +2,83 @@
 using MORR.Core.Session;
 using MORR.Shared.Utility;
 using System;
+using System.Diagnostics;
 using System.IO;
 using MORR.Core.CLI.Interactive;
+using MORR.Core.CLI.Utility;
 
 namespace MORR.Core.CLI.Commands.Record
 {
-    internal class RecordCommand : ICommand<RecordOptions>
+    public class RecordCommand : ICommand<RecordOptions>
     {
+        #region Constants
+        
         private const string loadedFileMessage = "Load configuration file.";
         private const string sessionManagerMessage = "Load session manager with configuration file.";
         private const string startRecordingMessage = "Start recording session:";
         private const string stopRecordingMessage = "Recording session stopped!";
+        
+        #endregion
 
+        #region Dependencies
+
+        private readonly ISessionManager sessionManager;
+        private readonly IConsoleFormatter consoleFormatter;
+        private readonly IInteractiveCommandLine commandLine;
+        private readonly IMessageLoop messageLoop;
+
+        #endregion
+
+        #region LifeCycle
+
+        public RecordCommand(ISessionManager sessionManager) : this(sessionManager, new ConsoleFormatter()) { }
+
+        public RecordCommand(ISessionManager sessionManager, IConsoleFormatter console) :
+            this(sessionManager, console, new InteractiveCommandLine(console), new MessageLoop()) { }
+
+        public RecordCommand(
+            ISessionManager sessionManager, 
+            IConsoleFormatter consoleFormatter,
+            IInteractiveCommandLine commandLine,
+            IMessageLoop messageLoop)
+        {
+            this.sessionManager = sessionManager;
+            this.consoleFormatter = consoleFormatter;
+            this.commandLine = commandLine;
+            this.messageLoop = messageLoop;
+        }
+
+        #endregion
+
+        #region Execution
         public int Execute(RecordOptions options)
         {
-            if (options == null)
-            {
-                return -1;
-            }
+            Debug.Assert(consoleFormatter != null, nameof(consoleFormatter) + " != null");
+            Debug.Assert(sessionManager != null, nameof(sessionManager) + " != null");
+            Debug.Assert(commandLine != null, nameof(commandLine) + " != null");
+            Debug.Assert(messageLoop != null, nameof(messageLoop) + " != null");
+
+            if (options == null) return -1;
 
             try
             {
-                OutputFormatter.IsVerbose = options.IsVerbose;
+                consoleFormatter.IsVerbose = options.IsVerbose;
 
                 // Load Configuration File
-                OutputFormatter.PrintDebug(loadedFileMessage);
-                var configPath = new FilePath(Path.GetFullPath(options.ConfigPath));
+                consoleFormatter.PrintDebug(loadedFileMessage);
 
                 // Load Session Manager
-                OutputFormatter.PrintDebug(sessionManagerMessage);
-                ISessionManager sessionManager = new SessionManager(configPath);
+                consoleFormatter.PrintDebug(sessionManagerMessage);
 
                 // Start Recording
-                OutputFormatter.PrintDebug(startRecordingMessage);
+                consoleFormatter.PrintDebug(startRecordingMessage);
                 sessionManager.StartRecording();
 
-                // We start our interactive commandline so the user
-                // can still interact with the application.
-                var commandLine = new InteractiveCommandLine();
-
                 // If the user cancels via the command line we need to stop the message loop.
-                commandLine.Launch(NativeMethods.StopMessageLoop);
+                commandLine.Launch(messageLoop.Stop);
 
                 // Run message loop required for Windows hooks
-                NativeMethods.DoWin32MessageLoop();
+                messageLoop.Start();
 
                 // To prevent the generated video file from becoming corrupted, recording needs to be stopped manually
                 sessionManager.StopRecording();
@@ -55,9 +88,11 @@ namespace MORR.Core.CLI.Commands.Record
             }
             catch (Exception exception) // I know this is not a recommend way to deal with exception, however this method receives a arbitrary amount of exception types.
             {
-                OutputFormatter.PrintError(exception);
+                consoleFormatter.PrintError(exception);
                 return -1;
             }
         }
+
+        #endregion
     }
 }

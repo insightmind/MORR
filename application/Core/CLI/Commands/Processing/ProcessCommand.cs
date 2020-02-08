@@ -2,47 +2,83 @@
 using MORR.Core.Session;
 using MORR.Shared.Utility;
 using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace MORR.Core.CLI.Commands.Processing
 {
-    internal class ProcessCommand : ICommand<ProcessOptions>
+    public class ProcessCommand : ICommand<ProcessOptions>
     {
+        #region Constants
+
         private const string loadedFileMessage = "Load configuration file.";
         private const string loadInputMessage = "Load input file.";
         private const string sessionManagerMessage = "Load session manager with configuration file.";
         private const string startProcessingMessage = "Start processing session:";
         private const string completeProcessingMessage = "Processing did complete!";
 
+        #endregion
+
+        #region Dependencies
+
+        private readonly ISessionManager sessionManager;
+        private readonly IConsoleFormatter consoleFormatter;
+
+        #endregion
+
+        #region LifeCycle
+
+        public ProcessCommand(ISessionManager sessionManager) : this(sessionManager, new ConsoleFormatter()) { }
+
+        public ProcessCommand(
+            ISessionManager sessionManager,
+            IConsoleFormatter consoleFormatter)
+        {
+            this.sessionManager = sessionManager;
+            if (consoleFormatter != null) this.consoleFormatter = consoleFormatter;
+        }
+
+        #endregion
+
+        #region Execution
+
         public int Execute(ProcessOptions options)
         {
+            Debug.Assert(consoleFormatter != null, nameof(consoleFormatter) + " != null");
+            Debug.Assert(sessionManager != null, nameof(sessionManager) + " != null");
+
+            if (options == null) return -1;
+
             try
             {
-                OutputFormatter.IsVerbose = options.IsVerbose;
+                consoleFormatter.IsVerbose = options.IsVerbose;
 
                 // Load configuration file
-                OutputFormatter.PrintDebug(loadedFileMessage);
+                consoleFormatter.PrintDebug(loadedFileMessage);
                 var configPath = new FilePath(Path.GetFullPath(options.ConfigPath));
 
                 // Load input file
-                OutputFormatter.PrintDebug(loadInputMessage);
+                consoleFormatter.PrintDebug(loadInputMessage);
                 var inputPath = new DirectoryPath(Path.GetFullPath(options.InputFile));
 
                 // Start session manager
-                OutputFormatter.PrintDebug(sessionManagerMessage);
-                ISessionManager sessionManager = new SessionManager(configPath);
+                consoleFormatter.PrintDebug(sessionManagerMessage);
 
                 // Start processing
-                OutputFormatter.PrintDebug(startProcessingMessage);
+                consoleFormatter.PrintDebug(startProcessingMessage);
                 sessionManager.Process(new[] { inputPath });
-                OutputFormatter.PrintDebug(completeProcessingMessage);
+                consoleFormatter.PrintDebug(completeProcessingMessage);
+
                 return 0;
             }
-            catch (Exception exception) // I know this is not a recommend way to deal with exception, however this method receives a arbitrary amount of exception types.
+            catch (Exception exception)
             {
-                OutputFormatter.PrintError(exception);
+                consoleFormatter.PrintError(exception);
+
                 return -1;
             }
         }
+
+        #endregion
     }
 }

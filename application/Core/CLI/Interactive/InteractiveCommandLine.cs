@@ -1,22 +1,31 @@
 ﻿using System;
 using System.Threading;
+using MORR.Core.CLI.Output;
 
 namespace MORR.Core.CLI.Interactive
 {
-    internal class InteractiveCommandLine
+    public class InteractiveCommandLine: IInteractiveCommandLine
     {
-        private const char exitCommand = 'x';
+        private const string exitCommand = "x";
         private const string startMessage = "Use 'x' and enter to stop the current process!";
         private const string closingMessage = "Closing MORR. This may take some time!";
-        private Action? cancelAction;
+
+        private Action? completionAction;
+        private readonly IConsoleFormatter consoleFormatter;
+
+        public InteractiveCommandLine(IConsoleFormatter consoleFormatter)
+        {
+            this.consoleFormatter = consoleFormatter;
+        }
 
         /// <summary>
         /// Launches the interactive command line.
         /// It is launched on a separate thread so interactive usage can be provided.
         /// </summary>
-        public void Launch(Action cancelAction)
+        public void Launch(Action completionAction)
         {
-            this.cancelAction = cancelAction;
+            this.completionAction = completionAction;
+
             var userThread = new Thread(Start);
             userThread.Start();
         }
@@ -26,11 +35,16 @@ namespace MORR.Core.CLI.Interactive
         /// </summary>
         private void Start()
         {
-            Console.WriteLine(startMessage);
-            while (Console.Read() != exitCommand);
-            Console.WriteLine(closingMessage);
+            if (consoleFormatter == null)
+            {
+                completionAction?.Invoke();
+            }
 
-            cancelAction?.Invoke();
+            consoleFormatter?.Print(startMessage);
+            while (consoleFormatter?.Read() != exitCommand);
+            consoleFormatter?.Print(closingMessage);
+
+            completionAction?.Invoke();
         }
     }
 }

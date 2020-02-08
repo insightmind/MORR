@@ -1,7 +1,10 @@
-﻿using CommandLine;
+﻿using System.IO;
+using CommandLine;
 using MORR.Core.CLI.Commands.Processing;
 using MORR.Core.CLI.Commands.Record;
 using MORR.Core.CLI.Commands.Validate;
+using MORR.Core.Session;
+using MORR.Shared.Utility;
 
 namespace MORR.Core.CLI
 {
@@ -17,8 +20,18 @@ namespace MORR.Core.CLI
                    .ParseArguments<ValidateOptions, RecordOptions, ProcessOptions>(args)
                    .MapResult(
                        (ValidateOptions opts) => new ValidateCommand().Execute(opts),
-                       (RecordOptions opts) => new RecordCommand().Execute(opts),
-                       (ProcessOptions opts) => new ProcessCommand().Execute(opts),
+                       (RecordOptions opts) => // Loads and executes the Record Command
+                       {
+                           var configPath = new FilePath(Path.GetFullPath(opts.ConfigPath));
+                           var command = new RecordCommand(new SessionManager(configPath));
+                           return command.Execute(opts);
+                       },
+                       (ProcessOptions opts) => // Loads and executes the ProcessCommand
+                       {
+                           var configPath = new FilePath(Path.GetFullPath(opts.ConfigPath));
+                           var command = new ProcessCommand(new SessionManager(configPath));
+                           return command.Execute(opts);
+                       },
                        errs => 1);
         }
     }
