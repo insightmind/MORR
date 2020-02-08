@@ -9,7 +9,8 @@
   },
   "MORR.Core.Session.SessionConfiguration": {
     "Encoders": [
-      "MORR.Core.CLI.Output.OutputFormatter"
+      "MORR.Core.Data.Transcoding.Json.JsonEncoder",
+      "MORR.Core.Data.Transcoding.Mpeg.MpegEncoder"
     ],
     "Decoders": [
       "MORR.Core.Data.Transcoding.Json.JsonDecoder"
