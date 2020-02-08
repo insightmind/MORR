@@ -195,7 +195,7 @@ the created CloseTabEvent will be set to 'url:unknown'.}
 \begin{method}{static deserialize(parsed : any, sender? : chrome.runtime.MessageSender) : TextSelectionEvent}{Deserialize a TextSelectionEvent from the supplied parsed JSON.}
 \begin{parameters}
 \para{parsed : any}{The parsed JSON to deserialize from.}
-\para{sender? : chrome.runtime.MessageSender}{The sender object of the serialized data. Will issually be a tabs.Tab.}
+\para{sender? : chrome.runtime.MessageSender}{The sender object of the serialized data. Will usually be a tabs.Tab.}
 \end{parameters}
 \end{method}
 \end{methods}
@@ -228,7 +228,7 @@ the created CloseTabEvent will be set to 'url:unknown'.}
 \begin{method}{static deserialize(parsed : any, sender? : chrome.runtime.MessageSender) : TextInputEvent}{Deserialize a TextInputEvent from the supplied parsed JSON.}
 \begin{parameters}
 \para{parsed : any}{The parsed JSON to deserialize from.}
-\para{sender? : chrome.runtime.MessageSender}{The sender object of the serialized data. Will issually be a tabs.Tab.}
+\para{sender? : chrome.runtime.MessageSender}{The sender object of the serialized data. Will usually be a tabs.Tab.}
 \end{parameters}
 \end{method}
 \end{methods}
@@ -261,7 +261,7 @@ the created CloseTabEvent will be set to 'url:unknown'.}
 \begin{method}{static deserialize(parsed : any, sender? : chrome.runtime.MessageSender) : ButtonClickEvent}{Deserialize a ButtonClickEvent from the supplied parsed JSON.}
 \begin{parameters}
 \para{parsed : any}{The parsed JSON to deserialize from.}
-\para{sender? : chrome.runtime.MessageSender}{The sender object of the serialized data. Will issually be a tabs.Tab.}
+\para{sender? : chrome.runtime.MessageSender}{The sender object of the serialized data. Will usually be a tabs.Tab.}
 \end{parameters}
 \end{method}
 \end{methods}
@@ -292,7 +292,7 @@ the created CloseTabEvent will be set to 'url:unknown'.}
 \begin{method}{static deserialize(parsed : any, sender? : chrome.runtime.MessageSender) : HoverEvent}{Deserialize a HoverEvent from the supplied parsed JSON.}
 \begin{parameters}
 \para{parsed : any}{The parsed JSON to deserialize from.}
-\para{sender? : chrome.runtime.MessageSender}{The sender object of the serialized data. Will issually be a tabs.Tab.}
+\para{sender? : chrome.runtime.MessageSender}{The sender object of the serialized data. Will usually be a tabs.Tab.}
 \end{parameters}
 \end{method}
 \end{methods}
@@ -357,7 +357,7 @@ the created CloseTabEvent will be set to 'url:unknown'.}
 \clsdsp{The DownloadEventFactory is responsible for creating DownloadEvent objects from the information a DownloadListener gathers.}
 
 \begin{methods}
-\begin{method}{createEvent(downloadItem: downloads.DownloadItem) : Promise<DownloadEvent>}{Asynchronously create a new DownloadEvent from a downlaods.DownLoadItem}
+\begin{method}{createEvent(downloadItem: downloads.DownloadItem) : Promise<DownloadEvent>}{Asynchronously create a new DownloadEvent from a downloads.DownloadItem}
 \return{Promise<DownloadEvent>}{A promise which will be filled with a new DownloadEvent.}
 \begin{parameters}
 \para{downloadItem : downloads.DownloadItem}{The DownloadItem created by the browser when a download was started.}
