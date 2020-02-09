@@ -146,21 +146,24 @@ namespace MORR.Modules.Clipboard.Producers
         /// <summary>
         ///     Sets the hook for the clipboard copy event.
         /// </summary>
-        public void StartCapture()
+        public override void Open()
         {
-            if (clipboardWindowMessageSink != null)
+            if (clipboardWindowMessageSink == null)
             {
-                clipboardWindowMessageSink.ClipboardUpdated += OnClipboardUpdate;
+                return;
             }
+
+            Open();
+            clipboardWindowMessageSink.ClipboardUpdated += OnClipboardUpdate;
         }
 
         /// <summary>
         ///     Releases the hook for the clipboard copy event.
         /// </summary>
-        public void StopCapture()
+        public override void Close()
         {
             clipboardWindowMessageSink?.Dispose();
-            NotifyOnEnqueueFinished();
+            base.Close();
         }
 
         #endregion

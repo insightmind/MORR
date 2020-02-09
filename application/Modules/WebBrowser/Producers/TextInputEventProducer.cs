@@ -9,12 +9,5 @@ namespace MORR.Modules.WebBrowser.Producers
     public class TextInputEventProducer : WebBrowserEventProducer<TextInputEvent>
     {
         public override EventLabel HandledEventLabel => EventLabel.TEXTINPUT;
-
-        public override void Notify(JsonElement eventJson)
-        {
-            var @event = new TextInputEvent();
-            @event.Deserialize(eventJson);
-            Enqueue(@event);
-        }
     }
 }

@@ -33,20 +33,24 @@ namespace MORR.Modules.WindowManagement.Producers
         /// </summary>
         private int windowUnderChangeHwnd;
 
-        public void StartCapture()
+        private readonly NativeMethods.MessageType[] listenedMessageTypes =
+            { 
+                NativeMethods.MessageType.WM_SIZE,
+                NativeMethods.MessageType.WM_ENTERSIZEMOVE,
+                NativeMethods.MessageType.WM_EXITSIZEMOVE
+            };
+
+        public override void Open()
         {
-            GlobalHook.AddListener(WindowHookCallback, NativeMethods.MessageType.WM_SIZE,
-                                   NativeMethods.MessageType.WM_ENTERSIZEMOVE,
-                                   NativeMethods.MessageType.WM_EXITSIZEMOVE);
+            base.Open();
+            GlobalHook.AddListener(WindowHookCallback, listenedMessageTypes);
             GlobalHook.IsActive = true;
         }
 
-        public void StopCapture()
+        public override void Close()
         {
-            GlobalHook.RemoveListener(WindowHookCallback, NativeMethods.MessageType.WM_SIZE,
-                                      NativeMethods.MessageType.WM_ENTERSIZEMOVE,
-                                      NativeMethods.MessageType.WM_EXITSIZEMOVE);
-            NotifyOnEnqueueFinished();
+            GlobalHook.RemoveListener(WindowHookCallback, listenedMessageTypes);
+            base.Close();
         }
 
         private void WindowHookCallback(GlobalHook.HookMessage msg)

@@ -67,8 +67,9 @@ namespace MORR.Modules.Mouse.Producers
         /// <summary>
         ///     start the mouse movement capture by starting the timer that records mouse position.
         /// </summary>
-        public void StartCapture()
+        public void Open()
         {
+            base.Open();
             NativeMethods.GetCursorPos(out lastMousePosition);
 
             var samplingTimeIntervalInMilliseconds = (int) ((double) 1 / SamplingRateInHz * 1000);
@@ -79,10 +80,10 @@ namespace MORR.Modules.Mouse.Producers
         /// <summary>
         ///     stop the mouse movement capture by disposing the timer that records mouse position.
         /// </summary>
-        public void StopCapture()
+        public override void Close()
         {
             mousePositionRecordingTimer?.Dispose();
-            NotifyOnEnqueueFinished();
+            base.Close();
         }
     }
 }

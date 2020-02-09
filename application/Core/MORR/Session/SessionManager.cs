@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
+using Microsoft.VisualBasic;
 using MORR.Core.Configuration;
 using MORR.Core.Data.Transcoding;
 using MORR.Core.Modules;
@@ -13,6 +14,7 @@ namespace MORR.Core.Session
 {
     public class SessionManager : ISessionManager
     {
+        private const string dateFormat = "yyyy-MM-ddTHH-mm-ss";
         private readonly IEnumerable<IEncoder> encoders;
         private readonly IEnumerable<IDecoder> decoders;
         private readonly IModuleManager moduleManager;
@@ -55,8 +57,9 @@ namespace MORR.Core.Session
 
         private DirectoryPath CreateNewRecordingDirectory()
         {
+            var timeNow = DateTime.Now;
             var sessionId = Guid.NewGuid();
-            var directory = Path.Combine(Configuration.RecordingDirectory.ToString(), sessionId.ToString());
+            var directory = Path.Combine(Configuration.RecordingDirectory.ToString(), timeNow.ToString(dateFormat) + "-" + sessionId.ToString());
             Directory.CreateDirectory(directory);
             return new DirectoryPath(directory);
         }
@@ -72,12 +75,12 @@ namespace MORR.Core.Session
 
             CurrentRecordingDirectory = CreateNewRecordingDirectory();
 
+            moduleManager.NotifyModulesOnSessionStart();
+
             foreach (var encoder in encoders)
             {
                 encoder.Encode(CurrentRecordingDirectory);
             }
-
-            moduleManager.NotifyModulesOnSessionStart();
         }
 
         public void StopRecording()
@@ -90,6 +93,7 @@ namespace MORR.Core.Session
             isRecording = false;
 
             moduleManager.NotifyModulesOnSessionStop();
+
             foreach (var encoder in encoders)
             {
                 // IEncoder.EncodeFinished will not be reset before IEncoder.Encode gets called again

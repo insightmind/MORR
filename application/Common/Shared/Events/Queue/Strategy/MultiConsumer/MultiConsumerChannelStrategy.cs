@@ -60,7 +60,12 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
             await EnqueueAsync(receivingChannel, @event);
         }
 
-        public void NotifyOnEnqueueFinished()
+        public void Open()
+        {
+            // TODO: Implement this
+        }
+
+        public void Close()
         {
             receivingChannel.Writer.Complete();
 

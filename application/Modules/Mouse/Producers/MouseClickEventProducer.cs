@@ -12,52 +12,48 @@ namespace MORR.Modules.Mouse.Producers
     /// </summary>
     public class MouseClickEventProducer : DefaultEventQueue<MouseClickEvent>
     {
-        public void StartCapture()
+        private readonly NativeMethods.MessageType[] listenedMessagesTypes = 
         {
-            GlobalHook.AddListener(MouseHookCallback, NativeMethods.MessageType.WM_RBUTTONDOWN,
-                                   NativeMethods.MessageType.WM_LBUTTONDOWN,
-                                   NativeMethods.MessageType.WM_MBUTTONDOWN,
-                                   NativeMethods.MessageType.WM_RBUTTONDBLCLK,
-                                   NativeMethods.MessageType.WM_LBUTTONDBLCLK,
-                                   NativeMethods.MessageType.WM_MBUTTONDBLCLK,
-                                   NativeMethods.MessageType.WM_NCRBUTTONDOWN,
-                                   NativeMethods.MessageType.WM_NCLBUTTONDOWN,
-                                   NativeMethods.MessageType.WM_NCMBUTTONDOWN,
-                                   NativeMethods.MessageType.WM_NCRBUTTONDBLCLK,
-                                   NativeMethods.MessageType.WM_NCLBUTTONDBLCLK,
-                                   NativeMethods.MessageType.WM_NCMBUTTONDBLCLK);
+            NativeMethods.MessageType.WM_RBUTTONDOWN,
+            NativeMethods.MessageType.WM_LBUTTONDOWN,
+            NativeMethods.MessageType.WM_MBUTTONDOWN,
+            NativeMethods.MessageType.WM_RBUTTONDBLCLK,
+            NativeMethods.MessageType.WM_LBUTTONDBLCLK,
+            NativeMethods.MessageType.WM_MBUTTONDBLCLK,
+            NativeMethods.MessageType.WM_NCRBUTTONDOWN,
+            NativeMethods.MessageType.WM_NCLBUTTONDOWN,
+            NativeMethods.MessageType.WM_NCMBUTTONDOWN,
+            NativeMethods.MessageType.WM_NCRBUTTONDBLCLK,
+            NativeMethods.MessageType.WM_NCLBUTTONDBLCLK,
+            NativeMethods.MessageType.WM_NCMBUTTONDBLCLK
+        };
+
+        public override void Open()
+        {
+            base.Open();
+            GlobalHook.AddListener(MouseHookCallback, listenedMessagesTypes);
             GlobalHook.IsActive = true;
         }
 
-        public void StopCapture()
+        public override void Close()
         {
-            GlobalHook.RemoveListener(MouseHookCallback, NativeMethods.MessageType.WM_RBUTTONDOWN,
-                                      NativeMethods.MessageType.WM_LBUTTONDOWN,
-                                      NativeMethods.MessageType.WM_MBUTTONDOWN,
-                                      NativeMethods.MessageType.WM_RBUTTONDBLCLK,
-                                      NativeMethods.MessageType.WM_LBUTTONDBLCLK,
-                                      NativeMethods.MessageType.WM_MBUTTONDBLCLK,
-                                      NativeMethods.MessageType.WM_NCRBUTTONDOWN,
-                                      NativeMethods.MessageType.WM_NCLBUTTONDOWN,
-                                      NativeMethods.MessageType.WM_NCMBUTTONDOWN,
-                                      NativeMethods.MessageType.WM_NCRBUTTONDBLCLK,
-                                      NativeMethods.MessageType.WM_NCLBUTTONDBLCLK,
-                                      NativeMethods.MessageType.WM_NCMBUTTONDBLCLK);
-            NotifyOnEnqueueFinished();
+            GlobalHook.RemoveListener(MouseHookCallback, listenedMessagesTypes);
+            base.Close();
         }
 
         private void MouseHookCallback(GlobalHook.HookMessage hookMessage)
         {
             var messageType = (NativeMethods.MessageType) hookMessage.Type;
             var mouseAction = GetMouseAction(messageType);
-            if (mouseAction != MouseAction.None)
+            if (mouseAction == MouseAction.None)
             {
-                var mousePosition = new Point { X = hookMessage.Data[0], Y = hookMessage.Data[1] };
-                var hwnd = hookMessage.Hwnd.ToString();
-                var @event = new MouseClickEvent
-                { MouseAction = mouseAction, MousePosition = mousePosition, HWnd = hwnd, IssuingModule = MouseModule.Identifier };
-                Enqueue(@event);
+                return;
             }
+
+            var mousePosition = new Point { X = hookMessage.Data[0], Y = hookMessage.Data[1] };
+            var hwnd = hookMessage.Hwnd.ToString();
+            var @event = new MouseClickEvent { MouseAction = mouseAction, MousePosition = mousePosition, HWnd = hwnd, IssuingModule = MouseModule.Identifier };
+            Enqueue(@event);
         }
 
 

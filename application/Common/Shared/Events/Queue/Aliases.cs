@@ -17,9 +17,9 @@ namespace MORR.Shared.Events.Queue
     ///     Provides an event queue for events intended for encoding.
     /// </summary>
     /// <typeparam name="T">The type of <see cref="Event" /> in this queue.</typeparam>
-    public abstract class DefaultEncodeableEventQueue<T> : EncodeableEventQueue<T> where T : Event
+    public abstract class DefaultEncodableEventQueue<T> : EncodableEventQueue<T> where T : Event
     {
-        protected DefaultEncodeableEventQueue(int bufferCapacity = 1024) : base(
+        protected DefaultEncodableEventQueue(int bufferCapacity = 1024) : base(
             new BoundedSingleConsumerChannelStrategy<T>(bufferCapacity)) { }
     }
 
@@ -27,9 +27,9 @@ namespace MORR.Shared.Events.Queue
     ///     Provides an event queue for events intended for decoding.
     /// </summary>
     /// <typeparam name="T">The type of <see cref="Event" /> in this queue.</typeparam>
-    public abstract class DefaultDecodeableEventQueue<T> : DecodeableEventQueue<T> where T : Event
+    public abstract class DefaultDecodableEventQueue<T> : DecodableEventQueue<T> where T : Event
     {
-        protected DefaultDecodeableEventQueue(int bufferCapacity = 1024, uint? maxConsumers = null) : base(
+        protected DefaultDecodableEventQueue(int bufferCapacity = 1024, uint? maxConsumers = null) : base(
             new BoundedMultiConsumerChannelStrategy<T>(bufferCapacity, maxConsumers)) { }
     }
 

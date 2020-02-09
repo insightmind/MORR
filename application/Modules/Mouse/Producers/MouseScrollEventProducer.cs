@@ -10,16 +10,17 @@ namespace MORR.Modules.Mouse.Producers
     /// </summary>
     public class MouseScrollEventProducer : DefaultEventQueue<MouseScrollEvent>
     {
-        public void StartCapture()
+        public override void Open()
         {
+            base.Open();
             GlobalHook.AddListener(MouseHookCallback, NativeMethods.MessageType.WM_MOUSEWHEEL);
             GlobalHook.IsActive = true;
         }
 
-        public void StopCapture()
+        public override void Close()
         {
             GlobalHook.RemoveListener(MouseHookCallback, NativeMethods.MessageType.WM_MOUSEWHEEL);
-            NotifyOnEnqueueFinished();
+            base.Close();
         }
 
         private void MouseHookCallback(GlobalHook.HookMessage hookMessage)

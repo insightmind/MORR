@@ -9,7 +9,7 @@ namespace MORR.Modules.Mouse
     /// <summary>
     ///     The <see cref="MouseModule" /> is responsible for recording all mouse related user interactions
     /// </summary>
-    public class MouseModule : IModule
+    public class MouseModule : Module
     {
         private bool isActive;
 
@@ -37,26 +37,24 @@ namespace MORR.Modules.Mouse
         [Import]
         private MouseModuleConfiguration MouseModuleConfiguration { get; set; }
 
-        public static Guid Identifier { get; } = new Guid("EFF894B3-4DC9-4605-9937-F02F400B4A62");
+        public new static Guid Identifier { get; } = new Guid("EFF894B3-4DC9-4605-9937-F02F400B4A62");
 
         /// <summary>
         ///     if the module is active or not.
         ///     When a module is being activated, all the producers will start to capture user interacts.
         ///     When a module is being deactivated, all the producers will stop capturing user interacts.
         /// </summary>
-        public bool IsActive
+        public new bool IsActive
         {
             get => isActive;
             set => Utility.SetAndDispatch(ref isActive, value, StartCapture,
                                           StopCapture);
         }
 
-        Guid IModule.Identifier => Identifier;
-
         /// <summary>
         ///     Initialize the module with Configuration and Producers.
         /// </summary>
-        public void Initialize()
+        public new void Initialize()
         {
             // configure all producers with retrieved parameters
             MouseMoveEventProducer.SamplingRateInHz = MouseModuleConfiguration.SamplingRateInHz;
@@ -65,16 +63,16 @@ namespace MORR.Modules.Mouse
 
         private void StartCapture()
         {
-            MouseClickEventProducer.StartCapture();
-            MouseScrollEventProducer.StartCapture();
-            MouseMoveEventProducer.StartCapture();
+            MouseClickEventProducer?.Open();
+            MouseScrollEventProducer?.Open();
+            MouseMoveEventProducer?.Open();
         }
 
         private void StopCapture()
         {
-            MouseClickEventProducer.StopCapture();
-            MouseScrollEventProducer.StopCapture();
-            MouseMoveEventProducer.StopCapture();
+            MouseClickEventProducer?.Close();
+            MouseScrollEventProducer?.Close();
+            MouseMoveEventProducer?.Close();
         }
     }
 }

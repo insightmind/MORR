@@ -14,23 +14,25 @@ namespace MORR.Modules.Keyboard.Producers
         private NativeMethods.LowLevelKeyboardProc? callback;
         private IntPtr keyboardHookHandle;
 
-        public void StartCapture()
+        public override void Open()
         {
             callback = KeyboardHookCallback; // Store callback to prevent GC
             if (!NativeMethods.TrySetKeyboardHook(callback, out keyboardHookHandle))
             {
                 throw new Exception("Failed hook keyboard.");
             }
+
+            base.Open();
         }
 
-        public void StopCapture()
+        public void Close()
         {
             if (!NativeMethods.UnhookWindowsHookEx(keyboardHookHandle))
             {
                 throw new Exception("Failed to unhook keyboard.");
             }
 
-            NotifyOnEnqueueFinished();
+            base.Close();
         }
 
         private int KeyboardHookCallback(int nCode,

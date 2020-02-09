@@ -13,7 +13,7 @@ using Device = SharpDX.Direct3D11.Device;
 
 namespace MORR.Core.Data.Capture.Video.Desktop
 {
-    public class VideoSampleProducer : DefaultEncodeableEventQueue<DirectXVideoSample>
+    public class VideoSampleProducer : DefaultEncodableEventQueue<DirectXVideoSample>
     {
         /// <summary>
         ///     Starts a video capture from the provided capture item.
@@ -37,7 +37,7 @@ namespace MORR.Core.Data.Capture.Video.Desktop
             closedEvent.Set();
             canCleanupNonPersistentResourcesEvent.WaitOne();
             CleanupSessionResources();
-            NotifyOnEnqueueFinished();
+            Close();
         }
 
         private void EnqueueFrames()

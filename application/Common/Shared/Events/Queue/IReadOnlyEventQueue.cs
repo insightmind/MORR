@@ -10,7 +10,7 @@ namespace MORR.Shared.Events.Queue
     public interface IReadOnlyEventQueue<out T> where T : Event
     {
         /// <summary>
-        ///     The actual type of the events enqueued in this queue.
+        ///     The actual type of the events queued in this queue.
         /// </summary>
         Type EventType => typeof(T);
 
@@ -19,5 +19,10 @@ namespace MORR.Shared.Events.Queue
         /// </summary>
         /// <returns>A stream of <typeparamref name="T" /></returns>
         IAsyncEnumerable<T> GetEvents();
+
+        /// <summary>
+        ///     Closes the EventQueue so no new event can be queued.
+        /// </summary>
+        public void Close();
     }
 }

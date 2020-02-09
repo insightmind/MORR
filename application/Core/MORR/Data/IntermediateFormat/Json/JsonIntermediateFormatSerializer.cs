@@ -13,11 +13,10 @@ using MORR.Shared.Utility;
 namespace MORR.Core.Data.IntermediateFormat.Json
 {
     public class JsonIntermediateFormatSerializer
-        : DefaultEncodeableEventQueue<JsonIntermediateFormatSample>, IModule
+        : DefaultEncodableEventQueue<JsonIntermediateFormatSample>, IModule
     {
         private bool isActive;
-
-        private CountdownEvent resetCounter;
+        private CountdownEvent resetCounter = new CountdownEvent(0);
 
         [ImportMany]
         private IEnumerable<IReadOnlyEventQueue<Event>> EventQueues { get; set; }
@@ -27,7 +26,7 @@ namespace MORR.Core.Data.IntermediateFormat.Json
         public bool IsActive
         {
             get => isActive;
-            set => Utility.SetAndDispatch(ref isActive, value, LinkAllQueues, () => { });
+            set => Utility.SetAndDispatch(ref isActive, value, LinkAllQueues, UnlinkAllQueues);
         }
 
         public Guid Identifier { get; } = new Guid("2D61FFB2-9CC1-4AAD-B1B9-A362FCF022A0");
@@ -35,10 +34,19 @@ namespace MORR.Core.Data.IntermediateFormat.Json
         private void LinkAllQueues()
         {
             resetCounter = new CountdownEvent(EventQueues.Count());
+            Open();
 
             foreach (var eventQueue in EventQueues)
             {
                 Task.Run(() => LinkSingleQueue(eventQueue));
+            }
+        }
+
+        private void UnlinkAllQueues()
+        {
+            foreach (var eventQueue in EventQueues)
+            {
+                eventQueue.Close();
             }
         }
 
@@ -73,7 +81,7 @@ namespace MORR.Core.Data.IntermediateFormat.Json
 
             if (resetCounter.Signal())
             {
-                NotifyOnEnqueueFinished();
+                Close();
             }
         }
     }

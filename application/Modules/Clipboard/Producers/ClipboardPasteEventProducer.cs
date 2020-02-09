@@ -14,12 +14,13 @@ namespace MORR.Modules.Clipboard.Producers
         {
             GlobalHook.IsActive = true;
             GlobalHook.AddListener(GlobalHookCallBack, NativeMethods.MessageType.WM_PASTE);
+            Open();
         }
 
         public void StopCapture()
         {
             GlobalHook.RemoveListener(GlobalHookCallBack, NativeMethods.MessageType.WM_PASTE);
-            NotifyOnEnqueueFinished();
+            Close();
         }
 
 

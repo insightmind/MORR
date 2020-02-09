@@ -28,10 +28,16 @@ namespace MORR.Core.Modules
         public void InitializeModules()
         {
             enabledModules = Modules.Where(x => ModuleConfiguration.EnabledModules.Contains(x.GetType()));
+            var disabledModules = Modules.Except(enabledModules);
 
             foreach (var module in enabledModules)
             {
                 module.Initialize();
+            }
+
+            foreach (var module in disabledModules)
+            {
+                module.IsActive = false;
             }
         }
 

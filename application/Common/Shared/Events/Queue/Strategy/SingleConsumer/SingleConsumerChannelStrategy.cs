@@ -26,7 +26,7 @@ namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
         ///     Asynchronously gets all events as concrete type <typeparamref name="T" />.
         /// </summary>
         /// <returns>A stream of <typeparamref name="T" /></returns>
-        public IAsyncEnumerable<TEvent> GetEvents([EnumeratorCancellation] CancellationToken token = default)
+        public IAsyncEnumerable<TEvent> GetEvents(CancellationToken token = default)
         {
             if (isOccupied)
             {
@@ -47,7 +47,12 @@ namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
             await EnqueueAsync(@event);
         }
 
-        public void NotifyOnEnqueueFinished()
+        public void Open()
+        {
+            // TODO: Implement this
+        }
+
+        public void Close()
         {
             eventChannel.Writer.Complete();
             FreeReading();

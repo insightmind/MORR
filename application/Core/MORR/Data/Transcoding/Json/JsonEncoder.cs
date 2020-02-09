@@ -12,7 +12,7 @@ namespace MORR.Core.Data.Transcoding.Json
     public class JsonEncoder : IEncoder
     {
         [Import]
-        private IEncodeableEventQueue<JsonIntermediateFormatSample> IntermediateFormatSampleQueue { get; set; }
+        private IEncodableEventQueue<JsonIntermediateFormatSample> IntermediateFormatSampleQueue { get; set; }
 
         [Import]
         private JsonEncoderConfiguration Configuration { get; set; }

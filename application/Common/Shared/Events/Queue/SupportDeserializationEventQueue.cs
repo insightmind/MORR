@@ -8,11 +8,9 @@ namespace MORR.Shared.Events.Queue
     ///     processing.
     /// </summary>
     /// <typeparam name="T">The type of <see cref="Event" /> in this queue.</typeparam>
-    public abstract class SupportDeserializationEventQueue<T>
-        : ReadOnlyEventQueue<T>, ISupportDeserializationEventQueue<T> where T : Event
+    public abstract class SupportDeserializationEventQueue<T> : ReadOnlyEventQueue<T>, ISupportDeserializationEventQueue<T> where T : Event
     {
-        protected SupportDeserializationEventQueue(IEventQueueStorageStrategy<T> storageStrategy) : base(
-            storageStrategy) { }
+        protected SupportDeserializationEventQueue(IEventQueueStorageStrategy<T> storageStrategy) : base(storageStrategy) { }
 
         public void Enqueue(object @event)
         {
@@ -24,9 +22,8 @@ namespace MORR.Shared.Events.Queue
             base.Enqueue(typedEvent);
         }
 
-        public new void NotifyOnEnqueueFinished()
-        {
-            base.NotifyOnEnqueueFinished();
-        }
+        public new virtual void Open() => base.Open();
+
+        public new virtual void Close() => base.Close();
     }
 }

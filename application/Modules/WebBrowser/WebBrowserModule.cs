@@ -10,7 +10,7 @@ namespace MORR.Modules.WebBrowser
     /// <summary>
     ///     The <see cref="WebBrowserModule" /> is responsible for recording all browser related user interactions
     /// </summary>
-    public class WebBrowserModule : IModule
+    public class WebBrowserModule : Module
     {
         [Import] private ButtonClickEventProducer buttonClickEventProducer;
 
@@ -35,27 +35,27 @@ namespace MORR.Modules.WebBrowser
         private WebExtensionListener listener;
         private List<IWebBrowserEventObserver> producers;
 
-        public static Guid Identifier { get; } = new Guid("e9240dc4-f33f-43db-a419-5b36d8279c88");
-        Guid IModule.Identifier => Identifier;
+        public new static Guid Identifier { get; } = new Guid("e9240dc4-f33f-43db-a419-5b36d8279c88");
 
-        public bool IsActive
+        public new bool IsActive
         {
             get => isActive;
-            set => Utility.SetAndDispatch(ref isActive, value,
-                                          () => listener.RecordingActive = true,
-                                          StopRecording);
+            set => Utility.SetAndDispatch(ref isActive, value, StartRecording, StopRecording);
+        }
+
+        private void StartRecording()
+        {
+            listener.RecordingActive = true;
+            producers?.ForEach(producer => producer.Open());
         }
 
         private void StopRecording()
         {
             listener.RecordingActive = false;
-            foreach (var producer in producers)
-            {
-                producer.EnqueueFinished();
-            }
+            producers?.ForEach(producer => producer.Close());
         }
 
-        public void Initialize()
+        public new void Initialize()
         {
             producers = new List<IWebBrowserEventObserver>
             {

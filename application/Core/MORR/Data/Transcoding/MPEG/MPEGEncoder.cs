@@ -26,7 +26,7 @@ namespace MORR.Core.Data.Transcoding.Mpeg
         private MpegEncoderConfiguration Configuration { get; set; }
 
         [Import]
-        private IEncodeableEventQueue<DirectXVideoSample> VideoQueue { get; set; }
+        private IEncodableEventQueue<DirectXVideoSample> VideoQueue { get; set; }
 
         public ManualResetEvent EncodeFinished { get; } = new ManualResetEvent(false);
 
@@ -77,7 +77,7 @@ namespace MORR.Core.Data.Transcoding.Mpeg
 
         private async Task ConsumeVideoSamples()
         {
-            await foreach (var videoSample in VideoQueue.GetEvents())
+            await foreach (var videoSample in VideoQueue?.GetEvents())
             {
                 if (inferredResolution == null)
                 {

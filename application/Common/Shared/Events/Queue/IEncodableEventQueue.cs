@@ -6,7 +6,7 @@ namespace MORR.Shared.Events.Queue
     ///     Provides a read-only queue for <see cref="Event" /> types intended for encoding.
     /// </summary>
     /// <typeparam name="T">The type of the event</typeparam>
-    public interface IEncodeableEventQueue<out T> where T : Event
+    public interface IEncodableEventQueue<out T> where T : Event
     {
         /// <summary>
         ///     Asynchronously gets all events as concrete type <typeparamref name="T" />.
