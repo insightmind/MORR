@@ -2,9 +2,11 @@
 \newcommand{\feature}[3]{\begin{minipage}{\textwidth}\textbf{Feature:} #1\\ \textbf{Status:} #2 \\%
 \ifthenelse{\isempty{#3}}{}{\textbf{Comment:} #3}\end{minipage}\vskip.2\baselineskip}
 \newcommand{\ok}{\textcolor{green}{Ok}}
-\newcommand{\partially}{\textcolor{orange}{Partially implemented}}
+\newcommand{\partially}{\textcolor{orange}{Limited functionality}}
 \newcommand{\cancelled}{\textcolor{red}{Cancelled}}
 \chapter{Features}
+This chapter provides information on the implementation status of the features/specifications listed in the function specification document.
+
 \section{High-level specification}
 \feature{FS10 - Identifiable sessions}{\ok}{}
 \feature{FS20 - Event timings}{\ok}{}
