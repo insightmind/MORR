@@ -112,15 +112,6 @@ namespace MORR.Shared.Utility
 
         #region Methods
 
-        [DllImport("kernel32.dll")]
-        public static extern IntPtr LoadLibrary(string dllToLoad);
-
-        [DllImport("kernel32.dll")]
-        public static extern IntPtr GetProcAddress(IntPtr hModule, string procedureName);
-
-        [DllImport("kernel32.dll")]
-        public static extern bool FreeLibrary(IntPtr hModule);
-
         public delegate int LowLevelKeyboardProc(int nCode, MessageType wParam, [In] KBDLLHOOKSTRUCT lParam);
 
         public delegate int LowLevelMouseProc(int nCode, MessageType wParam, [In] MSLLHOOKSTRUCT lParam);
@@ -135,19 +126,10 @@ namespace MORR.Shared.Utility
                                                      uint dwThreadId);
 
         [DllImport("user32.dll")]
-        public static extern IntPtr SetWindowsHookEx(HookType hookType,
-                                                     LowLevelMouseProc lpFn,
-                                                     IntPtr hMod,
-                                                     uint dwThreadId);
-
-        [DllImport("user32.dll")]
         public static extern bool UnhookWindowsHookEx(IntPtr hhk);
 
         [DllImport("user32.dll")]
         public static extern int CallNextHookEx(IntPtr hhk, int nCode, MessageType wParam, [In] KBDLLHOOKSTRUCT lParam);
-
-        [DllImport("user32.dll")]
-        public static extern int CallNextHookEx(IntPtr hhk, int nCode, MessageType wParam, [In] MSLLHOOKSTRUCT lParam);
 
 
         [DllImport("kernel32.dll")]
@@ -161,9 +143,6 @@ namespace MORR.Shared.Utility
 
         [DllImport("user32.dll")]
         public static extern bool GetCursorPos(out POINT lpPoint);
-
-        [DllImport("user32.dll")]
-        public static extern uint GetDoubleClickTime();
 
         [DllImport("user32.dll")]
         public static extern bool OpenClipboard(IntPtr hWndNewOwner);
@@ -227,9 +206,6 @@ namespace MORR.Shared.Utility
 
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         public static extern int GetWindowTextLength(IntPtr hWnd);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, [Out] StringBuilder lParam);
 
         [DllImport("user32.dll")]
         public static extern IntPtr GetForegroundWindow();
