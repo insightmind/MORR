@@ -5,6 +5,7 @@
 \newcommand{\partially}{\textcolor{orange}{Partially implemented}}
 \newcommand{\cancelled}{\textcolor{red}{Cancelled}}
 \chapter{Features}
+\section{High-level specification}
 \feature{FS10 - Identifiable sessions}{\ok}{}
 \feature{FS20 - Event timings}{\ok}{}
 \feature{FS30 - Event types}{\ok}{}
@@ -21,6 +22,8 @@
 \feature{FS110 - Quit while recording}{}{}
 \feature{FS120 - Save prompt}{}{}
 \feature{FS130 - User reviewability}{}{}
+
+\section{Core application specification}
 \feature{FS200 - Video stream recording}{\ok}{}
 \feature{FS210 - System module invocation}{\ok}{}
 \feature{FS220 - System module configuration}{\ok}{}
@@ -28,26 +31,39 @@
 \feature{FS240 - On-demand module initial registration}{\ok}{}
 \feature{FS250 - Data serialization}{\ok}{}
 \feature{FS260 - Combinability of modules}{\ok}{}
+
+\section{User interface specification}
 \feature{FS300 - Recording indicator}{}{}
 \feature{FS310 - Error dialog}{}{}
 \feature{FS320 - Save dialog}{}{}
 \feature{FS330 - Event-Data extraction}{\cancelled}{As the data is directly serialized to a JSON while recording, this feature is no longer needed.}
 \feature{FS340 - Tray-Icon}{}{}
 \feature{FS350 - Tray-Menu}{}{}
+
+\section{Per-module specification}
+\subsection{Window management module}
 \feature{FS400 - Window management events}{\ok}{}
 \feature{FS401 - Focusing a window}{\ok}{}
 \feature{FS402 - Moving a window}{\ok}{}
 \feature{FS403 - Resizing a window}{\ok}{}
 \feature{FS404 - Minimizing/Maximizing/Restoring a window}{\partially}{Window restoring is not implemented due to amount of false positives.}
+
+\subsection{Mouse module}
 \feature{FS410 - Mouse interaction events}{\ok}{}
 \feature{FS411 - Mouse Click}{\ok}{}
 \feature{FS412 - Scroll Wheel}{\ok}{}
 \feature{FS413 - Mouse Movement}{\ok}{}
+
+\subsection{Keyboard module}
 \feature{FS420 - Keyboard interaction events}{\ok}{}
 \feature{FS421 - Releasing/Pressing a key}{\ok}{}
+
+\subsection{Clipboard module}
 \feature{FS430 - Clipboard Events}{\ok}{}
 \feature{FS431 - Copying to the clipboard}{\ok}{}
 \feature{FS432 - Pasting from the clipboard}{\partially}{This event is not detectable in many cases, as the observable WM\_PASTE message is not used by many programs.}
+
+\subsection{Browser module}
 \feature{FS440 - Browser events}{\ok}{}
 \feature{FS441 - Opening a new tab}{\ok}{}
 \feature{FS442 - Switching to a tab}{\ok}{}
