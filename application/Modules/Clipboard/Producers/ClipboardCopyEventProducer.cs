@@ -10,8 +10,7 @@ namespace MORR.Modules.Clipboard.Producers
     /// </summary>
     public class ClipboardCopyEventProducer : DefaultEventQueue<ClipboardCopyEvent>
     {
-        private static readonly ClipboardWindowMessageSink
-            clipboardWindowMessageSink = new ClipboardWindowMessageSink();
+        private static readonly ClipboardWindowMessageSink clipboardWindowMessageSink = new ClipboardWindowMessageSink();
 
         #region Private methods
 
@@ -146,24 +145,23 @@ namespace MORR.Modules.Clipboard.Producers
         /// <summary>
         ///     Sets the hook for the clipboard copy event.
         /// </summary>
-        public override void Open()
+        public void StartCapture()
         {
             if (clipboardWindowMessageSink == null)
             {
                 return;
             }
 
-            Open();
             clipboardWindowMessageSink.ClipboardUpdated += OnClipboardUpdate;
         }
 
         /// <summary>
         ///     Releases the hook for the clipboard copy event.
         /// </summary>
-        public override void Close()
+        public void StopCapture()
         {
             clipboardWindowMessageSink?.Dispose();
-            base.Close();
+            Close();
         }
 
         #endregion

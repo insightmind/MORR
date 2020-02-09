@@ -7,8 +7,7 @@
       "MORR.Modules.WindowManagement.WindowManagementModule",
       "MORR.Modules.Keyboard.KeyboardModule",
       "MORR.Modules.Mouse.MouseModule",
-      "MORR.Modules.Clipboard.ClipboardModule",
-      "MORR.Modules.WebBrowser.WebBrowserModule"
+      "MORR.Modules.Clipboard.ClipboardModule"
     ]
   },
   "MORR.Core.Session.SessionConfiguration": {

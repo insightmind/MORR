@@ -9,6 +9,11 @@ namespace MORR.Shared.Events.Queue
     public interface IDecodableEventQueue<out T> where T : Event
     {
         /// <summary>
+        /// Describes whether the queue is currently enabled to queue new events or not.
+        /// </summary>
+        public bool IsClosed { get; }
+
+        /// <summary>
         ///     Asynchronously gets all events as concrete type <typeparamref name="T" />.
         /// </summary>
         /// <returns>A stream of <typeparamref name="T" /></returns>

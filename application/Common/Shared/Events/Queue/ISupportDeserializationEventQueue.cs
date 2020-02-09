@@ -9,6 +9,11 @@ namespace MORR.Shared.Events.Queue
     public interface ISupportDeserializationEventQueue<out T> where T : Event
     {
         /// <summary>
+        /// Describes whether the queue is currently enabled to queue new events or not.
+        /// </summary>
+        public bool IsClosed { get; }
+
+        /// <summary>
         ///     The actual type of the events queued in this queue.
         /// </summary>
         Type EventType => typeof(T);

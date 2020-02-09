@@ -11,12 +11,17 @@ namespace MORR.Shared.Events.Queue
     /// <typeparam name="TEvent">The type of Events which can be queued</typeparam>
     public abstract class BaseEventQueue<TEvent> where TEvent : Event
     {
+        /// <summary>
+        /// Describes whether the queue is currently enabled to queue new events or not.
+        /// </summary>
+        public bool IsClosed => storageStrategy.IsClosed;
+
         private readonly IEventQueueStorageStrategy<TEvent> storageStrategy;
 
         protected BaseEventQueue(IEventQueueStorageStrategy<TEvent> storageStrategy) => this.storageStrategy = storageStrategy;
 
         /// <summary>
-        ///     Asynchronously gets all events as concrete type <typeparamref name="T" />
+        ///     Asynchronously gets all events as concrete type <typeparamref name="TEvent" />
         /// </summary>
         /// <returns>A stream of <typeparamref name="T" /></returns>
         public IAsyncEnumerable<TEvent> GetEvents() => storageStrategy.GetEvents();
@@ -30,11 +35,11 @@ namespace MORR.Shared.Events.Queue
         /// <summary>
         ///     Opens the EventQueue so new events can be queued.
         /// </summary>
-        public void Open() => storageStrategy?.Open();
+        public void Open() => storageStrategy.Open();
 
         /// <summary>
         ///     Closes the EventQueue so no new event can be queued.
         /// </summary>
-        public void Close() => storageStrategy?.Close();
+        public void Close() => storageStrategy.Close();
     }
 }

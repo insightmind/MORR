@@ -3,6 +3,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Windows.Graphics.Capture;
+using Microsoft.VisualBasic;
 using MORR.Core.Data.Capture.Video.Desktop.Utility;
 using MORR.Core.Data.Capture.Video.Exceptions;
 using MORR.Shared.Modules;
@@ -28,8 +29,17 @@ namespace MORR.Core.Data.Capture.Video.Desktop
 
         public Guid Identifier { get; } = new Guid("9F1D496E-9939-4BE1-9117-6DE21A3D1CFE");
 
-        // TODO This also appears to be empty somewhat often - we could provide an empty implementation in the interface
-        public void Initialize() { }
+        public void Initialize(bool isEnabled)
+        {
+            if (isEnabled)
+            {
+                VideoSampleProducer.Open();
+            }
+            else
+            {
+                VideoSampleProducer.Close();
+            }
+        }
 
         private bool TryGetGraphicsCaptureItem([NotNullWhen(true)] out GraphicsCaptureItem? item)
         {

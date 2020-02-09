@@ -22,7 +22,7 @@ namespace MORR.Core.Session
         /// <summary>
         ///     Starts a recording if no session is currently being recorded.
         /// </summary>
-        void StartRecording();
+        void StartRecording(FilePath configurationPath);
 
         /// <summary>
         ///     Stops a recording if a session is currently being recorded.
@@ -32,6 +32,6 @@ namespace MORR.Core.Session
         /// <summary>
         ///     Processes the specified recordings.
         /// </summary>
-        void Process(IEnumerable<DirectoryPath> recordings);
+        void Process(FilePath configurationPath, IEnumerable<DirectoryPath> recordings);
     }
 }

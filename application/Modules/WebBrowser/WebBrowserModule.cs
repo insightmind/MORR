@@ -10,7 +10,7 @@ namespace MORR.Modules.WebBrowser
     /// <summary>
     ///     The <see cref="WebBrowserModule" /> is responsible for recording all browser related user interactions
     /// </summary>
-    public class WebBrowserModule : Module
+    public class WebBrowserModule : IModule
     {
         [Import] private ButtonClickEventProducer buttonClickEventProducer;
 
@@ -35,9 +35,10 @@ namespace MORR.Modules.WebBrowser
         private WebExtensionListener listener;
         private List<IWebBrowserEventObserver> producers;
 
-        public new static Guid Identifier { get; } = new Guid("e9240dc4-f33f-43db-a419-5b36d8279c88");
+        public static Guid Identifier { get; } = new Guid("e9240dc4-f33f-43db-a419-5b36d8279c88");
+        Guid IModule.Identifier => Identifier;
 
-        public new bool IsActive
+        public bool IsActive
         {
             get => isActive;
             set => Utility.SetAndDispatch(ref isActive, value, StartRecording, StopRecording);
@@ -46,7 +47,6 @@ namespace MORR.Modules.WebBrowser
         private void StartRecording()
         {
             listener.RecordingActive = true;
-            producers?.ForEach(producer => producer.Open());
         }
 
         private void StopRecording()
@@ -55,7 +55,7 @@ namespace MORR.Modules.WebBrowser
             producers?.ForEach(producer => producer.Close());
         }
 
-        public new void Initialize()
+        public void Initialize(bool isEnabled)
         {
             producers = new List<IWebBrowserEventObserver>
             {
@@ -63,11 +63,22 @@ namespace MORR.Modules.WebBrowser
                 hoverEventProducer, navigationEventProducer, openTabEventProducer,
                 switchTabEventProducer, textInputEventProducer, textSelectionEventProducer
             };
+
+
             listener = new WebExtensionListener(Configuration.UrlSuffix);
             listener.StartListening();
             foreach (var producer in producers)
             {
                 listener.Subscribe(producer, producer.HandledEventLabel);
+            }
+
+            if (isEnabled)
+            {
+                producers.ForEach(producer => producer.Open());
+            }
+            else
+            {
+                producers.ForEach(producer => producer.Close());
             }
         }
     }

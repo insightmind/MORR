@@ -10,7 +10,7 @@ using MORR.Shared.Utility;
 
 namespace MORR.Core.Data.IntermediateFormat.Json
 {
-    public class JsonIntermediateFormatDeserializer : Module
+    public class JsonIntermediateFormatDeserializer : IModule
     {
         private bool isActive;
 
@@ -20,7 +20,7 @@ namespace MORR.Core.Data.IntermediateFormat.Json
         [Import]
         private IDecodableEventQueue<JsonIntermediateFormatSample> IntermediateFormatSampleQueue { get; set; }
 
-        public new bool IsActive
+        public bool IsActive
         {
             get => isActive;
             set => Utility.SetAndDispatch(ref isActive, value, LinkAllQueues, delegate
@@ -32,7 +32,7 @@ namespace MORR.Core.Data.IntermediateFormat.Json
             });
         }
 
-        public new Guid Identifier { get; } = new Guid("03496342-BBAE-46A7-BCBE-98FACA083B74");
+        public Guid Identifier { get; } = new Guid("03496342-BBAE-46A7-BCBE-98FACA083B74");
 
         private void LinkAllQueues()
         {

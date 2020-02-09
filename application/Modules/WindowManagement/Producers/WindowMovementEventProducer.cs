@@ -32,17 +32,16 @@ namespace MORR.Modules.WindowManagement.Producers
         private readonly NativeMethods.MessageType[] listenedMessageTypes =
             { NativeMethods.MessageType.WM_ENTERSIZEMOVE, NativeMethods.MessageType.WM_EXITSIZEMOVE };
 
-        public override void Open()
+        public void StartCapture()
         {
-            base.Open();
             GlobalHook.AddListener(WindowHookCallback, listenedMessageTypes);
             GlobalHook.IsActive = true;
         }
 
-        public override void Close()
+        public void StopCapture()
         {
             GlobalHook.RemoveListener(WindowHookCallback, listenedMessageTypes);
-            base.Close();
+            Close();
         }
 
         /// <summary>

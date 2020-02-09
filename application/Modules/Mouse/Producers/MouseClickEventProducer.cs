@@ -28,17 +28,16 @@ namespace MORR.Modules.Mouse.Producers
             NativeMethods.MessageType.WM_NCMBUTTONDBLCLK
         };
 
-        public override void Open()
+        public void StartCapture()
         {
-            base.Open();
             GlobalHook.AddListener(MouseHookCallback, listenedMessagesTypes);
             GlobalHook.IsActive = true;
         }
 
-        public override void Close()
+        public void StopCapture()
         {
             GlobalHook.RemoveListener(MouseHookCallback, listenedMessagesTypes);
-            base.Close();
+            Close();
         }
 
         private void MouseHookCallback(GlobalHook.HookMessage hookMessage)

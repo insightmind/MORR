@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
-using Microsoft.VisualBasic;
 using MORR.Core.Configuration;
 using MORR.Core.Data.Transcoding;
 using MORR.Core.Modules;
@@ -15,30 +14,24 @@ namespace MORR.Core.Session
     public class SessionManager : ISessionManager
     {
         private const string dateFormat = "yyyy-MM-ddTHH-mm-ss";
-        private readonly IEnumerable<IEncoder> encoders;
-        private readonly IEnumerable<IDecoder> decoders;
+        private IEnumerable<IEncoder> encoders = new IEncoder[0];
+        private IEnumerable<IDecoder> decoders = new IDecoder[0];
         private readonly IModuleManager moduleManager;
+        private readonly IConfigurationManager configurationManager;
         private bool isRecording;
 
-        public SessionManager(FilePath configurationPath) : this(configurationPath, new Bootstrapper(),
-                                                                 new ConfigurationManager(), new ModuleManager()) { }
+        public SessionManager() : this(new Bootstrapper(), new ConfigurationManager(), new ModuleManager()) { }
 
-        public SessionManager(FilePath configurationPath,
-                              IBootstrapper bootstrapper,
+        public SessionManager(IBootstrapper bootstrapper,
                               IConfigurationManager configurationManager,
                               IModuleManager moduleManager)
         {
             this.moduleManager = moduleManager;
+            this.configurationManager = configurationManager;
+
             bootstrapper.ComposeImports(this);
             bootstrapper.ComposeImports(configurationManager);
             bootstrapper.ComposeImports(moduleManager);
-
-            configurationManager.LoadConfiguration(configurationPath);
-
-            encoders = Encoders.Where(x => Configuration.Encoders.Contains(x.GetType()));
-            decoders = Decoders.Where(x => Configuration.Decoders?.Contains(x.GetType()) ?? false);
-
-            moduleManager.InitializeModules();
         }
 
         [ImportMany]
@@ -64,8 +57,10 @@ namespace MORR.Core.Session
             return new DirectoryPath(directory);
         }
 
-        public void StartRecording()
+        public void StartRecording(FilePath configurationPath)
         {
+            LoadUsingConfig(configurationPath);
+
             if (isRecording)
             {
                 throw new AlreadyRecordingException();
@@ -104,8 +99,10 @@ namespace MORR.Core.Session
             GlobalHook.IsActive = false;
         }
 
-        public void Process(IEnumerable<DirectoryPath> recordings)
+        public void Process(FilePath configurationPath, IEnumerable<DirectoryPath> recordings)
         {
+            LoadUsingConfig(configurationPath);
+
             if (!decoders.Any())
             {
                 throw new InvalidConfigurationException("No decoder specified for processing operation.");
@@ -139,6 +136,16 @@ namespace MORR.Core.Session
             }
 
             moduleManager.NotifyModulesOnSessionStop();
+        }
+
+        private void LoadUsingConfig(FilePath configurationPath)
+        {
+            configurationManager.LoadConfiguration(configurationPath);
+
+            encoders = Encoders.Where(x => Configuration.Encoders.Contains(x.GetType()));
+            decoders = Decoders.Where(x => Configuration.Decoders?.Contains(x.GetType()) ?? false);
+
+            moduleManager.InitializeModules();
         }
     }
 }

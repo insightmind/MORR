@@ -40,17 +40,16 @@ namespace MORR.Modules.WindowManagement.Producers
                 NativeMethods.MessageType.WM_EXITSIZEMOVE
             };
 
-        public override void Open()
+        public void StartCapture()
         {
-            base.Open();
             GlobalHook.AddListener(WindowHookCallback, listenedMessageTypes);
             GlobalHook.IsActive = true;
         }
 
-        public override void Close()
+        public void StopCapture()
         {
             GlobalHook.RemoveListener(WindowHookCallback, listenedMessageTypes);
-            base.Close();
+            Close();
         }
 
         private void WindowHookCallback(GlobalHook.HookMessage msg)

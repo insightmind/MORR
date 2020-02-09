@@ -14,17 +14,16 @@ namespace MORR.Modules.WindowManagement.Producers
 
         private IntPtr lastHwnd = IntPtr.Zero;
 
-        public override void Open()
+        public void StartCapture()
         {
-            base.Open();
             GlobalHook.AddListener(WindowHookCallback, NativeMethods.MessageType.WM_ACTIVATE);
             GlobalHook.IsActive = true;
         }
 
-        public override void Close()
+        public void StopCapture()
         {
             GlobalHook.RemoveListener(WindowHookCallback, NativeMethods.MessageType.WM_ACTIVATE);
-            base.Close();
+            Close();
         }
 
         /// <summary>

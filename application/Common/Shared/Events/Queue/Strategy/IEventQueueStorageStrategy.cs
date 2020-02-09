@@ -1,11 +1,15 @@
 ﻿using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace MORR.Shared.Events.Queue.Strategy
 {
     public interface IEventQueueStorageStrategy<T> where T : Event
     {
+        /// <summary>
+        /// Describes whether the queue is currently enabled to queue new events or not.
+        /// </summary>
+        bool IsClosed { get; }
+
         /// <summary>
         /// Asynchronously gets all events from this storage strategy.
         /// </summary>

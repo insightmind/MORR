@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
@@ -15,12 +15,9 @@ namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
     public abstract class SingleConsumerChannelStrategy<TEvent> : IEventQueueStorageStrategy<TEvent> where TEvent : Event
     {
         private Channel<TEvent> eventChannel;
-        private bool isOccupied = false;
+        private bool isOccupied;
 
-        protected void StartReceiving()
-        {
-            eventChannel = CreateChannel();
-        }
+        public bool IsClosed { get; private set; } = true;
 
         /// <summary>
         ///     Asynchronously gets all events as concrete type <typeparamref name="T" />.
@@ -49,14 +46,16 @@ namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
 
         public void Open()
         {
-            // TODO: Implement this
+            eventChannel = CreateChannel();
+            FreeReading();
+            IsClosed = false;
         }
 
         public void Close()
         {
+            IsClosed = true;
             eventChannel.Writer.Complete();
             FreeReading();
-            eventChannel = CreateChannel();
         }
 
         private ValueTask EnqueueAsync(TEvent @event)

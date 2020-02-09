@@ -12,7 +12,6 @@ namespace MORR.Modules.Clipboard.Producers
     {
         public void StartCapture()
         {
-            Open();
             GlobalHook.IsActive = true;
             GlobalHook.AddListener(GlobalHookCallBack, NativeMethods.MessageType.WM_CUT);
         }
