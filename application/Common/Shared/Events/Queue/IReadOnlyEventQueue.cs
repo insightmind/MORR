@@ -24,10 +24,5 @@ namespace MORR.Shared.Events.Queue
         /// </summary>
         /// <returns>A stream of <typeparamref name="T" /></returns>
         IAsyncEnumerable<T> GetEvents();
-
-        /// <summary>
-        ///     Closes the EventQueue so no new event can be queued.
-        /// </summary>
-        public void Close();
     }
 }
