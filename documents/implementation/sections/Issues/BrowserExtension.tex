@@ -1,1 +1,43 @@
 \section{Browser Extension}
+\issue{The public \member{start} and \member{stop} functions of \class{BackgroundScript} will not be invoked anywhere as
+\class{BackgroundScript} is on top of the class hierarchy.}
+{Let the \class{BackgroundScript} manage its own state.}
+{Make \member{start} and \member{stop} functions private and provide public \member{run} function.}
+
+\issue{Current semantics of the \class{ICommunicationInterface} functions do not make it clear how a "Stop" signal should
+be transferred to the \class{BackgroundScript}.}{Provide additional function in \class{ICommunicationInterface}.}
+{Add \member{addOnStopListener} function to \class{ICommunicationInterface}, which will invoke the given 
+callback function when a "Stop" signal as received.}
+
+\issue{The \class{DOMEventRecorder} is mostly unaware of a given DOMEvent should be converted into a \class{BrowserEvent},
+it however always expects the \class{DOMEventFactory} to create a \class{BrowserEvent} when passing
+the DOMEvent as parameter.}
+{Allow the \member{createEvent} function of \class{DOMEventFactory} to not return an event without throwing an exception.}
+{Changed return type of \member{createEvent} to "BrowserEvent | undefined".}
+
+\issue{The \class{DOMEventRecorder} needs to use asynchronous API functions for certain tasks.}
+{Made the \member{createEvent} function asynchronous itself by using a Promise return type.}
+{Changed return type of \member{createEvent} to "Promise<BrowserEvent | undefined>".}
+
+\issue{The opened URLs are not known for all tab event types.}
+{Adjust defintions to allow for an "url:unknown" magic value.}
+{\class{OpenTabEvent} and \class{CloseTabEvent} have their \member{URL} value set to "url:unknown" when no
+URL is passed to their constructors.}
+
+\issue{Typescript does not allow for parameter-type based function overloads which are available in most common OOP languages.}
+{Chang function names of affected overloaded function.}
+{Changed names of member functions of \class{TabEventFactory} to represent their specific return types.}
+
+\issue{DOM based events should allow to be deserialized when retrieved from the contentscript.}
+{Add deserializer functions.}
+{Added static \member{deserialize} functions to \class{TextSelectionEvent}, \class{TextInputEvent},
+\class{ButtonClickEvent} and \class{HoverEvent}.}
+
+\issue{\class{DownloadEventFactory} needs to use an asynchronous API function to add the tab ID when creating a \class{DownloadEvent}.}
+{Make \member{createEvent} function of \class{DownloadEventFactory} asynchronous.}
+{Changed return type of \member{createEvent} function to "Promise<DownloadEvent>".}
+
+\issue{Depending on context, a serialized \class{BrowserEvent} should have its member names match the browser extension style (ES6),
+or the style used in the MORR main application.}
+{Allow users of the \member{serialize} function to choose wether the leading underscored (ES6) should be omitted on serialization.}
+{Changed function signature to \member{serialize(noUnderScore : boolean) : string}.}
