@@ -48,7 +48,7 @@ namespace MORR.Core
                 return new AssemblyCatalog(assembly, registrationBuilder) as ComposablePartCatalog;
             }).ToArray();
 
-            var applicationCatalog = new ApplicationCatalog(registrationBuilder);
+            var applicationCatalog = new AssemblyCatalog(Assembly.GetExecutingAssembly(), registrationBuilder);
             var aggregateCatalog = new AggregateCatalog(moduleCatalogs.Append(applicationCatalog));
 
             container = new CompositionContainer(aggregateCatalog);
