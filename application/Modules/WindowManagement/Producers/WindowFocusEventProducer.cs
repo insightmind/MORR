@@ -1,7 +1,8 @@
 ﻿using System;
 using MORR.Modules.WindowManagement.Events;
+using MORR.Modules.WindowManagement.Native;
 using MORR.Shared.Events.Queue;
-using MORR.Shared.Utility;
+using MORR.Shared.Hook;
 
 namespace MORR.Modules.WindowManagement.Producers
 {
@@ -16,13 +17,13 @@ namespace MORR.Modules.WindowManagement.Producers
 
         public void StartCapture()
         {
-            GlobalHook.AddListener(WindowHookCallback, NativeMethods.MessageType.WM_ACTIVATE);
+            GlobalHook.AddListener(WindowHookCallback, GlobalHook.MessageType.WM_ACTIVATE);
             GlobalHook.IsActive = true;
         }
 
         public void StopCapture()
         {
-            GlobalHook.RemoveListener(WindowHookCallback, NativeMethods.MessageType.WM_ACTIVATE);
+            GlobalHook.RemoveListener(WindowHookCallback, GlobalHook.MessageType.WM_ACTIVATE);
             Close();
         }
 
@@ -37,14 +38,15 @@ namespace MORR.Modules.WindowManagement.Producers
         {
             if ((int) msg.wParam == WA_ACTIVE)
             {
-                var hwnd = NativeMethods.GetForegroundWindow();
+                var hwnd = NativeWindowManagement.GetForegroundWindow();
                 if (lastHwnd != hwnd)
                 {
-                    var processName = Utility.GetProcessNameFromHwnd(hwnd);
-                    var windowTitle = Utility.GetWindowTitleFromHwnd(hwnd);
+                    var processName = NativeWindowManagement.GetProcessNameFromHwnd(hwnd);
+                    var windowTitle = NativeWindowManagement.GetWindowTitleFromHwnd(hwnd);
                     var @event = new WindowFocusEvent
                     {
-                        IssuingModule = WindowManagementModule.Identifier, ProcessName = processName,
+                        IssuingModule = WindowManagementModule.Identifier,
+                        ProcessName = processName,
                         Title = windowTitle
                     };
                     Enqueue(@event);

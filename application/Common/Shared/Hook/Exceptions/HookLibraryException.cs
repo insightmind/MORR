@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MORR.Shared.Utility.Exceptions
+namespace MORR.Shared.Hook.Exceptions
 {
     public class HookLibraryException : Exception {
 

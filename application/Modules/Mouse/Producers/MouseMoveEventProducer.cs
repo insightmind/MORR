@@ -1,8 +1,8 @@
 using System.Threading;
 using System.Windows;
 using MORR.Modules.Mouse.Events;
+using MORR.Modules.Mouse.Native;
 using MORR.Shared.Events.Queue;
-using MORR.Shared.Utility;
 
 namespace MORR.Modules.Mouse.Producers
 {
@@ -16,7 +16,7 @@ namespace MORR.Modules.Mouse.Producers
         ///     This field will be initialized to the mouse position
         ///     when the StartTimer() is called.
         /// </summary>
-        private NativeMethods.POINT lastMousePosition;
+        private NativeMouse.POINT lastMousePosition;
 
         /// <summary>
         ///     A timer that records the mouse position at specific intervals.
@@ -45,7 +45,7 @@ namespace MORR.Modules.Mouse.Producers
         private void GetMousePosition(object stateInfo)
         {
             // get the current mouse position as Point
-            NativeMethods.GetCursorPos(out var currentMousePosition);
+            NativeMouse.GetCursorPos(out var currentMousePosition);
 
             var currentMousePositionAsPoint = new Point(currentMousePosition.X, currentMousePosition.Y);
             var lastMousePositionAsPoint = new Point(lastMousePosition.X, lastMousePosition.Y);
@@ -69,7 +69,7 @@ namespace MORR.Modules.Mouse.Producers
         /// </summary>
         public void StartCapture()
         {
-            NativeMethods.GetCursorPos(out lastMousePosition);
+            NativeMouse.GetCursorPos(out lastMousePosition);
 
             var samplingTimeIntervalInMilliseconds = (int) ((double) 1 / SamplingRateInHz * 1000);
 

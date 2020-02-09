@@ -3,11 +3,9 @@ using System.ComponentModel.Composition;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Windows.Graphics.Capture;
-using Microsoft.VisualBasic;
 using MORR.Core.Data.Capture.Video.Desktop.Utility;
 using MORR.Core.Data.Capture.Video.Exceptions;
 using MORR.Shared.Modules;
-using MORR.Shared.Utility;
 
 namespace MORR.Core.Data.Capture.Video.Desktop
 {
@@ -47,7 +45,7 @@ namespace MORR.Core.Data.Capture.Video.Desktop
             if (!GraphicsCaptureHelper.CanCreateItemWithoutPicker || Configuration.PromptUserForMonitorSelection)
             {
                 var picker = new GraphicsCapturePicker();
-                var handle = NativeMethods.GetAssociatedWindow();
+                var handle = NativeDesktop.GetAssociatedWindow();
 
                 picker.SetWindow(handle);
                 item = picker.PickSingleItemAsync().GetAwaiter().GetResult();

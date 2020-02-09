@@ -7,6 +7,7 @@ using MORR.Core.Configuration;
 using MORR.Core.Data.Transcoding;
 using MORR.Core.Modules;
 using MORR.Core.Session.Exceptions;
+using MORR.Shared.Hook;
 using MORR.Shared.Utility;
 
 namespace MORR.Core.Session
@@ -95,7 +96,7 @@ namespace MORR.Core.Session
                 // We may therefore wait on this event sequentially without risk of blocking indefinitely
                 encoder.EncodeFinished.WaitOne();
             }
-            
+
             GlobalHook.IsActive = false;
         }
 
