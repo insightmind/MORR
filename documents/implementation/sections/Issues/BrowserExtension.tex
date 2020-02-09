@@ -9,11 +9,13 @@ be transferred to the \class{BackgroundScript}.}{Provide additional function in 
 {Add \member{addOnStopListener} function to \class{ICommunicationInterface}, which will invoke the given 
 callback function when a "Stop" signal as received.}
 
-\issue{The \class{DOMEventRecorder} is mostly unaware of a given DOMEvent should be converted into a \class{BrowserEvent},
+\issue{The \class{DOMEventRecorder} is mostly unaware if a given DOMEvent should be converted into a \class{BrowserEvent},
 it however always expects the \class{DOMEventFactory} to create a \class{BrowserEvent} when passing
 the DOMEvent as parameter.}
-{Allow the \member{createEvent} function of \class{DOMEventFactory} to not return an event without throwing an exception.}
-{Changed return type of \member{createEvent} to "BrowserEvent | undefined".}
+{Allow the \member{createEvent} function of \class{DOMEventFactory} to not return an event.}
+{Changed return type of \member{createEvent} to "BrowserEvent | undefined". This approach
+was preferred over throwing an exception, as this condition is regularly met due to the distributation of responsibilites
+between the \class{DOMEventRecorder} and \class{DOMEventFactory} classes.}
 
 \issue{The \class{DOMEventRecorder} needs to use asynchronous API functions for certain tasks.}
 {Made the \member{createEvent} function asynchronous itself by using a Promise return type.}
@@ -25,7 +27,7 @@ the DOMEvent as parameter.}
 URL is passed to their constructors.}
 
 \issue{Typescript does not allow for parameter-type based function overloads which are available in most common OOP languages.}
-{Chang function names of affected overloaded function.}
+{Change function names of affected overloaded function.}
 {Changed names of member functions of \class{TabEventFactory} to represent their specific return types.}
 
 \issue{DOM based events should allow to be deserialized when retrieved from the contentscript.}

@@ -5,7 +5,7 @@
 \newcommand{\partially}{\textcolor{orange}{Limited functionality}}
 \newcommand{\cancelled}{\textcolor{red}{Cancelled}}
 \chapter{Features}
-This chapter provides information on the implementation status of the features/specifications listed in the function specification document.
+This chapter provides information on the implementation status of the features/specifications listed in the functional specification document.
 
 \section{High-level specification}
 \feature{FS10 - Identifiable sessions}{\ok}{}
@@ -38,7 +38,7 @@ This chapter provides information on the implementation status of the features/s
 \feature{FS300 - Recording indicator}{}{}
 \feature{FS310 - Error dialog}{}{}
 \feature{FS320 - Save dialog}{}{}
-\feature{FS330 - Event-Data extraction}{\cancelled}{As the data is directly serialized to a JSON while recording, this feature is no longer needed.}
+\feature{FS330 - Event-Data extraction}{\cancelled}{As the data is directly serialized to a JSON file while recording, this feature is no longer needed.}
 \feature{FS340 - Tray-Icon}{}{}
 \feature{FS350 - Tray-Menu}{}{}
 
@@ -73,10 +73,11 @@ This chapter provides information on the implementation status of the features/s
 \feature{FS444 - Navigation}{\ok}{}
 \feature{FS445 - Text input}{\partially}{Will only be created for html elements tagged with \textit{textarea} and \textit{input}, and only after the respective html element loses focus.}
 \feature{FS446 - Button click}{\partially}{As we can not determine if a html element has a click-listener attached to it or not, this event will be created whenever the user clicks on an element tagged
-\textit{button}, \textit{a} or \textit{input} with an appropriate type (submit, checkbox etc.). As websites sometimes use different tags for buttons (\textit{span} etc.), this event may not be reliably
+as \textit{button}, \textit{a} or \textit{input} with an appropriate type (submit, checkbox etc.). As websites sometimes use different tags for buttons (\textit{span} etc.), this event may not be reliably
 created on all websites.}
-\feature{FS447 - Hovering}{\ok}{False positives may occur as we can not determine if an element has a MOUSEENTER or similar listener attached to it. The current implementation
-will create HoverEvents for most HTML elements regardless of them reacting to a hover or not, except those which are usually uninteresting in this context, e.g. those tagged with \textit{p} or \textit{body}.}
+\feature{FS447 - Hovering}{\ok}{False positives may occur as we can not determine if an element has a MOUSEENTER listener (or similar) attached to it. The current implementation
+will create HoverEvents for most HTML elements regardless of them reacting to a hover or not. The avoid too many false positives, HTML elements
+with tags which are usually uninteresting in this context are filtered out, e.g. \textit{p} and \textit{body}.}
 \feature{FS448 - Text selection}{\ok}{}
 \feature{FS449 - File download}{\ok}{}
 
