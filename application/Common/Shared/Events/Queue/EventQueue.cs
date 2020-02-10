@@ -4,12 +4,10 @@ using MORR.Shared.Events.Queue.Strategy;
 namespace MORR.Shared.Events.Queue
 {
     /// <summary>
-    /// Provides the basic structure of an EventQueue. This is explicitly not using an interface
-    /// so no consumptions are made for subclasses which use a limiting interface to only expose a
-    /// certain amount of the methods and functionality.
+    /// Provides the basic structure of an EventQueue.
     /// </summary>
     /// <typeparam name="TEvent">The type of Events which can be queued</typeparam>
-    public abstract class BaseEventQueue<TEvent> where TEvent : Event
+    public abstract class EventQueue<TEvent> where TEvent : Event
     {
         /// <summary>
         /// Describes whether the queue is currently enabled to queue new events or not.
@@ -18,7 +16,7 @@ namespace MORR.Shared.Events.Queue
 
         private readonly IEventQueueStorageStrategy<TEvent> storageStrategy;
 
-        protected BaseEventQueue(IEventQueueStorageStrategy<TEvent> storageStrategy) => this.storageStrategy = storageStrategy;
+        protected EventQueue(IEventQueueStorageStrategy<TEvent> storageStrategy) => this.storageStrategy = storageStrategy;
 
         /// <summary>
         ///     Asynchronously gets all events as concrete type <typeparamref name="TEvent" />
