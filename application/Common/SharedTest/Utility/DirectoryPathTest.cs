@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace SharedTest.Utility
 {
-    class DirectoryPathTest
+    [TestClass]
+    public class DirectoryPathTest
     {
+        // TODO
     }
 }
