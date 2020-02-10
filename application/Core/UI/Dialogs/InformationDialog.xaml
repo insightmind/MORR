@@ -12,14 +12,14 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0">
+        <TextBlock Grid.Row="0" TextAlignment="Center">
             The MORR application records screen, keyboard, mouse, clipboard and browser data.
             <LineBreak />
             The stored data may be personally identifiable.
             <LineBreak />
             Remember not to enter any personal information.
         </TextBlock>
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="2" HorizontalAlignment="Center">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" SharedSizeGroup="Button" />
                 <ColumnDefinition Width="15" />
