@@ -5,7 +5,7 @@ using MORR.Shared.Hook;
 
 namespace MORR.Modules.Keyboard.Native
 {
-    public static class NativeKeyboard
+    public static class KeyboardNativeMethods
     {
 
         #region Keyboard state helper

@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace MORR.Core.Data.Capture.Video.Desktop.Utility
 {
-    public static class NativeDesktop
+    public static class DesktopCaptureNativeMethods
     {
         /// <summary>
         ///     Attempts to get a window associated with the current process.

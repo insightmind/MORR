@@ -29,7 +29,7 @@ namespace MORR.Modules.Clipboard.Producers
 
         private void GlobalHookCallBack(GlobalHook.HookMessage message)
         {
-            var text = NativeClipboard.GetClipboardText();
+            var text = ClipboardNativeMethods.GetClipboardText();
 
             //create the corresponding new Event
             var clipboardPasteEvent = new ClipboardPasteEvent

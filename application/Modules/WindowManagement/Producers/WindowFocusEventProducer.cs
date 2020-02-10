@@ -38,11 +38,11 @@ namespace MORR.Modules.WindowManagement.Producers
         {
             if ((int) msg.wParam == WA_ACTIVE)
             {
-                var hwnd = NativeWindowManagement.GetForegroundWindow();
+                var hwnd = WindowManagementNativeMethods.GetForegroundWindow();
                 if (lastHwnd != hwnd)
                 {
-                    var processName = NativeWindowManagement.GetProcessNameFromHwnd(hwnd);
-                    var windowTitle = NativeWindowManagement.GetWindowTitleFromHwnd(hwnd);
+                    var processName = WindowManagementNativeMethods.GetProcessNameFromHwnd(hwnd);
+                    var windowTitle = WindowManagementNativeMethods.GetWindowTitleFromHwnd(hwnd);
                     var @event = new WindowFocusEvent
                     {
                         IssuingModule = WindowManagementModule.Identifier,

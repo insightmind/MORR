@@ -60,32 +60,32 @@ namespace MORR.Modules.WindowManagement.Producers
             {
                 windowUnderChangeHwnd = (int) msg.Hwnd;
                 windowRecBeforeChange = new Rectangle();
-                NativeWindowManagement.GetWindowRect(windowUnderChangeHwnd, ref windowRecBeforeChange);
+                WindowManagementNativeMethods.GetWindowRect(windowUnderChangeHwnd, ref windowRecBeforeChange);
             }
 
             if (msg.Type == (uint) GlobalHook.MessageType.WM_EXITSIZEMOVE)
             {
                 windowRecAfterChange = new Rectangle();
-                NativeWindowManagement.GetWindowRect(windowUnderChangeHwnd, ref windowRecAfterChange);
-                if (!NativeWindowManagement.IsRectSizeEqual(windowRecBeforeChange, windowRecAfterChange))
+                WindowManagementNativeMethods.GetWindowRect(windowUnderChangeHwnd, ref windowRecAfterChange);
+                if (!WindowManagementNativeMethods.IsRectSizeEqual(windowRecBeforeChange, windowRecAfterChange))
                 {
                     var oldSize = new Size
                     {
-                        Width = NativeWindowManagement.GetWindowWidth(windowRecBeforeChange),
-                        Height = NativeWindowManagement.GetWindowHeight(windowRecBeforeChange)
+                        Width = WindowManagementNativeMethods.GetWindowWidth(windowRecBeforeChange),
+                        Height = WindowManagementNativeMethods.GetWindowHeight(windowRecBeforeChange)
                     };
                     var newSize = new Size
                     {
-                        Width = NativeWindowManagement.GetWindowWidth(windowRecAfterChange),
-                        Height = NativeWindowManagement.GetWindowHeight(windowRecAfterChange)
+                        Width = WindowManagementNativeMethods.GetWindowWidth(windowRecAfterChange),
+                        Height = WindowManagementNativeMethods.GetWindowHeight(windowRecAfterChange)
                     };
                     var @event = new WindowResizingEvent
                     {
                         IssuingModule = WindowManagementModule.Identifier,
                         OldSize = oldSize,
                         NewSize = newSize,
-                        Title = NativeWindowManagement.GetWindowTitleFromHwnd(msg.Hwnd),
-                        ProcessName = NativeWindowManagement.GetProcessNameFromHwnd(msg.Hwnd)
+                        Title = WindowManagementNativeMethods.GetWindowTitleFromHwnd(msg.Hwnd),
+                        ProcessName = WindowManagementNativeMethods.GetProcessNameFromHwnd(msg.Hwnd)
                     };
                     Enqueue(@event);
                 }

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace MORR.Modules.WindowManagement.Native
 {
-    internal sealed class NativeWindowManagement
+    internal sealed class WindowManagementNativeMethods
     {
         /// <summary>
         ///     Get the title of a window from it's Hwnd

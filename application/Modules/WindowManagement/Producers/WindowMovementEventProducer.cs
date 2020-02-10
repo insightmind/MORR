@@ -62,14 +62,14 @@ namespace MORR.Modules.WindowManagement.Producers
             {
                 windowUnderChangeHwnd = (int) msg.Hwnd;
                 windowRecBeforeChange = new Rectangle();
-                NativeWindowManagement.GetWindowRect(windowUnderChangeHwnd, ref windowRecBeforeChange);
+                WindowManagementNativeMethods.GetWindowRect(windowUnderChangeHwnd, ref windowRecBeforeChange);
             }
 
             if (msg.Type == (uint) GlobalHook.MessageType.WM_EXITSIZEMOVE)
             {
                 windowRecAfterChange = new Rectangle();
-                NativeWindowManagement.GetWindowRect(windowUnderChangeHwnd, ref windowRecAfterChange);
-                if (NativeWindowManagement.IsRectSizeEqual(windowRecBeforeChange, windowRecAfterChange))
+                WindowManagementNativeMethods.GetWindowRect(windowUnderChangeHwnd, ref windowRecAfterChange);
+                if (WindowManagementNativeMethods.IsRectSizeEqual(windowRecBeforeChange, windowRecAfterChange))
                 {
                     var oldLocation = new Point { X = windowRecBeforeChange.X, Y = windowRecBeforeChange.Y };
                     var newLocation = new Point { X = windowRecAfterChange.X, Y = windowRecAfterChange.Y };
@@ -78,8 +78,8 @@ namespace MORR.Modules.WindowManagement.Producers
                         IssuingModule = WindowManagementModule.Identifier,
                         OldLocation = oldLocation,
                         NewLocation = newLocation,
-                        Title = NativeWindowManagement.GetWindowTitleFromHwnd(msg.Hwnd),
-                        ProcessName = NativeWindowManagement.GetProcessNameFromHwnd(msg.Hwnd)
+                        Title = WindowManagementNativeMethods.GetWindowTitleFromHwnd(msg.Hwnd),
+                        ProcessName = WindowManagementNativeMethods.GetProcessNameFromHwnd(msg.Hwnd)
                     };
                     Enqueue(@event);
                 }

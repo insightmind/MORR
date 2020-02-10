@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace MORR.Modules.Clipboard.Native
 {
-    public static class NativeClipboard
+    public static class ClipboardNativeMethods
     {
         #region Clipboard text helper
 

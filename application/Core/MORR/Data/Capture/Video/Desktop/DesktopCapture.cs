@@ -45,7 +45,7 @@ namespace MORR.Core.Data.Capture.Video.Desktop
             if (!GraphicsCaptureHelper.CanCreateItemWithoutPicker || Configuration.PromptUserForMonitorSelection)
             {
                 var picker = new GraphicsCapturePicker();
-                var handle = NativeDesktop.GetAssociatedWindow();
+                var handle = DesktopCaptureNativeMethods.GetAssociatedWindow();
 
                 picker.SetWindow(handle);
                 item = picker.PickSingleItemAsync().GetAwaiter().GetResult();

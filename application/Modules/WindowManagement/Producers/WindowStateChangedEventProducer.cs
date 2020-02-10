@@ -62,8 +62,8 @@ namespace MORR.Modules.WindowManagement.Producers
                 var @event = new WindowStateChangedEvent
                 {
                     IssuingModule = WindowManagementModule.Identifier,
-                    ProcessName = NativeWindowManagement.GetProcessNameFromHwnd(msg.Hwnd),
-                    Title = NativeWindowManagement.GetProcessNameFromHwnd(msg.Hwnd),
+                    ProcessName = WindowManagementNativeMethods.GetProcessNameFromHwnd(msg.Hwnd),
+                    Title = WindowManagementNativeMethods.GetProcessNameFromHwnd(msg.Hwnd),
                     // SIZE_MINIMIZED matches to the WindowState.Minimized in number
                     // SIZE_MAXIMIZED matches to the WindowState.Maximized in number
                     WindowState = (WindowState) msg.wParam
@@ -76,20 +76,20 @@ namespace MORR.Modules.WindowManagement.Producers
             {
                 windowUnderChangeHwnd = (int) msg.Hwnd;
                 windowRecBeforeChange = new Rectangle();
-                NativeWindowManagement.GetWindowRect(windowUnderChangeHwnd, ref windowRecBeforeChange);
+                WindowManagementNativeMethods.GetWindowRect(windowUnderChangeHwnd, ref windowRecBeforeChange);
             }
 
             if (msg.Type == (uint) GlobalHook.MessageType.WM_EXITSIZEMOVE)
             {
                 windowRecAfterChange = new Rectangle();
-                NativeWindowManagement.GetWindowRect(windowUnderChangeHwnd, ref windowRecAfterChange);
-                if (!NativeWindowManagement.IsRectSizeEqual(windowRecBeforeChange, windowRecAfterChange))
+                WindowManagementNativeMethods.GetWindowRect(windowUnderChangeHwnd, ref windowRecAfterChange);
+                if (!WindowManagementNativeMethods.IsRectSizeEqual(windowRecBeforeChange, windowRecAfterChange))
                 {
                     var @event = new WindowStateChangedEvent
                     {
                         IssuingModule = WindowManagementModule.Identifier,
-                        Title = NativeWindowManagement.GetWindowTitleFromHwnd(msg.Hwnd),
-                        ProcessName = NativeWindowManagement.GetProcessNameFromHwnd(msg.Hwnd),
+                        Title = WindowManagementNativeMethods.GetWindowTitleFromHwnd(msg.Hwnd),
+                        ProcessName = WindowManagementNativeMethods.GetProcessNameFromHwnd(msg.Hwnd),
                         WindowState = SIZE_RESTORED
                     };
                     Enqueue(@event);

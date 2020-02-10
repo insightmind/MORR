@@ -12,13 +12,13 @@ namespace MORR.Modules.Keyboard.Producers
     /// </summary>
     public class KeyboardInteractEventProducer : DefaultEventQueue<KeyboardInteractEvent>
     {
-        private NativeKeyboard.LowLevelKeyboardProc? callback;
+        private KeyboardNativeMethods.LowLevelKeyboardProc? callback;
         private IntPtr keyboardHookHandle;
 
         public void StartCapture()
         {
             callback = KeyboardHookCallback; // Store callback to prevent GC
-            if (!NativeKeyboard.TrySetKeyboardHook(callback, out keyboardHookHandle))
+            if (!KeyboardNativeMethods.TrySetKeyboardHook(callback, out keyboardHookHandle))
             {
                 throw new Exception("Failed hook keyboard.");
             }
@@ -26,7 +26,7 @@ namespace MORR.Modules.Keyboard.Producers
 
         public void StopCapture()
         {
-            if (!NativeKeyboard.UnhookWindowsHookEx(keyboardHookHandle))
+            if (!KeyboardNativeMethods.UnhookWindowsHookEx(keyboardHookHandle))
             {
                 throw new Exception("Failed to unhook keyboard.");
             }
@@ -34,13 +34,13 @@ namespace MORR.Modules.Keyboard.Producers
             Close();
         }
 
-        private int KeyboardHookCallback(int nCode, GlobalHook.MessageType wParam, NativeKeyboard.KBDLLHOOKSTRUCT lParam)
+        private int KeyboardHookCallback(int nCode, GlobalHook.MessageType wParam, KeyboardNativeMethods.KBDLLHOOKSTRUCT lParam)
         {
             if (nCode < 0)
             {
                 // Required as per documentation
                 // see https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/ms644985(v=vs.85)#return-value
-                return NativeKeyboard.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
+                return KeyboardNativeMethods.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
             }
 
             if (wParam == GlobalHook.MessageType.WM_KEYDOWN)
@@ -60,30 +60,30 @@ namespace MORR.Modules.Keyboard.Producers
                 Enqueue(keyboardEvent);
             }
 
-            return NativeKeyboard.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
+            return KeyboardNativeMethods.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
         }
 
         private static ModifierKeys GetModifierKeys()
         {
             var modifierKeys = ModifierKeys.None;
 
-            if (NativeKeyboard.IsKeyPressed(NativeKeyboard.VirtualKeyCode.VK_MENU))
+            if (KeyboardNativeMethods.IsKeyPressed(KeyboardNativeMethods.VirtualKeyCode.VK_MENU))
             {
                 modifierKeys |= ModifierKeys.Alt;
             }
 
-            if (NativeKeyboard.IsKeyPressed(NativeKeyboard.VirtualKeyCode.VK_CONTROL))
+            if (KeyboardNativeMethods.IsKeyPressed(KeyboardNativeMethods.VirtualKeyCode.VK_CONTROL))
             {
                 modifierKeys |= ModifierKeys.Control;
             }
 
-            if (NativeKeyboard.IsKeyPressed(NativeKeyboard.VirtualKeyCode.VK_SHIFT))
+            if (KeyboardNativeMethods.IsKeyPressed(KeyboardNativeMethods.VirtualKeyCode.VK_SHIFT))
             {
                 modifierKeys |= ModifierKeys.Shift;
             }
 
-            if (NativeKeyboard.IsKeyPressed(NativeKeyboard.VirtualKeyCode.VK_LWIN)
-                || NativeKeyboard.IsKeyPressed(NativeKeyboard.VirtualKeyCode.VK_RWIN))
+            if (KeyboardNativeMethods.IsKeyPressed(KeyboardNativeMethods.VirtualKeyCode.VK_LWIN)
+                || KeyboardNativeMethods.IsKeyPressed(KeyboardNativeMethods.VirtualKeyCode.VK_RWIN))
             {
                 modifierKeys |= ModifierKeys.Windows;
             }

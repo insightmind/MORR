@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace MORR.Modules.Mouse.Native
 {
-    internal sealed class NativeMouse
+    internal sealed class MouseNativeMethods
     {
         #region DllImports
 
