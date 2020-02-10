@@ -31,7 +31,7 @@ namespace MORR.Core.CLI.Commands.Record
 
         #region LifeCycle
 
-        public RecordCommand() : this(new SessionManager(), new ConsoleFormatter()) { }
+        public RecordCommand(ISessionManager sessionManager) : this(sessionManager, new ConsoleFormatter()) { }
 
         public RecordCommand(ISessionManager sessionManager, IConsoleFormatter console) :
             this(sessionManager, console, new InteractiveCommandLine(console), new MessageLoop()) { }
@@ -73,7 +73,7 @@ namespace MORR.Core.CLI.Commands.Record
 
                 // Start Recording
                 consoleFormatter.PrintDebug(startRecordingMessage);
-                sessionManager.StartRecording(configPath);
+                sessionManager.StartRecording();
 
                 // If the user cancels via the command line we need to stop the message loop.
                 commandLine.Launch(messageLoop.Stop);

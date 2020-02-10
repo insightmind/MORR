@@ -20,9 +20,10 @@ namespace MORR.Core.Session
         private readonly IConfigurationManager configurationManager;
         private bool isRecording;
 
-        public SessionManager() : this(new Bootstrapper(), new ConfigurationManager(), new ModuleManager()) { }
+        public SessionManager(FilePath configurationPath) : this(configurationPath, new Bootstrapper(), new ConfigurationManager(), new ModuleManager()) { }
 
-        public SessionManager(IBootstrapper bootstrapper,
+        public SessionManager(FilePath configurationPath,
+                              IBootstrapper bootstrapper,
                               IConfigurationManager configurationManager,
                               IModuleManager moduleManager)
         {
@@ -32,6 +33,11 @@ namespace MORR.Core.Session
             bootstrapper.ComposeImports(this);
             bootstrapper.ComposeImports(configurationManager);
             bootstrapper.ComposeImports(moduleManager);
+
+            configurationManager.LoadConfiguration(configurationPath);
+
+            encoders = Encoders.Where(x => Configuration.Encoders.Contains(x.GetType()));
+            decoders = Decoders.Where(x => Configuration.Decoders?.Contains(x.GetType()) ?? false);
         }
 
         [ImportMany]
@@ -57,14 +63,14 @@ namespace MORR.Core.Session
             return new DirectoryPath(directory);
         }
 
-        public void StartRecording(FilePath configurationPath)
+        public void StartRecording()
         {
-            LoadUsingConfig(configurationPath);
-
             if (isRecording)
             {
                 throw new AlreadyRecordingException();
             }
+
+            moduleManager.InitializeModules();
 
             isRecording = true;
 
@@ -99,15 +105,14 @@ namespace MORR.Core.Session
             GlobalHook.IsActive = false;
         }
 
-        public void Process(FilePath configurationPath, IEnumerable<DirectoryPath> recordings)
+        public void Process(IEnumerable<DirectoryPath> recordings)
         {
-            LoadUsingConfig(configurationPath);
-
             if (!decoders.Any())
             {
                 throw new InvalidConfigurationException("No decoder specified for processing operation.");
             }
 
+            moduleManager.InitializeModules();
             moduleManager.NotifyModulesOnSessionStart();
 
             foreach (var recording in recordings)
@@ -136,16 +141,6 @@ namespace MORR.Core.Session
             }
 
             moduleManager.NotifyModulesOnSessionStop();
-        }
-
-        private void LoadUsingConfig(FilePath configurationPath)
-        {
-            configurationManager.LoadConfiguration(configurationPath);
-
-            encoders = Encoders.Where(x => Configuration.Encoders.Contains(x.GetType()));
-            decoders = Decoders.Where(x => Configuration.Decoders?.Contains(x.GetType()) ?? false);
-
-            moduleManager.InitializeModules();
         }
     }
 }

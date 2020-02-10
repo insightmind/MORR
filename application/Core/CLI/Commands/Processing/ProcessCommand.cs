@@ -28,7 +28,7 @@ namespace MORR.Core.CLI.Commands.Processing
 
         #region LifeCycle
 
-        public ProcessCommand() : this(new SessionManager(), new ConsoleFormatter()) { }
+        public ProcessCommand(ISessionManager sessionManager) : this(sessionManager, new ConsoleFormatter()) { }
 
         public ProcessCommand(
             ISessionManager sessionManager,
@@ -66,7 +66,7 @@ namespace MORR.Core.CLI.Commands.Processing
 
                 // Start processing
                 consoleFormatter.PrintDebug(startProcessingMessage);
-                sessionManager.Process(configPath, new[] { inputPath });
+                sessionManager.Process(new[] { inputPath });
                 consoleFormatter.PrintDebug(completeProcessingMessage);
 
                 return 0;

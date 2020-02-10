@@ -20,8 +20,16 @@ namespace MORR.Core.CLI
                    .ParseArguments<ValidateOptions, RecordOptions, ProcessOptions>(args)
                    .MapResult(
                        (ValidateOptions opts) => new ValidateCommand().Execute(opts),
-                       (RecordOptions opts) => new RecordCommand().Execute(opts),
-                       (ProcessOptions opts) => new ProcessCommand().Execute(opts),
+                       (RecordOptions opts) =>
+                       {
+                           var sessionManager = new SessionManager(new FilePath(Path.GetFullPath(opts.ConfigPath)));
+                           return new RecordCommand(sessionManager).Execute(opts);
+                       },
+                       (ProcessOptions opts) =>
+                       {
+                           var sessionManager = new SessionManager(new FilePath(Path.GetFullPath(opts.ConfigPath)));
+                           return new ProcessCommand(sessionManager).Execute(opts);
+                       },
                        errs => 1);
         }
     }

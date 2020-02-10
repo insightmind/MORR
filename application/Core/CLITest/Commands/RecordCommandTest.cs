@@ -43,7 +43,7 @@ namespace CLITest.Commands
 
             /* GIVEN */
             var mockSequence = new MockSequence();
-            managerMock.InSequence(mockSequence)?.Setup(manager => manager.StartRecording(It.IsAny<FilePath>()));
+            managerMock.InSequence(mockSequence)?.Setup(manager => manager.StartRecording());
             managerMock.InSequence(mockSequence)?.Setup(manager => manager.StopRecording());
 
             commandLineMock
@@ -67,7 +67,7 @@ namespace CLITest.Commands
             Assert.AreEqual(successCode, returnCode);
 
             managerMock.VerifyAll();
-            managerMock.Verify(manager => manager.StartRecording(It.IsAny<FilePath>()), Times.Once);
+            managerMock.Verify(manager => manager.StartRecording(), Times.Once);
             managerMock.Verify(manager => manager.StopRecording(), Times.Once);
 
             messageLoopMock.Verify(loop => loop.Start(), Times.Once);
@@ -85,7 +85,7 @@ namespace CLITest.Commands
 
             /* GIVEN */
             managerMock
-                .Setup(manager => manager.StartRecording(It.IsAny<FilePath>()))?
+                .Setup(manager => manager.StartRecording())?
                 .Throws(new InvalidOperationException());
 
             var command = new RecordCommand(managerMock.Object, outputMock.Object, commandLineMock.Object, messageLoopMock.Object);
@@ -103,7 +103,7 @@ namespace CLITest.Commands
             // We test if the command failed and returned code -1.
             Assert.AreEqual(failCode, returnCode);
 
-            managerMock.Verify(manager => manager.StartRecording(It.IsAny<FilePath>()), Times.Once);
+            managerMock.Verify(manager => manager.StartRecording(), Times.Once);
             managerMock.Verify(manager => manager.StopRecording(), Times.Never);
 
             outputMock.Verify(output => output.PrintError(It.IsAny<InvalidOperationException>()), Times.Once);
@@ -132,7 +132,7 @@ namespace CLITest.Commands
             // We test if the command was unsuccessful and returned code -1.
             Assert.AreEqual(-1, returnCode);
 
-            managerMock.Verify(manager => manager.StartRecording(It.IsAny<FilePath>()), Times.Never);
+            managerMock.Verify(manager => manager.StartRecording(), Times.Never);
             managerMock.Verify(manager => manager.StopRecording(), Times.Never);
         }
 
