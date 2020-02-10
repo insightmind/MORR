@@ -10,13 +10,13 @@ namespace SharedTest.Hook
     [TestClass]
     public class GlobalHookTest
     {
-        private Mock<INativeHook> mockNativeHook;
+        private Mock<IHookNativeMethods> mockNativeHook;
         private const string mockLibraryName = "MockLibraryName.someDLL";
 
         [TestInitialize]
         public void BeforeTest()
         {
-            mockNativeHook = new Mock<INativeHook>();
+            mockNativeHook = new Mock<IHookNativeMethods>();
             mockNativeHook
                 .SetupGet(mock => mock.HookLibraryName)?
                 .Returns(mockLibraryName);

@@ -3,25 +3,25 @@ using System.Runtime.InteropServices;
 
 namespace MORR.Shared.Hook
 {
-    internal class NativeHook: INativeHook
+    internal class HookNativeMethods: IHookNativeMethods
     {
         private const string hookLibName = @"HookLibrary64";
 
         #region Interface Methods
 
-        string INativeHook.HookLibraryName=> hookLibName;
+        string IHookNativeMethods.HookLibraryName=> hookLibName;
 
-        bool INativeHook.FreeLibrary(IntPtr hModule) => FreeLibrary(hModule);
+        bool IHookNativeMethods.FreeLibrary(IntPtr hModule) => FreeLibrary(hModule);
 
-        void INativeHook.SetHook(GlobalHook.CppGetMessageCallback callbackPointer, bool blocking) => SetHook(callbackPointer, blocking);
+        void IHookNativeMethods.SetHook(GlobalHook.CppGetMessageCallback callbackPointer, bool blocking) => SetHook(callbackPointer, blocking);
 
-        IntPtr INativeHook.LoadLibrary() => LoadLibrary(hookLibName);
+        IntPtr IHookNativeMethods.LoadLibrary() => LoadLibrary(hookLibName);
 
-        bool INativeHook.Capture(uint type) => Capture(type);
+        bool IHookNativeMethods.Capture(uint type) => Capture(type);
 
-        void INativeHook.StopCapture(uint type) => StopCapture(type);
+        void IHookNativeMethods.StopCapture(uint type) => StopCapture(type);
 
-        void INativeHook.RemoveHook() => RemoveHook();
+        void IHookNativeMethods.RemoveHook() => RemoveHook();
 
         #endregion
 

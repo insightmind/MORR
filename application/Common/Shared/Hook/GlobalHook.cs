@@ -38,7 +38,7 @@ namespace MORR.Shared.Hook
 
         private static bool isActive;
         private static IntPtr hookLibrary;
-        private static INativeHook nativeHook;
+        private static IHookNativeMethods nativeHook;
 
         //map message types to lists of interested listeners
         private static readonly Dictionary<MessageType, List<RetrieveMessageCallBack>> listeners = new Dictionary<MessageType, List<RetrieveMessageCallBack>>();
@@ -95,13 +95,13 @@ namespace MORR.Shared.Hook
         /// <summary>
         ///     Initializes the Library with the default hook.
         /// </summary>
-        public static void Initialize() => Initialize(new NativeHook());
+        public static void Initialize() => Initialize(new HookNativeMethods());
 
         /// <summary>
         ///     Initializes the Library with the given hook
         /// </summary>
         /// <param name="hook">The hook used as an interaction point.</param>
-        public static void Initialize(INativeHook hook)
+        public static void Initialize(IHookNativeMethods hook)
         {
             FreeLibrary();
             nativeHook = hook;

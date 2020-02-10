@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace MORR.Shared.Hook
 {
-    public interface INativeHook
+    public interface IHookNativeMethods
     {
         string HookLibraryName { get; }
 
