@@ -6,6 +6,7 @@ class ButtonClickEvent extends BrowserEvent {
     + buttonTitle : string
     + buttonHref? : string
     + ButtonClickEvent(tabID : number, windowID : number, buttonTitle : string, buttonHref? : string, url : string)
+    + {static} deserialize(parsed : any, sender? : chrome.runtime.MessageSender) : ButtonClickEvent
 }
 interface IEvent {
     + timeStamp : Date
@@ -20,9 +21,9 @@ class BrowserEvent {
     + timeStamp : Date
     + issuingModule : number
     + type : EventType
-    + serialize() : string
     + tabID : number
     + url : URL
     + windowID : number
+    + serialize(noUnderScore : boolean) : string
 }
 @enduml

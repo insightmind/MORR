@@ -5,6 +5,7 @@ skinparam classAttributeIconSize 0
 class HoverEvent extends BrowserEvent {
     + target : string
     + HoverEvent(tabID : number, windowID : number, target : string, url : string)
+    + {static} deserialize(parsed : any, sender? : chrome.runtime.MessageSender) : HoverEvent
 }
 interface IEvent {
     + timeStamp : Date
@@ -19,9 +20,9 @@ class BrowserEvent {
     + timeStamp : Date
     + issuingModule : number
     + type : EventType
-    + serialize() : string
     + tabID : number
     + url : URL
     + windowID : number
+    + serialize(noUnderScore : boolean) : string
 }
 @enduml

@@ -3,7 +3,7 @@ skinparam linetype ortho
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 class ListenerManager {
-    + ListenerManager(callback : function(BrowserEvent) : void, configurationString : string)
+    + ListenerManager(callback : (Shared.BrowserEvent) => void, configurationString? : string)
     + startAll()
     + stopAll()
 }

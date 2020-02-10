@@ -3,7 +3,7 @@ skinparam linetype ortho
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 class DOMEventFactory {
-	+ createEvent(domEvent : Event) : BrowserEvent
+	+ createEvent(domEvent : Event) : Promise<BrowserEvent | undefined>
 }
 DOMEventRecorder *-- DOMEventFactory
 DOMEventFactory .DOWN.> TextInputEvent : creates

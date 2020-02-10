@@ -10,7 +10,8 @@
 \begin{methods}
 \begin{method}{public start() : void}{Start recording DOM events and sending the respective data back to the DOMEventListener.}
 \end{method}
-\begin{method}{public stop() : void}{Stop recording DOM events and sending them back.}
+\begin{method}{public stop() : void}{Stop recording DOM events and sending them back. When this is issued, the contentscript will terminate.
+    To launch the DOMEventRecorder again, the contentscript has to be injected again by the DOMEventListener.}
 \end{method}
 \end{methods}
 \end{class}
@@ -24,8 +25,8 @@
 \clsdsp{The DOMEventFactory is responsible for creating BrowserEvent objects from the DOM-Event objects created by the browser upon user-interaction from a website.}
 
 \begin{methods}
-\begin{method}{createEvent(domEvent : Event) : BrowserEvent}{Create a new BrowserEvent from an Event object raised by the browser.}
-\return{BrowserEvent}{A BrowserEvent.}
+\begin{method}{createEvent(domEvent : Event) : Promise<BrowserEvent | undefined>}{Asynchronously create a new BrowserEvent from an Event object raised by the browser.}
+\return{Promise<BrowserEvent | undefined>}{A promise which will be filled with an event if one could be created from the passed domEvent, or filled with undefined otherwise.}
 \begin{parameters}
 \para{domEvent : Event}{The DOM event raised by the browser.}
 \end{parameters}

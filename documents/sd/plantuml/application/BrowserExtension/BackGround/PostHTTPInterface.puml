@@ -7,14 +7,16 @@ interface ICommunicationStrategy {
     + establishConnection() : Promise<void>
     + requestConfig() : Promise<string>
     + waitForStart() : Promise<void>
-    + sendData(data : string) : Promise<void>
+    + sendData(data : string) : Promise<string>
+    + addOnStopListener(callback: (error? : boolean) => void) : void
 }
 class PostHTTPInterface {
-    + PostHTTPInterface(uri : string)
+    + PostHTTPInterface(uri? : string)
     + establishConnection() : Promise<void>
     + requestConfig() : Promise<string>
     + waitForStart() : Promise<void>
-    + sendData(data : string) : Promise<void>
+    + sendData(data : string) : Promise<string>
+    + addOnStopListener(callback: (error? : boolean) => void) : void
 }
 PostHTTPInterface .UP.|> ICommunicationStrategy : implements
 @enduml

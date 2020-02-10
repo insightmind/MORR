@@ -8,13 +8,11 @@
 \clsdsp{The BackgroundScript class serves as the main class of the browser extension. It is responsible for creating and starting/stopping the ListenerManager and the CommunicationStrategy.}
 
 \begin{constructors}
-\begin{constructor}{constructor()}{Initialize the BackgroundScript and thus the browser extension. After this function is completed, the browser extension is ready and awaits a signal from the MORR application.}
+\begin{constructor}{constructor()}{Initialize the BackgroundScript.}
 \end{constructor}
 \end{constructors}
 \begin{methods}
-\begin{method}{public start() : void}{Start all components necessary for a session recording. To be called when a recording starts.}
-\end{method}
-\begin{method}{public stop() : void}{Stop all components which should only be active during a session recording. To be called when a recording stops.}
+\begin{method}{public run() : void}{Run the BackgroundScript and thus the webextension.}
 \end{method}
 \begin{method}{public callback(BrowserEvent event) : void}{Function to be handed over as callback to all components which create events during a recording. The BackgroundScript class is responsible to forward these events to the ICommunicationStrategy for transmission to the MORR application.}
 \begin{parameters}
@@ -33,10 +31,10 @@
 \clsdsp{The ListenerManager is responsible for creating all IListeners and keeping references to them. The ListenerManager provides methods to start/stop all attached listeners.}
 
 \begin{constructors}
-\begin{constructor}{constructor(callback : (event : BrowserEvent) => void, configurationString : string)}{Initialize the ListenerManager and therefore all configured listeners.}
+\begin{constructor}{constructor(callback : (event : BrowserEvent) => void, configurationString? : string)}{Initialize the ListenerManager and therefore all configured listeners.}
 \begin{parameters}
 \para{callback : (event : BrowserEvent) => void}{The callback function to pass to the managed listeners.}
-\para{configurationString : string}{A valid JSON string containing optional configuration. The configuration determines whether specific event types shall be recorded or not.}
+\para{configurationString? : string}{A valid JSON string containing optional configuration. This parameter is currently ignored.}
 \end{parameters}
 \end{constructor}
 \end{constructors}
@@ -57,17 +55,19 @@
 \clsdsp{A conrete implementation of ICommunicationStrategy provides means to communicate with the MORR application. This includes sending the generated BrowserEvents from the browser extension to the MORR application where they will be processed.}
 
 \begin{methods}
-\begin{method}{establishConnection() : Promise<void>}{Asynchronously try to establish a connection to the MORR application.}
+\begin{method}{establishConnection() : Promise<void>}{Asynchronously establish a connection with the main application.}
 \return{Promise<void>}{A Promise which will be resolved when the connection is established successfully.}
 \end{method}
 \begin{method}{requestConfig() : Promise<string>}{Asynchronously request a configuration string from the MORR application.}
-\return{Promise<string>}{A Promise which will be resolved and filled with the configuration string as soon as the configuration string is received.}
+\return{Promise<string>}{A Promise which will be resolved and filled with the configuration string when the configuration string is received.}
 \end{method}
 \begin{method}{waitForStart() : Promise<void>}{Asynchronously await a start signal from the MORR application.}
 \return{Promise<void>}{A Promise which will be resolved when the start signal is received.}
 \end{method}
-\begin{method}{sendData(data : string) : Promise<void>}{Asynchronously send event data to the MORR application.}
-\return{Promise<void>}{A Promise which will be resolved when the data is sent successfully.}
+\begin{method}{sendData(data : string) : Promise<string>}{Asynchronously send serialized event data to the MORR application.}
+\return{Promise<string>}{A Promise which will be filled with a response from the MORR application and resolved when the data is sent successfully.}
+\end{method}
+\begin{method}{addOnStopListener(callback: (error? : boolean) => void) : void}{Set a function to be executed when the CommunicationStrategy receives a stop signal from the MORR application.}
 \end{method}
 \end{methods}
 \end{interface}
@@ -89,16 +89,20 @@
 \end{constructors}
 \begin{methods}
 \begin{method}{establishConnection() : Promise<void>}{Asynchronously try to establish a connection to the MORR application.}
-\return{Promise<void>}{A Promise which will be resolved when the connection is established successfully.}
+\return{Promise<void>}{A Promise which will be resolved when the connection is established successfully and rejected if the connection was declined.}
 \end{method}
 \begin{method}{requestConfig() : Promise<string>}{Asynchronously request a configuration string from the MORR application.}
-\return{Promise<string>}{A Promise which will be resolved and filled with the configuration string as soon as the configuration string is received.}
+\return{Promise<string>}{A Promise which will be resolved and filled with the configuration string as soon as the configuration string is received and rejected
+if the request was declined or the connection was interrupted.}
 \end{method}
 \begin{method}{waitForStart() : Promise<void>}{Asynchronously await a start signal from the MORR application.}
-\return{Promise<void>}{A Promise which will be resolved when the start signal is received.}
+\return{Promise<void>}{A Promise which will be resolved when the start signal is received and rejected if the request is declined or the connection interrupted.}
 \end{method}
-\begin{method}{sendData(data : string) : Promise<void>}{Asynchronously send event data to the MORR application.}
-\return{Promise<void>}{A Promise which will be resolved when the data is sent successfully.}
+\begin{method}{sendData(data : string) : Promise<string>}{Asynchronously send serialized event data to the MORR application.}
+\return{Promise<string>}{A Promise which will be filled with a response from the MORR application and resolved when the data is sent successfully.
+The Promise might be rejected if the request is declined or the connection interrupted.}
+\end{method}
+\begin{method}{addOnStopListener(callback: (error? : boolean) => void) : void}{Set a function to be executed when the CommunicationStrategy receives a stop signal from the MORR application.}
 \end{method}
 \end{methods}
 \end{class}
