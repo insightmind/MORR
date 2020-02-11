@@ -11,8 +11,6 @@ package SHARED #E6E6E6 {
         package Configuration <<Rectangle>> #BFBFBF {
             !includesub ../application/Common/Shared/Configuration/IConfiguration.puml!default
 
-            !includesub ../application/Core/MORR/Configuration/InvalidConfigurationException.puml!default
-
             !includesub ../application/Common/Shared/Configuration/RawConfiguration.puml!default
 
             IConfiguration ..> RawConfiguration : "uses"
