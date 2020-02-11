@@ -1,0 +1,12 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+!startsub default
+class RecordOptions {
+    + IsVerbose: bool <<get>> <<set>>
+    + ConfigPath: string <<get>> <<set>>
+}
+!endsub
+
+@enduml

@@ -225,15 +225,6 @@ package MORR {
 
                             !includesub ../application/Core/MORR/Data/Capture/Video/Desktop/Utility/GraphicsCaptureHelper.puml!default
 
-                            class MonitorInfo {
-                                + IsPrimary: bool <<get>> <<set>>
-                                + ScreenSize: Vector2 <<get>> <<set>>
-                                + MonitorArea: Rect <<get>> <<set>>
-                                + WorkArea: Rect <<get>> <<set>>
-                                + DeviceName: string <<get>> <<set>>
-                                + Hmon: IntPtr <<get>> <<set>>
-                            }
-
                             !includesub ../application/Core/MORR/Data/Capture/Video/Desktop/Utility/MonitorEnumerationHelper.puml!default
 
                             MonitorEnumerationHelper ..> MonitorInfo : "uses"
@@ -399,41 +390,25 @@ package MORR {
             }
 
             together {
-                class ProcessCommand {
-                    + Execute(options: ProcessOptions) : int
-                }
+                !includesub ../application/Core/CLI/Commands/Processing/ProcessCommand.puml!default
 
-                class ProcessOptions {
-                    + IsVerbose: bool <<get>> <<set>>
-                    + ConfigPath: string <<get>> <<set>>
-                    + InputFile: string <<get>> <<set>>
-                }
+                !includesub ../application/Core/CLI/Commands/Processing/ProcessOptions.puml!default
 
                 ProcessCommand ..> ProcessOptions : "uses"
             }
 
             together {
-                class RecordCommand {
-                    + Execute(options: RecordOptions) : int
-                }
+                !includesub ../application/Core/CLI/Commands/Record/RecordCommand.puml!default
 
-                class RecordOptions {
-                    + IsVerbose: bool <<get>> <<set>>
-                    + ConfigPath: string <<get>> <<set>>
-                }
+                !includesub ../application/Core/CLI/Commands/Record/RecordOptions.puml!default
 
                 RecordCommand ..> RecordOptions : "uses"
             }
 
             together {
-                class ValidateCommand {
-                    + Execute(options: ValidateOptions) : int
-                }
+                !includesub ../application/Core/CLI/Commands/Validate/ValidateCommand.puml!default
 
-                class ValidateOptions {
-                    + IsVerbose: bool <<get>> <<set>>
-                    + ConfigPath: string <<get>> <<set>>
-                }
+                !includesub ../application/Core/CLI/Commands/Validate/ValidateOptions.puml!default
 
                 ValidateCommand ..> ValidateOptions : "uses"
             }
@@ -448,22 +423,13 @@ package MORR {
         }
 
         together {
-            class InteractiveCommandLine {
-                + Launch(cancelAction: Action) : void
-            }
+            !includesub ../application/Core/CLI/Interactive/InteractiveCommandLine.puml!default
         }
 
         together {
-            class IOutputFormatter {
+            !includesub ../application/Core/CLI/Output/IOutputFormatter.puml!default
 
-            }
-
-            class OutputFormatter {
-                ~ IsVerbose: bool <<get>> <<set>>
-                + Encode(path: DirectoryPath) : void
-                ~ {static} PrintError(exception: Exception) : void
-                ~ {static} PrintDebug(message: string) : void
-            }
+            !includesub ../application/Core/CLI/Output/OutputFormatter.puml!default
 
             OutputFormatter ..|> IOutputFormatter
         }

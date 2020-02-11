@@ -3,22 +3,11 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 hide empty fields
 
-class ICLICommand {
-    + ExecuteCommand(options: Options)
-}
-
-class ProcessOptions {
-    + Input : string
-    + Output : string
-    + ProcessingEnabled: bool
-    + Verbose: bool
-}
-
+!startsub default
 class ProcessCommand {
-    + ProcessCommand(recordingManager : IRecordingManager)
-    + ExecuteCommand(options: ProcessOptions)
+    + Execute(options: ProcessOptions) : int
 }
-
+!endsub
 ProcessCommand ... ProcessOptions : uses
 ICLICommand <.. ProcessCommand : implements
 IRecordingManager <-- "receiver" ProcessCommand
