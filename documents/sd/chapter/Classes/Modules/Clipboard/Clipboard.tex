@@ -16,53 +16,82 @@
     \clsdcl{public abstract class ClipboardEvent : Event}
 
     \clsdsp{A generic clipboard event which all specific ClipboardEvents inherit from.}
+    
+    \begin{attributes}
+        \attribute{public string ClipboardText}{The text in the clipboard.}
+    \end{attributes}
 \end{absclass}
 
-\begin{class}{ClipboardInteractEvent} 
-    \clsdiagram[scale=0.9]{resources/Classes/Modules/Clipboard/Events/ClipBoardInteractEvent.png}
+\begin{class}{ClipboardCopyEvent} 
+    \clsdiagram[scale=0.9]{resources/Classes/Modules/Clipboard/Events/ClipboardCopyEvent.png}
 
-    \clsdcl{public class ClipboardInteractEvent : ClipboardEvent}
+    \clsdcl{public class ClipboardCopyEvent : ClipboardEvent}
 
-    \clsdsp{A clipboard user interaction.}
+    \clsdsp{A copy into clipboard user interaction.}
 
-    \begin{attributes}
-        \attribute{public string Text}{The text in the clipboard.}
-        \attribute{public InteractionType Interaction}{The interaction type.}
-    \end{attributes}
 \end{class}
 
-\begin{enum}{InteractionType}
-    \clsdiagram[scale=0.9]{resources/Classes/Modules/Clipboard/Events/InteractionType.png}
+\begin{class}{ClipboardCutEvent} 
+    \clsdiagram[scale=0.9]{resources/Classes/Modules/Clipboard/Events/ClipboardCutEvent.png}
 
-    \clsdcl{public enum InteractionType}
+    \clsdcl{public class ClipboardCutEvent : ClipboardEvent}
 
-    \clsdsp{An Enumeration to specify the four interaction type with a clipboard: clear, copy, cut and paste.}
+    \clsdsp{A cut into clipboard user interaction.}
 
-    \begin{elements}
-        \element{Clear}{Clear the content from the clipboard.}
-        \element{Copy}{Copy content into the clipboard.}
-        \element{Cut}{Cut content into the clipboard.}
-        \element{Paste}{Paste from the clipboard.}
-    \end{elements}
-\end{enum}
+\end{class}
+
+\begin{class}{ClipboardPasteEvent} 
+    \clsdiagram[scale=0.9]{resources/Classes/Modules/Clipboard/Events/ClipboardPasteEvent.png}
+
+    \clsdcl{public class ClipboardPasteEvent : ClipboardEvent}
+
+    \clsdsp{A paste from clipboard user interaction.}
+
+\end{class}
 
 \subsection*{Producers}
 
-\begin{class}{ClipboardInteractEventProducer} 
-	\clsdiagram[scale = 0.7]{resources/Classes/Modules/Clipboard/Producers/ClipboardInteractEventProducer.png}
+\begin{class}{ClipboardCopyEventProducer} 
+	\clsdiagram[scale = 0.7]{resources/Classes/Modules/Clipboard/Producers/ClipboardCopyEventProducer.png}
     
-    \clsdcl{public class ClipboardInteractEventProducer : EventQueue<ClipboardInteractEvent>}
+    \clsdcl{public class ClipboardCopyEventProducer : DefaultEventQueue<ClipboardCopyEvent>}
 
-    \clsdsp{A single-writer-multiple-reader queue for ClipboardInteractEvent}
+    \clsdsp{Provides a single-writer-multiple-reader queue for ClipboardCopyEvent}
 
     \begin{methods}
-        \begin{method}{public override IAsyncEnumerable<ClipboardInteractEvent> GetEvents()}{Asynchronously gets all clipboard interaction events}
-          \return{IAsyncEnumerable<ClipboardInteractEvent>}{A stream of ClipboardInteractEvent}
+        \begin{method}{public void StartCapture()}{Starts capturing clipboard copy events}
         \end{method}
-        \begin{method}{protected override void Enqueue(ClipboardInteractEvent event)}{Asynchronously enqueues a new clipboard interaction event}
-            \begin{parameters}
-                \para{ClipboardInteractEvent event}{ClipboardInteractEvent to enqueue}
-            \end{parameters}
+        \begin{method}{public void StopCapture()}{Stops capturing clipboard copy events}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{ClipboardCutEventProducer} 
+	\clsdiagram[scale = 0.7]{resources/Classes/Modules/Clipboard/Producers/ClipboardCutEventProducer.png}
+    
+    \clsdcl{public class ClipboardCutEventProducer : DefaultEventQueue<ClipboardCutEvent>}
+
+    \clsdsp{Provides a single-writer-multiple-reader queue for ClipboardCutEvent}
+
+    \begin{methods}
+        \begin{method}{public void StartCapture()}{Starts capturing clipboard cut events}
+        \end{method}
+        \begin{method}{public void StopCapture()}{Stops capturing clipboard cut events}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{ClipboardPasteEventProducer} 
+	\clsdiagram[scale = 0.7]{resources/Classes/Modules/Clipboard/Producers/ClipboardPasteEventProducer.png}
+    
+    \clsdcl{public class ClipboardPasteEventProducer : DefaultEventQueue<ClipboardPasteEvent>}
+
+    \clsdsp{Provides a single-writer-multiple-reader queue for ClipboardPasteEvent}
+
+    \begin{methods}
+        \begin{method}{public void StartCapture()}{Starts capturing clipboard paste events}
+        \end{method}
+        \begin{method}{public void StopCapture()}{Stops capturing clipboard paste events}
         \end{method}
     \end{methods}
 \end{class}
