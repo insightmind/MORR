@@ -1,8 +1,0 @@
-@startuml
-skinparam monochrome true
-skinparam classAttributeIconSize 0
-
-interface IMetadataCapture {
-    + NextSample() : MetadataSample
-}
-@enduml

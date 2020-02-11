@@ -1,0 +1,16 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+!startsub default
+class MpegEncoderConfiguration {
+    + Width: uint <<get>> <<set>>
+    + Height: uint <<get>> <<set>>
+    + KiloBitsPerSecond: uint <<get>> <<set>>
+    + FramesPerSecond: uint <<get>> <<set>>
+    + RecordingName: string <<get>> <<set>>
+    + Parse(RawConfiguration: configuration)
+}
+!endsub
+
+@enduml

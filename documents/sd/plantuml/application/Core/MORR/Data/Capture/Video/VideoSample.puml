@@ -2,8 +2,10 @@
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 
-interface IAudioCapture {
-    + NextSample() : AudioSample
+!startsub default
+class VideoSample {
+
 }
+!endsub
 
 @enduml

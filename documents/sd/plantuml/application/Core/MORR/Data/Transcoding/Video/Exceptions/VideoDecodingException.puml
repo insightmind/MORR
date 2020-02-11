@@ -2,9 +2,10 @@
 
 skinparam monochrome true
 skinparam classAttributeIconSize 0
-
+!startsub default
 class VideoDecodingException {
 }
+!endsub
 DecodingException <|-- VideoDecodingException
 Exception <|-- DecodingException
 @enduml

@@ -3,11 +3,14 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 
 interface IVideoCapture
-
+!startsub default
 class DesktopCapture {
-    + CaptureConfiguration : DesktopCaptureConfiguration <<get>> <<set>>
-    + NextSample() : VideoSample
+    + IsActive : bool
+    + Identifier: Guid
+    + Initialize() : void
+    - StartCapture() : void
+    - StopCapture() : void
 }
-
+!endsub
 IVideoCapture <|-- DesktopCapture
 @enduml

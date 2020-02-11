@@ -1,0 +1,12 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+!startsub default
+class IntermediateFormatSample {
+    + Type : Type <<get>> <<set>>
+    + Data : byte[] <<get>> <<set>>
+}
+!endsub
+
+@enduml

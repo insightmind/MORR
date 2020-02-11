@@ -1,9 +1,11 @@
 @startuml
 skinparam monochrome true
 skinparam classAttributeIconSize 0
+
 !startsub default
-class EncodingException {
+class DirectXVideoSample {
+    + Surface : IDirect3DSurface <<get>> <<set>>
 }
 !endsub
-Exception <|-- EncodingException
+
 @enduml

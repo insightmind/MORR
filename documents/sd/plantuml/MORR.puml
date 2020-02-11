@@ -200,66 +200,30 @@ package MORR {
 
         package Data <<Rectangle>> #BFBFBF {
             together {
-                class CaptureException {
-                    + <<create>> CaptureException()
-                    + <<create>> CaptureException(message: string)
-                    + <<create>> CaptureException(message: string, innerException: Exception)
-                }
+                !includesub application/Core/MORR/Data/Capture/CaptureException.puml!default
 
                 together {
-                    class DirectXVideoSample {
-                        + Surface : IDirect3DSurface <<get>> <<set>>
-                    }
+                    !includesub application/Core/MORR/Data/Capture/Video/DirectXVideoSample.puml!default
 
-                    class VideoSample {
-
-                    }
+                    !includesub application/Core/MORR/Data/Capture/Video/VideoSample.puml!default
 
                     together {
-                        class VideoCaptureException {
-                            + <<create>> VideoCaptureException()
-                            + <<create>> VideoCaptureException(message: string)
-                            + <<create>> VideoCaptureException(message: string, innerException: Exception)
-                        }
+                        !includesub application/Core/MORR/Data/Capture/Video/Exceptions/VideoCaptureException.puml!default
 
                         CaptureException <|-- VideoCaptureException
                     }
 
                     package Desktop <<Rectangle>> #E6E6E6 {
-                        class DesktopCapture {
-                            + IsActive : bool
-                            + Identifier: Guid
-                            + Initialize() : void
-                            - StartCapture() : void
-                            - StopCapture() : void
-                        }
+                        !includesub application/Core/MORR/Data/Capture/Video/Desktop/DesktopCapture.puml!default
 
-                        class DesktopCaptureConfiguration {
-                            + Index: MonitorIndex <<get>> <<private set>>
-                            + PromptUserForMonitorSelection: bool <<get>> <<private set>>
-                            + Parse(RawConfiguration: configuration) : void
-                        }
+                        !includesub application/Core/MORR/Data/Capture/Video/Desktop/DesktopCaptureConfiguration.puml!default
 
-                        class VideoSampleProducer {
-                            + <<create>> VideoSampleProducer()
-                            + StartCapture(item: GraphicsCaptureItem) : void
-                            + StopCapture() : void
-                            + Dispose() : void
-                        }
+                        !includesub application/Core/MORR/Data/Capture/Video/Desktop/VideoSampleProducer.puml!default
 
                         together {
-                            class Direct3D11Helper {
-                                ~ {static} CreateDevice(useWARP: bool) : IDirect3DDevice?
-                                ~ {static} CreateDirect3DSurfaceFromSharpDXTexture(texture: Texture2D) : IDirect3DSurface?
-                                ~ {static} CreateSharpDXDevice(device: IDirect3DDevice) : Device?
-                                ~ {static} CreateSharpDXTexture2D(surface: IDirect3DSurface) : Texture2D?
-                            }
+                            !includesub application/Core/MORR/Data/Capture/Video/Desktop/Utility/Direct3D11Helper.puml!default
 
-                            class GraphicsCaptureHelper {
-                                ~ {static} CanCreateItemWithoutPicker: bool <<get>>
-                                ~ {static} SetWindow(picker: GraphicsCapturePicker, hWnd: IntPtr) : void
-                                ~ {static} CreateItemForMonitor(hMon: IntPtr) : GraphicsCaptureItem?
-                            }
+                            !includesub application/Core/MORR/Data/Capture/Video/Desktop/Utility/GraphicsCaptureHelper.puml!default
 
                             class MonitorInfo {
                                 + IsPrimary: bool <<get>> <<set>>
@@ -270,9 +234,7 @@ package MORR {
                                 + Hmon: IntPtr <<get>> <<set>>
                             }
 
-                            class MonitorEnumerationHelper {
-                                + {static} GetMonitors() : IEnumerable<MonitorInfo>
-                            }
+                            !includesub application/Core/MORR/Data/Capture/Video/Desktop/Utility/MonitorEnumerationHelper.puml!default
 
                             MonitorEnumerationHelper ..> MonitorInfo : "uses"
                         }
@@ -289,66 +251,34 @@ package MORR {
             }
 
             together {
-                class IntermediateFormatSample {
-                    + Type : Type <<get>> <<set>>
-                    + Data : byte[] <<get>> <<set>>
-                }
+                !includesub application/Core/MORR/Data/IntermediateFormat/IntermediateFormatSample.puml!default
 
                 together {
-                    class JsonIntermediateFormatDeserializer {
-                        + IsActive: Bool <<get>> <<set>>
-                        + Identifier: Guid <<get>>
-                        + Initialize() : void
-                    }
+                    !includesub application/Core/MORR/Data/IntermediateFormat/Json/JsonIntermediateFormatDeserializer.puml!default
 
-                    class JsonIntermediateFormatSample {
-                        + JsonEncodedData: JsonDocument <<get>>
-                        + JsonEncodedType: JsondEncodedText <<get>>
-                    }
+                    !includesub application/Core/MORR/Data/IntermediateFormat/Json/JsonIntermediateFormatSample.puml!default
 
-                    class JsonIntermediateFormatSerializer {
-                        + IsActive: Bool <<get>> <<set>>
-                        + Identifier: Guid <<get>>
-                        + Initialize() : void
-                    }
+                    !includesub application/Core/MORR/Data/IntermediateFormat/Json/JsonIntermediateFormatSerializer.puml!default
                 }
 
                 IntermediateFormatSample <|-- JsonIntermediateFormatSample
             }
 
             package Transcoding <<Rectangle>> #E6E6E6 {
-                interface IDecoder {
-                    + Decode(path: FilePath) : void
-                }
+                !includesub application/Core/MORR/Data/Transcoding/IDecoder.puml!default
 
-                interface IEncoder {
-                    + Encode(directoryRecordingPath: DirectoryPath) : void
-                }
+                !includesub application/Core/MORR/Data/Transcoding/IEncoder.puml!default
 
                 package MPEG <<Rectangle>> #BFBFBF {
-                    class MpegEncoder {
-                        + Encode(directoryRecordingPath: DirectoryPath) : void
-                    }
+                    !includesub application/Core/MORR/Data/Transcoding/MPEG/MPEGEncoder.puml!default
                     
-                    class MpegEncoderConfiguration {
-                        + Width: uint <<get>> <<set>>
-                        + Height: uint <<get>> <<set>>
-                        + KiloBitsPerSecond: uint <<get>> <<set>>
-                        + FramesPerSecond: uint <<get>> <<set>>
-                        + RecordingName: string <<get>> <<set>>
-                        + Parse(RawConfiguration: configuration)
-                    }
+                    !includesub application/Core/MORR/Data/Transcoding/MPEG/MPEGEncoderConfiguration.puml!default
                 }
 
                 package Json <<Rectangle>> #BFBFBF {
-                    class JsonDecoder {
-                        + {static} Identifier: Guid <<get>>
-                        + Decode(path: FilePath) : void
-                    }
+                    !includesub application/Core/MORR/Data/Transcoding/Json/JsonDecoder.puml!default
 
-                    class JsonEncoder {
-                        + Encode(directoryRecordingPath: DirectoryPath) : void
-                    }
+                    !includesub application/Core/MORR/Data/Transcoding/Json/JsonEncoder.puml!default
                 }
 
                 IEncoder <|.. MpegEncoder

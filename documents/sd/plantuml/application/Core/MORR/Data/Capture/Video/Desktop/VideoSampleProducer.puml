@@ -1,0 +1,14 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+!startsub default
+class VideoSampleProducer {
+    + <<create>> VideoSampleProducer()
+    + StartCapture(item: GraphicsCaptureItem) : void
+    + StopCapture() : void
+    + Dispose() : void
+}
+!endsub
+
+@enduml
