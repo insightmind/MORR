@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using MORR.Core.CLI.Interactive;
 using MORR.Core.CLI.Utility;
+using MORR.Shared.Hook;
 
 namespace MORR.Core.CLI.Commands.Record
 {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.Composition;
-using System.Data.Common;
 using MORR.Modules.WindowManagement.Producers;
 using MORR.Shared.Modules;
 using MORR.Shared.Utility;

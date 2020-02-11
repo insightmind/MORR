@@ -1,7 +1,8 @@
 using System.Windows;
 using MORR.Modules.Mouse.Events;
+using MORR.Modules.Mouse.Native;
 using MORR.Shared.Events.Queue;
-using MORR.Shared.Utility;
+using MORR.Shared.Hook;
 
 namespace MORR.Modules.Mouse.Producers
 {
@@ -12,13 +13,13 @@ namespace MORR.Modules.Mouse.Producers
     {
         public void StartCapture()
         {
-            GlobalHook.AddListener(MouseHookCallback, NativeMethods.MessageType.WM_MOUSEWHEEL);
+            GlobalHook.AddListener(MouseHookCallback, GlobalHook.MessageType.WM_MOUSEWHEEL);
             GlobalHook.IsActive = true;
         }
 
         public void StopCapture()
         {
-            GlobalHook.RemoveListener(MouseHookCallback, NativeMethods.MessageType.WM_MOUSEWHEEL);
+            GlobalHook.RemoveListener(MouseHookCallback, GlobalHook.MessageType.WM_MOUSEWHEEL);
             base.Close();
         }
 

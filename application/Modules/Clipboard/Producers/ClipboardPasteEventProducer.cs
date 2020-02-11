@@ -1,5 +1,7 @@
 ﻿using MORR.Modules.Clipboard.Events;
+using MORR.Modules.Clipboard.Native;
 using MORR.Shared.Events.Queue;
+using MORR.Shared.Hook;
 using MORR.Shared.Utility;
 
 namespace MORR.Modules.Clipboard.Producers
@@ -13,12 +15,12 @@ namespace MORR.Modules.Clipboard.Producers
         public void StartCapture()
         {
             GlobalHook.IsActive = true;
-            GlobalHook.AddListener(GlobalHookCallBack, NativeMethods.MessageType.WM_PASTE);
+            GlobalHook.AddListener(GlobalHookCallBack, GlobalHook.MessageType.WM_PASTE);
         }
 
         public void StopCapture()
         {
-            GlobalHook.RemoveListener(GlobalHookCallBack, NativeMethods.MessageType.WM_PASTE);
+            GlobalHook.RemoveListener(GlobalHookCallBack, GlobalHook.MessageType.WM_PASTE);
             Close();
         }
 
@@ -27,7 +29,7 @@ namespace MORR.Modules.Clipboard.Producers
 
         private void GlobalHookCallBack(GlobalHook.HookMessage message)
         {
-            var text = NativeMethods.GetClipboardText();
+            var text = ClipboardNativeMethods.GetClipboardText();
 
             //create the corresponding new Event
             var clipboardPasteEvent = new ClipboardPasteEvent
