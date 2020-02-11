@@ -11,12 +11,12 @@ namespace MouseTest
     [TestClass]
     public class MouseModuleTest
     {
-        private MouseModule mouseModule;
+        private CompositionContainer container;
         private Mock<MouseClickEventProducer> mouseClickEventProducer;
+        private MouseModule mouseModule;
+        private MouseModuleConfiguration mouseModuleConfiguration;
         private Mock<MouseMoveEventProducer> mouseMoveEventProducer;
         private Mock<MouseScrollEventProducer> mouseScrollEventProducer;
-        private MouseModuleConfiguration mouseModuleConfiguration;
-        private CompositionContainer container;
 
         [TestInitialize]
         public void BeforeTest()
@@ -25,7 +25,7 @@ namespace MouseTest
             mouseClickEventProducer = new Mock<MouseClickEventProducer>();
             mouseMoveEventProducer = new Mock<MouseMoveEventProducer>();
             mouseScrollEventProducer = new Mock<MouseScrollEventProducer>();
-            mouseModuleConfiguration = new MouseModuleConfiguration() {SamplingRateInHz = 10, Threshold = 50};
+            mouseModuleConfiguration = new TestMouseModuleConfiguration();
             container = new CompositionContainer();
             container.ComposeExportedValue(mouseClickEventProducer.Object);
             container.ComposeExportedValue(mouseMoveEventProducer.Object);
@@ -63,6 +63,15 @@ namespace MouseTest
 
             /* THEN */
             Assert.IsFalse(mouseModule.IsActive);
+        }
+
+        private class TestMouseModuleConfiguration : MouseModuleConfiguration
+        {
+            public TestMouseModuleConfiguration()
+            {
+                SamplingRateInHz = 10;
+                Threshold = 50;
+            }
         }
     }
 }

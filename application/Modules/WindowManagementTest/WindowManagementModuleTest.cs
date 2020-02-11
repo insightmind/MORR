@@ -11,12 +11,12 @@ namespace WindowManagementTest
     [TestClass]
     public class WindowManagementModuleTest
     {
-        private WindowManagementModule windowManagementModule;
+        private CompositionContainer container;
         private Mock<WindowFocusEventProducer> windowFocusEventProducer;
+        private WindowManagementModule windowManagementModule;
         private Mock<WindowMovementEventProducer> windowMovementEventProducer;
         private Mock<WindowResizingEventProducer> windowResizingEventProducer;
         private Mock<WindowStateChangedEventProducer> windowStateChangedEventProducer;
-        private CompositionContainer container;
 
         [TestInitialize]
         public void BeforeTest()

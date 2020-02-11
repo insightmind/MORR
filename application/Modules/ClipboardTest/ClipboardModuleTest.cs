@@ -11,9 +11,9 @@ namespace ClipboardTest
     [TestClass]
     public class ClipboardModuleTest
     {
-        private ClipboardModule clipboardModule;
         private Mock<ClipboardCopyEventProducer> clipboardCopyEventProducer;
         private Mock<ClipboardCutEventProducer> clipboardCutEventProducer;
+        private ClipboardModule clipboardModule;
         private Mock<ClipboardPasteEventProducer> clipboardPasteEventProducer;
         private CompositionContainer container;
 

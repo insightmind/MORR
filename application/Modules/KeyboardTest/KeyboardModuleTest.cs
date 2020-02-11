@@ -11,9 +11,9 @@ namespace KeyboardTest
     [TestClass]
     public class KeyboardModuleTest
     {
-        private KeyboardModule keyboardModule;
-        private Mock<KeyboardInteractEventProducer> keyboardInteractEventProducer;
         private CompositionContainer container;
+        private Mock<KeyboardInteractEventProducer> keyboardInteractEventProducer;
+        private KeyboardModule keyboardModule;
 
         [TestInitialize]
         public void BeforeTest()

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
@@ -12,18 +11,18 @@ namespace WebBrowserTest
     [TestClass]
     public class WebBrowserModuleTest
     {
-        private WebBrowserModule webBrowserModule;
         private Mock<ButtonClickEventProducer> buttonClickEventProducer;
         private Mock<CloseTabEventProducer> closeTabEventProducer;
+        private CompositionContainer container;
         private Mock<FileDownloadEventProducer> fileDownloadEventProducer;
         private Mock<HoverEventProducer> hoverEventProducer;
         private Mock<NavigationEventProducer> navigationEventProducer;
         private Mock<OpenTabEventProducer> openTabEventProducer;
         private Mock<SwitchTabEventProducer> switchTabEventProducer;
+        private WebBrowserModuleConfiguration testWebBrowserModuleConfiguration;
         private Mock<TextInputEventProducer> textInputEventProducer;
         private Mock<TextSelectionEventProducer> textSelectionEventProducer;
-        private WebBrowserModuleConfiguration testWebBrowserModuleConfiguration;
-        private CompositionContainer container;
+        private WebBrowserModule webBrowserModule;
 
         [TestInitialize]
         public void BeforeTest()
@@ -87,7 +86,10 @@ namespace WebBrowserTest
 
         private class TestWebBrowserModuleConfiguration : WebBrowserModuleConfiguration
         {
-            public new string UrlSuffix { get; set; } = "60024/";
+            public TestWebBrowserModuleConfiguration()
+            {
+                UrlSuffix = "60024/";
+            }
         }
     }
 }
