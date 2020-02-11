@@ -5,7 +5,114 @@ skinparam classAttributeIconSize 0
 
 left to right direction
 hide empty fields
-!includesub ../complete_diagram/MORR.puml!SHARED
-'!includesub ../complete_diagram/MORR.puml!SHARED_INTERNAL
-'!includesub ../complete_diagram/MORR.puml!EVENTQUEUES
+
+!startsub default
+package SHARED #E6E6E6 {
+        package Configuration <<Rectangle>> #BFBFBF {
+            !includesub ../application/Common/Shared/Configuration/IConfiguration.puml!default
+
+            !includesub ../application/Core/MORR/Configuration/InvalidConfigurationException.puml!default
+
+            !includesub ../application/Common/Shared/Configuration/RawConfiguration.puml!default
+
+            IConfiguration ..> RawConfiguration : "uses"
+        }
+
+        together {
+            !includesub ../application/Common/Shared/Modules/IModule.puml!default
+        }
+
+        together {
+            !includesub ../application/Common/Shared/Events/Event.puml!default
+
+            package Queue <<Rectangle>> #BFBFBF {
+
+                !includesub ../application/Common/Shared/Events/Queue/IDecodeableEventQueue.puml!default
+
+                !includesub ../application/Common/Shared/Events/Queue/IEncodeableEventQueue.puml!default
+
+                !includesub ../application/Common/Shared/Events/Queue/IReadOnlyEventQueue.puml!default
+
+                !includesub ../application/Common/Shared/Events/Queue/ISupportDeserializationEventQueue.puml!default
+
+                !includesub ../application/Common/Shared/Events/Queue/DecodeableEventQueue.puml!default
+
+                !includesub ../application/Common/Shared/Events/Queue/EncodeableEventQueue.puml!default
+
+                !includesub ../application/Common/Shared/Events/Queue/ReadOnlyEventQueue.puml!default
+
+                !includesub ../application/Common/Shared/Events/Queue/SupportDeserializationEventQueue.puml!default
+                !includesub ../application/Common/Shared/Events/Queue/Aliases.puml!default
+
+                package StorageStrategy <<Rectangle>> #E6E6E6 {
+                    !includesub ../application/Common/Shared/Events/Queue/Strategy/ChannelConsumingException.puml!default
+
+                    !includesub ../application/Common/Shared/Events/Queue/Strategy/IEventQueueStorageStrategy.puml!default
+
+                    together {
+                        !includesub ../application/Common/Shared/Events/Queue/Strategy/MultiConsumer/MultiConsumerChannelStrategy.puml!default
+                        !includesub ../application/Common/Shared/Events/Queue/Strategy/MultiConsumer/BoundedMultiConsumerChannelStrategy.puml!default
+                        !includesub ../application/Common/Shared/Events/Queue/Strategy/MultiConsumer/UnboundedMultiConsumerChannelStrategy.puml!default
+
+                        "IEventQueueStorageStrategies<T: Event>" <|.. "MultiConsumerChannelStrategy<T: Event>"
+                        "MultiConsumerChannelStrategy<T: Event>" <|-- "BoundedMultiConsumerChannelStrategy<T: Event>"
+                        "MultiConsumerChannelStrategy<T: Event>" <|-- "UnboundedMultiConsumerChannelStrategy<T: Event>"
+                        "BoundedMultiConsumerChannelStrategy<T: Event>" ..> ChannelConsumingException: "throws"
+                    }
+                    
+                    together {
+                        !includesub ../application/Common/Shared/Events/Queue/Strategy/SingleConsumer/SingleConsumerChannelStrategy.puml!default
+
+                        !includesub ../application/Common/Shared/Events/Queue/Strategy/SingleConsumer/BoundedSingleConsumerChannelStrategy.puml!default
+                        !includesub ../application/Common/Shared/Events/Queue/Strategy/SingleConsumer/UnboundedSingleConsumerChannelStrategy.puml!default
+
+                        "IEventQueueStorageStrategies<T: Event>" <|.. "SingleConsumerChannelStrategy<T: Event>"
+                        "SingleConsumerChannelStrategy<T: Event>" <|-- "BoundedSingleConsumerChannelStrategy<T: Event>"
+                        "SingleConsumerChannelStrategy<T: Event>" <|-- "UnboundedSingleConsumerChannelStrategy<T: Event>"
+                        "BoundedSingleConsumerChannelStrategy<T: Event>" ..> ChannelConsumingException : "throws"
+                    }
+                }
+
+                "IEventQueueStorageStrategy<T: Event>" "1" *-- "ReadOnlyEventQueue<T: Event>"
+                "IEventQueueStorageStrategy<T: Event>" "1" *-- "EncodeableEventQueue<T: Event>"
+                "IEventQueueStorageStrategy<T: Event>" "1" *-- "DecodeableEventQueue<T: Event>"
+
+                "BoundedMultiConsumerChannelStrategy<T: Event>" <.. "DefaultEventQueue<T: Event>" : "uses"
+                "BoundedMultiConsumerChannelStrategy<T: Event>" <.. "NonDeserializableEventQueue<T: Event>" : "uses"
+                "BoundedMultiConsumerChannelStrategy<T: Event>" <.. "DefaultDecodeableEventQueue<T: Event>" : "uses"
+                "BoundedSingleConsumerChannelStrategy<T: Event>" <.. "DefaultEncodeableEventQueue<T: Event>" : "uses"
+
+                ' EventQueue
+                "IDecodeableEventQueue<T: Event>" <|.. "DecodeableEventQueue<T: Event>"
+                "IEncodeableEventQueue<T: Event>" <|.. "EncodeableEventQueue<T: Event>"
+                "IReadOnlyEventQueue<T: Event>" <|.. "ReadOnlyEventQueue<T: Event>"
+                "ISupportDeserializationEventQueue<T: Event>" <|.. "SupportDeserializationEventQueue<T: Event>"
+                "ReadOnlyEventQueue<T: Event>" <|-- "SupportDeserializationEventQueue<T: Event>"
+                "SupportDeserializationEventQueue<T: Event>" <|-- "DefaultEventQueue<T: Event>"
+                "EncodeableEventQueue<T: Event>" <|-- "DefaultEncodeableEventQueue<T: Event>"
+                "DecodeableEventQueue<T: Event>" <|-- "DefaultDecodeableEventQueue<T: Event>"
+                "ReadOnlyEventQueue<T: Event>" <|-- "NonDeserializableEventQueue<T: Event>"
+            }
+        }
+
+        package Utility <<Rectangle>> #BFBFBF {
+            !includesub ../application/Common/Shared/Utility/DirectoryPath.puml!default
+
+            !includesub ../application/Common/Shared/Utility/FilePath.puml!default
+
+            !includesub ../application/Common/Shared/Utility/GlobalHook.puml!default
+
+            !includesub ../application/Common/Shared/Utility/NativeMethods.puml!default
+
+            !includesub ../application/Common/Shared/Utility/Utility.puml!default
+
+            together {
+                !includesub ../application/Common/Shared/Utility/Exceptions/HookLibraryException.puml!default
+            }
+
+            GlobalHook ..> HookLibraryException : "throws"
+            GlobalHook ..> NativeMethods : "uses"
+        }
+    }
+!endsub
 @enduml

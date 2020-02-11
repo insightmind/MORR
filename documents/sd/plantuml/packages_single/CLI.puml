@@ -5,6 +5,67 @@ skinparam classAttributeIconSize 0
 
 left to right direction
 hide empty fields
-!includesub ../complete_diagram/MORR.puml!CLI
-'!includesub ../MORR.puml!CLI_INTERNAL
+!startsub default
+package "CLI" #E6E6E6 {
+    !includesub ../application/Core/CLI/Program.puml!default
+
+    together {
+        !includesub ../application/Core/CLI/Commands/Command.puml!default
+
+        !includesub ../application/Core/CLI/Commands/CommandOptions.puml!default
+
+        together {
+            !includesub ../application/Core/CLI/Commands/Processing/ProcessCommand.puml!default
+
+            !includesub ../application/Core/CLI/Commands/Processing/ProcessOptions.puml!default
+
+            ProcessCommand ..> ProcessOptions : "uses"
+        }
+
+        together {
+            !includesub ../application/Core/CLI/Commands/Record/RecordCommand.puml!default
+
+            !includesub ../application/Core/CLI/Commands/Record/RecordOptions.puml!default
+
+            RecordCommand ..> RecordOptions : "uses"
+        }
+
+        together {
+            !includesub ../application/Core/CLI/Commands/Validate/ValidateCommand.puml!default
+
+            !includesub ../application/Core/CLI/Commands/Validate/ValidateOptions.puml!default
+
+            ValidateCommand ..> ValidateOptions : "uses"
+        }
+
+        RecordCommand ..|> "ICommand<T: CommandOptions>"
+        ValidateCommand ..|> "ICommand<T: CommandOptions>"
+        ProcessCommand ..|> "ICommand<T: CommandOptions>"
+
+        RecordOptions --|> CommandOptions
+        ValidateOptions --|> CommandOptions
+        ProcessOptions --|> CommandOptions
+    }
+
+    together {
+        !includesub ../application/Core/CLI/Interactive/InteractiveCommandLine.puml!default
+    }
+
+    together {
+        !includesub ../application/Core/CLI/Output/IOutputFormatter.puml!default
+
+        !includesub ../application/Core/CLI/Output/OutputFormatter.puml!default
+
+        OutputFormatter ..|> IOutputFormatter
+    }
+
+    ProcessCommand ..> OutputFormatter : "uses"
+    ValidateCommand ..> OutputFormatter : "uses"
+    RecordCommand ..> OutputFormatter : "uses"
+    RecordCommand ..> InteractiveCommandLine :"uses"
+
+    Program ..> "ICommand<T: CommandOptions>": "uses"
+    Program ..> CommandOptions : "uses"
+}
+!endsub
 @enduml
