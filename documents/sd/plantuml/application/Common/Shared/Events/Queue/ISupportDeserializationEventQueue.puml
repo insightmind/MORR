@@ -1,11 +1,10 @@
 @startuml
 skinparam monochrome true
 skinparam classAttributeIconSize 0
-
 !startsub default
-interface "IReadOnlyEventQueue<T: Event>" {
+interface "ISupportDeserializationEventQueue<T: Event>" {
     + EventType: Type
-    + GetEvents() : IAsyncEnumerable<T: Event>
+    + Enqueue(event: object): void
 }
 !endsub
 @enduml

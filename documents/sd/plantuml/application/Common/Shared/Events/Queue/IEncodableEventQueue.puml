@@ -1,0 +1,10 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
+interface "IEncodableEventQueue<T: Event>" {
+    + GetEvents(cancellationToken: CancellationToken) : IAsyncEnumerable<T: Event>
+}
+!endsub
+
+@enduml

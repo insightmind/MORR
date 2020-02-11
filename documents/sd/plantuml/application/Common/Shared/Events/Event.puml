@@ -1,11 +1,10 @@
 @startuml
 skinparam monochrome true
 skinparam classAttributeIconSize 0
-
+!startsub default
 abstract class Event {
-    + Timestamp : DateTime
-    + IssuingModule : Guid
-    + Serialize() : string
-    + Deserialize(string serialized) : void
+    + Timestamp : DateTime <<get>>
+    + IssuingModule : Guid <<get>>
 }
+!endsub
 @enduml

@@ -11,9 +11,7 @@ package MORR {
     !startsub SHARED
     package SHARED #E6E6E6 {
         package Configuration <<Rectangle>> #BFBFBF {
-            interface IConfiguration {
-                + Parse(configuration:RawConfiguration) : void
-            }
+            !includesub application/Common/Shared/Configuration/IConfiguration.puml!default
 
             class InvalidConfigurationException {
                 + <<create>> InvalidConfigurationException()
@@ -21,46 +19,27 @@ package MORR {
                 + <<create>> InvalidConfigurationException(message: string, innerException: exception)
             }
 
-            class RawConfiguration {
-                + RawValue: string
-                + <<create>> RawConfiguration(rawValue: string)
-            }
+            !includesub application/Common/Shared/Configuration/RawConfiguration.puml!default
 
             IConfiguration ..> RawConfiguration : "uses"
         }
 
         together {
-            interface IModule {
-                + Identifier : Guid <<get>>
-                + IsActive : bool <<get>> <<set>>
-                + Initialize() : void
-            }
+            !includesub application/Common/Shared/Modules/IModule.puml!default
         }
 
         together {
-            abstract class Event {
-                + Timestamp : DateTime <<get>>
-                + IssuingModule : Guid <<get>>
-            }
+            !includesub application/Common/Shared/Events/Event.puml!default
 
             package Queue <<Rectangle>> #BFBFBF {
-                interface "IDecodableEventQueue<T: Event>" {
-                    + GetEvents(cancellationToken: CancellationToken) : IAsyncEnumerable<T: Event>
-                }
 
-                interface "IEncodableEventQueue<T: Event>" {
-                    + GetEvents(cancellationToken: CancellationToken) : IAsyncEnumerable<T: Event>
-                }
+                !includesub application/Common/Shared/Events/Queue/IDecodableEventQueue.puml!default
 
-                interface "IReadOnlyEventQueue<T: Event>" {
-                    + EventType: Type
-                    + GetEvents() : IAsyncEnumerable<T: Event>
-                }
+                !includesub application/Common/Shared/Events/Queue/IEncodableEventQueue.puml!default
 
-                interface "ISupportDeserializationEventQueue<T: Event>" {
-                    + EventType: Type
-                    + Enqueue(event: object): void
-                }
+                !includesub application/Common/Shared/Events/Queue/IReadOnlyEventQueue.puml!default
+
+                !includesub application/Common/Shared/Events/Queue/ISupportDeserializationEventQueue.puml!default
 
                 abstract class "DecodableEventQueue<T: Event>" {
                     # <<create>> DecodableEventQueue(storageStrategy: IEventQueueStorageStrategy<T: Event>)
@@ -80,59 +59,18 @@ package MORR {
                     + Enqueue(event: T) : void
                 }
 
-                abstract class "SupportDeserializationEventQueue<T: Event>" {
-                    # <<create>> SupportDeserializationEventQueue(storageStrategy: IEventQueueStorageStrategy<T: Event>)
-                    + Enqueue(event: T) : void
-                }
-
-                abstract class "DefaultEventQueue<T: Event>" {
-                    # <<create>> DefaultEventQueue(bufferCapacity: int, maxConsumers: uint?)
-                }
-
-                abstract class "DefaultEncodableEventQueue<T: Event>" {
-                    # <<create>> DefaultEncodableEventQueue(bufferCapacity: int)
-                }
-
-                abstract class "DefaultDecodableEventQueue<T: Event>" {
-                    # <<create>> DefaultDecodableEventQueue(bufferCapacity: int, maxConsumers: uint?)
-                }
-
-                abstract class "NonDeserializableEventQueue<T: Event>" {
-                    # <<create>> NonDeserializableEventQueue(bufferCapacity: int, maxConsumers: uint?)
-                }
+                !includesub application/Common/Shared/Events/Queue/SupportDeserializationEventQueue.puml!default
+                !includesub application/Common/Shared/Events/Queue/Aliases.puml!default
 
                 package StorageStrategy <<Rectangle>> #E6E6E6 {
-                    class ChannelConsumingException {
-                        + <<create>> ChannelConsumingException()
-                        + <<create>> ChannelConsumingException(message: string)
-                        + <<create>> ChannelConsumingException(message: string, innerException: exception)
-                    }
+                    !includesub application/Common/Shared/Events/Queue/Strategy/ChannelConsumingException.puml!default
 
-                    interface "IEventQueueStorageStrategy<T: Event>" {
-                        + GetEvents(cancellationToken: CancellationToken) : IAsyncEnumerable<T: Event>
-                        + Enqueue(event: T) : void
-                    }
+                    !includesub application/Common/Shared/Events/Queue/Strategy/IEventQueueStorageStrategy.puml!default
 
                     together {
-                        abstract class "MultiConsumerChannelStrategy<T: Event>" {
-                            # StartReceiving(maxChannelConsumers: uint?) : void
-                            + GetEvents(token: CancellationToken) : IAsyncEnumerable<T: Event>
-                            + Enqueue(event: T) : void
-                            # {abstract} CreateOfferingChannel() : Channel<T: Event>
-                            # {abstract} CreateReceivingChannel() : Channel<T: Event>
-                        }
-
-                        class "BoundedMultiConsumerChannelStrategy<T: Event>" {
-                            + <<create>> BoundedMultiConsumerChannelStrategy(bufferCapacity: int, maxChannelConsumers: uint?)
-                            # CreateOfferingChannel() : Channel<T: Event>
-                            # CreateReceivingChannel() : Channel<T: Event>
-                        }
-
-                        class "UnboundedMultiConsumerChannelStrategy<T: Event>" {
-                            + <<create>> UnboundedMultiConsumerChannelStrategy(maxChannelConsumers: uint?)
-                            # CreateOfferingChannel() : Channel<T: Event>
-                            # CreateReceivingChannel() : Channel<T: Event>
-                        }
+                        !includesub application/Common/Shared/Events/Queue/Strategy/MultiConsumer/MultiConsumerChannelStrategy.puml!default
+                        !includesub application/Common/Shared/Events/Queue/Strategy/MultiConsumer/BoundedMultiConsumerChannelStrategy.puml!default
+                        !includesub application/Common/Shared/Events/Queue/Strategy/MultiConsumer/UnboundedMultiConsumerChannelStrategy.puml!default
 
                         "IEventQueueStorageStrategies<T: Event>" <|.. "MultiConsumerChannelStrategy<T: Event>"
                         "MultiConsumerChannelStrategy<T: Event>" <|-- "BoundedMultiConsumerChannelStrategy<T: Event>"
@@ -141,22 +79,10 @@ package MORR {
                     }
                     
                     together {
-                        abstract class "SingleConsumerChannelStrategy<T: Event>" {
-                            # StartReceiving() : void
-                            + GetEvents(token: CancellationToken) : IAsyncEnumerable<T: Event>
-                            + Enqueue(event: T) : void
-                            # {abstract} CreateChannel() : Channel<T: Event>
-                        }
+                        !includesub application/Common/Shared/Events/Queue/Strategy/SingleConsumer/SingleConsumerChannelStrategy.puml!default
 
-                        class "BoundedSingleConsumerChannelStrategy<T: Event>" {
-                            + <<create>> BoundedSingleConsumerChannelStrategy(bufferCapacity: int)
-                            # CreateChannel() : Channel<T: Event>
-                        }
-
-                        class "UnboundedSingleConsumerChannelStrategy<T: Event>" {
-                            + <<create>> UnboundedSingleConsumerChannelStrategy()
-                            # CreateChannel() : Channel<T: Event>
-                        }
+                        !includesub application/Common/Shared/Events/Queue/Strategy/SingleConsumer/BoundedSingleConsumerChannelStrategy.puml!default
+                        !includesub application/Common/Shared/Events/Queue/Strategy/SingleConsumer/UnboundedSingleConsumerChannelStrategy.puml!default
 
                         "IEventQueueStorageStrategies<T: Event>" <|.. "SingleConsumerChannelStrategy<T: Event>"
                         "SingleConsumerChannelStrategy<T: Event>" <|-- "BoundedSingleConsumerChannelStrategy<T: Event>"

@@ -1,0 +1,12 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+!startsub default
+class "UnboundedMultiConsumerChannelStrategy<T: Event>" {
+    + <<create>> UnboundedMultiConsumerChannelStrategy(maxChannelConsumers: uint?)
+    # CreateOfferingChannel() : Channel<T: Event>
+    # CreateReceivingChannel() : Channel<T: Event>
+}
+!endsub
+@enduml
