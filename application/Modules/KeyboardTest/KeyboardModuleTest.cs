@@ -12,33 +12,47 @@ namespace KeyboardTest
     public class KeyboardModuleTest
     {
         private KeyboardModule keyboardModule;
+        private Mock<KeyboardInteractEventProducer> keyboardInteractEventProducer;
+        private CompositionContainer container;
 
         [TestInitialize]
         public void BeforeTest()
         {
             keyboardModule = new KeyboardModule();
+            keyboardInteractEventProducer = new Mock<KeyboardInteractEventProducer>();
+            container = new CompositionContainer();
+            container.ComposeExportedValue(keyboardInteractEventProducer.Object);
+            container.ComposeParts(keyboardModule);
         }
 
         [TestMethod]
-        public void TestKeyboardModule_OnActivate()
+        public void TestKeyboardModule_Activate()
         {
             // Preconditions
             Debug.Assert(keyboardModule != null);
 
             /* GIVEN */
-            var keyboardInteractEventProducerMock = new Mock<KeyboardInteractEventProducer>();
-            var container = new CompositionContainer();
-            container.ComposeExportedValue(keyboardInteractEventProducerMock.Object);
-            container.ComposeParts(keyboardModule);
-
-            keyboardInteractEventProducerMock.Setup(mock => mock.StartCapture());
 
             /* WHEN */
             keyboardModule.IsActive = true;
 
             /* THEN */
             Assert.IsTrue(keyboardModule.IsActive);
-            keyboardInteractEventProducerMock.Verify(mock => mock.StartCapture(), Times.Once());
+        }
+
+        [TestMethod]
+        public void TestKeyboardModule_Deactivate()
+        {
+            // Preconditions
+            Debug.Assert(keyboardModule != null);
+
+            /* GIVEN */
+
+            /* WHEN */
+            keyboardModule.IsActive = false;
+
+            /* THEN */
+            Assert.IsFalse(keyboardModule.IsActive);
         }
     }
 }

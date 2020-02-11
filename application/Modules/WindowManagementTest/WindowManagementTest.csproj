@@ -8,16 +8,26 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+    <PackageReference Include="JetBrains.DotMemoryUnit" Version="3.1.20200127.214830" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+    <PackageReference Include="Moq" Version="4.13.1" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.1.0" />
     <PackageReference Include="MSTest.TestFramework" Version="2.1.0" />
     <PackageReference Include="coverlet.collector" Version="1.2.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.18362.2005" />
+    <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
+    <PackageReference Include="System.ComponentModel.Composition" Version="4.7.0" />
+    <PackageReference Include="System.ComponentModel.Composition.Registration" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\WindowManagement\WindowManagement.csproj" />
+    <Reference Include="WindowsBase">
+      <HintPath>C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\3.1.1\WindowsBase.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
