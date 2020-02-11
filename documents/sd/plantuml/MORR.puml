@@ -13,11 +13,7 @@ package MORR {
         package Configuration <<Rectangle>> #BFBFBF {
             !includesub application/Common/Shared/Configuration/IConfiguration.puml!default
 
-            class InvalidConfigurationException {
-                + <<create>> InvalidConfigurationException()
-                + <<create>> InvalidConfigurationException(message: string)
-                + <<create>> InvalidConfigurationException(message: string, innerException: exception)
-            }
+            !includesub application/Core/MORR/Configuration/InvalidConfigurationException.puml!default
 
             !includesub application/Common/Shared/Configuration/RawConfiguration.puml!default
 
@@ -136,33 +132,18 @@ package MORR {
 
     !startsub CORE
     package "CORE" #E6E6E6 {
-        interface IBootstrapper {
-            + ComposeImports(object:object) : void
-        }
+        !includesub application/Core/MORR/IBootstrapper.puml!default
 
-        class Bootstrapper {
-            + <<create> Bootstrapper()
-            + ComposeImports(object:object) : void
-        }
+        !includesub application/Core/MORR/Bootstrapper.puml!default
 
-        class BootstrapperConventions {
-            + {static} GetRegistrationBuilder() : RegistrationBuilder
-        }
+        !includesub application/Core/MORR/BootstrapperConventions.puml!default
 
         package ConfigurationManagement <<Rectangle>> #BFBFBF {
-            interface IConfigurationManager {
-                + LoadConfiguration(path:FilePath) : void
-            }
+            !includesub application/Core/MORR/Configuration/IConfigurationManager.puml!default
 
-            class ConfigurationManager {
-                + LoadConfiguration(path:FilePath) : void
-            }
+            !includesub application/Core/MORR/Configuration/ConfigurationManager.puml!default
 
-            class InvalidConfigurationException {
-                + <<create>> InvalidConfigurationException()
-                + <<create>> InvalidConfigurationException(message: string)
-                + <<create>> InvalidConfigurationException(message: string, innerException: Exception)
-            }
+            !includesub application/Core/MORR/Configuration/InvalidConfigurationException.puml!default
 
             IConfigurationManager <|.. ConfigurationManager
             ConfigurationManager ..> InvalidConfigurationException : "throws"
@@ -207,21 +188,11 @@ package MORR {
         }
 
         package Modules <<Rectangle>> #BFBFBF {
-            interface IModuleManager {
-                + InitializeModules() : void
-                + NotifyModulesOnSessionStart() : void
-                + NotifyModulesOnSessionStop() : void
-            }
+            !includesub application/Core/MORR/Modules/IModuleManager.puml!default
 
-            class ModuleManager {
-                + InitializeModules() : void
-                + NotifyModulesOnSessionStart() : void
-                + NotifyModulesOnSessionStop() : void
-            }
+            !includesub application/Core/MORR/Modules/ModuleManager.puml!default
 
-            class GlobalModuleConfiguration {
-                + Parse(RawConfiguration: configuration) : void
-            }
+            !includesub application/Core/MORR/Modules/GlobalModuleConfiguration.puml!default
 
             IModuleManager <|-- ModuleManager
             ModuleManager *-- "1" GlobalModuleConfiguration

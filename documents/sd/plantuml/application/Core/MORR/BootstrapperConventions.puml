@@ -2,8 +2,8 @@
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 !startsub default
-interface IBootstrapper {
-    + ComposeImports(object:object) : void
+class BootstrapperConventions {
+    + {static} GetRegistrationBuilder() : RegistrationBuilder
 }
 !endsub
 @enduml

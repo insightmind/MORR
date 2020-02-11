@@ -5,10 +5,9 @@ skinparam classAttributeIconSize 0
 interface IConfiguration
 
 IConfiguration <|-- GlobalModuleConfiguration
-
+!startsub default
 class GlobalModuleConfiguration {
-    + EnabledModules : IEnumerable<Type> <<get>> <<set>>
-    + Parse(string configuration) : void
+    + Parse(RawConfiguration: configuration) : void
 }
-
+!endsub
 @enduml
