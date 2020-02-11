@@ -29,31 +29,19 @@ package MORR {
 
             package Queue <<Rectangle>> #BFBFBF {
 
-                !includesub ../application/Common/Shared/Events/Queue/IDecodableEventQueue.puml!default
+                !includesub ../application/Common/Shared/Events/Queue/IDecodeableEventQueue.puml!default
 
-                !includesub ../application/Common/Shared/Events/Queue/IEncodableEventQueue.puml!default
+                !includesub ../application/Common/Shared/Events/Queue/IEncodeableEventQueue.puml!default
 
                 !includesub ../application/Common/Shared/Events/Queue/IReadOnlyEventQueue.puml!default
 
                 !includesub ../application/Common/Shared/Events/Queue/ISupportDeserializationEventQueue.puml!default
 
-                abstract class "DecodableEventQueue<T: Event>" {
-                    # <<create>> DecodableEventQueue(storageStrategy: IEventQueueStorageStrategy<T: Event>)
-                    + GetEvents(cancellationToken: CancellationToken) : IAsyncEnumerable<T: Event>
-                    + Enqueue(event: T) : void
-                }
+                !includesub ../application/Common/Shared/Events/Queue/DecodeableEventQueue.puml!default
 
-                abstract class "EncodableEventQueue<T: Event>" {
-                    # <<create>> EncodableEventQueue(storageStrategy: IEventQueueStorageStrategy<T: Event>)
-                    + GetEvents(cancellationToken: CancellationToken) : IAsyncEnumerable<T: Event>
-                    + Enqueue(event: T) : void
-                }
+                !includesub ../application/Common/Shared/Events/Queue/EncodeableEventQueue.puml!default
 
-                abstract class "ReadOnlyEventQueue<T: Event>" {
-                    # <<create>> ReadOnlyEventQueue(storageStrategy: IEventQueueStorageStrategy<T: Event>)
-                    + GetEvents(cancellationToken: CancellationToken) : IAsyncEnumerable<T: Event>
-                    + Enqueue(event: T) : void
-                }
+                !includesub ../application/Common/Shared/Events/Queue/ReadOnlyEventQueue.puml!default
 
                 !includesub ../application/Common/Shared/Events/Queue/SupportDeserializationEventQueue.puml!default
                 !includesub ../application/Common/Shared/Events/Queue/Aliases.puml!default
@@ -88,23 +76,23 @@ package MORR {
                 }
 
                 "IEventQueueStorageStrategy<T: Event>" "1" *-- "ReadOnlyEventQueue<T: Event>"
-                "IEventQueueStorageStrategy<T: Event>" "1" *-- "EncodableEventQueue<T: Event>"
-                "IEventQueueStorageStrategy<T: Event>" "1" *-- "DecodableEventQueue<T: Event>"
+                "IEventQueueStorageStrategy<T: Event>" "1" *-- "EncodeableEventQueue<T: Event>"
+                "IEventQueueStorageStrategy<T: Event>" "1" *-- "DecodeableEventQueue<T: Event>"
 
                 "BoundedMultiConsumerChannelStrategy<T: Event>" <.. "DefaultEventQueue<T: Event>" : "uses"
                 "BoundedMultiConsumerChannelStrategy<T: Event>" <.. "NonDeserializableEventQueue<T: Event>" : "uses"
-                "BoundedMultiConsumerChannelStrategy<T: Event>" <.. "DefaultDecodableEventQueue<T: Event>" : "uses"
-                "BoundedSingleConsumerChannelStrategy<T: Event>" <.. "DefaultEncodableEventQueue<T: Event>" : "uses"
+                "BoundedMultiConsumerChannelStrategy<T: Event>" <.. "DefaultDecodeableEventQueue<T: Event>" : "uses"
+                "BoundedSingleConsumerChannelStrategy<T: Event>" <.. "DefaultEncodeableEventQueue<T: Event>" : "uses"
 
                 ' EventQueue
-                "IDecodableEventQueue<T: Event>" <|.. "DecodableEventQueue<T: Event>"
-                "IEncodableEventQueue<T: Event>" <|.. "EncodableEventQueue<T: Event>"
+                "IDecodeableEventQueue<T: Event>" <|.. "DecodeableEventQueue<T: Event>"
+                "IEncodeableEventQueue<T: Event>" <|.. "EncodeableEventQueue<T: Event>"
                 "IReadOnlyEventQueue<T: Event>" <|.. "ReadOnlyEventQueue<T: Event>"
                 "ISupportDeserializationEventQueue<T: Event>" <|.. "SupportDeserializationEventQueue<T: Event>"
                 "ReadOnlyEventQueue<T: Event>" <|-- "SupportDeserializationEventQueue<T: Event>"
                 "SupportDeserializationEventQueue<T: Event>" <|-- "DefaultEventQueue<T: Event>"
-                "EncodableEventQueue<T: Event>" <|-- "DefaultEncodableEventQueue<T: Event>"
-                "DecodableEventQueue<T: Event>" <|-- "DefaultDecodableEventQueue<T: Event>"
+                "EncodeableEventQueue<T: Event>" <|-- "DefaultEncodeableEventQueue<T: Event>"
+                "DecodeableEventQueue<T: Event>" <|-- "DefaultDecodeableEventQueue<T: Event>"
                 "ReadOnlyEventQueue<T: Event>" <|-- "NonDeserializableEventQueue<T: Event>"
             }
         }
@@ -150,33 +138,16 @@ package MORR {
         }
 
         package Session <<Rectangle>> #BFBFBF {
-            interface ISessionManager {
-                + IsRecording : bool <<get>>
-                + StartRecording() : void
-                + StopRecording() : void
-                + Process(files: IEnumerable<FilePath>) : void
-            }
+            !includesub ../application/Core/MORR/Session/ISessionManager.puml!default
 
-            class SessionManager {
-                - videoCapture : IVideoCapture
-                + IsRecording : bool <<get>> <<private set>>
-                + StartRecording() : void
-                + StopRecording() : void
-                + Process(files: IEnumerable<FilePath>) : void
-            }
+            !includesub ../application/Core/MORR/Session/SessionManager.puml!default
 
             together {
-                abstract class RecordingException {
+                !includesub ../application/Core/MORR/Session/Exceptions/RecordingException.puml!default
 
-                }
+                !includesub ../application/Core/MORR/Session/Exceptions/AlreadyRecordingException.puml!default
 
-                class AlreadyRecordingException {
-
-                }
-
-                class NotRecordingException {
-
-                }
+                !includesub ../application/Core/MORR/Session/Exceptions/NotRecordingException.puml!default
 
                 RecordingException <|-- AlreadyRecordingException
                 RecordingException <|-- NotRecordingException
@@ -276,7 +247,7 @@ package MORR {
                 IDecoder <|.. JsonDecoder
                 IEncoder <|-- JsonEncoder
                 MpegEncoder --* "1 Configuration" MpegEncoderConfiguration
-                MpegEncoder --* "1 VideoQueue" "IEncodableEventQueue<T: Event>"
+                MpegEncoder --* "1 VideoQueue" "IEncodeableEventQueue<T: Event>"
             }
         }
 
@@ -302,14 +273,14 @@ package MORR {
     IntermediateFormatSample --|> Event
     JsonIntermediateFormatDeserializer ..|> IModule
     JsonIntermediateFormatDeserializer --* "* EventQueues" "ISupportDeserializationEventQueue<T: Event>"
-    JsonIntermediateFormatDeserializer --* "1 IntermediateFormatSampleQueue" "IDecodableEventQueue<T: Event>"
+    JsonIntermediateFormatDeserializer --* "1 IntermediateFormatSampleQueue" "IDecodeableEventQueue<T: Event>"
     JsonIntermediateFormatSerializer ..|> IModule
-    JsonIntermediateFormatSerializer --|> "DefaultEncodableEventQueue<T: Event>"
+    JsonIntermediateFormatSerializer --|> "DefaultEncodeableEventQueue<T: Event>"
     JsonIntermediateFormatSerializer --* "* EventQueues" "IReadOnlyEventQueue<T: Event>"
 
     MpegEncoderConfiguration ..|> IConfiguration
-    JsonDecoder --|> "DefaultDecodableEventQueue<T: Event>"
-    JsonEncoder --* "1 IntermediateFormatSampleQueue" "IEncodableEventQueue<T: Event>"
+    JsonDecoder --|> "DefaultDecodeableEventQueue<T: Event>"
+    JsonEncoder --* "1 IntermediateFormatSampleQueue" "IEncodeableEventQueue<T: Event>"
 
     !startsub UI
     package "UI" #E6E6E6 {
@@ -376,18 +347,12 @@ package MORR {
 
     !startsub CLI
     package "CLI" #E6E6E6 {
-        class Program {
-            + {static} Main(args:string[]) : int
-        }
+        !includesub ../application/Core/CLI/Program.puml!default
 
         together {
-            interface "ICommand<T: CommandOptions>" {
-                + Execute(options: T) : int
-            }
+            !includesub ../application/Core/CLI/Commands/Command.puml!default
 
-            abstract class CommandOptions {
-                + IsVerbose: bool <<get>> <<set>>
-            }
+            !includesub ../application/Core/CLI/Commands/CommandOptions.puml!default
 
             together {
                 !includesub ../application/Core/CLI/Commands/Processing/ProcessCommand.puml!default
@@ -450,7 +415,7 @@ package MORR {
     ValidateCommand ..> IBootstrapper : "uses"
     ValidateCommand ..> IModuleManager : "uses"
     IOutputFormatter --|> IEncoder
-    OutputFormatter --* "1 MetadataQueue" "IEncodableEventQueue<T: Event>"
+    OutputFormatter --* "1 MetadataQueue" "IEncodeableEventQueue<T: Event>"
 
     package "MODULES" #E6E6E6 {
         !startsub MODULES_CLIPBOARD

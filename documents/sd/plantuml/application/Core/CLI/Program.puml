@@ -2,11 +2,11 @@
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 hide empty fields
-
+!startsub default
 class Program {
-    {static} Main(args:string[]) : void
+    + {static} Main(args:string[]) : int
 }
-
+!endsub
 class ICLICommand {
     + ExecuteCommand(options: Options)
 }

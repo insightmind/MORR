@@ -1,28 +1,16 @@
 @startuml
 skinparam monochrome true
 skinparam classAttributeIconSize 0
-
-class RecordingManager {
-    - encoder : IEncoder
-    - decoder : IDecoder
+!startsub default
+class SessionManager {
     - videoCapture : IVideoCapture
-    - metadataCapture : IMetadataCapture
-    - metadataDeserializer : IMetadataDeserializer
     + IsRecording : bool <<get>> <<private set>>
     + StartRecording() : void
     + StopRecording() : void
-    + StartDecoding() : void
-    + StopDecoding() : void
+    + Process(files: IEnumerable<FilePath>) : void
 }
-
-interface IRecordingManager {
-    + IsRecording : bool <<get>>
-    + StartRecording() : void
-    + StopRecording() : void
-    + StartDecoding() : void
-    + StopDecoding() : void
-}
-
-IRecordingManager <|-- RecordingManager
+!endsub
+!include ISessionManager.puml
+ISessionManager <|-- SessionManager
 
 @enduml

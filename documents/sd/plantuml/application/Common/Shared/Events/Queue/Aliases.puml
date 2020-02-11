@@ -7,12 +7,12 @@ abstract class "DefaultEventQueue<T: Event>" {
     # <<create>> DefaultEventQueue(bufferCapacity: int, maxConsumers: uint?)
 }
 
-abstract class "DefaultEncodableEventQueue<T: Event>" {
-    # <<create>> DefaultEncodableEventQueue(bufferCapacity: int)
+abstract class "DefaultEncodeableEventQueue<T: Event>" {
+    # <<create>> DefaultEncodeableEventQueue(bufferCapacity: int)
 }
 
-abstract class "DefaultDecodableEventQueue<T: Event>" {
-    # <<create>> DefaultDecodableEventQueue(bufferCapacity: int, maxConsumers: uint?)
+abstract class "DefaultDecodeableEventQueue<T: Event>" {
+    # <<create>> DefaultDecodeableEventQueue(bufferCapacity: int, maxConsumers: uint?)
 }
 
 abstract class "NonDeserializableEventQueue<T: Event>" {

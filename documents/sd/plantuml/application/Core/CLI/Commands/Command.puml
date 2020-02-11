@@ -1,0 +1,11 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+!startsub default
+interface "ICommand<T: CommandOptions>" {
+    + Execute(options: T) : int
+}
+!endsub
+
+@enduml
