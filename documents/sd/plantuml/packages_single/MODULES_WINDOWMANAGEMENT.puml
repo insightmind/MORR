@@ -5,6 +5,6 @@ skinparam classAttributeIconSize 0
 
 left to right direction
 hide empty fields
-!includesub ../MORR.puml!MODULES_WINDOWMANAGEMENT
-'!includesub ../MORR.puml!MODULES_WINDOWMANAGEMENT_INTERNAL
+!includesub ../complete_diagram/MORR.puml!MODULES_WINDOWMANAGEMENT
+'!includesub ../complete_diagram/MORR.puml!MODULES_WINDOWMANAGEMENT_INTERNAL
 @enduml

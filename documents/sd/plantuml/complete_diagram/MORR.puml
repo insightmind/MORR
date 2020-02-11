@@ -11,31 +11,31 @@ package MORR {
     !startsub SHARED
     package SHARED #E6E6E6 {
         package Configuration <<Rectangle>> #BFBFBF {
-            !includesub application/Common/Shared/Configuration/IConfiguration.puml!default
+            !includesub ../application/Common/Shared/Configuration/IConfiguration.puml!default
 
-            !includesub application/Core/MORR/Configuration/InvalidConfigurationException.puml!default
+            !includesub ../application/Core/MORR/Configuration/InvalidConfigurationException.puml!default
 
-            !includesub application/Common/Shared/Configuration/RawConfiguration.puml!default
+            !includesub ../application/Common/Shared/Configuration/RawConfiguration.puml!default
 
             IConfiguration ..> RawConfiguration : "uses"
         }
 
         together {
-            !includesub application/Common/Shared/Modules/IModule.puml!default
+            !includesub ../application/Common/Shared/Modules/IModule.puml!default
         }
 
         together {
-            !includesub application/Common/Shared/Events/Event.puml!default
+            !includesub ../application/Common/Shared/Events/Event.puml!default
 
             package Queue <<Rectangle>> #BFBFBF {
 
-                !includesub application/Common/Shared/Events/Queue/IDecodableEventQueue.puml!default
+                !includesub ../application/Common/Shared/Events/Queue/IDecodableEventQueue.puml!default
 
-                !includesub application/Common/Shared/Events/Queue/IEncodableEventQueue.puml!default
+                !includesub ../application/Common/Shared/Events/Queue/IEncodableEventQueue.puml!default
 
-                !includesub application/Common/Shared/Events/Queue/IReadOnlyEventQueue.puml!default
+                !includesub ../application/Common/Shared/Events/Queue/IReadOnlyEventQueue.puml!default
 
-                !includesub application/Common/Shared/Events/Queue/ISupportDeserializationEventQueue.puml!default
+                !includesub ../application/Common/Shared/Events/Queue/ISupportDeserializationEventQueue.puml!default
 
                 abstract class "DecodableEventQueue<T: Event>" {
                     # <<create>> DecodableEventQueue(storageStrategy: IEventQueueStorageStrategy<T: Event>)
@@ -55,18 +55,18 @@ package MORR {
                     + Enqueue(event: T) : void
                 }
 
-                !includesub application/Common/Shared/Events/Queue/SupportDeserializationEventQueue.puml!default
-                !includesub application/Common/Shared/Events/Queue/Aliases.puml!default
+                !includesub ../application/Common/Shared/Events/Queue/SupportDeserializationEventQueue.puml!default
+                !includesub ../application/Common/Shared/Events/Queue/Aliases.puml!default
 
                 package StorageStrategy <<Rectangle>> #E6E6E6 {
-                    !includesub application/Common/Shared/Events/Queue/Strategy/ChannelConsumingException.puml!default
+                    !includesub ../application/Common/Shared/Events/Queue/Strategy/ChannelConsumingException.puml!default
 
-                    !includesub application/Common/Shared/Events/Queue/Strategy/IEventQueueStorageStrategy.puml!default
+                    !includesub ../application/Common/Shared/Events/Queue/Strategy/IEventQueueStorageStrategy.puml!default
 
                     together {
-                        !includesub application/Common/Shared/Events/Queue/Strategy/MultiConsumer/MultiConsumerChannelStrategy.puml!default
-                        !includesub application/Common/Shared/Events/Queue/Strategy/MultiConsumer/BoundedMultiConsumerChannelStrategy.puml!default
-                        !includesub application/Common/Shared/Events/Queue/Strategy/MultiConsumer/UnboundedMultiConsumerChannelStrategy.puml!default
+                        !includesub ../application/Common/Shared/Events/Queue/Strategy/MultiConsumer/MultiConsumerChannelStrategy.puml!default
+                        !includesub ../application/Common/Shared/Events/Queue/Strategy/MultiConsumer/BoundedMultiConsumerChannelStrategy.puml!default
+                        !includesub ../application/Common/Shared/Events/Queue/Strategy/MultiConsumer/UnboundedMultiConsumerChannelStrategy.puml!default
 
                         "IEventQueueStorageStrategies<T: Event>" <|.. "MultiConsumerChannelStrategy<T: Event>"
                         "MultiConsumerChannelStrategy<T: Event>" <|-- "BoundedMultiConsumerChannelStrategy<T: Event>"
@@ -75,10 +75,10 @@ package MORR {
                     }
                     
                     together {
-                        !includesub application/Common/Shared/Events/Queue/Strategy/SingleConsumer/SingleConsumerChannelStrategy.puml!default
+                        !includesub ../application/Common/Shared/Events/Queue/Strategy/SingleConsumer/SingleConsumerChannelStrategy.puml!default
 
-                        !includesub application/Common/Shared/Events/Queue/Strategy/SingleConsumer/BoundedSingleConsumerChannelStrategy.puml!default
-                        !includesub application/Common/Shared/Events/Queue/Strategy/SingleConsumer/UnboundedSingleConsumerChannelStrategy.puml!default
+                        !includesub ../application/Common/Shared/Events/Queue/Strategy/SingleConsumer/BoundedSingleConsumerChannelStrategy.puml!default
+                        !includesub ../application/Common/Shared/Events/Queue/Strategy/SingleConsumer/UnboundedSingleConsumerChannelStrategy.puml!default
 
                         "IEventQueueStorageStrategies<T: Event>" <|.. "SingleConsumerChannelStrategy<T: Event>"
                         "SingleConsumerChannelStrategy<T: Event>" <|-- "BoundedSingleConsumerChannelStrategy<T: Event>"
@@ -110,18 +110,18 @@ package MORR {
         }
 
         package Utility <<Rectangle>> #BFBFBF {
-            !includesub application/Common/Shared/Utility/DirectoryPath.puml!default
+            !includesub ../application/Common/Shared/Utility/DirectoryPath.puml!default
 
-            !includesub application/Common/Shared/Utility/FilePath.puml!default
+            !includesub ../application/Common/Shared/Utility/FilePath.puml!default
 
-            !includesub application/Common/Shared/Utility/GlobalHook.puml!default
+            !includesub ../application/Common/Shared/Utility/GlobalHook.puml!default
 
-            !includesub application/Common/Shared/Utility/NativeMethods.puml!default
+            !includesub ../application/Common/Shared/Utility/NativeMethods.puml!default
 
-            !includesub application/Common/Shared/Utility/Utility.puml!default
+            !includesub ../application/Common/Shared/Utility/Utility.puml!default
 
             together {
-                !includesub application/Common/Shared/Utility/Exceptions/HookLibraryException.puml!default
+                !includesub ../application/Common/Shared/Utility/Exceptions/HookLibraryException.puml!default
             }
 
             GlobalHook ..> HookLibraryException : "throws"
@@ -132,18 +132,18 @@ package MORR {
 
     !startsub CORE
     package "CORE" #E6E6E6 {
-        !includesub application/Core/MORR/IBootstrapper.puml!default
+        !includesub ../application/Core/MORR/IBootstrapper.puml!default
 
-        !includesub application/Core/MORR/Bootstrapper.puml!default
+        !includesub ../application/Core/MORR/Bootstrapper.puml!default
 
-        !includesub application/Core/MORR/BootstrapperConventions.puml!default
+        !includesub ../application/Core/MORR/BootstrapperConventions.puml!default
 
         package ConfigurationManagement <<Rectangle>> #BFBFBF {
-            !includesub application/Core/MORR/Configuration/IConfigurationManager.puml!default
+            !includesub ../application/Core/MORR/Configuration/IConfigurationManager.puml!default
 
-            !includesub application/Core/MORR/Configuration/ConfigurationManager.puml!default
+            !includesub ../application/Core/MORR/Configuration/ConfigurationManager.puml!default
 
-            !includesub application/Core/MORR/Configuration/InvalidConfigurationException.puml!default
+            !includesub ../application/Core/MORR/Configuration/InvalidConfigurationException.puml!default
 
             IConfigurationManager <|.. ConfigurationManager
             ConfigurationManager ..> InvalidConfigurationException : "throws"
@@ -188,11 +188,11 @@ package MORR {
         }
 
         package Modules <<Rectangle>> #BFBFBF {
-            !includesub application/Core/MORR/Modules/IModuleManager.puml!default
+            !includesub ../application/Core/MORR/Modules/IModuleManager.puml!default
 
-            !includesub application/Core/MORR/Modules/ModuleManager.puml!default
+            !includesub ../application/Core/MORR/Modules/ModuleManager.puml!default
 
-            !includesub application/Core/MORR/Modules/GlobalModuleConfiguration.puml!default
+            !includesub ../application/Core/MORR/Modules/GlobalModuleConfiguration.puml!default
 
             IModuleManager <|-- ModuleManager
             ModuleManager *-- "1" GlobalModuleConfiguration
@@ -200,30 +200,30 @@ package MORR {
 
         package Data <<Rectangle>> #BFBFBF {
             together {
-                !includesub application/Core/MORR/Data/Capture/CaptureException.puml!default
+                !includesub ../application/Core/MORR/Data/Capture/CaptureException.puml!default
 
                 together {
-                    !includesub application/Core/MORR/Data/Capture/Video/DirectXVideoSample.puml!default
+                    !includesub ../application/Core/MORR/Data/Capture/Video/DirectXVideoSample.puml!default
 
-                    !includesub application/Core/MORR/Data/Capture/Video/VideoSample.puml!default
+                    !includesub ../application/Core/MORR/Data/Capture/Video/VideoSample.puml!default
 
                     together {
-                        !includesub application/Core/MORR/Data/Capture/Video/Exceptions/VideoCaptureException.puml!default
+                        !includesub ../application/Core/MORR/Data/Capture/Video/Exceptions/VideoCaptureException.puml!default
 
                         CaptureException <|-- VideoCaptureException
                     }
 
                     package Desktop <<Rectangle>> #E6E6E6 {
-                        !includesub application/Core/MORR/Data/Capture/Video/Desktop/DesktopCapture.puml!default
+                        !includesub ../application/Core/MORR/Data/Capture/Video/Desktop/DesktopCapture.puml!default
 
-                        !includesub application/Core/MORR/Data/Capture/Video/Desktop/DesktopCaptureConfiguration.puml!default
+                        !includesub ../application/Core/MORR/Data/Capture/Video/Desktop/DesktopCaptureConfiguration.puml!default
 
-                        !includesub application/Core/MORR/Data/Capture/Video/Desktop/VideoSampleProducer.puml!default
+                        !includesub ../application/Core/MORR/Data/Capture/Video/Desktop/VideoSampleProducer.puml!default
 
                         together {
-                            !includesub application/Core/MORR/Data/Capture/Video/Desktop/Utility/Direct3D11Helper.puml!default
+                            !includesub ../application/Core/MORR/Data/Capture/Video/Desktop/Utility/Direct3D11Helper.puml!default
 
-                            !includesub application/Core/MORR/Data/Capture/Video/Desktop/Utility/GraphicsCaptureHelper.puml!default
+                            !includesub ../application/Core/MORR/Data/Capture/Video/Desktop/Utility/GraphicsCaptureHelper.puml!default
 
                             class MonitorInfo {
                                 + IsPrimary: bool <<get>> <<set>>
@@ -234,7 +234,7 @@ package MORR {
                                 + Hmon: IntPtr <<get>> <<set>>
                             }
 
-                            !includesub application/Core/MORR/Data/Capture/Video/Desktop/Utility/MonitorEnumerationHelper.puml!default
+                            !includesub ../application/Core/MORR/Data/Capture/Video/Desktop/Utility/MonitorEnumerationHelper.puml!default
 
                             MonitorEnumerationHelper ..> MonitorInfo : "uses"
                         }
@@ -251,34 +251,34 @@ package MORR {
             }
 
             together {
-                !includesub application/Core/MORR/Data/IntermediateFormat/IntermediateFormatSample.puml!default
+                !includesub ../application/Core/MORR/Data/IntermediateFormat/IntermediateFormatSample.puml!default
 
                 together {
-                    !includesub application/Core/MORR/Data/IntermediateFormat/Json/JsonIntermediateFormatDeserializer.puml!default
+                    !includesub ../application/Core/MORR/Data/IntermediateFormat/Json/JsonIntermediateFormatDeserializer.puml!default
 
-                    !includesub application/Core/MORR/Data/IntermediateFormat/Json/JsonIntermediateFormatSample.puml!default
+                    !includesub ../application/Core/MORR/Data/IntermediateFormat/Json/JsonIntermediateFormatSample.puml!default
 
-                    !includesub application/Core/MORR/Data/IntermediateFormat/Json/JsonIntermediateFormatSerializer.puml!default
+                    !includesub ../application/Core/MORR/Data/IntermediateFormat/Json/JsonIntermediateFormatSerializer.puml!default
                 }
 
                 IntermediateFormatSample <|-- JsonIntermediateFormatSample
             }
 
             package Transcoding <<Rectangle>> #E6E6E6 {
-                !includesub application/Core/MORR/Data/Transcoding/IDecoder.puml!default
+                !includesub ../application/Core/MORR/Data/Transcoding/IDecoder.puml!default
 
-                !includesub application/Core/MORR/Data/Transcoding/IEncoder.puml!default
+                !includesub ../application/Core/MORR/Data/Transcoding/IEncoder.puml!default
 
                 package MPEG <<Rectangle>> #BFBFBF {
-                    !includesub application/Core/MORR/Data/Transcoding/MPEG/MPEGEncoder.puml!default
+                    !includesub ../application/Core/MORR/Data/Transcoding/MPEG/MPEGEncoder.puml!default
                     
-                    !includesub application/Core/MORR/Data/Transcoding/MPEG/MPEGEncoderConfiguration.puml!default
+                    !includesub ../application/Core/MORR/Data/Transcoding/MPEG/MPEGEncoderConfiguration.puml!default
                 }
 
                 package Json <<Rectangle>> #BFBFBF {
-                    !includesub application/Core/MORR/Data/Transcoding/Json/JsonDecoder.puml!default
+                    !includesub ../application/Core/MORR/Data/Transcoding/Json/JsonDecoder.puml!default
 
-                    !includesub application/Core/MORR/Data/Transcoding/Json/JsonEncoder.puml!default
+                    !includesub ../application/Core/MORR/Data/Transcoding/Json/JsonEncoder.puml!default
                 }
 
                 IEncoder <|.. MpegEncoder

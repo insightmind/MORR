@@ -5,8 +5,8 @@ skinparam classAttributeIconSize 0
 
 left to right direction
 hide empty fields
-!includesub ../MORR.puml!TRANSCODING
-!includesub ../MORR.puml!TRANSCODING_INTERNAL
-!includesub ../MORR.puml!TRANSCODING_MPEG_INTERNAL
-!includesub ../MORR.puml!EXCEPTIONS
+!includesub ../complete_diagram/MORR.puml!TRANSCODING
+!includesub ../complete_diagram/MORR.puml!TRANSCODING_INTERNAL
+!includesub ../complete_diagram/MORR.puml!TRANSCODING_MPEG_INTERNAL
+!includesub ../complete_diagram/MORR.puml!EXCEPTIONS
 @enduml
