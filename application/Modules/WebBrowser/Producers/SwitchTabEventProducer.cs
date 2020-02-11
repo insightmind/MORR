@@ -9,12 +9,5 @@ namespace MORR.Modules.WebBrowser.Producers
     public class SwitchTabEventProducer : WebBrowserEventProducer<SwitchTabEvent>
     {
         public override EventLabel HandledEventLabel => EventLabel.SWITCHTAB;
-
-        public override void Notify(JsonElement eventJson)
-        {
-            var @event = new SwitchTabEvent();
-            @event.Deserialize(eventJson);
-            Enqueue(@event);
-        }
     }
 }

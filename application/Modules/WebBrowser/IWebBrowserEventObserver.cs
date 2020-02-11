@@ -6,7 +6,8 @@ namespace MORR.Modules.WebBrowser
     {
         public EventLabel HandledEventLabel { get; }
         public void Notify(JsonElement eventJson);
-        public void EnqueueFinished();
+        public void Open();
+        public void Close();
     }
 
     internal interface IWebBrowserEventObservable

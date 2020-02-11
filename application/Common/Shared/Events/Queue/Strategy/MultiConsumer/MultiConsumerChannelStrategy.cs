@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
@@ -17,7 +16,7 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
         private Channel<TEvent> receivingChannel;
         private readonly List<Channel<TEvent>> offeringChannels = new List<Channel<TEvent>>();
 
-        protected async void StartReceiving(uint? maxChannelConsumers)
+        protected void StartReceiving(uint? maxChannelConsumers)
         {
             if (maxChannelConsumers == 1)
             {
@@ -30,15 +29,15 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
             }
 
             this.maxChannelConsumers = maxChannelConsumers;
-            receivingChannel = CreateReceivingChannel();
-            await DistributeEventsAsync();
         }
+
+        public bool IsClosed { get; private set; } = true;
 
         /// <summary>
         ///     Asynchronously gets all events as concrete type <typeparamref name="T" />.
         /// </summary>
         /// <returns>A stream of <typeparamref name="T" /></returns>
-        public IAsyncEnumerable<TEvent> GetEvents([EnumeratorCancellation] CancellationToken token = default)
+        public IAsyncEnumerable<TEvent> GetEvents(CancellationToken token = default)
         {
             if ((maxChannelConsumers != null) && (offeringChannels.Count >= maxChannelConsumers))
             {
@@ -46,8 +45,8 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
             }
 
             var channel = CreateOfferingChannel();
-            offeringChannels.Add(channel);
-            token.Register(channel => FreeChannel(channel), channel);
+            offeringChannels?.Add(channel);
+            token.Register(FreeChannel, channel);
             return channel.Reader.ReadAllAsync(token);
         }
 
@@ -60,17 +59,24 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
             await EnqueueAsync(receivingChannel, @event);
         }
 
-        public void NotifyOnEnqueueFinished()
+        public void Open()
         {
-            receivingChannel.Writer.Complete();
+            receivingChannel = CreateReceivingChannel();
+            _ = DistributeEventsAsync();
+            IsClosed = false;
+        }
+
+        public void Close()
+        {
+            IsClosed = true;
+            receivingChannel?.Writer?.Complete();
 
             foreach (var channel in offeringChannels)
             {
-                channel.Writer.Complete();
+                channel?.Writer?.Complete();
             }
 
             offeringChannels.Clear();
-            receivingChannel = CreateReceivingChannel();
         }
 
         private ValueTask EnqueueAsync(Channel<TEvent> channel, TEvent @event)
@@ -89,7 +95,7 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
             {
                 foreach (var channel in offeringChannels)
                 {
-                    EnqueueAsync(channel, @event);
+                    _ = EnqueueAsync(channel, @event);
                 }
             }
         }
@@ -101,7 +107,7 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
                 return;
             }
 
-            offeringChannels.Remove(channel);
+            offeringChannels?.Remove(channel);
         }
 
         protected abstract Channel<TEvent> CreateOfferingChannel();

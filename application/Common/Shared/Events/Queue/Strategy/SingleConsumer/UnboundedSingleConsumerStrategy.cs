@@ -26,8 +26,6 @@ namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
                 SingleWriter = false,
                 SingleReader = true
             };
-
-            StartReceiving();
         }
 
         protected override Channel<TEvent> CreateChannel()

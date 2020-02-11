@@ -12,31 +12,40 @@ using MORR.Shared.Utility;
 
 namespace MORR.Core.Data.IntermediateFormat.Json
 {
-    public class JsonIntermediateFormatSerializer
-        : DefaultEncodeableEventQueue<JsonIntermediateFormatSample>, ITransformingModule
+    public class JsonIntermediateFormatSerializer : DefaultEncodableEventQueue<JsonIntermediateFormatSample>, IModule
     {
         private bool isActive;
-
-        private CountdownEvent resetCounter;
+        private CountdownEvent resetCounter = new CountdownEvent(0);
 
         [ImportMany]
         private IEnumerable<IReadOnlyEventQueue<Event>> EventQueues { get; set; }
 
-        public void Initialize() { }
+        public void Initialize(bool isEnabled)
+        {
+            if (isEnabled)
+            {
+                Open();
+            }
+            else
+            {
+                Close();
+            }
+        }
 
         public bool IsActive
         {
             get => isActive;
-            set => Utility.SetAndDispatch(ref isActive, value, LinkAllQueues, () => { });
+            set => Utility.SetAndDispatch(ref isActive, value, LinkAllQueues, () => { /* We wait until all queues are closed */ });
         }
 
         public Guid Identifier { get; } = new Guid("2D61FFB2-9CC1-4AAD-B1B9-A362FCF022A0");
 
         private void LinkAllQueues()
         {
-            resetCounter = new CountdownEvent(EventQueues.Count());
+            var enabledQueues = EventQueues.Where(queue => !queue.IsClosed);
+            resetCounter = new CountdownEvent(enabledQueues.Count());
 
-            foreach (var eventQueue in EventQueues)
+            foreach (var eventQueue in enabledQueues)
             {
                 Task.Run(() => LinkSingleQueue(eventQueue));
             }
@@ -73,7 +82,7 @@ namespace MORR.Core.Data.IntermediateFormat.Json
 
             if (resetCounter.Signal())
             {
-                NotifyOnEnqueueFinished();
+                Close();
             }
         }
     }

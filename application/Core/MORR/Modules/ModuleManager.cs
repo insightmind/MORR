@@ -29,9 +29,9 @@ namespace MORR.Core.Modules
         {
             enabledModules = Modules.Where(x => ModuleConfiguration.EnabledModules.Contains(x.GetType()));
 
-            foreach (var module in enabledModules)
+            foreach (var module in Modules)
             {
-                module.Initialize();
+                module.Initialize(enabledModules.Contains(module));
             }
         }
 

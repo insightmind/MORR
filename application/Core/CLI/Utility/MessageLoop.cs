@@ -1,5 +1,6 @@
 ﻿using MORR.Shared.Utility;
 using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
 
 namespace MORR.Core.CLI.Utility
@@ -103,13 +104,13 @@ namespace MORR.Core.CLI.Utility
         #region NativeMethods
 
         [DllImport(user32Dll)]
-        private static extern int GetMessage(out NativeMethods.MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
+        private static extern int GetMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
 
         [DllImport(user32Dll)]
-        private static extern bool TranslateMessage([In] ref NativeMethods.MSG lpMsg);
+        private static extern bool TranslateMessage([In] ref MSG lpMsg);
 
         [DllImport(user32Dll)]
-        private static extern IntPtr DispatchMessage([In] ref NativeMethods.MSG lpMsg);
+        private static extern IntPtr DispatchMessage([In] ref MSG lpMsg);
 
         [DllImport(user32Dll, SetLastError = true, CharSet = CharSet.Auto)]
         private static extern uint RegisterWindowMessage(string lpString);
@@ -120,6 +121,46 @@ namespace MORR.Core.CLI.Utility
 
         [DllImport(kernel32Dll)]
         public static extern uint GetCurrentThreadId();
+
+        #endregion
+
+        #region Structs 
+
+        public struct MSG
+        {
+            public IntPtr HWnd;
+            public uint Message;
+            public IntPtr WParam;
+            public IntPtr LParam;
+            public uint Time;
+            public POINT Pt;
+        }
+
+        /// <summary>
+        ///     The POINT is of two int(32 bits) for the usage in MSLLHOOKSTRUCT.
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential)]
+        public struct POINT
+        {
+            public int X;
+            public int Y;
+
+            public POINT(int x, int y)
+            {
+                X = x;
+                Y = y;
+            }
+
+            public static implicit operator Point(POINT p)
+            {
+                return new Point(p.X, p.Y);
+            }
+
+            public static implicit operator POINT(Point p)
+            {
+                return new POINT(p.X, p.Y);
+            }
+        }
 
         #endregion
     }

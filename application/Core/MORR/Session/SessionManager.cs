@@ -7,19 +7,21 @@ using MORR.Core.Configuration;
 using MORR.Core.Data.Transcoding;
 using MORR.Core.Modules;
 using MORR.Core.Session.Exceptions;
+using MORR.Shared.Hook;
 using MORR.Shared.Utility;
 
 namespace MORR.Core.Session
 {
     public class SessionManager : ISessionManager
     {
-        private readonly IEnumerable<IEncoder> encoders;
-        private readonly IEnumerable<IDecoder> decoders;
+        private const string dateFormat = "yyyy-MM-ddTHH-mm-ss";
+        private IEnumerable<IEncoder> encoders = new IEncoder[0];
+        private IEnumerable<IDecoder> decoders = new IDecoder[0];
         private readonly IModuleManager moduleManager;
+        private readonly IConfigurationManager configurationManager;
         private bool isRecording;
 
-        public SessionManager(FilePath configurationPath) : this(configurationPath, new Bootstrapper(),
-                                                                 new ConfigurationManager(), new ModuleManager()) { }
+        public SessionManager(FilePath configurationPath) : this(configurationPath, new Bootstrapper(), new ConfigurationManager(), new ModuleManager()) { }
 
         public SessionManager(FilePath configurationPath,
                               IBootstrapper bootstrapper,
@@ -27,6 +29,8 @@ namespace MORR.Core.Session
                               IModuleManager moduleManager)
         {
             this.moduleManager = moduleManager;
+            this.configurationManager = configurationManager;
+
             bootstrapper.ComposeImports(this);
             bootstrapper.ComposeImports(configurationManager);
             bootstrapper.ComposeImports(moduleManager);
@@ -35,8 +39,6 @@ namespace MORR.Core.Session
 
             encoders = Encoders.Where(x => Configuration.Encoders.Contains(x.GetType()));
             decoders = Decoders.Where(x => Configuration.Decoders?.Contains(x.GetType()) ?? false);
-
-            moduleManager.InitializeModules();
         }
 
         [ImportMany]
@@ -55,8 +57,9 @@ namespace MORR.Core.Session
 
         private DirectoryPath CreateNewRecordingDirectory()
         {
+            var timeNow = DateTime.Now;
             var sessionId = Guid.NewGuid();
-            var directory = Path.Combine(Configuration.RecordingDirectory.ToString(), sessionId.ToString());
+            var directory = Path.Combine(Configuration.RecordingDirectory.ToString(), timeNow.ToString(dateFormat) + "-" + sessionId.ToString());
             Directory.CreateDirectory(directory);
             return new DirectoryPath(directory);
         }
@@ -68,16 +71,18 @@ namespace MORR.Core.Session
                 throw new AlreadyRecordingException();
             }
 
+            moduleManager.InitializeModules();
+
             isRecording = true;
 
             CurrentRecordingDirectory = CreateNewRecordingDirectory();
+
+            moduleManager.NotifyModulesOnSessionStart();
 
             foreach (var encoder in encoders)
             {
                 encoder.Encode(CurrentRecordingDirectory);
             }
-
-            moduleManager.NotifyModulesOnSessionStart();
         }
 
         public void StopRecording()
@@ -90,13 +95,14 @@ namespace MORR.Core.Session
             isRecording = false;
 
             moduleManager.NotifyModulesOnSessionStop();
+
             foreach (var encoder in encoders)
             {
                 // IEncoder.EncodeFinished will not be reset before IEncoder.Encode gets called again
                 // We may therefore wait on this event sequentially without risk of blocking indefinitely
                 encoder.EncodeFinished.WaitOne();
             }
-            
+
             GlobalHook.IsActive = false;
         }
 
@@ -107,6 +113,7 @@ namespace MORR.Core.Session
                 throw new InvalidConfigurationException("No decoder specified for processing operation.");
             }
 
+            moduleManager.InitializeModules();
             moduleManager.NotifyModulesOnSessionStart();
 
             foreach (var recording in recordings)

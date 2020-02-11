@@ -6,11 +6,10 @@ using Windows.Graphics.Capture;
 using MORR.Core.Data.Capture.Video.Desktop.Utility;
 using MORR.Core.Data.Capture.Video.Exceptions;
 using MORR.Shared.Modules;
-using MORR.Shared.Utility;
 
 namespace MORR.Core.Data.Capture.Video.Desktop
 {
-    public class DesktopCapture : ICollectingModule
+    public class DesktopCapture : IModule
     {
         private bool isActive;
 
@@ -28,8 +27,17 @@ namespace MORR.Core.Data.Capture.Video.Desktop
 
         public Guid Identifier { get; } = new Guid("9F1D496E-9939-4BE1-9117-6DE21A3D1CFE");
 
-        // TODO This also appears to be empty somewhat often - we could provide an empty implementation in the interface
-        public void Initialize() { }
+        public void Initialize(bool isEnabled)
+        {
+            if (isEnabled)
+            {
+                VideoSampleProducer.Open();
+            }
+            else
+            {
+                VideoSampleProducer.Close();
+            }
+        }
 
         private bool TryGetGraphicsCaptureItem([NotNullWhen(true)] out GraphicsCaptureItem? item)
         {
@@ -37,7 +45,7 @@ namespace MORR.Core.Data.Capture.Video.Desktop
             if (!GraphicsCaptureHelper.CanCreateItemWithoutPicker || Configuration.PromptUserForMonitorSelection)
             {
                 var picker = new GraphicsCapturePicker();
-                var handle = NativeMethods.GetAssociatedWindow();
+                var handle = DesktopCaptureNativeMethods.GetAssociatedWindow();
 
                 picker.SetWindow(handle);
                 item = picker.PickSingleItemAsync().GetAwaiter().GetResult();

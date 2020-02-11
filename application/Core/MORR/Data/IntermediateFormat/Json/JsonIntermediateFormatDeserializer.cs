@@ -10,7 +10,7 @@ using MORR.Shared.Utility;
 
 namespace MORR.Core.Data.IntermediateFormat.Json
 {
-    public class JsonIntermediateFormatDeserializer : ITransformingModule
+    public class JsonIntermediateFormatDeserializer : IModule
     {
         private bool isActive;
 
@@ -18,20 +18,21 @@ namespace MORR.Core.Data.IntermediateFormat.Json
         private IEnumerable<ISupportDeserializationEventQueue<Event>> EventQueues { get; set; }
 
         [Import]
-        private IDecodeableEventQueue<JsonIntermediateFormatSample> IntermediateFormatSampleQueue { get; set; }
+        private IDecodableEventQueue<JsonIntermediateFormatSample> IntermediateFormatSampleQueue { get; set; }
 
         public bool IsActive
         {
             get => isActive;
             set => Utility.SetAndDispatch(ref isActive, value, LinkAllQueues, delegate
             {
-                /* TODO Cancel iteration */
+                /*
+                 * Cancel should happen automatically as this is a transforming module and awaits
+                 * closing of input event queues.
+                 */
             });
         }
 
         public Guid Identifier { get; } = new Guid("03496342-BBAE-46A7-BCBE-98FACA083B74");
-
-        public void Initialize() { }
 
         private void LinkAllQueues()
         {
@@ -45,14 +46,14 @@ namespace MORR.Core.Data.IntermediateFormat.Json
         {
             await foreach (var sample in IntermediateFormatSampleQueue.GetEvents())
             {
-                if (sample.Type == eventQueue.EventType)
+                if (sample.Type == eventQueue?.EventType)
                 {
                     var @event = JsonSerializer.Deserialize(sample.Data, sample.Type);
-                    eventQueue.Enqueue(@event);
+                    eventQueue?.Enqueue(@event);
                 }
             }
 
-            eventQueue.NotifyOnEnqueueFinished();
+            eventQueue?.Close();
         }
     }
 }

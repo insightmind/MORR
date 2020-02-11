@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
@@ -15,18 +15,15 @@ namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
     public abstract class SingleConsumerChannelStrategy<TEvent> : IEventQueueStorageStrategy<TEvent> where TEvent : Event
     {
         private Channel<TEvent> eventChannel;
-        private bool isOccupied = false;
+        private bool isOccupied;
 
-        protected void StartReceiving()
-        {
-            eventChannel = CreateChannel();
-        }
+        public bool IsClosed { get; private set; } = true;
 
         /// <summary>
         ///     Asynchronously gets all events as concrete type <typeparamref name="T" />.
         /// </summary>
         /// <returns>A stream of <typeparamref name="T" /></returns>
-        public IAsyncEnumerable<TEvent> GetEvents([EnumeratorCancellation] CancellationToken token = default)
+        public IAsyncEnumerable<TEvent> GetEvents(CancellationToken token = default)
         {
             if (isOccupied)
             {
@@ -47,11 +44,18 @@ namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
             await EnqueueAsync(@event);
         }
 
-        public void NotifyOnEnqueueFinished()
+        public void Open()
         {
+            eventChannel = CreateChannel();
+            FreeReading();
+            IsClosed = false;
+        }
+
+        public void Close()
+        {
+            IsClosed = true;
             eventChannel.Writer.Complete();
             FreeReading();
-            eventChannel = CreateChannel();
         }
 
         private ValueTask EnqueueAsync(TEvent @event)
