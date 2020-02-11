@@ -114,42 +114,18 @@ package MORR {
         }
 
         package Utility <<Rectangle>> #BFBFBF {
-            class DirectoryPath {
-                + <<create>> DirectoryPath(value: string)
-                + ToString() : string
-            }
+            !includesub application/Common/Shared/Utility/DirectoryPath.puml!default
 
-            class FilePath {
-                + <<create>> FilePath(value: string)
-                +  ToString() : string
-            }
+            !includesub application/Common/Shared/Utility/FilePath.puml!default
 
-            class GlobalHook {
-                + {static} IsActive : bool <<get>> <<set>>
-                + {static} AddListener(callback: RetrieveMessageCallBack, types: NativeMethods.MessageType[])
-                + {static} RemoveListener(callback: RetrieveMessageCallBack, types: NativeMethods.MessageType[])
-                + {static} FreeLibrary()
-            }
+            !includesub application/Common/Shared/Utility/GlobalHook.puml!default
 
-            class NativeMethods {
-                + {static} DoWin32MessageLoop()
-                + {static} StopMessageLoop()
-                + {static} IsKeyPressed(VirtualKeyCode virtualKeyCode)
-                + {static} TrySetKeyboardHook(callback: LowLevelKeyboardProc, handle: IntPtr)
-                + {static} GetClipboardText()
-                + {static} GetAssociatedWindow()
-            }
+            !includesub application/Common/Shared/Utility/NativeMethods.puml!default
 
-            class Utility {
-                + {static} SetAndDispatch(variable: bool, value: bool, onTrue: Action, onFalse: Action)
-                + {static} GetTypeFromAnyAssembly(type: string)
-            }
+            !includesub application/Common/Shared/Utility/Utility.puml!default
 
             together {
-                class HookLibraryException {
-                    + <<create>> HookLibraryException()
-                    + <<create>> HookLibraryException(message: string)
-                }
+                !includesub application/Common/Shared/Utility/Exceptions/HookLibraryException.puml!default
             }
 
             GlobalHook ..> HookLibraryException : "throws"

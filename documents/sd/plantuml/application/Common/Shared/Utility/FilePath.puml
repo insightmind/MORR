@@ -2,8 +2,9 @@
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 !startsub default
-interface IModule
-interface ICollectingModule
+class FilePath {
+    + <<create>> FilePath(value: string)
+    +  ToString() : string
+}
 !endsub
-IModule <|-- ICollectingModule
 @enduml
