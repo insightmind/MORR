@@ -1,1 +1,59 @@
- \section{Common}
+\section{Common}
+\subsection{Shared}
+\issue{
+Distinction between \class{ICollectingModule}, \class{ITransformingModule} and \class{IReceivingModule} has proven unnecessary.
+}{
+Do not differentiate between different modules and suggest use of general \class{IModule}.
+}{
+Remove interfaces: \class{ICollectingModule}, \class{ITransformingModule} and \class{IReceivingModule}.
+}
+
+\issue{
+Design of different event queue strategies: \class{RingBufferStorageStrategy}, \class{RefCountedListStorageStrategy}, \class{KeepAllStorageStrategy} were not suitable for our implementation approach and use of the C\# .NET Core language library.
+}{
+Design new event queue storage strategies for different types of usage: \keyword{Bounded} or \keyword{Unbounded} and \keyword{SingleConsumer} or \keyword{MultiConsumer}.
+}{
+Add abstract storage strategies: \class{SingleConsumerChannelStrategy} and \class{MutliConsumerChannelStrategy}.\\
+A \keyword{SingleConsumer} strategy allows only one consumer at a time to read events out of the queue which provides a performance boost in comparison to \keyword{MultiConsumer}.
+A \keyword{MultiConsumer} strategy allows a finite and infinite amount of consumers to read simultanously. This provides multiplication of references to a specific \class{Event} and supports reference counting for each consumer.
+
+Both strategy types have been additionally divided into \keyword{Bounded}, which acts as a RingBuffer and removes the oldest events if the queue is full, and \keyword{Unbounded}, which does not restrict the event count of the queue.
+}
+
+\issue{
+Unable to use designed event queue structure in \keyword{MEF} correctly.
+}{
+Add new abstraction of event queues to support distinct imports in MEF and simplify usage for Modules.
+}{
+Add interfaces concerning distinct sections of the event pipeline and read-write access:\\
+\class{IReadOnlyEventQueue}: To restrict usage to read only methods.\\
+\class{ISupportDeserializationEventQueue}: Allows a strongly typed usage of events in the deserialization process that stores events serialized, which is necessary for any recording or processing session.\\
+\class{IDecodableEventQueue}: Defines an strongly typed read only event queue which is used in the decoding process of the pipeline.\\
+\class{IEncodableEventQueue}: Defines an strongly typed read only event queue which is used in the encoding process of the pipeline.\\
+
+Additionally multiple default implementation using their correct storage strategies were introduced to simplify usage of queues in a Module.
+}
+
+\issue{
+Unable to gather events from unowned processes and windows.
+}{
+Support our additional \package{HookLibrary} for use by our modules.
+}{
+To accomplish this and reduce the amount of multiple hooks per windows process, we had to add \class{GlobalHook} and \class{HookNativeMethods} to our shared project.
+}
+
+\issue{
+Handling of directory- or filepaths using \class{string} has proven error-prone and not typesafe.
+}{
+Add shared support for directory- and filepaths using new classes.
+}{
+Add \class{DirectoryPath} and \class{FilePath} classes.
+}
+
+\issue{
+Handling of to be serialized configurations using \class{string} has proven error-prone and not typesafe.
+}{
+Add shared support for strongly typed raw configurations.
+}{
+Add \class{RawConfiguration} as a wrapper to the unserialized configuration as a string at \member{RawConfiguration.RawValue}.
+}

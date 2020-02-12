@@ -59,3 +59,11 @@
 \issue{Use of JSON as the intermediate format conflicts with CSV output format}
 {Instead use JSON as the output format}
 {Removed \class{CSVEncoder}, added \class{JsonEncoder} and \class{JsonDecoder}}
+
+\issue{
+Unable to infer specific types in a configuration.
+}{
+Add support to deserialize type using its name from all imported assemblies.
+}{
+Alter behaviour of \class{ConfigurationManager} to manually deserialize sections of the main configuration.
+}

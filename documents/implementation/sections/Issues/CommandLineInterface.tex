@@ -26,3 +26,19 @@ Introduce \class{InteractiveCommandLine} and possiblity to stop \keyword{Message
 A new class \class{InteractiveCommandLine} was added which is launched on a seperate thread, to allow user interaction while recording. You are now able to use the 'x' command to cancel a currently running session.
 The \class{MessageLoop} has been extended to support cancellation of a currently running \keyword{MessagePump} from a different thread using the method \member{MessageLoop.Cancel}.
 }
+
+\issue{
+Missing command for starting a recording session.
+}{
+Implement a new command to start a recording session.
+}{
+Add classes \class{RecordCommand} and \class{RecordOptions}.
+}
+
+\issue{
+Missing command for validating a given configuration file.
+}{
+Implement a new command validate a given configuration file. 
+}{
+Add classes \class{ValidateCommand} and \class{ValidateOptions}.
+}
