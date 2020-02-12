@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Morr.Core.UI.Controls.NotifyIcon.Utility
+namespace MORR.Core.UI.Controls.NotifyIcon.Utility
 {
     /// <summary>
     /// Creates a window procedure to receive window and taskbar messages

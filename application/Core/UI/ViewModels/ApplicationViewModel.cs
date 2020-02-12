@@ -3,10 +3,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using Windows.Devices.Printers;
 using MORR.Core.Configuration;
 using MORR.Core.Session;
-using Morr.Core.UI.Dialogs;
+using MORR.Core.UI.Dialogs;
 using MORR.Core.UI.ViewModels.Utility;
 using MORR.Shared.Utility;
 

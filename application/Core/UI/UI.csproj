@@ -27,6 +27,6 @@
 
   <ItemGroup>
     <Resource Include="Assets\Icon\MORR_Default.ico" />
-    <Resource Include="Assets\Icon\Morr_Active_Recording.ico"/>
+    <Resource Include="Assets\Icon\MORR_Active_Recording.ico" />
   </ItemGroup>
 </Project>

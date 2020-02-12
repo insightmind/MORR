@@ -6,8 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Interop;
-using System.Windows.Media;
-using Morr.Core.UI.Controls.NotifyIcon.Utility;
+using MORR.Core.UI.Controls.NotifyIcon.Utility;
 using Point = System.Windows.Point;
 
 namespace MORR.Core.UI.Controls.NotifyIcon
@@ -39,6 +38,37 @@ namespace MORR.Core.UI.Controls.NotifyIcon
             }
         }
 
+        private void CreateNotifyIcon()
+        {
+            lock (this)
+            {
+                if (isNotifyIconCreated)
+                {
+                    return;
+                }
+
+                WriteIconData(NativeMethods.NotifyIconMessage.NIM_ADD,
+                              NativeMethods.NotifyIconFlags.NIF_MESSAGE | NativeMethods.NotifyIconFlags.NIF_ICON |
+                              NativeMethods.NotifyIconFlags.NIF_TIP | NativeMethods.NotifyIconFlags.NIF_GUID);
+                isNotifyIconCreated = true;
+            }
+        }
+
+        private void RemoveNotifyIcon()
+        {
+            lock (this)
+            {
+                if (!isNotifyIconCreated)
+                {
+                    return;
+                }
+
+                WriteIconData(NativeMethods.NotifyIconMessage.NIM_DELETE,
+                              NativeMethods.NotifyIconFlags.NIF_MESSAGE | NativeMethods.NotifyIconFlags.NIF_GUID);
+                isNotifyIconCreated = false;
+            }
+        }
+
         #region Event handlers
 
         private static void OnTooltipChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -52,11 +82,11 @@ namespace MORR.Core.UI.Controls.NotifyIcon
             }
         }
 
-        private static void OnIconSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void IconUriChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is NotifyIcon notifyIcon && e.NewValue is ImageSource icon)
+            if (d is NotifyIcon notifyIcon && e.NewValue is Uri uri)
             {
-                notifyIcon.SetIcon(icon);
+                notifyIcon.SetIcon(uri);
             }
         }
 
@@ -126,37 +156,6 @@ namespace MORR.Core.UI.Controls.NotifyIcon
 
         #endregion
 
-        private void CreateNotifyIcon()
-        {
-            lock (this)
-            {
-                if (isNotifyIconCreated)
-                {
-                    return;
-                }
-
-                WriteIconData(NativeMethods.NotifyIconMessage.NIM_ADD,
-                              NativeMethods.NotifyIconFlags.NIF_MESSAGE | NativeMethods.NotifyIconFlags.NIF_ICON |
-                              NativeMethods.NotifyIconFlags.NIF_TIP | NativeMethods.NotifyIconFlags.NIF_GUID);
-                isNotifyIconCreated = true;
-            }
-        }
-
-        private void RemoveNotifyIcon()
-        {
-            lock (this)
-            {
-                if (!isNotifyIconCreated)
-                {
-                    return;
-                }
-
-                WriteIconData(NativeMethods.NotifyIconMessage.NIM_DELETE,
-                              NativeMethods.NotifyIconFlags.NIF_MESSAGE | NativeMethods.NotifyIconFlags.NIF_GUID);
-                isNotifyIconCreated = false;
-            }
-        }
-
         #region Dependency properties
 
         public static readonly DependencyProperty CommandProperty =
@@ -171,13 +170,13 @@ namespace MORR.Core.UI.Controls.NotifyIcon
             DependencyProperty.Register(nameof(ContextMenu), typeof(ContextMenu), typeof(NotifyIcon),
                                         new PropertyMetadata(null));
 
-        public static readonly DependencyProperty IconSourceProperty =
-            DependencyProperty.Register(nameof(IconSource), typeof(ImageSource), typeof(NotifyIcon),
-                                        new PropertyMetadata(null, OnIconSourceChanged));
-
         public static readonly DependencyProperty TooltipProperty =
             DependencyProperty.Register(nameof(Tooltip), typeof(string), typeof(NotifyIcon),
                                         new PropertyMetadata(string.Empty, OnTooltipChanged));
+
+        public static readonly DependencyProperty IconUriProperty =
+            DependencyProperty.Register(nameof(IconUri), typeof(Uri), typeof(NotifyIcon),
+                                        new PropertyMetadata(null, IconUriChanged));
 
         /// <summary>
         ///     The tooltip shown during hovering
@@ -191,10 +190,10 @@ namespace MORR.Core.UI.Controls.NotifyIcon
         /// <summary>
         ///     The icon shown in the tray
         /// </summary>
-        public ImageSource IconSource
+        public Uri IconUri
         {
-            get => (ImageSource) GetValue(IconSourceProperty);
-            set => SetValue(IconSourceProperty, value);
+            get => (Uri) GetValue(IconUriProperty);
+            set => SetValue(IconUriProperty, value);
         }
 
         /// <summary>
@@ -228,16 +227,11 @@ namespace MORR.Core.UI.Controls.NotifyIcon
 
         #region Utility
 
-        private void SetIcon(ImageSource imageSource)
+        private void SetIcon(Uri uri)
         {
-            if (imageSource == null)
-            {
-                return;
-            }
+            var resourceInfo = Application.GetResourceStream(uri);
 
-            // Using an ImageSource internally is easier than the types required by the native API
-            // However, to actually use the image, it needs to be converted back to a handle-based format
-            if (!(Application.GetResourceStream(new Uri(imageSource.ToString())) is { } resourceInfo))
+            if (resourceInfo == null)
             {
                 return;
             }
