@@ -6,7 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Interop;
-using MORR.Core.UI.Controls.NotifyIcon.Utility;
+using MORR.Core.UI.Utility;
 using Point = System.Windows.Point;
 
 namespace MORR.Core.UI.Controls.NotifyIcon

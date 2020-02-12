@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace MORR.Core.UI.ViewModels.Utility
+namespace MORR.Core.UI.Utility
 {
     public class RelayCommand : ICommand
     {

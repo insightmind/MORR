@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace MORR.Core.UI.Controls.NotifyIcon.Utility
+namespace MORR.Core.UI.Utility
 {
     internal static class NativeMethods
     {

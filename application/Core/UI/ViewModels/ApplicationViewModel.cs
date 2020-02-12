@@ -6,7 +6,7 @@ using System.Windows.Input;
 using MORR.Core.Configuration;
 using MORR.Core.Session;
 using MORR.Core.UI.Dialogs;
-using MORR.Core.UI.ViewModels.Utility;
+using MORR.Core.UI.Utility;
 using MORR.Shared.Utility;
 
 namespace MORR.Core.UI.ViewModels
