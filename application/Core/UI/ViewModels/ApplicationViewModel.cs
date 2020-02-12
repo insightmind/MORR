@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using MORR.Core.Configuration;
@@ -13,7 +15,7 @@ namespace MORR.Core.UI.ViewModels
 {
     public class ApplicationViewModel : DependencyObject
     {
-        private static SessionManager sessionManager;
+        private SessionManager sessionManager;
 
         public ApplicationViewModel()
         {
@@ -22,16 +24,32 @@ namespace MORR.Core.UI.ViewModels
 
         private void Initialize()
         {
-            try
+            var commandLineArguments = Environment.GetCommandLineArgs();
+
+            if (!commandLineArguments.Any())
             {
-                sessionManager = new SessionManager(new FilePath(Environment.GetCommandLineArgs()[1]));
-            }
-            catch (InvalidConfigurationException)
-            {
-                new ErrorDialog("The configuration could not be loaded. \nPlease check the configuration file or contact an administrator.").ShowDialog();
-                Exit();
+                throw new InvalidConfigurationException("");
             }
 
+            if (!Environment.GetCommandLineArgs().Any())
+            {
+                ExitWithError(
+                    "No configuration has been specified. Please specify a configuration file as the command line argument.");
+            }
+
+            // The first argument is the current assembly, the second argument is the first actual command line argument
+            var configurationPathArgument = commandLineArguments.ElementAt(1);
+            var configurationPath = new FilePath(Path.GetFullPath(configurationPathArgument));
+
+            try
+            {
+                sessionManager = new SessionManager(configurationPath);
+            }
+            catch (Exception)
+            {
+                ExitWithError(
+                    "The configuration could not be loaded correctly. \nPlease check the configuration file or contact an administrator.");
+            }
         }
 
         private static void Exit()
@@ -39,16 +57,15 @@ namespace MORR.Core.UI.ViewModels
             Application.Current?.Shutdown();
         }
 
-        private static void OnOpenRecordingsDirectory(object _)
+        private void OnOpenRecordingsDirectory(object _)
         {
             var recordingsFolder = sessionManager.RecordingsFolder;
 
             if (recordingsFolder == null)
             {
-                new ErrorDialog("The recordings folder could not be found. \nPlease contact an administrator.").ShowDialog();
-                Exit();  
+                ExitWithError("The recordings folder could not be found. \nPlease contact an administrator.");
             }
-            
+
             Process.Start("explorer.exe", recordingsFolder.ToString());
         }
 
@@ -76,11 +93,13 @@ namespace MORR.Core.UI.ViewModels
 
         private void StartRecording()
         {
-            if (new InformationDialog().ShowDialog() ?? false)
+            if (!ShowDialogWithResult<InformationDialog>())
             {
-                IsRecording = true;
-                sessionManager.StartRecording();
+                return;
             }
+
+            IsRecording = true;
+            sessionManager.StartRecording();
         }
 
         private void StopRecording()
@@ -88,12 +107,33 @@ namespace MORR.Core.UI.ViewModels
             IsRecording = false;
             sessionManager.StopRecording();
 
-            
-
-            if (!new SaveDialog().ShowDialog() ?? false)
+            if (ShowDialogWithResult<SaveDialog>())
             {
-                Directory.Delete(sessionManager.CurrentRecordingDirectory?.ToString(), true);
+                // Recordings are automatically saved - no further action required
+                return;
             }
+
+            var recordingDirectory = sessionManager.CurrentRecordingDirectory?.ToString();
+
+            if (recordingDirectory == null)
+            {
+                return;
+            }
+
+            Directory.Delete(recordingDirectory, true);
+        }
+
+        [DoesNotReturn]
+        private static void ExitWithError(string errorMessage)
+        {
+            new ErrorDialog(errorMessage).ShowDialog();
+            Exit();
+        }
+
+        private static bool ShowDialogWithResult<T>() where T : Window, new()
+        {
+            var dialogResult = new T().ShowDialog();
+            return dialogResult ?? false;
         }
 
         #region Commands

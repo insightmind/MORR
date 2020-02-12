@@ -35,7 +35,7 @@
                             </Utility:SwitchCase.In>
                         </Utility:SwitchCase>
                     </Utility:SwitchConverter>
-                    <Icon:NotifyIcon x:Key="Icon" Command="{Binding ToggleRecordingCommand}"
+                    <Icon:NotifyIcon x:Key="Icon"
                                      IconUri="{Binding IsRecording, Converter={StaticResource IconConverter}}">
                         <Icon:NotifyIcon.DataContext>
                             <ViewModel:ApplicationViewModel />

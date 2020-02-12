@@ -20,6 +20,13 @@
     ],
     "RecordingDirectory": "%userprofile%\\Videos\\MORR"
   },
+  "MORR.Modules.Mouse.MouseModuleConfiguration": {
+    "SamplingRateInHz": 10,
+    "Threshold": 50
+  },
+  "MORR.Modules.WebBrowser.WebBrowserModuleConfiguration": {
+    "UrlSuffix": "60024/"
+  },
   "MORR.Core.Data.Transcoding.Json.JsonEncoderConfiguration": {
     "RelativeFilePath": "event_data.json"
   },
@@ -36,12 +43,5 @@
   "MORR.Core.Data.Capture.Video.Desktop.DesktopCaptureConfiguration": {
     "PromptUserForMonitorSelection": false,
     "MonitorIndex": 0
-  },
-  "MORR.Modules.WebBrowser.WebBrowserModuleConfiguration": {
-    "UrlSuffix": "60024/"
-  },
-  "MORR.Modules.Mouse.MouseModuleConfiguration": {
-    "SamplingRateInHz": 1,
-    "Threshold": 100
   }
 }
