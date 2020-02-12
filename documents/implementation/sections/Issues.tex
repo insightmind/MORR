@@ -1,4 +1,4 @@
-\newcommand{\issue}[3]{\begin{minipage}{\textwidth}\textbf{Problem:} #1\\ \textbf{Solution:} #2 \\ \textbf{Change:} #3\end{minipage}\vskip.2\baselineskip}
+\newcommand{\issue}[3]{\begin{minipage}{\textwidth}\textbf{Problem:}\\ #1 \\ \textbf{Solution:}\\ #2 \\ \textbf{Change:} \\ #3 \end{minipage}\vskip.2\baselineskip}
 \newcommand{\keyword}[1]{\textbf{#1}}
 \newcommand{\class}[1]{\textcolor{blue}{#1}}
 \newcommand{\package}[1]{\textbf{#1}}
@@ -9,6 +9,7 @@ During the implementation phase, various unforeseen issues where encountered whi
 adjustements to the original design necessary. This chapter briefly mentions the challenges
 and their respective resolution.
 
+\RaggedRight
 \input{sections/Issues/Core.tex}
 \input{sections/Issues/Modules.tex}
 \input{sections/Issues/Common.tex}
