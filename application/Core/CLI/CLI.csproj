@@ -27,6 +27,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MORR\MORR.csproj" />
-    <ProjectReference Include="..\..\Core\UI\UI.csproj"/>
+    <ProjectReference Include="..\UI\UI.csproj"/>
   </ItemGroup>
 </Project>
