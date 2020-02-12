@@ -31,11 +31,11 @@ namespace WindowManagementTest
             container.ComposeExportedValue(windowMovementEventProducer.Object);
             container.ComposeExportedValue(windowResizingEventProducer.Object);
             container.ComposeExportedValue(windowStateChangedEventProducer.Object);
-            container.ComposeParts(windowResizingEventProducer);
+            container.ComposeParts(windowManagementModule);
         }
 
         [TestMethod]
-        public void TestMouseModule_Activate()
+        public void TestWindowManagementModule_Activate()
         {
             // Preconditions
             Debug.Assert(windowManagementModule != null);
@@ -50,7 +50,7 @@ namespace WindowManagementTest
         }
 
         [TestMethod]
-        public void TestMouseModule_Deactivate()
+        public void TestWindowManagementModule_Deactivate()
         {
             // Preconditions
             Debug.Assert(windowManagementModule != null);

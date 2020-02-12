@@ -1,6 +1,8 @@
+using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using MORR.Modules.Clipboard;
@@ -60,5 +62,7 @@ namespace ClipboardTest
             /* THEN */
             Assert.IsFalse(clipboardModule.IsActive);
         }
+
+        
     }
 }
