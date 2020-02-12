@@ -13,6 +13,7 @@
     <Platforms>x64</Platforms>
     <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)</OutDir>
     <Nullable>enable</Nullable>
+    <ApplicationIcon>Assets\Icon\MORR_Default.ico</ApplicationIcon>
   </PropertyGroup>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk.WindowsDesktop" />
