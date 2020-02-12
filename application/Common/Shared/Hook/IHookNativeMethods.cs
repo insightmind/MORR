@@ -10,6 +10,7 @@ namespace MORR.Shared.Hook
         IntPtr LoadLibrary();
 
         bool FreeLibrary(IntPtr hModule);
+
         void SetHook([MarshalAs(UnmanagedType.FunctionPtr)] GlobalHook.CppGetMessageCallback callbackPointer, [MarshalAs(UnmanagedType.Bool)] bool blocking);
 
         void RemoveHook();
