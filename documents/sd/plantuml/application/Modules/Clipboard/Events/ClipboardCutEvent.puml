@@ -3,7 +3,9 @@ skinparam monochrome true
 skinparam ClassAttributeIconSize 0
 class ClipboardCutEvent {
 }
-abstract class ClipboardEvent
+abstract class ClipboardEvent {
+    + ClipboardText : string <<get>> <<set>>
+}
 abstract class Event
 ClipboardEvent <|-- ClipboardCutEvent
 Event <|-- ClipboardEvent

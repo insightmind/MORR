@@ -6,6 +6,12 @@ class HoverEvent {
     + HoveredElement : string <<get>> <<set>>
 }
 abstract class WebBrowserEvent {
+    + TabID : int <<get>> <<set>>
+    + Deserialize(serialized:string) : void
+    + Deserialize(parsed:JsonElement) : void
+    # <<virtual>> DeserializeSpecificAttributes(JsonElement parsed) : void
+    # DeserializeCommonAttributes(JsonElement parsed) : void
+    + CurrentURL : Uri <<get>> <<set>>
 }
 abstract class Event
 

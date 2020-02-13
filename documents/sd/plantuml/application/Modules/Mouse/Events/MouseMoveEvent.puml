@@ -5,7 +5,9 @@ skinparam classAttributeIconSize 0
 class MouseMoveEvent {
 }
 abstract class Event
-abstract class MouseEvent
+abstract class MouseEvent {
+    + MousePosition : Point <<get>> <<set>>
+}
 MouseEvent <|-- MouseMoveEvent
 Event <|-- MouseEvent
 @enduml

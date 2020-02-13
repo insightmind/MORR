@@ -6,7 +6,9 @@ class MouseClickEvent {
     + HWnd : string <<get>> <<set>>
     + MouseAction : MouseAction <<get>> <<set>>
 }
-abstract class MouseEvent
+abstract class MouseEvent {
+    + MousePosition : Point <<get>> <<set>>
+}
 abstract class Event
 MouseEvent <|-- MouseClickEvent
 Event <|-- MouseEvent

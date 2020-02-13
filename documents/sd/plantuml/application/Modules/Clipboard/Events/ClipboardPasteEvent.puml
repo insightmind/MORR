@@ -4,7 +4,9 @@ skinparam ClassAttributeIconSize 0
 class ClipboardPasteEvent {
 }
 abstract class Event
-abstract class ClipboardEvent
+abstract class ClipboardEvent {
+    + ClipboardText : string <<get>> <<set>>
+}
 ClipboardEvent <|-- ClipboardPasteEvent
 Event <|-- ClipboardEvent
 @enduml

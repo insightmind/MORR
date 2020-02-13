@@ -3,9 +3,11 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 
 class KeyboardInteractEvent {
+    + PressedKey : Key <<get>> <<set>>
+    + ModifierKeys : ModifierKeys <<get>> <<set>>
 }
+abstract class Event
+abstract class KeyboardEvent
 KeyboardEvent <|-- KeyboardInteractEvent
 Event <|-- KeyboardEvent
-KeyboardInteractEvent --> "PressedKey" Key
-KeyboardInteractEvent --> "ModifierKeys" ModifierKeys
 @enduml
