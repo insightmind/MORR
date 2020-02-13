@@ -12,5 +12,6 @@ abstract class WindowEvent {
     + Title : string <<get>> <<set>>
     + ProcessName : string <<get>> <<set>>
 }
+abstract class Event
 Event <|-- WindowEvent
 @enduml

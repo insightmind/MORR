@@ -7,10 +7,10 @@ class WindowStateChangedEvent {
 }
 WindowEvent <|-- WindowStateChangedEvent
 
-abstract class WebBrowserEvent {
-    + TabID: Guid
-    + CurrentURL: Uri
+abstract class WindowEvent {
+    + Title : string <<get>> <<set>>
+    + ProcessName : string <<get>> <<set>>
 }
-
-Event <|-- WebBrowserEvent
+abstract class Event
+Event <|-- WindowEvent
 @enduml
