@@ -9,9 +9,12 @@ ICollectingModule <|-- ClipboardModule
 
 interface IModule {
     + Identifier : Guid
-    + IsEnabled : bool <<get>> <<set>>
+    + IsActive : bool <<get>> <<set>>
     + Initialize() : void
 }
 
 IModule <|-- ICollectingModule
+ClipboardModule --> "  ClipboardCutEventProducer" ClipboardCutEventProducer
+ClipboardModule --> "ClipboardCopyEventProducer" ClipboardCopyEventProducer
+ClipboardModule --> "   ClipboardPasteEventProducer" ClipboardPasteEventProducer
 @enduml

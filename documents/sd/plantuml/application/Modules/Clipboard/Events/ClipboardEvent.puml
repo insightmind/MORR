@@ -3,6 +3,7 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 
 abstract class ClipboardEvent {
+    + ClipboardText : string <<get>> <<set>>
 }
 Event <|-- ClipboardEvent
 @enduml
