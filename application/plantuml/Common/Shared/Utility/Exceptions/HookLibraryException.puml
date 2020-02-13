@@ -1,0 +1,7 @@
+@startuml
+class HookLibraryException {
+    + HookLibraryException()
+    + HookLibraryException(message:string)
+}
+Exception <|-- HookLibraryException
+@enduml

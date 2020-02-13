@@ -1,0 +1,6 @@
+@startuml
+class RecordOptions {
+    + ConfigPath : string <<get>> <<set>>
+}
+CommandOptions <|-- RecordOptions
+@enduml

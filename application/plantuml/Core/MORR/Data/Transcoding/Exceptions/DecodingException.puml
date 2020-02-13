@@ -1,0 +1,8 @@
+@startuml
+class DecodingException {
+    + DecodingException()
+    + DecodingException(message:string)
+    + DecodingException(message:string, innerException:Exception)
+}
+Exception <|-- DecodingException
+@enduml

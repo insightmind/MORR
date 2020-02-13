@@ -1,0 +1,11 @@
+@startuml
+interface IWebBrowserEventObserver {
+    + Notify(eventJson:JsonElement) : void
+    + EnqueueFinished() : void
+}
+interface IWebBrowserEventObservable {
+    + Subscribe(observer:IWebBrowserEventObserver, eventLabel:EventLabel[]) : void
+    + Unsubscribe(observer:IWebBrowserEventObserver, eventLabel:EventLabel[]) : void
+}
+IWebBrowserEventObserver --> "HandledEventLabel" EventLabel
+@enduml

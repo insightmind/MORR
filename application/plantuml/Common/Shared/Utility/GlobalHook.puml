@@ -1,0 +1,16 @@
+@startuml
+class GlobalHook <<static>> {
+    + {static} IsActive : bool <<get>> <<set>>
+    {static} <<extern>> LoadLibrary(lpFileName:string) : IntPtr
+    {static} <<extern>> FreeLibrary(hModule:IntPtr) : bool
+    + {static} AddListener(callback:RetrieveMessageCallBack, types:NativeMethods.MessageType[]) : void
+    + {static} RemoveListener(callback:RetrieveMessageCallBack, types:NativeMethods.MessageType[]) : void
+    + {static} FreeLibrary() : void
+}
+class HookMessage <<struct>> {
+    + Type : uint
+}
+GlobalHook +-- HookMessage
+HookMessage --> "Hwnd" IntPtr
+HookMessage --> "wParam" IntPtr
+@enduml

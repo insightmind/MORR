@@ -1,0 +1,6 @@
+@startuml
+abstract class Event {
+}
+Event o-> "Timestamp" DateTime
+Event --> "IssuingModule" Guid
+@enduml

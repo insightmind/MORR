@@ -1,0 +1,10 @@
+@startuml
+class MessageLoop {
+    + IsRunning : bool <<get>>
+    + MessageLoop()
+    + Start() : void
+    + Stop() : void
+    + {static} <<extern>> GetCurrentThreadId() : uint
+}
+IMessageLoop <|-- MessageLoop
+@enduml

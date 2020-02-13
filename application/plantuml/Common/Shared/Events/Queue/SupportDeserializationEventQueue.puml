@@ -1,0 +1,12 @@
+@startuml
+abstract class "SupportDeserializationEventQueue`1"<T> {
+    + Enqueue(@event:object) : void
+    + <<new>> NotifyOnEnqueueFinished() : void
+}
+class "ReadOnlyEventQueue`1"<T> {
+}
+class "ISupportDeserializationEventQueue`1"<T> {
+}
+"ReadOnlyEventQueue`1" "<T>" <|-- "SupportDeserializationEventQueue`1"
+"ISupportDeserializationEventQueue`1" "<T>" <|-- "SupportDeserializationEventQueue`1"
+@enduml

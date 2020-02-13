@@ -1,0 +1,7 @@
+@startuml
+class WindowMovementEvent {
+}
+WindowEvent <|-- WindowMovementEvent
+WindowMovementEvent --> "OldLocation" Point
+WindowMovementEvent --> "NewLocation" Point
+@enduml

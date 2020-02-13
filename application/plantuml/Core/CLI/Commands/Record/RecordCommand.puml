@@ -1,0 +1,11 @@
+@startuml
+class RecordCommand {
+    + RecordCommand(sessionManager:ISessionManager)
+    + RecordCommand(sessionManager:ISessionManager, console:IConsoleFormatter)
+    + RecordCommand(sessionManager:ISessionManager, consoleFormatter:IConsoleFormatter, commandLine:IInteractiveCommandLine, messageLoop:IMessageLoop)
+    + Execute(options:RecordOptions) : int
+}
+class "ICommand`1"<T> {
+}
+"ICommand`1" "<RecordOptions>" <|-- RecordCommand
+@enduml

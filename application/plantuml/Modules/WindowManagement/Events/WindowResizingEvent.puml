@@ -1,0 +1,7 @@
+@startuml
+class WindowResizingEvent {
+}
+WindowEvent <|-- WindowResizingEvent
+WindowResizingEvent --> "OldSize" Size
+WindowResizingEvent --> "NewSize" Size
+@enduml

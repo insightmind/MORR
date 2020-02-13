@@ -1,0 +1,5 @@
+@startuml
+class MessageLoopTest {
+    + TestMessageLoop() : void
+}
+@enduml

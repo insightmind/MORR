@@ -1,0 +1,10 @@
+
+@startuml
+skinparam monochrome true
+skinparam ClassAttributeIconSize 0
+class KeyboardInteractEvent {
+}
+KeyboardEvent <|-- KeyboardInteractEvent
+KeyboardInteractEvent --> "PressedKey" Key
+KeyboardInteractEvent --> "ModifierKeys" ModifierKeys
+@enduml

@@ -1,0 +1,7 @@
+@startuml
+class JsonIntermediateFormatSample {
+}
+IntermediateFormatSample <|-- JsonIntermediateFormatSample
+JsonIntermediateFormatSample --> "JsonEncodedData" JsonDocument
+JsonIntermediateFormatSample --> "JsonEncodedType" JsonEncodedText
+@enduml

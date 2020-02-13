@@ -1,0 +1,5 @@
+@startuml
+class WindowFocusEvent {
+}
+WindowEvent <|-- WindowFocusEvent
+@enduml

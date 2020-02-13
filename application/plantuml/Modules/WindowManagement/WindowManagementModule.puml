@@ -1,18 +1,17 @@
 @startuml
 skinparam monochrome true
 skinparam ClassAttributeIconSize 0
-
 class WindowManagementModule {
 }
 interface IModule {
     + Identifier : Guid
-    + IsEnabled : bool <<get>> <<set>>
+    + IsActive : bool <<get>> <<set>>
     + Initialize() : void
 }
 IModule <|-- ICollectingModule
 ICollectingModule <|-- WindowManagementModule
-WindowManagementModule --> "WindowoFocusEventProducer" WindowFocusEventProducer
-WindowManagementModule ----> "WindowoMovementEventProducer" WindowMovementEventProducer
-WindowManagementModule --> "WindoworResizingEventProducer" WindowResizingEventProducer
-WindowManagementModule ----> "WindowoStateChangedEventProducer" WindowStateChangedEventProducer
+WindowManagementModule --> "WindowFocusEventProducer" WindowFocusEventProducer
+WindowManagementModule ---> "WindowMovementEventProducer" WindowMovementEventProducer
+WindowManagementModule --> "       WindowResizingEventProducer" WindowResizingEventProducer
+WindowManagementModule ---> "WindowStateChangedEventProducer" WindowStateChangedEventProducer
 @enduml

@@ -1,0 +1,9 @@
+@startuml
+class ConsoleFormatterTest {
+    + TestConsole_Read() : void
+    + TestConsole_Print() : void
+    + TestConsole_PrintDebug() : void
+    + TestConsole_PrintDebug_NotInDebug() : void
+    + TestConsole_PrintError() : void
+}
+@enduml

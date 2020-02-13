@@ -1,0 +1,5 @@
+@startuml
+class UnitTest1 {
+    + TestMethod1() : void
+}
+@enduml

@@ -1,0 +1,10 @@
+@startuml
+class ProcessCommand {
+    + ProcessCommand(sessionManager:ISessionManager)
+    + ProcessCommand(sessionManager:ISessionManager, consoleFormatter:IConsoleFormatter)
+    + Execute(options:ProcessOptions) : int
+}
+class "ICommand`1"<T> {
+}
+"ICommand`1" "<ProcessOptions>" <|-- ProcessCommand
+@enduml

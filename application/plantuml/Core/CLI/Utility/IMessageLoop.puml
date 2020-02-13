@@ -1,0 +1,7 @@
+@startuml
+interface IMessageLoop {
+    IsRunning : bool <<get>>
+    Start() : void
+    Stop() : void
+}
+@enduml

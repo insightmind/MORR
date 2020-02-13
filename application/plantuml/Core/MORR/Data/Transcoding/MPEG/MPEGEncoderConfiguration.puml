@@ -1,0 +1,11 @@
+@startuml
+class MpegEncoderConfiguration {
+    + Width : uint <<get>> <<set>>
+    + Height : uint <<get>> <<set>>
+    + KiloBitsPerSecond : uint <<get>> <<set>>
+    + FramesPerSecond : uint <<get>> <<set>>
+    + Parse(configuration:RawConfiguration) : void
+}
+IConfiguration <|-- MpegEncoderConfiguration
+MpegEncoderConfiguration --> "RelativeFilePath" FilePath
+@enduml

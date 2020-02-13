@@ -1,12 +1,9 @@
 @startuml
-skinparam monochrome true
-skinparam ClassAttributeIconSize 0
-
 class TextInputEventProducer {
-    + <<override>> GetEvents() : IAsyncEnumerable<TextInputEvent>
-    # <<override>> Enqueue(TextInputEvent event) : void
+    + <<override>> Notify(eventJson:JsonElement) : void
 }
-class "EventQueue<T>" {
+class "WebBrowserEventProducer`1"<T> {
 }
-"EventQueue<T>" "<TextInputEvent>" <|-- TextInputEventProducer
+"WebBrowserEventProducer`1" "<TextInputEvent>" <|-- TextInputEventProducer
+TextInputEventProducer --> "HandledEventLabel" EventLabel
 @enduml

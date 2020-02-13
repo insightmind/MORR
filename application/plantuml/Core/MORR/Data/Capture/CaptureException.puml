@@ -1,0 +1,8 @@
+@startuml
+class CaptureException {
+    + CaptureException()
+    + CaptureException(message:string)
+    + CaptureException(message:string, innerException:Exception)
+}
+Exception <|-- CaptureException
+@enduml

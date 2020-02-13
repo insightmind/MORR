@@ -1,12 +1,11 @@
 @startuml
 skinparam monochrome true
 skinparam ClassAttributeIconSize 0
-
 class WindowResizingEventProducer {
-    + <<override>> GetEvents() : IAsyncEnumerable<WindowResizingEvent>
-    # <<override>> Enqueue(WindowResizingEvent event) : void
+    + StartCapture() : void
+    + StopCapture() : void
 }
-class "EventQueue<T>" {
+class "DefaultEventQueue<T>" {
 }
-"EventQueue<T>" "<WindowResizingEvent>" <|-- WindowResizingEventProducer
+"DefaultEventQueue<T>" "     <WindowResizingEvent>" <|-- WindowResizingEventProducer
 @enduml

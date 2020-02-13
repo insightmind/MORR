@@ -1,0 +1,6 @@
+@startuml
+class RawConfiguration {
+    + RawValue : string <<get>>
+    + RawConfiguration(rawValue:string)
+}
+@enduml

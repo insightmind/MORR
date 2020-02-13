@@ -1,0 +1,5 @@
+@startuml
+abstract class RecordingException {
+}
+Exception <|-- RecordingException
+@enduml

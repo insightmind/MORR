@@ -1,0 +1,10 @@
+@startuml
+class ConsoleFormatter {
+    + IsVerbose : bool <<get>> <<set>> = false
+    + PrintError(exception:Exception) : void
+    + PrintDebug(message:string) : void
+    + Print(message:string) : void
+    + Read() : string
+}
+IConsoleFormatter <|-- ConsoleFormatter
+@enduml

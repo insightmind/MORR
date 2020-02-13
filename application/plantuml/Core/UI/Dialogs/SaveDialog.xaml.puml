@@ -1,0 +1,6 @@
+@startuml
+class SaveDialog <<partial>> {
+    + SaveDialog()
+}
+Window <|-- SaveDialog
+@enduml

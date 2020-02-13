@@ -1,0 +1,5 @@
+@startuml
+interface "IDecodeableEventQueue`1"<out T> {
+    GetEvents() : IAsyncEnumerable<T>
+}
+@enduml

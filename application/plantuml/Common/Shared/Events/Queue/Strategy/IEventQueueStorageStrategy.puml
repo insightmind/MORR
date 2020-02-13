@@ -1,0 +1,7 @@
+@startuml
+interface "IEventQueueStorageStrategy`1"<T> {
+    GetEvents(token:CancellationToken) : IAsyncEnumerable<T>
+    Enqueue(@event:T) : void
+    NotifyOnEnqueueFinished() : void
+}
+@enduml

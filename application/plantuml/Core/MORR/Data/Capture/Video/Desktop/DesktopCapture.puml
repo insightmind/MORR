@@ -1,0 +1,8 @@
+@startuml
+class DesktopCapture {
+    + IsActive : bool <<get>> <<set>>
+    + Initialize() : void
+}
+ICollectingModule <|-- DesktopCapture
+DesktopCapture o-> "Identifier" Guid
+@enduml

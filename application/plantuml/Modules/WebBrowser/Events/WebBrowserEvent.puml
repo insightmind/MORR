@@ -1,0 +1,9 @@
+@startuml
+abstract class WebBrowserEvent {
+    + TabID : int <<get>> <<set>>
+    + Deserialize(serialized:string) : void
+    + Deserialize(parsed:JsonElement) : void
+}
+Event <|-- WebBrowserEvent
+WebBrowserEvent --> "CurrentURL" Uri
+@enduml

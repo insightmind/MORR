@@ -1,0 +1,6 @@
+@startuml
+class TextSelectionEvent {
+    + SelectedText : string <<get>> <<set>>
+}
+WebBrowserEvent <|-- TextSelectionEvent
+@enduml

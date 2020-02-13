@@ -1,0 +1,11 @@
+@startuml
+class SessionConfiguration {
+    + Decoders : IEnumerable<Type>? <<get>>
+    + Parse(configuration:RawConfiguration) : void
+}
+class "IEnumerable`1"<T> {
+}
+IConfiguration <|-- SessionConfiguration
+SessionConfiguration --> "Encoders<Type>" "IEnumerable`1"
+SessionConfiguration --> "RecordingDirectory" DirectoryPath
+@enduml

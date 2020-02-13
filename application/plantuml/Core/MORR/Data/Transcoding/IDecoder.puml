@@ -1,0 +1,6 @@
+@startuml
+interface IDecoder {
+    Decode(recordingDirectoryPath:DirectoryPath) : void
+}
+IDecoder --> "DecodeFinished" ManualResetEvent
+@enduml

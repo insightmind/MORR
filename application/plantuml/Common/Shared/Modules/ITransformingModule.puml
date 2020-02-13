@@ -1,0 +1,5 @@
+@startuml
+interface ITransformingModule {
+}
+IModule <|-- ITransformingModule
+@enduml

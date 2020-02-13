@@ -1,0 +1,8 @@
+@startuml
+abstract class "EncodeableEventQueue`1"<T> {
+    + GetEvents() : IAsyncEnumerable<T>
+}
+class "IEncodeableEventQueue`1"<T> {
+}
+"IEncodeableEventQueue`1" "<T>" <|-- "EncodeableEventQueue`1"
+@enduml

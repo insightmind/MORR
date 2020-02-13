@@ -1,0 +1,5 @@
+@startuml
+interface IConfigurationManager {
+    LoadConfiguration(path:FilePath) : void
+}
+@enduml

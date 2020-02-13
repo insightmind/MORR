@@ -1,0 +1,9 @@
+@startuml
+class GlobalModuleConfiguration {
+    + Parse(configuration:RawConfiguration) : void
+}
+class "IEnumerable`1"<T> {
+}
+IConfiguration <|-- GlobalModuleConfiguration
+GlobalModuleConfiguration --> "EnabledModules<Type>" "IEnumerable`1"
+@enduml

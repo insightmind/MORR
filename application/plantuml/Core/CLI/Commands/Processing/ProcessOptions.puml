@@ -1,0 +1,7 @@
+@startuml
+class ProcessOptions {
+    + ConfigPath : string <<get>> <<set>>
+    + InputFile : string <<get>> <<set>>
+}
+CommandOptions <|-- ProcessOptions
+@enduml

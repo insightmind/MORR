@@ -1,0 +1,6 @@
+@startuml
+abstract class IntermediateFormatSample {
+}
+Event <|-- IntermediateFormatSample
+IntermediateFormatSample --> "Type" Type
+@enduml

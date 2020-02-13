@@ -1,12 +1,11 @@
 @startuml
 skinparam monochrome true
 skinparam ClassAttributeIconSize 0
-
 class WindowMovementEventProducer {
-    + <<override>> GetEvents() : IAsyncEnumerable<WindowMovementEvent>
-    # <<override>> Enqueue(WindowMovementEvent event) : void
+    + StartCapture() : void
+    + StopCapture() : void
 }
-class "EventQueue<T>" {
+class "DefaultEventQueue<T>" {
 }
-"EventQueue<T>" "<WindowMovementEvent>" <|-- WindowMovementEventProducer
+"DefaultEventQueue<T>" "     <WindowMovementEvent>" <|-- WindowMovementEventProducer
 @enduml

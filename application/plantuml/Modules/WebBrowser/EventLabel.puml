@@ -1,0 +1,13 @@
+@startuml
+enum EventLabel {
+    BUTTONCLICK,
+    CLOSETAB,
+    DOWNLOAD,
+    HOVER,
+    NAVIGATION,
+    OPENTAB,
+    SWITCHTAB,
+    TEXTINPUT,
+    TEXTSELECTION,
+}
+@enduml

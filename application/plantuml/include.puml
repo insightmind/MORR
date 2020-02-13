@@ -1,0 +1,1511 @@
+@startuml
+class UnitTest1 {
+    + TestMethod1() : void
+}
+class Program {
+    + {static} Main(args:string[]) : int
+}
+class Bootstrapper {
+    + Bootstrapper()
+    + ComposeImports(@object:object) : void
+}
+class ModuleLoadContext {
+    + ModuleLoadContext(pluginPath:string)
+}
+IBootstrapper <|-- Bootstrapper
+Bootstrapper +-- ModuleLoadContext
+AssemblyLoadContext <|-- ModuleLoadContext
+class BootstrapperConventions <<static>> {
+    + {static} GetRegistrationBuilder() : RegistrationBuilder
+}
+interface IBootstrapper {
+    ComposeImports(@object:object) : void
+}
+class UnitTest1 {
+    + TestMethod1() : void
+}
+class App <<partial>> {
+}
+Application <|-- App
+class UnitTest1 {
+    + TestMethod1() : void
+}
+class ClipboardModule {
+    + IsActive : bool <<get>> <<set>>
+    + Initialize() : void
+}
+ICollectingModule <|-- ClipboardModule
+ClipboardModule o-> "Identifier" Guid
+ClipboardModule --> "Identifier" Guid
+class UnitTest1 {
+    + TestMethod1() : void
+}
+class KeyboardModule {
+    + IsActive : bool <<get>> <<set>>
+    + Initialize() : void
+}
+ICollectingModule <|-- KeyboardModule
+KeyboardModule o-> "Identifier" Guid
+KeyboardModule --> "Identifier" Guid
+class UnitTest1 {
+    + TestMethod1() : void
+}
+class MouseModule {
+    + IsActive : bool <<get>> <<set>>
+    + Initialize() : void
+}
+ICollectingModule <|-- MouseModule
+MouseModule o-> "Identifier" Guid
+MouseModule --> "Identifier" Guid
+class MouseModuleConfiguration {
+    + SamplingRateInHz : uint <<get>> <<set>>
+    + Threshold : int <<get>> <<set>>
+    + Parse(configuration:RawConfiguration) : void
+}
+IConfiguration <|-- MouseModuleConfiguration
+class UnitTest1 {
+    + TestMethod1() : void
+}
+enum EventLabel {
+    BUTTONCLICK,
+    CLOSETAB,
+    DOWNLOAD,
+    HOVER,
+    NAVIGATION,
+    OPENTAB,
+    SWITCHTAB,
+    TEXTINPUT,
+    TEXTSELECTION,
+}
+interface IWebBrowserEventObserver {
+    + Notify(eventJson:JsonElement) : void
+    + EnqueueFinished() : void
+}
+interface IWebBrowserEventObservable {
+    + Subscribe(observer:IWebBrowserEventObserver, eventLabel:EventLabel[]) : void
+    + Unsubscribe(observer:IWebBrowserEventObserver, eventLabel:EventLabel[]) : void
+}
+IWebBrowserEventObserver --> "HandledEventLabel" EventLabel
+class WebBrowserModule {
+    + IsActive : bool <<get>> <<set>>
+    + Initialize() : void
+}
+ICollectingModule <|-- WebBrowserModule
+WebBrowserModule o-> "Identifier" Guid
+WebBrowserModule --> "Identifier" Guid
+class WebBrowserModuleConfiguration {
+    + UrlSuffix : string <<get>>
+    + Parse(configuration:RawConfiguration) : void
+}
+IConfiguration <|-- WebBrowserModuleConfiguration
+class WebExtensionListener {
+    + WebExtensionListener(urlSuffix:string)
+    + RecordingActive : bool <<get>> <<set>>
+    + StartListening() : void
+    + StopListening() : void
+    + Subscribe(observer:IWebBrowserEventObserver, labels:EventLabel[]) : void
+    + Unsubscribe(observer:IWebBrowserEventObserver, labels:EventLabel[]) : void
+}
+class WebBrowserRequest {
+    + Request : string <<get>> <<set>>
+    + Data : JsonElement? <<get>> <<set>>
+}
+class WebBrowserResponse {
+    + WebBrowserResponse(response:string, config:string?)
+    + application : string <<get>> = "MORR"
+    + response : string <<get>>
+    + config : string? <<get>>
+}
+enum WebBrowserRequestType {
+    CONNECT,
+    CONFIG,
+    START,
+    SENDDATA,
+    WAITSTOP,
+}
+class ResponseStrings <<sealed>> {
+    + {static} <<readonly>> POSITIVERESPONSE : string = "Ok"
+    + {static} <<readonly>> NEGATIVERESPONSE : string = "Invalid Request"
+    + {static} <<readonly>> STARTRESPONSE : string = "Start"
+    + {static} <<readonly>> STOPRESPONSE : string = "Stop"
+}
+IWebBrowserEventObservable <|-- WebExtensionListener
+WebExtensionListener +-- WebBrowserRequest
+WebExtensionListener +-- WebBrowserResponse
+WebExtensionListener +-- WebBrowserRequestType
+WebExtensionListener +-- ResponseStrings
+class UnitTest1 {
+    + TestMethod1() : void
+}
+class WindowManagementModule {
+    + IsActive : bool <<get>> <<set>>
+    + Initialize() : void
+}
+ICollectingModule <|-- WindowManagementModule
+WindowManagementModule --> "WindowFocusEventProducer" WindowFocusEventProducer
+WindowManagementModule --> "WindowMovementEventProducer" WindowMovementEventProducer
+WindowManagementModule --> "WindowResizingEventProducer" WindowResizingEventProducer
+WindowManagementModule --> "WindowStateChangedEventProducer" WindowStateChangedEventProducer
+WindowManagementModule o-> "Identifier" Guid
+WindowManagementModule --> "Identifier" Guid
+class UnitTest1 {
+    + TestMethod1() : void
+}
+interface IConfiguration {
+    Parse(configuration:RawConfiguration) : void
+}
+class RawConfiguration {
+    + RawValue : string <<get>>
+    + RawConfiguration(rawValue:string)
+}
+abstract class Event {
+}
+Event o-> "Timestamp" DateTime
+Event --> "IssuingModule" Guid
+interface ICollectingModule {
+}
+IModule <|-- ICollectingModule
+interface IModule {
+    IsActive : bool <<get>> <<set>>
+    Initialize() : void
+}
+IModule --> "Identifier" Guid
+interface IReceivingModule {
+}
+IModule <|-- IReceivingModule
+interface ITransformingModule {
+}
+IModule <|-- ITransformingModule
+class DirectoryPath <<sealed>> {
+    + DirectoryPath(value:string, skipValidation:bool)
+    + <<override>> ToString() : string
+}
+class FilePath <<sealed>> {
+    + FilePath(value:string, skipValidation:bool)
+    + <<override>> ToString() : string
+}
+class GlobalHook <<static>> {
+    + {static} IsActive : bool <<get>> <<set>>
+    {static} <<extern>> LoadLibrary(lpFileName:string) : IntPtr
+    {static} <<extern>> FreeLibrary(hModule:IntPtr) : bool
+    + {static} AddListener(callback:RetrieveMessageCallBack, types:NativeMethods.MessageType[]) : void
+    + {static} RemoveListener(callback:RetrieveMessageCallBack, types:NativeMethods.MessageType[]) : void
+    + {static} FreeLibrary() : void
+}
+class HookMessage <<struct>> {
+    + Type : uint
+}
+GlobalHook +-- HookMessage
+HookMessage --> "Hwnd" IntPtr
+HookMessage --> "wParam" IntPtr
+class NativeMethods <<static>> {
+    + {static} IsKeyPressed(virtualKeyCode:VirtualKeyCode) : bool
+    + {static} TrySetKeyboardHook(callback:LowLevelKeyboardProc, handle:IntPtr) : bool
+    + {static} GetClipboardText() : string
+    + {static} GetAssociatedWindow() : IntPtr
+    + {static} <<extern>> LoadLibrary(dllToLoad:string) : IntPtr
+    + {static} <<extern>> GetProcAddress(hModule:IntPtr, procedureName:string) : IntPtr
+    + {static} <<extern>> FreeLibrary(hModule:IntPtr) : bool
+    + {static} <<extern>> GetKeyState(nVirtualKeyCode:VirtualKeyCode) : short
+    + {static} <<extern>> SetWindowsHookEx(hookType:HookType, lpFn:LowLevelKeyboardProc, hMod:IntPtr, dwThreadId:uint) : IntPtr
+    + {static} <<extern>> SetWindowsHookEx(hookType:HookType, lpFn:LowLevelMouseProc, hMod:IntPtr, dwThreadId:uint) : IntPtr
+    + {static} <<extern>> UnhookWindowsHookEx(hhk:IntPtr) : bool
+    + {static} <<extern>> CallNextHookEx(hhk:IntPtr, nCode:int, wParam:MessageType, lParam:KBDLLHOOKSTRUCT) : int
+    + {static} <<extern>> CallNextHookEx(hhk:IntPtr, nCode:int, wParam:MessageType, lParam:MSLLHOOKSTRUCT) : int
+    + {static} <<extern>> GetModuleHandle(lpModuleName:string) : IntPtr
+    + {static} <<extern>> GetConsoleWindow() : IntPtr
+    + {static} <<extern>> GetActiveWindow() : IntPtr
+    + {static} <<extern>> GetCursorPos(lpPoint:POINT) : bool
+    + {static} <<extern>> GetDoubleClickTime() : uint
+    + {static} <<extern>> OpenClipboard(hWndNewOwner:IntPtr) : bool
+    + {static} <<extern>> CloseClipboard() : bool
+    + {static} <<extern>> GetOpenClipboardWindow() : IntPtr
+    + {static} <<extern>> GetClipboardData(uFormat:uint) : IntPtr
+    + {static} <<extern>> GlobalUnlock(hMem:IntPtr) : bool
+    + {static} <<extern>> GlobalLock(hMem:IntPtr) : IntPtr
+    + {static} <<extern>> CreateWindowEx(dwExStyle:int, lpClassName:string, lpWindowName:string, dwStyle:int, x:int, y:int, nWidth:int, nHeight:int, hWndParent:IntPtr, hMenu:IntPtr, hInstance:IntPtr, lpParam:IntPtr) : IntPtr
+    + {static} <<extern>> RegisterClass(lpWndClass:WindowClass) : short
+    + {static} <<extern>> DestroyWindow(hWnd:IntPtr) : bool
+    + {static} <<extern>> DefWindowProc(hWnd:IntPtr, msg:uint, wParam:IntPtr, lParam:IntPtr) : IntPtr
+    + {static} <<extern>> AddClipboardFormatListener(hwnd:IntPtr) : bool
+    + {static} <<extern>> RemoveClipboardFormatListener(hwnd:IntPtr) : bool
+    + {static} <<extern>> GetWindowText(hWnd:IntPtr, lpString:StringBuilder, nMaxCount:int) : int
+    + {static} <<extern>> GetWindowThreadProcessId(hWnd:IntPtr, lpdwProcessId:uint) : uint
+    + {static} <<extern>> GetWindowTextLength(hWnd:IntPtr) : int
+    + {static} <<extern>> SendMessage(hWnd:IntPtr, Msg:UInt32, wParam:IntPtr, lParam:StringBuilder) : IntPtr
+    + {static} <<extern>> GetForegroundWindow() : IntPtr
+    + {static} <<extern>> GetWindowRect(hWnd:int, lpRect:Rectangle) : long
+}
+class MSG <<struct>> {
+    + Message : uint
+    + Time : uint
+}
+class POINT <<struct>> {
+    + X : int
+    + Y : int
+    + POINT(x:int, y:int)
+}
+class KBDLLHOOKSTRUCT <<struct>> {
+    + VKCode : int
+    + ScanCode : int
+    + Flags : int
+    + Time : int
+    + DWExtraInfo : int
+}
+class MSLLHOOKSTRUCT <<struct>> {
+    + mouseData : uint
+    + flags : uint
+    + time : uint
+}
+class WindowClass <<struct>> {
+    + style : uint
+    + cbClsExtra : int
+    + cbWndExtra : int
+    + lpszMenuName : string
+    + lpszClassName : string
+}
+enum KeyMask {
+    KEY_PRESSED= 0x8000,
+    KEY_TOGGLED= 0x1,
+}
+enum HookType {
+    WH_KEYBOARD_LL= 13,
+    WH_MOUSE_LL= 14,
+}
+enum MessageType {
+    WM_NULL= 0x00,
+    WM_CREATE= 0x01,
+    WM_DESTROY= 0x02,
+    WM_MOVE= 0x03,
+    WM_SIZE= 0x05,
+    WM_ACTIVATE= 0x06,
+    WM_SETFOCUS= 0x07,
+    WM_KILLFOCUS= 0x08,
+    WM_ENABLE= 0x0A,
+    WM_SETREDRAW= 0x0B,
+    WM_SETTEXT= 0x0C,
+    WM_GETTEXT= 0x0D,
+    WM_GETTEXTLENGTH= 0x0E,
+    WM_PAINT= 0x0F,
+    WM_CLOSE= 0x10,
+    WM_QUERYENDSESSION= 0x11,
+    WM_QUIT= 0x12,
+    WM_QUERYOPEN= 0x13,
+    WM_ERASEBKGND= 0x14,
+    WM_SYSCOLORCHANGE= 0x15,
+    WM_ENDSESSION= 0x16,
+    WM_SYSTEMERROR= 0x17,
+    WM_SHOWWINDOW= 0x18,
+    WM_CTLCOLOR= 0x19,
+    WM_WININICHANGE= 0x1A,
+    WM_SETTINGCHANGE= 0x1A,
+    WM_DEVMODECHANGE= 0x1B,
+    WM_ACTIVATEAPP= 0x1C,
+    WM_FONTCHANGE= 0x1D,
+    WM_TIMECHANGE= 0x1E,
+    WM_CANCELMODE= 0x1F,
+    WM_SETCURSOR= 0x20,
+    WM_MOUSEACTIVATE= 0x21,
+    WM_CHILDACTIVATE= 0x22,
+    WM_QUEUESYNC= 0x23,
+    WM_GETMINMAXINFO= 0x24,
+    WM_PAINTICON= 0x26,
+    WM_ICONERASEBKGND= 0x27,
+    WM_NEXTDLGCTL= 0x28,
+    WM_SPOOLERSTATUS= 0x2A,
+    WM_DRAWITEM= 0x2B,
+    WM_MEASUREITEM= 0x2C,
+    WM_DELETEITEM= 0x2D,
+    WM_VKEYTOITEM= 0x2E,
+    WM_CHARTOITEM= 0x2F,
+    WM_SETFONT= 0x30,
+    WM_GETFONT= 0x31,
+    WM_SETHOTKEY= 0x32,
+    WM_GETHOTKEY= 0x33,
+    WM_QUERYDRAGICON= 0x37,
+    WM_COMPAREITEM= 0x39,
+    WM_COMPACTING= 0x41,
+    WM_WINDOWPOSCHANGING= 0x46,
+    WM_WINDOWPOSCHANGED= 0x47,
+    WM_POWER= 0x48,
+    WM_COPYDATA= 0x4A,
+    WM_CANCELJOURNAL= 0x4B,
+    WM_NOTIFY= 0x4E,
+    WM_INPUTLANGCHANGEREQUEST= 0x50,
+    WM_INPUTLANGCHANGE= 0x51,
+    WM_TCARD= 0x52,
+    WM_HELP= 0x53,
+    WM_USERCHANGED= 0x54,
+    WM_NOTIFYFORMAT= 0x55,
+    WM_CONTEXTMENU= 0x7B,
+    WM_STYLECHANGING= 0x7C,
+    WM_STYLECHANGED= 0x7D,
+    WM_DISPLAYCHANGE= 0x7E,
+    WM_GETICON= 0x7F,
+    WM_SETICON= 0x80,
+    WM_NCCREATE= 0x81,
+    WM_NCDESTROY= 0x82,
+    WM_NCCALCSIZE= 0x83,
+    WM_NCHITTEST= 0x84,
+    WM_NCPAINT= 0x85,
+    WM_NCACTIVATE= 0x86,
+    WM_GETDLGCODE= 0x87,
+    WM_NCMOUSEMOVE= 0xA0,
+    WM_NCLBUTTONDOWN= 0xA1,
+    WM_NCLBUTTONUP= 0xA2,
+    WM_NCLBUTTONDBLCLK= 0xA3,
+    WM_NCRBUTTONDOWN= 0xA4,
+    WM_NCRBUTTONUP= 0xA5,
+    WM_NCRBUTTONDBLCLK= 0xA6,
+    WM_NCMBUTTONDOWN= 0xA7,
+    WM_NCMBUTTONUP= 0xA8,
+    WM_NCMBUTTONDBLCLK= 0xA9,
+    WM_KEYFIRST= 0x100,
+    WM_KEYDOWN= 0x100,
+    WM_KEYUP= 0x101,
+    WM_CHAR= 0x102,
+    WM_DEADCHAR= 0x103,
+    WM_SYSKEYDOWN= 0x104,
+    WM_SYSKEYUP= 0x105,
+    WM_SYSCHAR= 0x106,
+    WM_SYSDEADCHAR= 0x107,
+    WM_KEYLAST= 0x108,
+    WM_IME_STARTCOMPOSITION= 0x10D,
+    WM_IME_ENDCOMPOSITION= 0x10E,
+    WM_IME_COMPOSITION= 0x10F,
+    WM_IME_KEYLAST= 0x10F,
+    WM_INITDIALOG= 0x110,
+    WM_COMMAND= 0x111,
+    WM_SYSCOMMAND= 0x112,
+    WM_TIMER= 0x113,
+    WM_HSCROLL= 0x114,
+    WM_VSCROLL= 0x115,
+    WM_INITMENU= 0x116,
+    WM_INITMENUPOPUP= 0x117,
+    WM_MENUSELECT= 0x11F,
+    WM_MENUCHAR= 0x120,
+    WM_ENTERIDLE= 0x121,
+    WM_CTLCOLORMSGBOX= 0x132,
+    WM_CTLCOLOREDIT= 0x133,
+    WM_CTLCOLORLISTBOX= 0x134,
+    WM_CTLCOLORBTN= 0x135,
+    WM_CTLCOLORDLG= 0x136,
+    WM_CTLCOLORSCROLLBAR= 0x137,
+    WM_CTLCOLORSTATIC= 0x138,
+    WM_MOUSEMOVE= 0x200,
+    WM_MOUSEFIRST= 0x200,
+    WM_LBUTTONDOWN= 0x201,
+    WM_LBUTTONUP= 0x202,
+    WM_LBUTTONDBLCLK= 0x203,
+    WM_RBUTTONDOWN= 0x204,
+    WM_RBUTTONUP= 0x205,
+    WM_RBUTTONDBLCLK= 0x206,
+    WM_MBUTTONDOWN= 0x207,
+    WM_MBUTTONUP= 0x208,
+    WM_MBUTTONDBLCLK= 0x209,
+    WM_MOUSEWHEEL= 0x20A,
+    WM_MOUSEHWHEEL= 0x20E,
+    WM_PARENTNOTIFY= 0x210,
+    WM_ENTERMENULOOP= 0x211,
+    WM_EXITMENULOOP= 0x212,
+    WM_NEXTMENU= 0x213,
+    WM_SIZING= 0x214,
+    WM_CAPTURECHANGED= 0x215,
+    WM_MOVING= 0x216,
+    WM_POWERBROADCAST= 0x218,
+    WM_DEVICECHANGE= 0x219,
+    WM_MDICREATE= 0x220,
+    WM_MDIDESTROY= 0x221,
+    WM_MDIACTIVATE= 0x222,
+    WM_MDIRESTORE= 0x223,
+    WM_MDINEXT= 0x224,
+    WM_MDIMAXIMIZE= 0x225,
+    WM_MDITILE= 0x226,
+    WM_MDICASCADE= 0x227,
+    WM_MDIICONARRANGE= 0x228,
+    WM_MDIGETACTIVE= 0x229,
+    WM_MDISETMENU= 0x230,
+    WM_ENTERSIZEMOVE= 0x231,
+    WM_EXITSIZEMOVE= 0x232,
+    WM_DROPFILES= 0x233,
+    WM_MDIREFRESHMENU= 0x234,
+    WM_IME_SETCONTEXT= 0x281,
+    WM_IME_NOTIFY= 0x282,
+    WM_IME_CONTROL= 0x283,
+    WM_IME_COMPOSITIONFULL= 0x284,
+    WM_IME_SELECT= 0x285,
+    WM_IME_CHAR= 0x286,
+    WM_IME_KEYDOWN= 0x290,
+    WM_IME_KEYUP= 0x291,
+    WM_MOUSEHOVER= 0x2A1,
+    WM_NCMOUSELEAVE= 0x2A2,
+    WM_MOUSELEAVE= 0x2A3,
+    WM_CUT= 0x300,
+    WM_COPY= 0x301,
+    WM_PASTE= 0x302,
+    WM_CLEAR= 0x303,
+    WM_UNDO= 0x304,
+    WM_CLIPBOARDUPDATE= 0x031D,
+    WM_RENDERFORMAT= 0x305,
+    WM_RENDERALLFORMATS= 0x306,
+    WM_DESTROYCLIPBOARD= 0x307,
+    WM_DRAWCLIPBOARD= 0x308,
+    WM_PAINTCLIPBOARD= 0x309,
+    WM_VSCROLLCLIPBOARD= 0x30A,
+    WM_SIZECLIPBOARD= 0x30B,
+    WM_ASKCBFORMATNAME= 0x30C,
+    WM_CHANGECBCHAIN= 0x30D,
+    WM_HSCROLLCLIPBOARD= 0x30E,
+    WM_QUERYNEWPALETTE= 0x30F,
+    WM_PALETTEISCHANGING= 0x310,
+    WM_PALETTECHANGED= 0x311,
+    WM_HOTKEY= 0x312,
+    WM_PRINT= 0x317,
+    WM_PRINTCLIENT= 0x318,
+    WM_HANDHELDFIRST= 0x358,
+    WM_HANDHELDLAST= 0x35F,
+    WM_PENWINFIRST= 0x380,
+    WM_PENWINLAST= 0x38F,
+    WM_COALESCE_FIRST= 0x390,
+    WM_COALESCE_LAST= 0x39F,
+    WM_DDE_FIRST= 0x3E0,
+    WM_DDE_INITIATE= 0x3E0,
+    WM_DDE_TERMINATE= 0x3E1,
+    WM_DDE_ADVISE= 0x3E2,
+    WM_DDE_UNADVISE= 0x3E3,
+    WM_DDE_ACK= 0x3E4,
+    WM_DDE_DATA= 0x3E5,
+    WM_DDE_REQUEST= 0x3E6,
+    WM_DDE_POKE= 0x3E7,
+    WM_DDE_EXECUTE= 0x3E8,
+    WM_DDE_LAST= 0x3E8,
+    WM_USER= 0x400,
+    WM_APP= 0x8000,
+}
+enum VirtualKeyCode {
+    VK_SHIFT= 0x10,
+    VK_CONTROL= 0x11,
+    VK_MENU= 0x12,
+    VK_LWIN= 0x5B,
+    VK_RWIN= 0x5C,
+}
+enum ClipboardFormat {
+    CF_BITMAP= 2,
+    CF_DIB= 8,
+    CF_DIBV5= 17,
+    CF_DIF= 5,
+    CF_DSPBITMAP= 0x0082,
+    CF_DSPENHMETAFILE= 0x008E,
+    CF_DSPMETAFILEPICT= 0x0083,
+    CF_DSPTEXT= 0x0081,
+    CF_ENHMETAFILE= 14,
+    CF_GDIOBJFIRST= 0x0300,
+    CF_GDIOBJLAST= 0x03FF,
+    CF_HDROP= 15,
+    CF_LOCALE= 16,
+    CF_METAFILEPICT= 3,
+    CF_OEMTEXT= 7,
+    CF_OWNERDISPLAY= 0x0080,
+    CF_PALETTE= 9,
+    CF_PENDATA= 10,
+    CF_PRIVATEFIRST= 0x0200,
+    CF_PRIVATELAST= 0x02FF,
+    CF_RIFF= 11,
+    CF_SYLK= 4,
+    CF_TEXT= 1,
+    CF_TIFF= 6,
+    CF_UNICODETEXT= 13,
+    CF_WAVE= 12,
+}
+NativeMethods +-- MSG
+MSG --> "HWnd" IntPtr
+MSG --> "WParam" IntPtr
+MSG --> "LParam" IntPtr
+MSG --> "Pt" POINT
+NativeMethods +-- POINT
+NativeMethods +-- KBDLLHOOKSTRUCT
+NativeMethods +-- MSLLHOOKSTRUCT
+MSLLHOOKSTRUCT --> "pt" POINT
+MSLLHOOKSTRUCT --> "dwExtraInfo" IntPtr
+NativeMethods +-- WindowClass
+WindowClass --> "lpfnWndProc" WindowProcedureHandler
+WindowClass --> "hInstance" IntPtr
+WindowClass --> "hIcon" IntPtr
+WindowClass --> "hCursor" IntPtr
+WindowClass --> "hbrBackground" IntPtr
+NativeMethods +-- KeyMask
+NativeMethods +-- HookType
+NativeMethods +-- MessageType
+NativeMethods +-- VirtualKeyCode
+NativeMethods +-- ClipboardFormat
+class Utility <<static>> {
+    + {static} SetAndDispatch(variable:bool, value:bool, onTrue:Action, onFalse:Action) : void
+    + {static} GetTypeFromAnyAssembly(type:string) : Type?
+    + {static} GetWindowTitleFromHwnd(hwnd:IntPtr) : string
+    + {static} GetProcessNameFromHwnd(hwnd:IntPtr) : string
+    + {static} IsRectSizeEqual(rectA:Rectangle, rectB:Rectangle) : bool
+    + {static} GetWindowWidth(rect:Rectangle) : int
+    + {static} GetWindowHeight(rect:Rectangle) : int
+}
+interface "ICommand`1"<in TOptions> {
+    Execute(options:TOptions) : int
+}
+abstract class CommandOptions {
+    + IsVerbose : bool <<get>> <<set>>
+}
+interface IInteractiveCommandLine {
+    Launch(completionAction:Action) : void
+}
+class InteractiveCommandLine {
+    + InteractiveCommandLine(consoleFormatter:IConsoleFormatter)
+    + Launch(completionAction:Action) : void
+}
+IInteractiveCommandLine <|-- InteractiveCommandLine
+class ConsoleFormatter {
+    + IsVerbose : bool <<get>> <<set>> = false
+    + PrintError(exception:Exception) : void
+    + PrintDebug(message:string) : void
+    + Print(message:string) : void
+    + Read() : string
+}
+IConsoleFormatter <|-- ConsoleFormatter
+interface IConsoleFormatter {
+    IsVerbose : bool <<get>> <<set>>
+    PrintError(exception:Exception) : void
+    PrintDebug(message:string) : void
+    Print(message:string) : void
+    Read() : string
+}
+interface IMessageLoop {
+    IsRunning : bool <<get>>
+    Start() : void
+    Stop() : void
+}
+class MessageLoop {
+    + IsRunning : bool <<get>>
+    + MessageLoop()
+    + Start() : void
+    + Stop() : void
+    + {static} <<extern>> GetCurrentThreadId() : uint
+}
+IMessageLoop <|-- MessageLoop
+class ProcessCommandTest {
+    + BeforeTest() : void
+    + TestProcessCommand_Successful() : void
+    + TestProcessCommand_OnProcessError() : void
+    + TestProcessCommand_NullOptions() : void
+    + TestProcessCommand_IsVerbosePropagation() : void
+}
+class RecordCommandTest {
+    + BeforeTest() : void
+    + TestRecordCommand_Successful() : void
+    + TestRecordCommand_OnStartError() : void
+    + TestRecordCommand_NullOptions() : void
+    + TestRecordCommand_IsVerbosePropagation() : void
+}
+class ValidateCommandTest {
+    + BeforeTest() : void
+    + TestProcessCommand_Successful() : void
+    + TestProcessCommand_OnConfigManagerError() : void
+    + TestProcessCommand_OnBootstrapperError() : void
+    + TestProcessCommand_InvalidConfig() : void
+    + TestProcessCommand_NullOptions() : void
+    + TestProcessCommand_IsVerbosePropagation() : void
+}
+class InteractiveCommandLineTest {
+    + BeforeTest() : void
+    + TestInteractive_Completion() : void
+    + TestInteractive_Retry() : void
+    + TestInteractive_NullOutputFormatter() : void
+}
+class ConsoleFormatterTest {
+    + TestConsole_Read() : void
+    + TestConsole_Print() : void
+    + TestConsole_PrintDebug() : void
+    + TestConsole_PrintDebug_NotInDebug() : void
+    + TestConsole_PrintError() : void
+}
+class MessageLoopTest {
+    + TestMessageLoop() : void
+}
+class ConfigurationManager {
+    + LoadConfiguration(path:FilePath) : void
+}
+IConfigurationManager <|-- ConfigurationManager
+interface IConfigurationManager {
+    LoadConfiguration(path:FilePath) : void
+}
+class InvalidConfigurationException {
+    + InvalidConfigurationException()
+    + InvalidConfigurationException(message:string)
+    + InvalidConfigurationException(message:string, innerException:Exception)
+}
+Exception <|-- InvalidConfigurationException
+class GlobalModuleConfiguration {
+    + Parse(configuration:RawConfiguration) : void
+}
+class "IEnumerable`1"<T> {
+}
+IConfiguration <|-- GlobalModuleConfiguration
+GlobalModuleConfiguration --> "EnabledModules<Type>" "IEnumerable`1"
+interface IModuleManager {
+    InitializeModules() : void
+    NotifyModulesOnSessionStart() : void
+    NotifyModulesOnSessionStop() : void
+}
+class ModuleManager {
+    + InitializeModules() : void
+    + NotifyModulesOnSessionStart() : void
+    + NotifyModulesOnSessionStop() : void
+}
+IModuleManager <|-- ModuleManager
+interface ISessionManager {
+    CurrentRecordingDirectory : DirectoryPath? <<get>>
+    RecordingsFolder : DirectoryPath? <<get>>
+    StartRecording() : void
+    StopRecording() : void
+    Process(recordings:IEnumerable<DirectoryPath>) : void
+}
+class SessionConfiguration {
+    + Decoders : IEnumerable<Type>? <<get>>
+    + Parse(configuration:RawConfiguration) : void
+}
+class "IEnumerable`1"<T> {
+}
+IConfiguration <|-- SessionConfiguration
+SessionConfiguration --> "Encoders<Type>" "IEnumerable`1"
+SessionConfiguration --> "RecordingDirectory" DirectoryPath
+class SessionManager {
+    + SessionManager(configurationPath:FilePath)
+    + SessionManager(configurationPath:FilePath, bootstrapper:IBootstrapper, configurationManager:IConfigurationManager, moduleManager:IModuleManager)
+    + CurrentRecordingDirectory : DirectoryPath? <<get>>
+    + RecordingsFolder : DirectoryPath? <<get>>
+    + StartRecording() : void
+    + StopRecording() : void
+    + Process(recordings:IEnumerable<DirectoryPath>) : void
+}
+ISessionManager <|-- SessionManager
+class ErrorDialog <<partial>> {
+    + ErrorDialog(errorMessage:string)
+    + ErrorMessage : string <<get>>
+}
+Window <|-- ErrorDialog
+class InformationDialog <<partial>> {
+    + InformationDialog()
+}
+Window <|-- InformationDialog
+class SaveDialog <<partial>> {
+    + SaveDialog()
+}
+Window <|-- SaveDialog
+class ApplicationViewModel {
+    + ApplicationViewModel()
+    + IsRecording : bool <<get>> <<set>>
+}
+DependencyObject <|-- ApplicationViewModel
+ApplicationViewModel --> "OpenRecordingsDirectoryCommand" ICommand
+ApplicationViewModel --> "ExitCommand" ICommand
+ApplicationViewModel --> "ToggleRecordingCommand" ICommand
+ApplicationViewModel o-> "IsRecordingProperty" DependencyProperty
+class ClipboardCopyEvent {
+}
+ClipboardEvent <|-- ClipboardCopyEvent
+class ClipboardCutEvent {
+}
+ClipboardEvent <|-- ClipboardCutEvent
+abstract class ClipboardEvent {
+    + ClipboardText : string <<get>> <<set>>
+}
+Event <|-- ClipboardEvent
+class ClipboardPasteEvent {
+}
+ClipboardEvent <|-- ClipboardPasteEvent
+class ClipboardCopyEventProducer {
+    + StartCapture() : void
+    + StopCapture() : void
+}
+class "DefaultEventQueue`1"<T> {
+}
+class ClipboardWindowMessageSink {
+    + ClipboardWindowMessageSink()
+    +  <<event>> ClipboardUpdated : ClipboardEventHandler? 
+    + Dispose() : void
+}
+"DefaultEventQueue`1" "<ClipboardCopyEvent>" <|-- ClipboardCopyEventProducer
+ClipboardCopyEventProducer +-- ClipboardWindowMessageSink
+class ClipboardCutEventProducer {
+    + StartCapture() : void
+    + StopCapture() : void
+}
+class "DefaultEventQueue`1"<T> {
+}
+"DefaultEventQueue`1" "<ClipboardCutEvent>" <|-- ClipboardCutEventProducer
+class ClipboardPasteEventProducer {
+    + StartCapture() : void
+    + StopCapture() : void
+}
+class "DefaultEventQueue`1"<T> {
+}
+"DefaultEventQueue`1" "<ClipboardPasteEvent>" <|-- ClipboardPasteEventProducer
+abstract class KeyboardEvent {
+}
+Event <|-- KeyboardEvent
+class KeyboardInteractEvent {
+}
+KeyboardEvent <|-- KeyboardInteractEvent
+KeyboardInteractEvent --> "PressedKey" Key
+KeyboardInteractEvent --> "ModifierKeys" ModifierKeys
+class KeyboardInteractEventProducer {
+    + StartCapture() : void
+    + StopCapture() : void
+}
+class "DefaultEventQueue`1"<T> {
+}
+"DefaultEventQueue`1" "<KeyboardInteractEvent>" <|-- KeyboardInteractEventProducer
+class MouseClickEvent {
+    + HWnd : string <<get>> <<set>>
+}
+MouseEvent <|-- MouseClickEvent
+MouseClickEvent --> "MouseAction" MouseAction
+abstract class MouseEvent {
+}
+Event <|-- MouseEvent
+MouseEvent --> "MousePosition" Point
+class MouseMoveEvent {
+}
+MouseEvent <|-- MouseMoveEvent
+class MouseScrollEvent {
+    + ScrollAmount : short <<get>> <<set>>
+    + HWnd : string <<get>> <<set>>
+}
+MouseEvent <|-- MouseScrollEvent
+class MouseClickEventProducer {
+    + StartCapture() : void
+    + StopCapture() : void
+}
+class "DefaultEventQueue`1"<T> {
+}
+"DefaultEventQueue`1" "<MouseClickEvent>" <|-- MouseClickEventProducer
+class MouseMoveEventProducer {
+    + StartCapture() : void
+    + StopCapture() : void
+}
+class "DefaultEventQueue`1"<T> {
+}
+"DefaultEventQueue`1" "<MouseMoveEvent>" <|-- MouseMoveEventProducer
+class MouseScrollEventProducer {
+    + StartCapture() : void
+    + StopCapture() : void
+}
+class "DefaultEventQueue`1"<T> {
+}
+"DefaultEventQueue`1" "<MouseScrollEvent>" <|-- MouseScrollEventProducer
+class ButtonClickEvent {
+    + Button : string <<get>> <<set>>
+    + Href : string? <<get>> <<set>>
+}
+WebBrowserEvent <|-- ButtonClickEvent
+class CloseTabEvent {
+}
+WebBrowserEvent <|-- CloseTabEvent
+class FileDownloadEvent {
+    + MIMEType : string <<get>> <<set>>
+}
+WebBrowserEvent <|-- FileDownloadEvent
+FileDownloadEvent --> "FileURL" Uri
+class HoverEvent {
+    + HoveredElement : string <<get>> <<set>>
+}
+WebBrowserEvent <|-- HoverEvent
+class NavigationEvent {
+}
+WebBrowserEvent <|-- NavigationEvent
+class OpenTabEvent {
+}
+WebBrowserEvent <|-- OpenTabEvent
+class SwitchTabEvent {
+    + NewTabID : int <<get>> <<set>>
+}
+WebBrowserEvent <|-- SwitchTabEvent
+class TextInputEvent {
+    + InputtedText : string <<get>> <<set>>
+    + Textbox : string <<get>> <<set>>
+}
+WebBrowserEvent <|-- TextInputEvent
+class TextSelectionEvent {
+    + SelectedText : string <<get>> <<set>>
+}
+WebBrowserEvent <|-- TextSelectionEvent
+abstract class WebBrowserEvent {
+    + TabID : int <<get>> <<set>>
+    + Deserialize(serialized:string) : void
+    + Deserialize(parsed:JsonElement) : void
+}
+Event <|-- WebBrowserEvent
+WebBrowserEvent --> "CurrentURL" Uri
+class ButtonClickEventProducer {
+    + <<override>> Notify(eventJson:JsonElement) : void
+}
+class "WebBrowserEventProducer`1"<T> {
+}
+"WebBrowserEventProducer`1" "<ButtonClickEvent>" <|-- ButtonClickEventProducer
+ButtonClickEventProducer --> "HandledEventLabel" EventLabel
+class CloseTabEventProducer {
+    + <<override>> Notify(eventJson:JsonElement) : void
+}
+class "WebBrowserEventProducer`1"<T> {
+}
+"WebBrowserEventProducer`1" "<CloseTabEvent>" <|-- CloseTabEventProducer
+CloseTabEventProducer --> "HandledEventLabel" EventLabel
+class FileDownloadEventProducer {
+    + <<override>> Notify(eventJson:JsonElement) : void
+}
+class "WebBrowserEventProducer`1"<T> {
+}
+"WebBrowserEventProducer`1" "<FileDownloadEvent>" <|-- FileDownloadEventProducer
+FileDownloadEventProducer --> "HandledEventLabel" EventLabel
+class HoverEventProducer {
+    + <<override>> Notify(eventJson:JsonElement) : void
+}
+class "WebBrowserEventProducer`1"<T> {
+}
+"WebBrowserEventProducer`1" "<HoverEvent>" <|-- HoverEventProducer
+HoverEventProducer --> "HandledEventLabel" EventLabel
+class NavigationEventProducer {
+    + <<override>> Notify(eventJson:JsonElement) : void
+}
+class "WebBrowserEventProducer`1"<T> {
+}
+"WebBrowserEventProducer`1" "<NavigationEvent>" <|-- NavigationEventProducer
+NavigationEventProducer --> "HandledEventLabel" EventLabel
+class OpenTabEventProducer {
+    + <<override>> Notify(eventJson:JsonElement) : void
+}
+class "WebBrowserEventProducer`1"<T> {
+}
+"WebBrowserEventProducer`1" "<OpenTabEvent>" <|-- OpenTabEventProducer
+OpenTabEventProducer --> "HandledEventLabel" EventLabel
+class SwitchTabEventProducer {
+    + <<override>> Notify(eventJson:JsonElement) : void
+}
+class "WebBrowserEventProducer`1"<T> {
+}
+"WebBrowserEventProducer`1" "<SwitchTabEvent>" <|-- SwitchTabEventProducer
+SwitchTabEventProducer --> "HandledEventLabel" EventLabel
+class TextInputEventProducer {
+    + <<override>> Notify(eventJson:JsonElement) : void
+}
+class "WebBrowserEventProducer`1"<T> {
+}
+"WebBrowserEventProducer`1" "<TextInputEvent>" <|-- TextInputEventProducer
+TextInputEventProducer --> "HandledEventLabel" EventLabel
+class TextSelectionEventProducer {
+    + <<override>> Notify(eventJson:JsonElement) : void
+}
+class "WebBrowserEventProducer`1"<T> {
+}
+"WebBrowserEventProducer`1" "<TextSelectionEvent>" <|-- TextSelectionEventProducer
+TextSelectionEventProducer --> "HandledEventLabel" EventLabel
+abstract class "WebBrowserEventProducer`1"<T> {
+    + <<virtual>> Notify(eventJson:JsonElement) : void
+    + EnqueueFinished() : void
+}
+class "DefaultEventQueue`1"<T> {
+}
+"DefaultEventQueue`1" "<T>" <|-- "WebBrowserEventProducer`1"
+IWebBrowserEventObserver <|-- "WebBrowserEventProducer`1"
+"WebBrowserEventProducer`1" --> "HandledEventLabel" EventLabel
+abstract class WindowEvent {
+    + Title : string <<get>> <<set>>
+    + ProcessName : string <<get>> <<set>>
+}
+Event <|-- WindowEvent
+class WindowFocusEvent {
+}
+WindowEvent <|-- WindowFocusEvent
+class WindowMovementEvent {
+}
+WindowEvent <|-- WindowMovementEvent
+WindowMovementEvent --> "OldLocation" Point
+WindowMovementEvent --> "NewLocation" Point
+class WindowResizingEvent {
+}
+WindowEvent <|-- WindowResizingEvent
+WindowResizingEvent --> "OldSize" Size
+WindowResizingEvent --> "NewSize" Size
+class WindowStateChangedEvent {
+}
+WindowEvent <|-- WindowStateChangedEvent
+WindowStateChangedEvent --> "WindowState" WindowState
+class WindowFocusEventProducer {
+    + StartCapture() : void
+    + StopCapture() : void
+}
+class "DefaultEventQueue`1"<T> {
+}
+"DefaultEventQueue`1" "<WindowFocusEvent>" <|-- WindowFocusEventProducer
+class WindowMovementEventProducer {
+    + StartCapture() : void
+    + StopCapture() : void
+}
+class "DefaultEventQueue`1"<T> {
+}
+"DefaultEventQueue`1" "<WindowMovementEvent>" <|-- WindowMovementEventProducer
+class WindowResizingEventProducer {
+    + StartCapture() : void
+    + StopCapture() : void
+}
+class "DefaultEventQueue`1"<T> {
+}
+"DefaultEventQueue`1" "<WindowResizingEvent>" <|-- WindowResizingEventProducer
+class WindowStateChangedEventProducer {
+    + StartCapture() : void
+    + StopCapture() : void
+}
+class "DefaultEventQueue`1"<T> {
+}
+"DefaultEventQueue`1" "<WindowStateChangedEvent>" <|-- WindowStateChangedEventProducer
+abstract class "DefaultEventQueue`1"<T> {
+}
+abstract class "DefaultEncodeableEventQueue`1"<T> {
+}
+abstract class "DefaultDecodeableEventQueue`1"<T> {
+}
+abstract class "NonDeserializableEventQueue`1"<T> {
+}
+class "SupportDeserializationEventQueue`1"<T> {
+}
+class "EncodeableEventQueue`1"<T> {
+}
+class "DecodeableEventQueue`1"<T> {
+}
+class "ReadOnlyEventQueue`1"<T> {
+}
+"SupportDeserializationEventQueue`1" "<T>" <|-- "DefaultEventQueue`1"
+"EncodeableEventQueue`1" "<T>" <|-- "DefaultEncodeableEventQueue`1"
+"DecodeableEventQueue`1" "<T>" <|-- "DefaultDecodeableEventQueue`1"
+"ReadOnlyEventQueue`1" "<T>" <|-- "NonDeserializableEventQueue`1"
+abstract class "DecodeableEventQueue`1"<T> {
+    + GetEvents() : IAsyncEnumerable<T>
+}
+class "IDecodeableEventQueue`1"<T> {
+}
+"IDecodeableEventQueue`1" "<T>" <|-- "DecodeableEventQueue`1"
+abstract class "EncodeableEventQueue`1"<T> {
+    + GetEvents() : IAsyncEnumerable<T>
+}
+class "IEncodeableEventQueue`1"<T> {
+}
+"IEncodeableEventQueue`1" "<T>" <|-- "EncodeableEventQueue`1"
+interface "IDecodeableEventQueue`1"<out T> {
+    GetEvents() : IAsyncEnumerable<T>
+}
+interface "IEncodeableEventQueue`1"<out T> {
+    GetEvents() : IAsyncEnumerable<T>
+}
+interface "IReadOnlyEventQueue`1"<out T> {
+    GetEvents() : IAsyncEnumerable<T>
+}
+"IReadOnlyEventQueue`1" --> "EventType" Type
+interface "ISupportDeserializationEventQueue`1"<out T> {
+    Enqueue(@event:object) : void
+    NotifyOnEnqueueFinished() : void
+}
+"ISupportDeserializationEventQueue`1" --> "EventType" Type
+abstract class "ReadOnlyEventQueue`1"<T> {
+    + GetEvents() : IAsyncEnumerable<T>
+}
+class "IReadOnlyEventQueue`1"<T> {
+}
+"IReadOnlyEventQueue`1" "<T>" <|-- "ReadOnlyEventQueue`1"
+abstract class "SupportDeserializationEventQueue`1"<T> {
+    + Enqueue(@event:object) : void
+    + <<new>> NotifyOnEnqueueFinished() : void
+}
+class "ReadOnlyEventQueue`1"<T> {
+}
+class "ISupportDeserializationEventQueue`1"<T> {
+}
+"ReadOnlyEventQueue`1" "<T>" <|-- "SupportDeserializationEventQueue`1"
+"ISupportDeserializationEventQueue`1" "<T>" <|-- "SupportDeserializationEventQueue`1"
+class HookLibraryException {
+    + HookLibraryException()
+    + HookLibraryException(message:string)
+}
+Exception <|-- HookLibraryException
+class ProcessCommand {
+    + ProcessCommand(sessionManager:ISessionManager)
+    + ProcessCommand(sessionManager:ISessionManager, consoleFormatter:IConsoleFormatter)
+    + Execute(options:ProcessOptions) : int
+}
+class "ICommand`1"<T> {
+}
+"ICommand`1" "<ProcessOptions>" <|-- ProcessCommand
+class ProcessOptions {
+    + ConfigPath : string <<get>> <<set>>
+    + InputFile : string <<get>> <<set>>
+}
+CommandOptions <|-- ProcessOptions
+class RecordCommand {
+    + RecordCommand(sessionManager:ISessionManager)
+    + RecordCommand(sessionManager:ISessionManager, console:IConsoleFormatter)
+    + RecordCommand(sessionManager:ISessionManager, consoleFormatter:IConsoleFormatter, commandLine:IInteractiveCommandLine, messageLoop:IMessageLoop)
+    + Execute(options:RecordOptions) : int
+}
+class "ICommand`1"<T> {
+}
+"ICommand`1" "<RecordOptions>" <|-- RecordCommand
+class RecordOptions {
+    + ConfigPath : string <<get>> <<set>>
+}
+CommandOptions <|-- RecordOptions
+class ValidateCommand {
+    + ValidateCommand()
+    + ValidateCommand(configurationManager:IConfigurationManager, consoleFormatter:IConsoleFormatter, bootstrapper:IBootstrapper)
+    + Execute(options:ValidateOptions) : int
+}
+class "ICommand`1"<T> {
+}
+"ICommand`1" "<ValidateOptions>" <|-- ValidateCommand
+class ValidateOptions {
+    + ConfigPath : string <<get>> <<set>>
+}
+CommandOptions <|-- ValidateOptions
+class CaptureException {
+    + CaptureException()
+    + CaptureException(message:string)
+    + CaptureException(message:string, innerException:Exception)
+}
+Exception <|-- CaptureException
+abstract class IntermediateFormatSample {
+}
+Event <|-- IntermediateFormatSample
+IntermediateFormatSample --> "Type" Type
+interface IDecoder {
+    Decode(recordingDirectoryPath:DirectoryPath) : void
+}
+IDecoder --> "DecodeFinished" ManualResetEvent
+interface IEncoder {
+    Encode(recordingDirectoryPath:DirectoryPath) : void
+}
+IEncoder --> "EncodeFinished" ManualResetEvent
+class AlreadyRecordingException {
+}
+RecordingException <|-- AlreadyRecordingException
+class NotRecordingException {
+}
+RecordingException <|-- NotRecordingException
+abstract class RecordingException {
+}
+Exception <|-- RecordingException
+class NotifyIcon {
+    + NotifyIcon()
+    + Tooltip : string <<get>> <<set>>
+    + CommandParameter : object <<get>> <<set>>
+    + Dispose() : void
+}
+Control <|-- NotifyIcon
+IDisposable <|-- NotifyIcon
+NotifyIcon o-> "CommandProperty" DependencyProperty
+NotifyIcon o-> "CommandParameterProperty" DependencyProperty
+NotifyIcon o-> "ContextMenuProperty" DependencyProperty
+NotifyIcon o-> "IconSourceProperty" DependencyProperty
+NotifyIcon o-> "TooltipProperty" DependencyProperty
+NotifyIcon --> "IconSource" ImageSource
+NotifyIcon --> "Command" ICommand
+NotifyIcon --> "ContextMenu" ContextMenu
+class RelayCommand {
+    + RelayCommand(execute:Action<object>, canExecute:Predicate<object>?)
+    + CanExecute(parameter:object) : bool
+    + Execute(parameter:object) : void
+}
+ICommand <|-- RelayCommand
+class ChannelConsumingException {
+    + ChannelConsumingException()
+    + ChannelConsumingException(message:string)
+    + ChannelConsumingException(message:string, innerException:Exception)
+}
+Exception <|-- ChannelConsumingException
+interface "IEventQueueStorageStrategy`1"<T> {
+    GetEvents(token:CancellationToken) : IAsyncEnumerable<T>
+    Enqueue(@event:T) : void
+    NotifyOnEnqueueFinished() : void
+}
+class DirectXVideoSample {
+}
+VideoSample <|-- DirectXVideoSample
+DirectXVideoSample --> "Surface" IDirect3DSurface
+class VideoSample {
+}
+Event <|-- VideoSample
+class JsonIntermediateFormatDeserializer {
+    + IsActive : bool <<get>> <<set>>
+    + Initialize() : void
+}
+ITransformingModule <|-- JsonIntermediateFormatDeserializer
+JsonIntermediateFormatDeserializer o-> "Identifier" Guid
+class JsonIntermediateFormatSample {
+}
+IntermediateFormatSample <|-- JsonIntermediateFormatSample
+JsonIntermediateFormatSample --> "JsonEncodedData" JsonDocument
+JsonIntermediateFormatSample --> "JsonEncodedType" JsonEncodedText
+class JsonIntermediateFormatSerializer {
+    + Initialize() : void
+    + IsActive : bool <<get>> <<set>>
+}
+class "DefaultEncodeableEventQueue`1"<T> {
+}
+"DefaultEncodeableEventQueue`1" "<JsonIntermediateFormatSample>" <|-- JsonIntermediateFormatSerializer
+ITransformingModule <|-- JsonIntermediateFormatSerializer
+JsonIntermediateFormatSerializer o-> "Identifier" Guid
+class DecodingException {
+    + DecodingException()
+    + DecodingException(message:string)
+    + DecodingException(message:string, innerException:Exception)
+}
+Exception <|-- DecodingException
+class EncodingException {
+    + EncodingException()
+    + EncodingException(message:string)
+    + EncodingException(message:string, innerException:Exception)
+}
+Exception <|-- EncodingException
+class JsonDecoder {
+    + Decode(recordingDirectoryPath:DirectoryPath) : void
+}
+class "DefaultDecodeableEventQueue`1"<T> {
+}
+"DefaultDecodeableEventQueue`1" "<JsonIntermediateFormatSample>" <|-- JsonDecoder
+IDecoder <|-- JsonDecoder
+JsonDecoder o-> "DecodeFinished" ManualResetEvent
+class JsonDecoderConfiguration {
+    + Parse(configuration:RawConfiguration) : void
+}
+IConfiguration <|-- JsonDecoderConfiguration
+JsonDecoderConfiguration --> "RelativeFilePath" FilePath
+class JsonEncoder {
+    + Encode(recordingDirectoryPath:DirectoryPath) : void
+}
+IEncoder <|-- JsonEncoder
+JsonEncoder o-> "EncodeFinished" ManualResetEvent
+class JsonEncoderConfiguration {
+    + Parse(configuration:RawConfiguration) : void
+}
+IConfiguration <|-- JsonEncoderConfiguration
+JsonEncoderConfiguration --> "RelativeFilePath" FilePath
+class MpegEncoder {
+    + Encode(recordingDirectoryPath:DirectoryPath) : void
+}
+IEncoder <|-- MpegEncoder
+MpegEncoder o-> "EncodeFinished" ManualResetEvent
+class MpegEncoderConfiguration {
+    + Width : uint <<get>> <<set>>
+    + Height : uint <<get>> <<set>>
+    + KiloBitsPerSecond : uint <<get>> <<set>>
+    + FramesPerSecond : uint <<get>> <<set>>
+    + Parse(configuration:RawConfiguration) : void
+}
+IConfiguration <|-- MpegEncoderConfiguration
+MpegEncoderConfiguration --> "RelativeFilePath" FilePath
+class NativeMethods <<static>> {
+    + {static} <<extern>> Shell_NotifyIcon(dwMessage:NotifyIconMessage, lpData:NotifyIconData) : bool
+    + {static} <<extern>> CreateWindowEx(dwExStyle:int, lpClassName:string, lpWindowName:string, dwStyle:int, x:int, y:int, nWidth:int, nHeight:int, hWndParent:IntPtr, hMenu:IntPtr, hInstance:IntPtr, lpParam:IntPtr) : IntPtr
+    + {static} <<extern>> DefWindowProc(hWnd:IntPtr, msg:uint, wParam:IntPtr, lParam:IntPtr) : IntPtr
+    + {static} <<extern>> RegisterClass(lpWndClass:WindowClass) : short
+    + {static} <<extern>> RegisterWindowMessage(lpString:string) : uint
+    + {static} <<extern>> DestroyWindow(hWnd:IntPtr) : bool
+    + {static} <<extern>> GetCursorPos(lpPoint:Win32Point) : bool
+    + {static} <<extern>> SetForegroundWindow(hWnd:IntPtr) : bool
+}
+enum WindowMessages {
+    WM_MOUSEMOVE= 0x200,
+    WM_LBUTTONDOWN= 0x201,
+    WM_LBUTTONUP= 0x202,
+    WM_LBUTTONDBLCLK= 0x203,
+    WM_RBUTTONDOWN= 0x204,
+    WM_RBUTTONUP= 0x205,
+    WM_RBUTTONDBLCLK= 0x206,
+    WM_MBUTTONDOWN= 0x207,
+    WM_MBUTTONUP= 0x208,
+    WM_MBUTTONDBLCLK= 0x209,
+}
+enum NotifyIconFlags {
+    NIF_MESSAGE= 0x01,
+    NIF_ICON= 0x02,
+    NIF_TIP= 0x04,
+    NIF_STATE= 0x08,
+    NIF_INFO= 0x10,
+    NIF_GUID= 0x20,
+    NIF_REALTIME= 0x40,
+    NIF_SHOWTIP= 0x80,
+}
+enum NotifyIconInfoFlags {
+    NIIF_NONE= 0x00,
+    NIIF_INFO= 0x01,
+    NIIF_WARNING= 0x02,
+    NIIF_ERROR= 0x03,
+    NIIF_USER= 0x04,
+    NIIF_NOSOUND= 0x10,
+    NIIF_LARGE_ICON= 0x20,
+    NIIF_RESPECT_QUIET_TIME= 0x80,
+    NIIF_ICON_MASK= 0x0F,
+}
+enum NotifyIconMessage {
+    NIM_ADD= 0x00,
+    NIM_MODIFY= 0x01,
+    NIM_DELETE= 0x02,
+    NIM_SETFOCUS= 0x03,
+    NIM_SETVERSION= 0x04,
+}
+enum NotifyIconState {
+    NIS_HIDDEN= 0x01,
+    NIS_SHAREDICON= 0x02,
+}
+enum NotifyIconVersion {
+    NOTIFY_ICON_VERSION= 0x3,
+    NOTIFY_ICON_VERSION_4= 0x4,
+}
+class NotifyIconData <<struct>> {
+    + cbSize : uint
+    + uID : uint
+    + uCallbackMessage : uint
+    + szTip : string
+    + szInfo : string
+    + uTimeoutOrVersion : uint
+    + szInfoTitle : string
+}
+class WindowClass <<struct>> {
+    + style : uint
+    + cbClsExtra : int
+    + cbWndExtra : int
+    + lpszMenuName : string
+    + lpszClassName : string
+}
+class Win32Point <<struct>> {
+    + X : int
+    + Y : int
+}
+NativeMethods +-- WindowMessages
+NativeMethods +-- NotifyIconFlags
+NativeMethods +-- NotifyIconInfoFlags
+NativeMethods +-- NotifyIconMessage
+NativeMethods +-- NotifyIconState
+NativeMethods +-- NotifyIconVersion
+NativeMethods +-- NotifyIconData
+NotifyIconData --> "hWnd" IntPtr
+NotifyIconData --> "uFlags" NotifyIconFlags
+NotifyIconData --> "hIcon" IntPtr
+NotifyIconData --> "dwState" NotifyIconState
+NotifyIconData --> "dwStateMask" NotifyIconState
+NotifyIconData --> "dwInfoFlags" NotifyIconInfoFlags
+NotifyIconData --> "guidItem" Guid
+NotifyIconData --> "hBalloonIcon" IntPtr
+NativeMethods +-- WindowClass
+WindowClass --> "lpfnWndProc" WindowProcedureHandler
+WindowClass --> "hInstance" IntPtr
+WindowClass --> "hIcon" IntPtr
+WindowClass --> "hCursor" IntPtr
+WindowClass --> "hbrBackground" IntPtr
+NativeMethods +-- Win32Point
+class WindowMessageSink {
+    + WindowMessageSink()
+    +  <<event>> WindowMessage : WindowMessageEventHandler? 
+    +  <<event>> TaskbarCreated : TaskbarCreatedEventHandler? 
+    + Dispose() : void
+}
+IDisposable <|-- WindowMessageSink
+WindowMessageSink --> "WindowHandle" IntPtr
+class App <<partial>> {
+    + InitializeComponent() : void
+    + {static} Main() : void
+}
+class GeneratedInternalTypeHelper <<sealed>> {
+}
+class App <<partial>> {
+    + InitializeComponent() : void
+    + {static} Main() : void
+}
+class GeneratedInternalTypeHelper <<sealed>> {
+}
+class "BoundedMultiConsumerChannelStrategy`1"<TEvent> {
+    + BoundedMultiConsumerChannelStrategy(bufferCapacity:int, maxChannelConsumers:uint?)
+}
+class "MultiConsumerChannelStrategy`1"<T> {
+}
+"MultiConsumerChannelStrategy`1" "<TEvent>" <|-- "BoundedMultiConsumerChannelStrategy`1"
+abstract class "MultiConsumerChannelStrategy`1"<TEvent> {
+    + GetEvents(token:CancellationToken) : IAsyncEnumerable<TEvent>
+    + <<async>> Enqueue(@event:TEvent) : void
+    + NotifyOnEnqueueFinished() : void
+}
+class "IEventQueueStorageStrategy`1"<T> {
+}
+"IEventQueueStorageStrategy`1" "<TEvent>" <|-- "MultiConsumerChannelStrategy`1"
+class "UnboundedMultiConsumerChannelStrategy`1"<TEvent> {
+    + UnboundedMultiConsumerChannelStrategy(maxChannelConsumers:uint?)
+}
+class "MultiConsumerChannelStrategy`1"<T> {
+}
+"MultiConsumerChannelStrategy`1" "<TEvent>" <|-- "UnboundedMultiConsumerChannelStrategy`1"
+class "BoundedSingleConsumerChannelStrategy`1"<TEvent> {
+    + BoundedSingleConsumerChannelStrategy(bufferCapacity:int)
+}
+class "SingleConsumerChannelStrategy`1"<T> {
+}
+"SingleConsumerChannelStrategy`1" "<TEvent>" <|-- "BoundedSingleConsumerChannelStrategy`1"
+abstract class "SingleConsumerChannelStrategy`1"<TEvent> {
+    + GetEvents(token:CancellationToken) : IAsyncEnumerable<TEvent>
+    + <<async>> Enqueue(@event:TEvent) : void
+    + NotifyOnEnqueueFinished() : void
+}
+class "IEventQueueStorageStrategy`1"<T> {
+}
+"IEventQueueStorageStrategy`1" "<TEvent>" <|-- "SingleConsumerChannelStrategy`1"
+class "UnboundedSingleConsumerChannelStrategy`1"<TEvent> {
+    + UnboundedSingleConsumerChannelStrategy()
+}
+class "SingleConsumerChannelStrategy`1"<T> {
+}
+"SingleConsumerChannelStrategy`1" "<TEvent>" <|-- "UnboundedSingleConsumerChannelStrategy`1"
+class DesktopCapture {
+    + IsActive : bool <<get>> <<set>>
+    + Initialize() : void
+}
+ICollectingModule <|-- DesktopCapture
+DesktopCapture o-> "Identifier" Guid
+class DesktopCaptureConfiguration {
+    + PromptUserForMonitorSelection : bool <<get>>
+    + Parse(configuration:RawConfiguration) : void
+}
+IConfiguration <|-- DesktopCaptureConfiguration
+DesktopCaptureConfiguration --> "MonitorIndex" Index
+class VideoSampleProducer {
+    + StartCapture(item:GraphicsCaptureItem) : void
+    + StopCapture() : void
+    + VideoSampleProducer()
+    + Dispose() : void
+}
+class "DefaultEncodeableEventQueue`1"<T> {
+}
+class MultithreadLock {
+    + MultithreadLock(multithread:Multithread)
+    + Dispose() : void
+}
+"DefaultEncodeableEventQueue`1" "<DirectXVideoSample>" <|-- VideoSampleProducer
+VideoSampleProducer +-- MultithreadLock
+IDisposable <|-- MultithreadLock
+class VideoCaptureException {
+    + VideoCaptureException()
+    + VideoCaptureException(message:string)
+    + VideoCaptureException(message:string, innerException:Exception)
+}
+CaptureException <|-- VideoCaptureException
+class VideoDecodingException {
+}
+DecodingException <|-- VideoDecodingException
+class VideoEncodingException {
+}
+EncodingException <|-- VideoEncodingException
+class ErrorDialog <<partial>> {
+    + InitializeComponent() : void
+    Connect(connectionId:int, target:object) : void
+}
+class InformationDialog <<partial>> {
+    + InitializeComponent() : void
+    Connect(connectionId:int, target:object) : void
+}
+class SaveDialog <<partial>> {
+    + InitializeComponent() : void
+    Connect(connectionId:int, target:object) : void
+}
+class ErrorDialog <<partial>> {
+    + InitializeComponent() : void
+    Connect(connectionId:int, target:object) : void
+}
+class InformationDialog <<partial>> {
+    + InitializeComponent() : void
+    Connect(connectionId:int, target:object) : void
+}
+class SaveDialog <<partial>> {
+    + InitializeComponent() : void
+    Connect(connectionId:int, target:object) : void
+}
+interface IDirect3DDxgiInterfaceAccess {
+    GetInterface(iid:Guid) : IntPtr
+}
+class Direct3D11Helper <<static>> {
+}
+class GraphicsCaptureHelper <<static>> {
+}
+interface IInitializeWithWindow {
+    Initialize(hWnd:IntPtr) : void
+}
+interface IGraphicsCaptureItemInterop {
+    CreateForWindow(window:IntPtr, iid:Guid) : IntPtr
+    CreateForMonitor(monitor:IntPtr, iid:Guid) : IntPtr
+}
+GraphicsCaptureHelper +-- IInitializeWithWindow
+GraphicsCaptureHelper +-- IGraphicsCaptureItemInterop
+class MonitorInfo {
+    + IsPrimary : bool <<get>> <<set>>
+    + DeviceName : string <<get>> <<set>>
+}
+class MonitorEnumerationHelper <<static>> {
+    + {static} GetMonitors() : IEnumerable<MonitorInfo>
+}
+class RECT <<struct>> {
+    + <<readonly>> left : int
+    + <<readonly>> top : int
+    + <<readonly>> right : int
+    + <<readonly>> bottom : int
+}
+class MonitorInfoEx <<struct>> {
+    + Size : int
+    + <<readonly>> Flags : uint
+    + <<readonly>> DeviceName : string
+}
+MonitorInfo --> "ScreenSize" Vector2
+MonitorInfo --> "MonitorArea" Rect
+MonitorInfo --> "WorkArea" Rect
+MonitorInfo --> "Hmon" IntPtr
+MonitorEnumerationHelper +-- RECT
+MonitorEnumerationHelper +-- MonitorInfoEx
+MonitorInfoEx --> "Monitor" RECT
+MonitorInfoEx --> "WorkArea" RECT
+class App <<partial>> {
+    + InitializeComponent() : void
+    + {static} Main() : void
+}
+class App <<partial>> {
+    + InitializeComponent() : void
+    + {static} Main() : void
+}
+class GeneratedInternalTypeHelper <<sealed>> {
+}
+class GeneratedInternalTypeHelper <<sealed>> {
+}
+class ErrorDialog <<partial>> {
+    + InitializeComponent() : void
+    Connect(connectionId:int, target:object) : void
+}
+class ErrorDialog <<partial>> {
+    + InitializeComponent() : void
+    Connect(connectionId:int, target:object) : void
+}
+class InformationDialog <<partial>> {
+    + InitializeComponent() : void
+    Connect(connectionId:int, target:object) : void
+}
+class InformationDialog <<partial>> {
+    + InitializeComponent() : void
+    Connect(connectionId:int, target:object) : void
+}
+class SaveDialog <<partial>> {
+    + InitializeComponent() : void
+    Connect(connectionId:int, target:object) : void
+}
+class SaveDialog <<partial>> {
+    + InitializeComponent() : void
+    Connect(connectionId:int, target:object) : void
+}
+@enduml

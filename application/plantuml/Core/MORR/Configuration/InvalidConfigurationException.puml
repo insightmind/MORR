@@ -1,0 +1,8 @@
+@startuml
+class InvalidConfigurationException {
+    + InvalidConfigurationException()
+    + InvalidConfigurationException(message:string)
+    + InvalidConfigurationException(message:string, innerException:Exception)
+}
+Exception <|-- InvalidConfigurationException
+@enduml

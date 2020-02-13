@@ -1,0 +1,6 @@
+@startuml
+class DirectXVideoSample {
+}
+VideoSample <|-- DirectXVideoSample
+DirectXVideoSample --> "Surface" IDirect3DSurface
+@enduml

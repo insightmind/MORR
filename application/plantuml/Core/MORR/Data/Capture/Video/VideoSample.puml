@@ -1,0 +1,5 @@
+@startuml
+class VideoSample {
+}
+Event <|-- VideoSample
+@enduml

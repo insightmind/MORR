@@ -1,0 +1,9 @@
+@startuml
+interface IConsoleFormatter {
+    IsVerbose : bool <<get>> <<set>>
+    PrintError(exception:Exception) : void
+    PrintDebug(message:string) : void
+    Print(message:string) : void
+    Read() : string
+}
+@enduml

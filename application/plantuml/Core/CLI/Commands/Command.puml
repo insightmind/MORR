@@ -1,0 +1,5 @@
+@startuml
+interface "ICommand`1"<in TOptions> {
+    Execute(options:TOptions) : int
+}
+@enduml

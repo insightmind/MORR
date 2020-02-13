@@ -1,0 +1,9 @@
+@startuml
+class ProcessCommandTest {
+    + BeforeTest() : void
+    + TestProcessCommand_Successful() : void
+    + TestProcessCommand_OnProcessError() : void
+    + TestProcessCommand_NullOptions() : void
+    + TestProcessCommand_IsVerbosePropagation() : void
+}
+@enduml

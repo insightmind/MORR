@@ -1,0 +1,8 @@
+@startuml
+skinparam monochrome true
+skinparam ClassAttributeIconSize 0
+abstract class MouseEvent {
+    + MousePosition : Point <<get>> <<set>>
+}
+Event <|-- MouseEvent
+@enduml

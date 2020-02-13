@@ -1,0 +1,8 @@
+@startuml
+class JsonIntermediateFormatDeserializer {
+    + IsActive : bool <<get>> <<set>>
+    + Initialize() : void
+}
+ITransformingModule <|-- JsonIntermediateFormatDeserializer
+JsonIntermediateFormatDeserializer o-> "Identifier" Guid
+@enduml

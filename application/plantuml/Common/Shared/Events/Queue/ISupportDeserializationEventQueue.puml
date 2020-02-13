@@ -1,0 +1,7 @@
+@startuml
+interface "ISupportDeserializationEventQueue`1"<out T> {
+    Enqueue(@event:object) : void
+    NotifyOnEnqueueFinished() : void
+}
+"ISupportDeserializationEventQueue`1" --> "EventType" Type
+@enduml

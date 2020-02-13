@@ -1,0 +1,7 @@
+@startuml
+class ButtonClickEvent {
+    + Button : string <<get>> <<set>>
+    + Href : string? <<get>> <<set>>
+}
+WebBrowserEvent <|-- ButtonClickEvent
+@enduml

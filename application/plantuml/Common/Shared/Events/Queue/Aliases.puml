@@ -1,0 +1,22 @@
+@startuml
+abstract class "DefaultEventQueue`1"<T> {
+}
+abstract class "DefaultEncodeableEventQueue`1"<T> {
+}
+abstract class "DefaultDecodeableEventQueue`1"<T> {
+}
+abstract class "NonDeserializableEventQueue`1"<T> {
+}
+class "SupportDeserializationEventQueue`1"<T> {
+}
+class "EncodeableEventQueue`1"<T> {
+}
+class "DecodeableEventQueue`1"<T> {
+}
+class "ReadOnlyEventQueue`1"<T> {
+}
+"SupportDeserializationEventQueue`1" "<T>" <|-- "DefaultEventQueue`1"
+"EncodeableEventQueue`1" "<T>" <|-- "DefaultEncodeableEventQueue`1"
+"DecodeableEventQueue`1" "<T>" <|-- "DefaultDecodeableEventQueue`1"
+"ReadOnlyEventQueue`1" "<T>" <|-- "NonDeserializableEventQueue`1"
+@enduml

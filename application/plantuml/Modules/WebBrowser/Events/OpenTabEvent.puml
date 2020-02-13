@@ -1,0 +1,5 @@
+@startuml
+class OpenTabEvent {
+}
+WebBrowserEvent <|-- OpenTabEvent
+@enduml

@@ -1,0 +1,7 @@
+@startuml
+interface IModule {
+    IsActive : bool <<get>> <<set>>
+    Initialize() : void
+}
+IModule --> "Identifier" Guid
+@enduml

@@ -1,0 +1,5 @@
+@startuml
+interface IInteractiveCommandLine {
+    Launch(completionAction:Action) : void
+}
+@enduml

@@ -1,12 +1,9 @@
 @startuml
-skinparam monochrome true
-skinparam ClassAttributeIconSize 0
-
 class CloseTabEventProducer {
-    + <<override>> GetEvents() : IAsyncEnumerable<CloseTabEvent>
-    # <<override>> Enqueue(CloseTabEvent event) : void
+    + <<override>> Notify(eventJson:JsonElement) : void
 }
-class "EventQueue<T>" {
+class "WebBrowserEventProducer`1"<T> {
 }
-"EventQueue<T>" "<CloseTabEvent>" <|-- CloseTabEventProducer
+"WebBrowserEventProducer`1" "<CloseTabEvent>" <|-- CloseTabEventProducer
+CloseTabEventProducer --> "HandledEventLabel" EventLabel
 @enduml

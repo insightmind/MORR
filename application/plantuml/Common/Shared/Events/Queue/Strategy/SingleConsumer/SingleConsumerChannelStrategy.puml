@@ -1,0 +1,10 @@
+@startuml
+abstract class "SingleConsumerChannelStrategy`1"<TEvent> {
+    + GetEvents(token:CancellationToken) : IAsyncEnumerable<TEvent>
+    + <<async>> Enqueue(@event:TEvent) : void
+    + NotifyOnEnqueueFinished() : void
+}
+class "IEventQueueStorageStrategy`1"<T> {
+}
+"IEventQueueStorageStrategy`1" "<TEvent>" <|-- "SingleConsumerChannelStrategy`1"
+@enduml

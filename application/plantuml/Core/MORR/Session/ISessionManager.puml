@@ -1,0 +1,9 @@
+@startuml
+interface ISessionManager {
+    CurrentRecordingDirectory : DirectoryPath? <<get>>
+    RecordingsFolder : DirectoryPath? <<get>>
+    StartRecording() : void
+    StopRecording() : void
+    Process(recordings:IEnumerable<DirectoryPath>) : void
+}
+@enduml

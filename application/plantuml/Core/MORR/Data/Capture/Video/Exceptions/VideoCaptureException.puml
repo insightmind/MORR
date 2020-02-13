@@ -1,0 +1,8 @@
+@startuml
+class VideoCaptureException {
+    + VideoCaptureException()
+    + VideoCaptureException(message:string)
+    + VideoCaptureException(message:string, innerException:Exception)
+}
+CaptureException <|-- VideoCaptureException
+@enduml

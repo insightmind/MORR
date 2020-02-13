@@ -1,0 +1,5 @@
+@startuml
+interface IConfiguration {
+    Parse(configuration:RawConfiguration) : void
+}
+@enduml

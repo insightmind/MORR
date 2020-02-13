@@ -1,0 +1,6 @@
+@startuml
+class DirectoryPath <<sealed>> {
+    + DirectoryPath(value:string, skipValidation:bool)
+    + <<override>> ToString() : string
+}
+@enduml

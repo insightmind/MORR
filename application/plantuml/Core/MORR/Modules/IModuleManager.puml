@@ -1,0 +1,7 @@
+@startuml
+interface IModuleManager {
+    InitializeModules() : void
+    NotifyModulesOnSessionStart() : void
+    NotifyModulesOnSessionStop() : void
+}
+@enduml

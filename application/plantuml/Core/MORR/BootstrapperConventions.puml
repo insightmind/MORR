@@ -1,0 +1,5 @@
+@startuml
+class BootstrapperConventions <<static>> {
+    + {static} GetRegistrationBuilder() : RegistrationBuilder
+}
+@enduml

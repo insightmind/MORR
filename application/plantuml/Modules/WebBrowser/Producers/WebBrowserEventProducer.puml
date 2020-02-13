@@ -1,0 +1,11 @@
+@startuml
+abstract class "WebBrowserEventProducer`1"<T> {
+    + <<virtual>> Notify(eventJson:JsonElement) : void
+    + EnqueueFinished() : void
+}
+class "DefaultEventQueue`1"<T> {
+}
+"DefaultEventQueue`1" "<T>" <|-- "WebBrowserEventProducer`1"
+IWebBrowserEventObserver <|-- "WebBrowserEventProducer`1"
+"WebBrowserEventProducer`1" --> "HandledEventLabel" EventLabel
+@enduml

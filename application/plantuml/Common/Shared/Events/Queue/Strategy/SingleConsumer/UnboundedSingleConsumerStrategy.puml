@@ -1,0 +1,8 @@
+@startuml
+class "UnboundedSingleConsumerChannelStrategy`1"<TEvent> {
+    + UnboundedSingleConsumerChannelStrategy()
+}
+class "SingleConsumerChannelStrategy`1"<T> {
+}
+"SingleConsumerChannelStrategy`1" "<TEvent>" <|-- "UnboundedSingleConsumerChannelStrategy`1"
+@enduml

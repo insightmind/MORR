@@ -1,0 +1,11 @@
+@startuml
+class ValidateCommandTest {
+    + BeforeTest() : void
+    + TestProcessCommand_Successful() : void
+    + TestProcessCommand_OnConfigManagerError() : void
+    + TestProcessCommand_OnBootstrapperError() : void
+    + TestProcessCommand_InvalidConfig() : void
+    + TestProcessCommand_NullOptions() : void
+    + TestProcessCommand_IsVerbosePropagation() : void
+}
+@enduml

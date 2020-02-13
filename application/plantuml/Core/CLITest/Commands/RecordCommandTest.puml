@@ -1,0 +1,9 @@
+@startuml
+class RecordCommandTest {
+    + BeforeTest() : void
+    + TestRecordCommand_Successful() : void
+    + TestRecordCommand_OnStartError() : void
+    + TestRecordCommand_NullOptions() : void
+    + TestRecordCommand_IsVerbosePropagation() : void
+}
+@enduml

@@ -1,8 +1,9 @@
 @startuml
 class ButtonClickEventProducer {
-    + <<override>> GetEvents() : IAsyncEnumerable<ButtonClickEvent>
+    + <<override>> Notify(eventJson:JsonElement) : void
 }
-class "EventQueue`1"<T> {
+class "WebBrowserEventProducer`1"<T> {
 }
-"EventQueue`1" "<ButtonClickEvent>" <|-- ButtonClickEventProducer
+"WebBrowserEventProducer`1" "<ButtonClickEvent>" <|-- ButtonClickEventProducer
+ButtonClickEventProducer --> "HandledEventLabel" EventLabel
 @enduml

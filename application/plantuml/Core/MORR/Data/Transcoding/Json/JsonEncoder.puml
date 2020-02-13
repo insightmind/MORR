@@ -1,0 +1,7 @@
+@startuml
+class JsonEncoder {
+    + Encode(recordingDirectoryPath:DirectoryPath) : void
+}
+IEncoder <|-- JsonEncoder
+JsonEncoder o-> "EncodeFinished" ManualResetEvent
+@enduml

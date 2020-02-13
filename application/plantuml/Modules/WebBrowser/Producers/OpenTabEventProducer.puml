@@ -1,12 +1,9 @@
 @startuml
-skinparam monochrome true
-skinparam ClassAttributeIconSize 0
-
 class OpenTabEventProducer {
-    + <<override>> GetEvents() : IAsyncEnumerable<OpenTabEvent>
-    # <<override>> Enqueue(OpenTabEvent event) : void
+    + <<override>> Notify(eventJson:JsonElement) : void
 }
-class "EventQueue<T>" {
+class "WebBrowserEventProducer`1"<T> {
 }
-"EventQueue<T>" "<OpenTabEvent>" <|-- OpenTabEventProducer
+"WebBrowserEventProducer`1" "<OpenTabEvent>" <|-- OpenTabEventProducer
+OpenTabEventProducer --> "HandledEventLabel" EventLabel
 @enduml

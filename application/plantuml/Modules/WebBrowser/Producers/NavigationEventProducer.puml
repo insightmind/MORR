@@ -1,12 +1,9 @@
 @startuml
-skinparam monochrome true
-skinparam ClassAttributeIconSize 0
-
 class NavigationEventProducer {
-    + <<override>> GetEvents() : IAsyncEnumerable<NavigationEvent>
-    # <<override>> Enqueue(NavigationEvent event) : void
+    + <<override>> Notify(eventJson:JsonElement) : void
 }
-class "EventQueue<T>" {
+class "WebBrowserEventProducer`1"<T> {
 }
-"EventQueue<T>" "<NavigationEvent>" <|-- NavigationEventProducer
+"WebBrowserEventProducer`1" "<NavigationEvent>" <|-- NavigationEventProducer
+NavigationEventProducer --> "HandledEventLabel" EventLabel
 @enduml
