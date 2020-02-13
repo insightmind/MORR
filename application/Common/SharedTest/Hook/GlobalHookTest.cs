@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using MORR.Shared.Hook;
@@ -10,6 +11,7 @@ namespace SharedTest.Hook
     [TestClass]
     public class GlobalHookTest
     {
+        protected const int maxWaitTime = 500;
         private Mock<IHookNativeMethods> mockNativeHook;
         private const string mockLibraryName = "MockLibraryName.someDLL";
 
@@ -99,10 +101,84 @@ namespace SharedTest.Hook
             Debug.Assert(mockNativeHook != null);
 
             /* GIVEN */
+            const int numOfEvent = 50;
+            const int numOfNotEvent = 20;
+            const GlobalHook.MessageType messageType = GlobalHook.MessageType.WM_USER;
+
+            var resetCounter = new CountdownEvent(numOfEvent);
+            var autoReset = new AutoResetEvent(false);
+
+            GlobalHook.CppGetMessageCallback callback = null;
+            
+            // Allow message type
+            mockNativeHook
+                .Setup(hook => hook.Capture((uint) messageType))?
+                .Returns(true);
+
+            // Allow loading library
+            mockNativeHook
+                .Setup(mock => mock.LoadLibrary())?
+                .Returns(new IntPtr(0x1)); // We just return a non null pointer
+
+            mockNativeHook
+                .Setup(hook => hook.SetHook(It.IsAny<GlobalHook.CppGetMessageCallback>(), It.IsAny<bool>()))?
+                .Callback((GlobalHook.CppGetMessageCallback cppCallback, bool isBlocking) =>
+                {
+                    callback = cppCallback;
+                    autoReset.Set();
+                });
 
             /* WHEN */
+            GlobalHook.AddListener(message =>
+            {
+                Assert.AreEqual((uint) messageType, message.Type);
+                resetCounter.Signal();
+            }, messageType);
+
+            GlobalHook.IsActive = true;
+
+            Assert.IsTrue(autoReset.WaitOne(maxWaitTime));
+            Assert.IsNotNull(callback);
+
+            for (var index = 0; index < numOfEvent; index++)
+            {
+                callback(new GlobalHook.HookMessage()
+                {
+                    Type = (uint) messageType
+                });
+            }
+
+            // We check if our listener still gets called on events we don't care about. If it will this 
+            // test will throw because the resetCounter will be set to a negative number.
+            for (var index = 0; index < numOfNotEvent; index++)
+            {
+                callback(new GlobalHook.HookMessage()
+                {
+                    Type = (uint) GlobalHook.MessageType.WM_APP
+                });
+            }
 
             /* THEN */
+            Assert.IsTrue(resetCounter.Wait(maxWaitTime));
+        }
+
+        [TestMethod]
+        public void TestGlobalHook_AddListener_UnsupportedMessageType()
+        {
+            /* PRECONDITIONS */
+            Debug.Assert(mockNativeHook != null);
+
+            /* GIVEN */
+            const GlobalHook.MessageType messageType = GlobalHook.MessageType.WM_USER;
+            mockNativeHook
+                .Setup(hook => hook.Capture(It.IsAny<uint>()))?
+                .Returns(false);
+
+            /* WHEN */
+            Assert.ThrowsException<NotSupportedException>(() => GlobalHook.AddListener(message => { }, messageType));
+
+            /* THEN */
+            mockNativeHook.Verify(hook => hook.SetHook(It.IsAny<GlobalHook.CppGetMessageCallback>(), It.IsAny<bool>()), Times.Never);
         }
 
         [TestMethod]
@@ -112,10 +188,54 @@ namespace SharedTest.Hook
             Debug.Assert(mockNativeHook != null);
 
             /* GIVEN */
+            const int numOfEvent = 50;
+            const GlobalHook.MessageType messageType = GlobalHook.MessageType.WM_USER;
+
+            var autoReset = new AutoResetEvent(false);
+
+            GlobalHook.CppGetMessageCallback callback = null;
+
+            // Allow message type
+            mockNativeHook
+                .Setup(hook => hook.Capture((uint)messageType))?
+                .Returns(true);
+
+            // Allow loading library
+            mockNativeHook
+                .Setup(mock => mock.LoadLibrary())?
+                .Returns(new IntPtr(0x1)); // We just return a non null pointer
+
+            mockNativeHook
+                .Setup(hook => hook.SetHook(It.IsAny<GlobalHook.CppGetMessageCallback>(), It.IsAny<bool>()))?
+                .Callback((GlobalHook.CppGetMessageCallback cppCallback, bool isBlocking) =>
+                {
+                    callback = cppCallback;
+                    autoReset.Set();
+                });
 
             /* WHEN */
+            void Listener(GlobalHook.HookMessage message)
+            {
+                /* THEN */
+                Assert.Fail("The listener should not get called!");
+            }
 
-            /* THEN */
+            GlobalHook.AddListener(Listener, messageType);
+
+            GlobalHook.IsActive = true;
+
+            GlobalHook.RemoveListener(Listener, messageType);
+
+            Assert.IsTrue(autoReset.WaitOne(maxWaitTime));
+            Assert.IsNotNull(callback);
+
+            for (var index = 0; index < numOfEvent; index++)
+            {
+                callback(new GlobalHook.HookMessage()
+                {
+                    Type = (uint)messageType
+                });
+            }
         }
 
         [TestMethod]
@@ -126,9 +246,22 @@ namespace SharedTest.Hook
 
             /* GIVEN */
 
+            // Allow loading library
+            var pointer = new IntPtr(0x1);
+
+            mockNativeHook
+                .Setup(mock => mock.LoadLibrary())?
+                .Returns(pointer); // We just return a non null pointer
+
+            GlobalHook.IsActive = true;
+
+
             /* WHEN */
+            GlobalHook.FreeLibrary();
 
             /* THEN */
+            Assert.IsFalse(GlobalHook.IsActive);
+            mockNativeHook.Verify(mock => mock.FreeLibrary(pointer), Times.AtLeastOnce);
         }
     }
 }
