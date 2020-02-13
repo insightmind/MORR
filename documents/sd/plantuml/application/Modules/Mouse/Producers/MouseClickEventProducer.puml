@@ -1,0 +1,11 @@
+@startuml
+skinparam monochrome true
+skinparam ClassAttributeIconSize 0
+class MouseClickEventProducer {
+    + StartCapture() : void
+    + StopCapture() : void
+}
+class "DefaultEventQueue<T>" {
+}
+"DefaultEventQueue<T>" "    <MouseClickEvent>" <|-- MouseClickEventProducer
+@enduml

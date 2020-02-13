@@ -3,6 +3,8 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 
 abstract class MouseEvent {
+    + MousePosition : Point <<get>> <<set>>
 }
+abstract class Event
 Event <|-- MouseEvent
 @enduml

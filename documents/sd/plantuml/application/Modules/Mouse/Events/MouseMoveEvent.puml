@@ -3,8 +3,9 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 
 class MouseMoveEvent {
-    + Movement : Vector2
 }
+abstract class Event
+abstract class MouseEvent
 MouseEvent <|-- MouseMoveEvent
 Event <|-- MouseEvent
 @enduml

@@ -9,9 +9,12 @@ ICollectingModule <|-- MouseModule
 
 interface IModule {
     + Identifier : Guid
-    + IsEnabled : bool <<get>> <<set>>
+    + IsActive : bool <<get>> <<set>>
     + Initialize() : void
 }
 
 IModule <|-- ICollectingModule
+MouseModule --> "  MouseScrollEventProducer" MouseScrollEventProducer
+MouseModule --> " MouseMoveEventProducer " MouseMoveEventProducer
+MouseModule --> "   MouseClickEventProducer" MouseClickEventProducer
 @enduml

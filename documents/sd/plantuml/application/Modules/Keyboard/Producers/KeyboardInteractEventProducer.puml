@@ -1,0 +1,11 @@
+@startuml
+skinparam monochrome true
+skinparam ClassAttributeIconSize 0
+class KeyboardInteractEventProducer {
+    + StartCapture() : void
+    + StopCapture() : void
+}
+class "DefaultEventQueue<T>" {
+}
+"DefaultEventQueue<T>" "      <KeyboardInteractEvent>" <|-- KeyboardInteractEventProducer
+@enduml
