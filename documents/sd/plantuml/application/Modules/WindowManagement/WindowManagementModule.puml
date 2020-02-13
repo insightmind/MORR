@@ -6,7 +6,7 @@ class WindowManagementModule {
 }
 
 ICollectingModule <|-- WindowManagementModule
-
+interface ICollectingModule
 interface IModule {
     + Identifier : Guid
     + IsActive : bool <<get>> <<set>>

@@ -6,7 +6,7 @@ class MouseModule {
 }
 
 ICollectingModule <|-- MouseModule
-
+interface ICollectingModule
 interface IModule {
     + Identifier : Guid
     + IsActive : bool <<get>> <<set>>

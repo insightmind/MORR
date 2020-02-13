@@ -4,7 +4,7 @@ skinparam classAttributeIconSize 0
 
 class ClipboardModule {
 }
-
+interface ICollectingModule
 ICollectingModule <|-- ClipboardModule
 
 interface IModule {

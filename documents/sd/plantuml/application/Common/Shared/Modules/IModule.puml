@@ -4,7 +4,7 @@ skinparam classAttributeIconSize 0
 
 interface IModule {
     + Identifier : Guid
-    + IsEnabled : bool <<get>> <<set>>
+    + IsActive : bool <<get>> <<set>>
     + Initialize() : void
 }
 
