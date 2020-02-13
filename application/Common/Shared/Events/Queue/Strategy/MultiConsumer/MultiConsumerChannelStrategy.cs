@@ -61,6 +61,9 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
 
         public void Open()
         {
+            if (!IsClosed) return;
+
+            offeringChannels.Clear();
             receivingChannel = CreateReceivingChannel();
             _ = DistributeEventsAsync();
             IsClosed = false;
@@ -68,6 +71,8 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
 
         public void Close()
         {
+            if (IsClosed) return;
+
             IsClosed = true;
             receivingChannel?.Writer?.Complete();
 
@@ -75,8 +80,6 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
             {
                 channel?.Writer?.Complete();
             }
-
-            offeringChannels.Clear();
         }
 
         private ValueTask EnqueueAsync(Channel<TEvent> channel, TEvent @event)

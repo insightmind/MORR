@@ -35,7 +35,7 @@ namespace MORR.Core.Data.IntermediateFormat.Json
         public bool IsActive
         {
             get => isActive;
-            set => Utility.SetAndDispatch(ref isActive, value, LinkAllQueues, () => { /* We wait until all queues are closed */ });
+            set => Utility.SetAndDispatch(ref isActive, value, LinkAllQueues, UnlinkOnClose);
         }
 
         public Guid Identifier { get; } = new Guid("2D61FFB2-9CC1-4AAD-B1B9-A362FCF022A0");
@@ -48,6 +48,16 @@ namespace MORR.Core.Data.IntermediateFormat.Json
             foreach (var eventQueue in enabledQueues)
             {
                 Task.Run(() => LinkSingleQueue(eventQueue));
+            }
+        }
+
+        private void UnlinkOnClose()
+        {
+            var canClose = EventQueues.All(queue => queue.IsClosed);
+
+            if (canClose)
+            {
+                Close();
             }
         }
 
