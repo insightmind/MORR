@@ -64,8 +64,11 @@ namespace MORR.Modules.WebBrowser
                 switchTabEventProducer, textInputEventProducer, textSelectionEventProducer
             };
 
+            if (listener == null)
+            {
+                listener = new WebExtensionListener(Configuration.UrlSuffix);
+            }
 
-            listener = new WebExtensionListener(Configuration.UrlSuffix);
             listener.StartListening();
             foreach (var producer in producers)
             {
