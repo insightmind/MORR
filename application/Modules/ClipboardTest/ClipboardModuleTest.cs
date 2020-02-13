@@ -62,7 +62,5 @@ namespace ClipboardTest
             /* THEN */
             Assert.IsFalse(clipboardModule.IsActive);
         }
-
-        
     }
 }
