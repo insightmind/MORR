@@ -3,5 +3,8 @@ skinparam monochrome true
 skinparam ClassAttributeIconSize 0
 class ClipboardPasteEvent {
 }
+abstract class Event
+abstract class ClipboardEvent
 ClipboardEvent <|-- ClipboardPasteEvent
+Event <|-- ClipboardEvent
 @enduml

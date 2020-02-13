@@ -5,9 +5,9 @@ skinparam classAttributeIconSize 0
 class NavigationEvent {
 }
 abstract class WebBrowserEvent {
-    + TabID: Guid
-    + CurrentURL: Uri
+   
 }
+abstract class Event
 WebBrowserEvent <|-- NavigationEvent
 Event <|-- WebBrowserEvent
 @enduml

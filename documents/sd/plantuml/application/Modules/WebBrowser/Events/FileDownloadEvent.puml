@@ -4,12 +4,12 @@ skinparam classAttributeIconSize 0
 
 class FileDownloadEvent {
     + MIMEType : string <<get>> <<set>>
-    + FileURL: Uri
+    + FileURL: Uri <<get>> <<set>>
 }
 abstract class WebBrowserEvent {
-    + TabID: Guid
-    + CurrentURL: Uri
+    
 }
+abstract class Event
 WebBrowserEvent <|-- FileDownloadEvent
 Event <|-- WebBrowserEvent
 @enduml

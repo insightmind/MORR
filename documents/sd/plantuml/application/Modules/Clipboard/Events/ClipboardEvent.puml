@@ -5,5 +5,6 @@ skinparam classAttributeIconSize 0
 abstract class ClipboardEvent {
     + ClipboardText : string <<get>> <<set>>
 }
+abstract class Event 
 Event <|-- ClipboardEvent
 @enduml

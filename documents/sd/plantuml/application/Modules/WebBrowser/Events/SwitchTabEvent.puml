@@ -3,12 +3,12 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 
 class SwitchTabEvent {
-    + NewTabID: Guid
+    + NewTabID: int <<get>><<set>>
 }
 abstract class WebBrowserEvent {
-    + TabID: Guid
-    + CurrentURL: Uri
+
 }
+abstract class Event
 WebBrowserEvent <|-- SwitchTabEvent
 Event <|-- WebBrowserEvent
 @enduml

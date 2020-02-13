@@ -7,9 +7,9 @@ class TextInputEvent {
     + Textbox : string <<get>> <<set>>
 }
 abstract class WebBrowserEvent {
-    + TabID: Guid
-    + CurrentURL: Uri
+
 }
+abstract class Event
 WebBrowserEvent <|-- TextInputEvent
 Event <|-- WebBrowserEvent
 @enduml

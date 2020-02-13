@@ -4,14 +4,12 @@ skinparam classAttributeIconSize 0
 
 class ButtonClickEvent {
     + Button : string <<get>> <<set>>
-    + URL: Uri
+    + Href : string <<get>> <<set>>
 }
 abstract class WebBrowserEvent {
-    + TabID: Guid
-    + CurrentURL: Uri
 }
 
-
+abstract class Event
 WebBrowserEvent <|-- ButtonClickEvent
 Event <|-- WebBrowserEvent
 @enduml

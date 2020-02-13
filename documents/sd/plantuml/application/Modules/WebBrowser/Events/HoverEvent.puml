@@ -6,9 +6,8 @@ class HoverEvent {
     + HoveredElement : string <<get>> <<set>>
 }
 abstract class WebBrowserEvent {
-    + TabID: Guid
-    + CurrentURL: Uri
 }
+abstract class Event
 
 WebBrowserEvent <|-- HoverEvent
 Event <|-- WebBrowserEvent

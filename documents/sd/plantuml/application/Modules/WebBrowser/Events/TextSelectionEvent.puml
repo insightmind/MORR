@@ -6,9 +6,9 @@ class TextSelectionEvent {
     + SelectedText : string <<get>> <<set>>
 }
 abstract class WebBrowserEvent {
-    + TabID: Guid
-    + CurrentURL: Uri
+
 }
+abstract class Event
 WebBrowserEvent <|-- TextSelectionEvent
 Event <|-- WebBrowserEvent
 @enduml
