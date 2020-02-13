@@ -5,7 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Interop;
 using MORR.Core.Configuration;
+using MORR.Core.Data.Capture.Video.Desktop.Utility;
 using MORR.Core.Session;
 using MORR.Core.UI.Dialogs;
 using MORR.Core.UI.Utility;
@@ -19,6 +21,7 @@ namespace MORR.Core.UI.ViewModels
 
         public ApplicationViewModel()
         {
+            DesktopCaptureNativeMethods.WindowRequestedHandler = CreateWindowForPicker;
             Initialize();
         }
 
@@ -123,6 +126,8 @@ namespace MORR.Core.UI.ViewModels
             Directory.Delete(recordingDirectory, true);
         }
 
+        #region Utility
+
         [DoesNotReturn]
         private static void ExitWithError(string errorMessage)
         {
@@ -135,6 +140,27 @@ namespace MORR.Core.UI.ViewModels
             var dialogResult = new T().ShowDialog();
             return dialogResult ?? false;
         }
+
+        private static DesktopCaptureNativeMethods.WindowHandleWrapper CreateWindowForPicker()
+        {
+            var window = new Window
+            {
+                WindowStyle = WindowStyle.None,
+                Top = 0.0d,
+                Left = 0.0d,
+                Width = 0.0d,
+                Height = 0.0d,
+                ShowInTaskbar = false
+            };
+
+            window.Show();
+            void CleanupCallback() => window.Close();
+
+            var windowInteropHelper = new WindowInteropHelper(window);
+            return new DesktopCaptureNativeMethods.WindowHandleWrapper(windowInteropHelper.EnsureHandle(), CleanupCallback);
+        }
+
+        #endregion
 
         #region Commands
 
