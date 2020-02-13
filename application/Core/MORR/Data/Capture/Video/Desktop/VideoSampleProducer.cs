@@ -186,11 +186,7 @@ namespace MORR.Core.Data.Capture.Video.Desktop
             this.item.Closed += OnClosed;
         }
 
-        public VideoSampleProducer() : base(16)
-        {
-            // InitializeDevices();
-            // InitializeEvents();
-        }
+        public VideoSampleProducer() : base(16) { }
 
         private void InitializeBlankTexture()
         {
