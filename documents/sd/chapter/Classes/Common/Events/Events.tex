@@ -16,7 +16,7 @@
 \subsection*{MORR.Shared.Events.Queue}
 
 \begin{absclass}{DefaultEventQueue<T>}
-	\clsdiagram[width=0.6\textwidth]{resources/Classes/Common/Shared/Events/DefaultEventQueue.png}
+	\clsdiagram[width=0.6\textwidth]{resources/Classes/Common/Shared/Events/Queue/DefaultEventQueue.png}
 	
 	\clsdcl{public abstract class DefaultEventQueue<T> : SupportDeserializationEventQueue<T> where T : Event}
 	
@@ -24,15 +24,15 @@
 \end{absclass}
 
 \begin{absclass}{DefaultEncodableEventQueue<T>}
-	\clsdiagram[width=0.6\textwidth]{resources/Classes/Common/Shared/Events/DefaultEncodableEventQueue.png}
+	\clsdiagram[width=0.6\textwidth]{resources/Classes/Common/Shared/Events/Queue/DefaultEncodableEventQueue.png}
 	
-	\clsdcl{public abstract class DefaultEncodableEventQueue<T> : BaseEventQueue<T>, IEncodableEventQueue<T> where T : Event}
+	\clsdcl{public abstract class DefaultEncodeableEventQueue<T> : BaseEventQueue<T>, IEncodableEventQueue<T> where T : Event}
 	
 	\clsdsp{Provides an event queue for events intended for encoding.}
 \end{absclass}
 
 \begin{absclass}{DefaultDecodableEventQueue<T>}
-	\clsdiagram[width=0.6\textwidth]{resources/Classes/Common/Shared/Events/DefaultDecodableEventQueue.png}
+	\clsdiagram[width=0.6\textwidth]{resources/Classes/Common/Shared/Events/Queue/DefaultDecodableEventQueue.png}
 	
 	\clsdcl{public abstract class DefaultDecodableEventQueue<T> : BaseEventQueue<T>, IDecodableEventQueue<T> where T : Event}
 	
@@ -40,15 +40,16 @@
 \end{absclass}
 
 \begin{absclass}{NonDeserializableEventQueue<T>}
-	\clsdiagram[width=0.6\textwidth]{resources/Classes/Common/Shared/Events/NonDeserializableEventQueue.png}
+	\clsdiagram[width=0.6\textwidth]{resources/Classes/Common/Shared/Events/Queue/NonDeserializableEventQueue.png}
 	
-	\clsdcl{public abstract class NonDeserializableEventQueue<T> : BaseEventQueue<T>, IReadOnlyEventQueue<T> where T : Event}
+	\clsdcl{public abstract class NonDeserializableEventQueue<T> : BaseEventQueue<T>, 
+	IReadOnlyEventQueue<T> where T : Event}
 	
 	\clsdsp{Provides an event queue for events that do not support deserialization.}
 \end{absclass}
 	
 \begin{absclass}{BaseEventQueue<TEvent>}
-	\clsdiagram[width=0.6\textwidth]{resources/Classes/Common/Shared/Events/BaseEventQueue.png}
+	\clsdiagram[width=0.5\textwidth]{resources/Classes/Common/Shared/Events/Queue/BaseEventQueue.png}
 	
 	\clsdcl{public abstract class BaseEventQueue<TEvent> where TEvent : Event}
 	
@@ -75,7 +76,7 @@
 \end{absclass}
 
 \begin{interface}{IDecodableEventQueue<out T>}
-	\clsdiagram[width=0.7\textwidth]{resources/Classes/Common/Shared/Events/IDecodableEventQueue.png}
+	\clsdiagram[width=0.5\textwidth]{resources/Classes/Common/Shared/Events/Queue/IDecodableEventQueue.png}
 
 	\clsdcl{public interface IDecodableEventQueue<out T> where T : Event}
 	
@@ -88,7 +89,7 @@
 \end{interface}
 
 \begin{interface}{IEncodableEventQueue<out T>}
-	\clsdiagram[width=0.7\textwidth]{resources/Classes/Common/Shared/Events/IEncodableEventQueue.png}
+	\clsdiagram[width=0.5\textwidth]{resources/Classes/Common/Shared/Events/Queue/IEncodableEventQueue.png}
 
 	\clsdcl{public interface IEncodableEventQueue<out T> where T : Event}
 	
@@ -101,7 +102,7 @@
 \end{interface}
 
 \begin{interface}{IReadOnlyEventQueue<out T>}
-	\clsdiagram[width=0.7\textwidth]{resources/Classes/Common/Shared/Events/IReadOnlyEventQueue.png}
+	\clsdiagram[width=0.5\textwidth]{resources/Classes/Common/Shared/Events/Queue/IReadOnlyEventQueue.png}
 
 	\clsdcl{public interface IReadOnlyEventQueue<out T> where T : Event}
 	
@@ -114,7 +115,7 @@
 \end{interface}
 
 \begin{interface}{ISupportDeserializationEventQueue<out T>}
-	\clsdiagram[width=0.7\textwidth]{resources/Classes/Common/Shared/Events/ISupportDeserializationEventQueue.png}
+	\clsdiagram[width=0.6\textwidth]{resources/Classes/Common/Shared/Events/Queue/ISupportDeserializationEventQueue.png}
 
 	\clsdcl{public interface ISupportDeserializationEventQueue<out T> where T : Event}
 	
@@ -130,7 +131,7 @@
 \end{interface}
 
 \begin{absclass}{SupportDeserializationEventQueue<T>}
-	\clsdiagram[width=0.7\textwidth]{resources/Classes/Common/Shared/Events/SupportDeserializationEventQueue.png}
+	\clsdiagram[width=0.8\textwidth]{resources/Classes/Common/Shared/Events/Queue/SupportDeserializationEventQueue.png}
 	
 	\clsdcl{public abstract class SupportDeserializationEventQueue<T> : BaseEventQueue<T>, IReadOnlyEventQueue<T>, ISupportDeserializationEventQueue<T> where T : Event}
 	
@@ -143,14 +144,15 @@
             \end{parameters}
             \begin{exceptions}
             	\excp{ArgumentException}{Exception is thrown when event type is not T}
+            \end{exceptions}
         \end{method}
     \end{methods}
 \end{absclass}
 	
 \subsection*{MORR.Shared.Events.Queue.Strategy}
 
-\begin{class}
-	\clsdiagram[width=0.4\textwidth]{resources/Classes/Common/Shared/Events/Strategy/ChannelConsumingException.png}
+\begin{class}{ChannelConsumingException}
+	\clsdiagram[width=0.4\textwidth]{resources/Classes/Common/Shared/Events/Queue/Strategy/ChannelConsumingException.png}
 	
 	\clsdcl{public class ChannelConsumingException : Exception}	
 	
@@ -159,7 +161,7 @@
 \end{class}
 	
 \begin{interface}{IEventQueueStorageStrategy}
-    \clsdiagram[width=0.4\textwidth]{resources/Classes/Common/Shared/Events/Strategy/IEventQueueStorageStrategy.png}
+    \clsdiagram[width=0.5\textwidth]{resources/Classes/Common/Shared/Events/Queue/Strategy/IEventQueueStorageStrategy.png}
 
     \clsdcl{public interface IEventQueueStorageStrategy<T> where T : Event}
 
@@ -170,9 +172,10 @@
 \subsubsection*{MORR.Shared.Event.Queue.Strategy.MultiConsumer}
 
 \begin{class}{BoundedMultiConsumerChannelStrategy<TEvent>}
-	\clsdiagram[width=0.4\textwidth]{resources/Classes/Common/Shared/Events/Queue/Strategy/MultiConsumer/BoundedMultiConsumerChannelStrategy.png}
+	\clsdiagram[width=0.5\textwidth]{resources/Classes/Common/Shared/Events/Queue/Strategy/MultiConsumer/BoundedMultiConsumerChannelStrategy.png}
 	
-	\clsdcl{public class BoundedMultiConsumerChannelStrategy<TEvent> : MultiConsumerChannelStrategy<TEvent> where TEvent : Event}
+	\clsdcl{public class BoundedMultiConsumerChannelStrategy<TEvent> : 
+	MultiConsumerChannelStrategy<TEvent> where TEvent : Event}
 	
 	\clsdsp{A BoundedMultiConsumerChannelStrategies is a Distributive-FIFO Queue which allows multiple producers and multiple consumers. However every event is propagated to each consumer once. This queue is bounded by a buffer capacity. To be more detailed each channel is bound by the bufferCapacity. Is the capacity reached for a specific channel it will drop the oldest event and write the new event.}
 	
@@ -187,9 +190,10 @@
 \end{class}
 
 \begin{absclass}{MultiConsumerChannelStrategy<TEvent>} 
-	\clsdiagram[width=0.4\textwidth]{resources/Classes/Common/Shared/Events/Queue/Strategy/MultiConsumer/MultiConsumerChannelStrategy.png}
+	\clsdiagram[width=0.5\textwidth]{resources/Classes/Common/Shared/Events/Queue/Strategy/MultiConsumer/MultiConsumerChannelStrategy.png}
 	
-	\clsdcl{public abstract class MultiConsumerChannelStrategy<TEvent> : IEventQueueStorageStrategy<TEvent> where TEvent : Event}
+	\clsdcl{public abstract class MultiConsumerChannelStrategy<TEvent> : 
+	IEventQueueStorageStrategy<TEvent> where TEvent : Event}
 	
 	\clsdsp{A MultiConsumerChannelStrategies is a Distributive-FIFO Queue which allows multiple producers and multiple consumers. However every event is propagated to each consumer once.}
 	
@@ -221,17 +225,18 @@
         \end{method}
         \begin{method}{public void Close()}{Notifies the event queue that no more events will be queued.}
         \end{method}
-        \begin{method}{protected abstract Channel<TEvent> CreateOfferingChannel();}
+        \begin{method}{protected abstract Channel<TEvent> CreateOfferingChannel()}{}
         \end{method}
-        \begin{method}{protected abstract Channel<TEvent> CreateReceivingChannel();}
+        \begin{method}{protected abstract Channel<TEvent> CreateReceivingChannel()}{}
         \end{method}
 	\end{methods}
 \end{absclass}
 
 \begin{class}{UnboundedMultiConsumerChannelStrategy<TEvent>}
-	\clsdiagram[width=0.4\textwidth]{resources/Classes/Common/Shared/Events/Queue/Strategy/MultiConsumer/UnboundedMultiConsumerChannelStrategy.png}
+	\clsdiagram[width=0.5\textwidth]{resources/Classes/Common/Shared/Events/Queue/Strategy/MultiConsumer/UnboundedMultiConsumerChannelStrategy.png}
 	
-	\clsdcl{public class UnboundedMultiConsumerChannelStrategy<TEvent> : MultiConsumerChannelStrategy<TEvent> where TEvent : Event}
+	\clsdcl{public class UnboundedMultiConsumerChannelStrategy<TEvent> : 
+	MultiConsumerChannelStrategy<TEvent> where TEvent : Event}
 	
 	\clsdsp{An UnboundedMultiConsumerChannelStrategy is a Distributive-FIFO Queue which allows multiple producers and multiple consumers. However every event is propagated to each consumer once. This queue is unbound, which means that an event is never dismissed. Make sure to only use this queue if you are sure it is bound by a maximum number of events.}
 	
@@ -248,9 +253,10 @@
 \subsubsection*{SingleConsumer}
 
 \begin{class}{BoundedSingleConsumerChannelStrategy<TEvent>}
-	\clsdiagram[width=0.4\textwidth]{resources/Classes/Common/Shared/Events/Queue/Strategy/SingleConsumer/BoundedSingleConsumerChannelStrategy.png}
+	\clsdiagram[width=0.5\textwidth]{resources/Classes/Common/Shared/Events/Queue/Strategy/SingleConsumer/BoundedSingleConsumerChannelStrategy.png}
 	
-	\clsdcl{public class BoundedSingleConsumerChannelStrategy<TEvent> : SingleConsumerChannelStrategy<TEvent> where TEvent : Event}
+	\clsdcl{public class BoundedSingleConsumerChannelStrategy<TEvent> :
+	 SingleConsumerChannelStrategy<TEvent> where TEvent : Event}
 	
 	\clsdsp{A BoundedSingleConsumerChannelStrategy is a Distributive-FIFO Queue which allows multiple producers and a single consumer. This queue is performance optimized for a single consumer and should be preferred in this case. This queue is bounded by a buffer capacity. If capacity is reached it will dismiss the oldest event and queue the new event.}
 	
@@ -262,9 +268,10 @@
 \end{class}
 
 \begin{absclass}{SingleConsumerChannelStrategy<TEvent>} 
-	\clsdiagram[width=0.4\textwidth]{resources/Classes/Common/Shared/Events/Queue/Strategy/SingleConsumer/SingleConsumerChannelStrategy.png}
+	\clsdiagram[width=0.5\textwidth]{resources/Classes/Common/Shared/Events/Queue/Strategy/SingleConsumer/SingleConsumerChannelStrategy.png}
 	
-	\clsdcl{public abstract class SingleConsumerChannelStrategy<TEvent> : IEventQueueStorageStrategy<TEvent> where TEvent : Event}
+	\clsdcl{public abstract class SingleConsumerChannelStrategy<TEvent> : 
+	IEventQueueStorageStrategy<TEvent> where TEvent : Event}
 	
 	\clsdsp{A SingleConsumerChannelStrategies is a Distributive-FIFO Queue which allows multiple producers and singer consumers. This queue is performance optimized for a single consumer and should be preferred in this case.}
 	
@@ -291,15 +298,16 @@
         \end{method}
         \begin{method}{public void Close()}{Notifies the event queue that no more events will be queued.}
         \end{method}
-        \begin{method}{protected abstract Channel<TEvent> CreateChannel();}
+        \begin{method}{protected abstract Channel<TEvent> CreateChannel()}{}
         \end{method}
 	\end{methods}
 \end{absclass}
 
 \begin{class}{UnboundedSingleConsumerChannelStrategy<TEvent>}
-	\clsdiagram[width=0.4\textwidth]{resources/Classes/Common/Shared/Events/Queue/Strategy/SingleConsumer/UnboundedSingleConsumerChannelStrategy.png}
+	\clsdiagram[width=0.5\textwidth]{resources/Classes/Common/Shared/Events/Queue/Strategy/SingleConsumer/UnboundedSingleConsumerChannelStrategy.png}
 	
-	\clsdcl{public class UnboundedSingleConsumerChannelStrategy<TEvent> : SingleConsumerChannelStrategy<TEvent> where TEvent : Event}
+	\clsdcl{public class UnboundedSingleConsumerChannelStrategy<TEvent> : 
+	SingleConsumerChannelStrategy<TEvent> where TEvent : Event}
 	
 	\clsdsp{A UnboundedSingleConsumerChannelStrategy is a Distributive-FIFO Queue which allows multiple producers and a single consumer. This queue is performance optimized for a single consumer and should be preferred in this case.  This queue is unbounded and will therefore don't dismiss any events.}
 	
