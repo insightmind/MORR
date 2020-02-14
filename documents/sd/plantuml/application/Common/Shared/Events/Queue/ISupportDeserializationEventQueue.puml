@@ -3,8 +3,9 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 !startsub default
 interface "ISupportDeserializationEventQueue<T: Event>" {
-    + EventType: Type
-    + Enqueue(event: object): void
+    + IsClosed: bool <<get>>
+    + Open() : void
+    + Close() : void
 }
 !endsub
 @enduml

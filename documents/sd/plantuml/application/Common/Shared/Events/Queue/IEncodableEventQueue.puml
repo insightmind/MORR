@@ -1,11 +1,10 @@
 @startuml
 skinparam monochrome true
 skinparam classAttributeIconSize 0
-
 !startsub default
-class ChannelConsumingException {
+interface "IEncodableEventQueue<T: Event>" {
+    + IsClosed: bool <<get>>
 }
-class "Exception"
-"Exception" <|-- "ChannelConsumingException"
 !endsub
+
 @enduml

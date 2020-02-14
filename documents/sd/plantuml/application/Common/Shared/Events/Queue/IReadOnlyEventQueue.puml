@@ -4,8 +4,7 @@ skinparam classAttributeIconSize 0
 
 !startsub default
 interface "IReadOnlyEventQueue<T: Event>" {
-    + EventType: Type
-    + GetEvents() : IAsyncEnumerable<T: Event>
+    + IsClosed: bool <<get>>
 }
 !endsub
 @enduml

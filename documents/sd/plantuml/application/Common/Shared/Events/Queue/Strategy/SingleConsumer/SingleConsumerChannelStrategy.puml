@@ -3,11 +3,15 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 
 !startsub default
-abstract class "SingleConsumerChannelStrategy<T: Event>" {
-    # StartReceiving() : void
-    + GetEvents(token: CancellationToken) : IAsyncEnumerable<T: Event>
+abstract class "SingleConsumerChannelStrategy<TEvent>" {
+    + IsClosed : bool <<get>>
+    + GetEvents(token: CancellationToken) : IAsyncEnumerable<TEvent>
     + Enqueue(event: T) : void
-    # {abstract} CreateChannel() : Channel<T: Event>
+    + Open() : void
+    + Close() : void
 }
+interface "IEventQueueStorageStrategy<TEvent>"
+"IEventQueueStorageStrategy<TEvent>" <|-- "SingleConsumerChannelStrategy<TEvent>"
+
 !endsub
 @enduml

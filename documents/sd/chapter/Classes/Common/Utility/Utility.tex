@@ -1,0 +1,85 @@
+\subsection*{MORR.Shared.Utility}
+
+\begin{class}{DirectoryPath}
+	\clsdiagram[scale = 1.2]{resources/Classes/Common/Shared/Utility/DirectoryPath.png}
+	
+	\clsdcl{public sealed class DirectoryPath}
+	
+	\clsdsp{Encapsulates a directory path.}
+	
+	\begin{constructors}
+		\begin{constructor}{public DirectoryPath(string value, bool skipValidation = false)}{Creates a new instance of the DirectoryPath with provided value}
+			\begin{parameters}
+				\para{string value}{The value to create the DirectoryPath with}
+				\para{bool skipValidation}{Always false}
+			\end{parameters}
+		\end{constructor}
+	\end{constructors}
+	
+	\begin{methods}
+		\begin{method}{public override string ToString()}{A string representation of the directory path.}
+			\return{string}{DirectoryPath instance as a string}
+		\end{method}
+	\end{methods}
+\end{class}
+
+\begin{class}{FilePath}
+	\clsdiagram[scale = 1.2]{resources/Classes/Common/Shared/Utility/FilePath.png}
+	
+	\clsdcl{public sealed class FilePath}
+	
+	\clsdsp{Encapsulates a local file path.}
+	
+	\begin{constructors}
+		\begin{constructor}{public FilePath(string value, bool skipValidation = false)}{Creates a new instance of the FilePath with provided value}
+			\begin{parameters}
+				\para{string value}{The value to create the FilePath with}
+				\para{bool skipValidation}{Always false}
+			\end{parameters}
+		\end{constructor}
+	\end{constructors}
+	
+	\begin{methods}
+		\begin{method}{public override string ToString()}{A string representation of the file path.}
+			\return{string}{FilePath instance as a string}
+		\end{method}
+	\end{methods}
+\end{class}
+
+\begin{class}{Utility}
+	\clsdiagram[scale = 1.2]{resources/Classes/Common/Shared/Utility/Utility.png}
+	
+	\clsdcl{public static class Utility}
+	
+	\clsdsp{Contains the utility methods.}
+	
+	\begin{methods}
+		\begin{method}{public static void SetAndDispatch(ref bool variable, bool value, Action onTrue, Action onFalse)}{Sets a boolean property and dispatches based on its value.}
+			\begin{parameters}
+				\para{ref bool variable}{The property to set}
+				\para{bool value}{The value to set the property to}
+				\para{Action onTrue}{The action to execute if variable was not set to true before calling this method, but value is true}
+				\para{Action onFalse}{The action to execute if variable was not set to false before calling this method, but value is false}
+			\end{parameters}
+		\end{method}
+		\begin{method}{public static Type? GetTypeFromAnyAssembly(string type)}{Attempts to load the type with the specified name from any currently loaded assembly.}
+			\begin{parameters}
+				\para{string type}{The name of the type to load}
+			\end{parameters}
+			\return{Type?}{The Type with the corresponding name or null on failure}
+		\end{method}
+	\end{methods}
+\end{class}	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

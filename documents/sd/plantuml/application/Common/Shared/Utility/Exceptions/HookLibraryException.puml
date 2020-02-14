@@ -3,8 +3,9 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 !startsub default
 class HookLibraryException {
-    + <<create>> HookLibraryException()
-    + <<create>> HookLibraryException(message: string)
+
 }
+class "Exception"
+"Exception" <|-- "HookLibraryException"
 !endsub
 @enduml

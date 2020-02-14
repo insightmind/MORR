@@ -3,8 +3,7 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 
 !startsub default
-abstract class "DecodeableEventQueue<T: Event>" {
-    # <<create>> DecodeableEventQueue(storageStrategy: IEventQueueStorageStrategy<T: Event>)
+abstract class "DecodableEventQueue<T: Event>" {
     + GetEvents(cancellationToken: CancellationToken) : IAsyncEnumerable<T: Event>
     + Enqueue(event: T) : void
 }
