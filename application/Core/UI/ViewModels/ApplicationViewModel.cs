@@ -6,7 +6,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
-using MORR.Core.Configuration;
 using MORR.Core.Data.Capture.Video.Desktop.Utility;
 using MORR.Core.Session;
 using MORR.Core.UI.Dialogs;
@@ -27,25 +26,9 @@ namespace MORR.Core.UI.ViewModels
 
         private void Initialize()
         {
-            var commandLineArguments = Environment.GetCommandLineArgs();
-
-            if (!commandLineArguments.Any())
-            {
-                throw new InvalidConfigurationException("");
-            }
-
-            if (!Environment.GetCommandLineArgs().Any())
-            {
-                ExitWithError(
-                    "No configuration has been specified. Please specify a configuration file as the command line argument.");
-            }
-
-            // The first argument is the current assembly, the second argument is the first actual command line argument
-            var configurationPathArgument = commandLineArguments.ElementAt(1);
-            var configurationPath = new FilePath(Path.GetFullPath(configurationPathArgument));
-
             try
             {
+                var configurationPath = GetConfigurationPathFromCommandLine();
                 sessionManager = new SessionManager(configurationPath);
             }
             catch (Exception)
@@ -102,7 +85,17 @@ namespace MORR.Core.UI.ViewModels
             }
 
             IsRecording = true;
-            sessionManager.StartRecording();
+
+            try
+            {
+                sessionManager.StartRecording();
+            }
+            catch (Exception)
+            {
+                // We cannot recover from an error here, as the modules might be in an invalid state
+                // We have to exit immediately as otherwise threads might throw new exceptions
+                Environment.Exit(-1); // Exit with non-zero value to indicate error
+            }
         }
 
         private void StopRecording()
@@ -127,6 +120,20 @@ namespace MORR.Core.UI.ViewModels
         }
 
         #region Utility
+
+        private static FilePath GetConfigurationPathFromCommandLine()
+        {
+            var commandLineArguments = Environment.GetCommandLineArgs();
+
+            if (commandLineArguments.Length < 2)
+            {
+                ExitWithError("No configuration has been specified. Please specify a configuration file as the command line argument.");
+            }
+
+            // The first argument is the current assembly, the second argument is the first actual command line argument
+            var configurationPathArgument = commandLineArguments.ElementAt(1);
+            return new FilePath(Path.GetFullPath(configurationPathArgument));
+        }
 
         [DoesNotReturn]
         private static void ExitWithError(string errorMessage)
@@ -154,10 +161,15 @@ namespace MORR.Core.UI.ViewModels
             };
 
             window.Show();
-            void CleanupCallback() => window.Close();
+
+            void CleanupCallback()
+            {
+                window.Close();
+            }
 
             var windowInteropHelper = new WindowInteropHelper(window);
-            return new DesktopCaptureNativeMethods.WindowHandleWrapper(windowInteropHelper.EnsureHandle(), CleanupCallback);
+            return new DesktopCaptureNativeMethods.WindowHandleWrapper(windowInteropHelper.EnsureHandle(),
+                                                                       CleanupCallback);
         }
 
         #endregion
