@@ -3,10 +3,15 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 
 !startsub default
-abstract class "SupportDeserializationEventQueue<T: Event>" {
-    # <<create>> SupportDeserializationEventQueue(storageStrategy: IEventQueueStorageStrategy<T: Event>)
+abstract class "SupportDeserializationEventQueue<T>" {
     + Enqueue(event: T) : void
 }
+abstract class "BaseEventQueue<T>"
+interface "IReadOnlyEventQueue<T>"
+interface "ISupportDeserializationEventQueue<T>"
+"BaseEventQueue<T>" <|-- "SupportDeserializationEventQueue<T>"
+"IReadOnlyEventQueue<T>" <|-- "SupportDeserializationEventQueue<T>"
+"ISupportDeserializationEventQueue<T>" <|-- "SupportDeserializationEventQueue<T>"
 !endsub
 
 @enduml

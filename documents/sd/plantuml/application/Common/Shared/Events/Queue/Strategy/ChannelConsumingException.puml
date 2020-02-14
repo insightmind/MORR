@@ -4,9 +4,8 @@ skinparam classAttributeIconSize 0
 
 !startsub default
 class ChannelConsumingException {
-    + <<create>> ChannelConsumingException()
-    + <<create>> ChannelConsumingException(message : string)
-    + <<create>> ChannelConsumingException(message : string, innerException : Exception)
 }
+class "Exception"
+"Exception" <|-- "ChannelConsumingException"
 !endsub
 @enduml
