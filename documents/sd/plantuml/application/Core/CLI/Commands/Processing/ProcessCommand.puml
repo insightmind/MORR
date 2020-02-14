@@ -5,11 +5,18 @@ hide empty fields
 
 !startsub default
 class ProcessCommand {
+    + <<create>> ProcessCommand(sessionManager: ISessionManager)
+    + <<create>> ProcessCommand(sessionManager: ISessionManager, consoleFormatter: IConsoleFormatter)
     + Execute(options: ProcessOptions) : int
 }
 !endsub
-ProcessCommand ... ProcessOptions : uses
-ICLICommand <.. ProcessCommand : implements
-IRecordingManager <-- "receiver" ProcessCommand
-IDecoder <-- "decoder" ProcessCommand
+
+!includesub ProcessOptions.puml!default
+!includesub ../Command.puml!default
+!includesub ../CommandOptions.puml!default
+
+ProcessOptions --|> CommandOptions
+ProcessCommand ..> ProcessOptions : "uses"
+ProcessCommand ..|> "ICommand<T: CommandOptions>"
+
 @enduml

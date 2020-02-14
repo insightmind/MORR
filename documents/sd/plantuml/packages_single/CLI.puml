@@ -10,24 +10,58 @@ package "CLI" #E6E6E6 {
     !includesub ../application/Core/CLI/Program.puml!default
 
     together {
+        !includesub ../application/Core/CLI/Interactive/InteractiveCommandLine.puml!default
+        !includesub ../application/Core/CLI/Interactive/IInteractiveCommandLine.puml!default
+
+        InteractiveCommandLine ..|> IInteractiveCommandLine
+    }
+
+    together {
+        !includesub ../application/Core/CLI/Output/ConsoleFormatter.puml!default
+        !includesub ../application/Core/CLI/Output/IConsoleFormatter.puml!default
+
+        ConsoleFormatter ..|> IConsoleFormatter
+    }
+
+    together {
+        !includesub ../application/Core/CLI/Utility/MessageLoop.puml!default
+        !includesub ../application/Core/CLI/Utility/IMessageLoop.puml!default
+
+        MessageLoop ..|> IMessageLoop
+    }
+
+    together {
         !includesub ../application/Core/CLI/Commands/Command.puml!default
 
         !includesub ../application/Core/CLI/Commands/CommandOptions.puml!default
+
+        Program ..> "ICommand<T: CommandOptions>": "uses"
+        Program ..> CommandOptions : "uses"
+        "ICommand<T: CommandOptions>" .up.> CommandOptions
 
         together {
             !includesub ../application/Core/CLI/Commands/Processing/ProcessCommand.puml!default
 
             !includesub ../application/Core/CLI/Commands/Processing/ProcessOptions.puml!default
 
-            ProcessCommand ..> ProcessOptions : "uses"
+            ProcessCommand .up.> ProcessOptions
+            ProcessCommand .down.> IConsoleFormatter
+            ProcessCommand .right.|> "ICommand<T: CommandOptions>"
+            ProcessOptions -up-|> CommandOptions
         }
+        
 
         together {
             !includesub ../application/Core/CLI/Commands/Record/RecordCommand.puml!default
 
             !includesub ../application/Core/CLI/Commands/Record/RecordOptions.puml!default
 
-            RecordCommand ..> RecordOptions : "uses"
+            RecordCommand .up.> RecordOptions
+            RecordCommand .down.> IConsoleFormatter
+            RecordCommand .down.> IInteractiveCommandLine
+            RecordCommand .down.> IMessageLoop
+            RecordCommand .right.|> "ICommand<T: CommandOptions>"
+            RecordOptions -up-|> CommandOptions
         }
 
         together {
@@ -35,37 +69,12 @@ package "CLI" #E6E6E6 {
 
             !includesub ../application/Core/CLI/Commands/Validate/ValidateOptions.puml!default
 
-            ValidateCommand ..> ValidateOptions : "uses"
+            ValidateCommand .up.> ValidateOptions
+            ValidateCommand .right.|> "ICommand<T: CommandOptions>"
+            ValidateOptions -up-|> CommandOptions
+            ValidateCommand .down.> IConsoleFormatter
         }
-
-        RecordCommand ..|> "ICommand<T: CommandOptions>"
-        ValidateCommand ..|> "ICommand<T: CommandOptions>"
-        ProcessCommand ..|> "ICommand<T: CommandOptions>"
-
-        RecordOptions --|> CommandOptions
-        ValidateOptions --|> CommandOptions
-        ProcessOptions --|> CommandOptions
     }
-
-    together {
-        !includesub ../application/Core/CLI/Interactive/InteractiveCommandLine.puml!default
-    }
-
-    together {
-        !includesub ../application/Core/CLI/Output/IOutputFormatter.puml!default
-
-        !includesub ../application/Core/CLI/Output/OutputFormatter.puml!default
-
-        OutputFormatter ..|> IOutputFormatter
-    }
-
-    ProcessCommand ..> OutputFormatter : "uses"
-    ValidateCommand ..> OutputFormatter : "uses"
-    RecordCommand ..> OutputFormatter : "uses"
-    RecordCommand ..> InteractiveCommandLine :"uses"
-
-    Program ..> "ICommand<T: CommandOptions>": "uses"
-    Program ..> CommandOptions : "uses"
 }
 !endsub
 @enduml

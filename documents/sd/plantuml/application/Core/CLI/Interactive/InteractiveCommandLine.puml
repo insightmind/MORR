@@ -4,8 +4,12 @@ skinparam classAttributeIconSize 0
 
 !startsub default
 class InteractiveCommandLine {
+    + <<create>> InteractiveCommandLine(consoleFormatter: IConsoleFormatter)
     + Launch(cancelAction: Action) : void
 }
 !endsub
+
+!includesub IInteractiveCommandLine.puml!default
+InteractiveCommandLine ..|> IInteractiveCommandLine
 
 @enduml

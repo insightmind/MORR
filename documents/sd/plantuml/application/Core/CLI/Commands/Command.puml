@@ -1,4 +1,4 @@
-@startuml
+@startuml ICommand
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 
@@ -7,5 +7,9 @@ interface "ICommand<T: CommandOptions>" {
     + Execute(options: T) : int
 }
 !endsub
+
+!includesub CommandOptions.puml!default
+
+"ICommand<T: CommandOptions>" ..> CommandOptions
 
 @enduml

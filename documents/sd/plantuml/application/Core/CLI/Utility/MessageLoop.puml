@@ -1,0 +1,18 @@
+@startuml MessageLoop
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
+class MessageLoop {
+    + <<create>> MessageLoop()
+    + IsRunning: bool
+    + Start() : void
+    + Stop() : void
+}
+
+!endsub
+
+!includesub IMessageLoop.puml!default
+
+MessageLoop ..|> IMessageLoop
+
+@enduml

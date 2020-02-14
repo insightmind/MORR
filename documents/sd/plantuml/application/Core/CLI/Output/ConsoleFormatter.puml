@@ -1,0 +1,19 @@
+@startuml ConsoleFormatter
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
+class ConsoleFormatter {
+    + IsVerbose: bool <<get>> <<set>>
+    + PrintError(exception: Exception) : void
+    + PrintDebug(message: string) : void
+    + Print(message: string) : void
+    + Read() : string
+}
+
+!endsub
+
+!includesub IConsoleFormatter.puml!default
+
+ConsoleFormatter ..|> IConsoleFormatter
+
+@enduml
