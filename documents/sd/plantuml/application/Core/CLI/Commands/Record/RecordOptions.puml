@@ -1,4 +1,4 @@
-@startuml
+@startuml RecordOptions
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 
@@ -8,5 +8,9 @@ class RecordOptions {
     + ConfigPath: string <<get>> <<set>>
 }
 !endsub
+
+!includesub ../CommandOptions.puml!default
+
+RecordOptions --|> CommandOptions
 
 @enduml

@@ -1,4 +1,4 @@
-@startuml
+@startuml ValidateOptions
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 
@@ -8,5 +8,9 @@ class ValidateOptions {
     + ConfigPath: string <<get>> <<set>>
 }
 !endsub
+
+!includesub ../CommandOptions.puml!default
+
+ValidateOptions --|> CommandOptions
 
 @enduml

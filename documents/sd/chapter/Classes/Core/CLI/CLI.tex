@@ -139,7 +139,7 @@
 \end{interface}
 
 \begin{class}{InteractiveCommandline}
-	\clsdiagram[width=0.3\textwidth]{resources/Classes/Core/CLI/InteractiveCommandline.png}
+	\clsdiagram[width=0.7\textwidth]{resources/Classes/Core/CLI/InteractiveCommandline.png}
 	\clsdcl{public class InteractiveCommandLine}\\
 	\clsdsp{A MessageLoop instantiates a cancelable Win32 message loop. Make sure to start the loop only on the main thread! Keep in mind that the message loop does block its calling thread, so you have to cancel it via a separate thread!}
 	
@@ -191,7 +191,7 @@
 \subsection*{MORR.CORE.CLI.COMMANDS.VALIDATE}
 
 \begin{class}{ValidateCommand}
-	\clsdiagram[width=0.3\textwidth]{resources/Classes/Core/CLI/ValidateCommand.png}
+	\clsdiagram[width=0.7\textwidth]{resources/Classes/Core/CLI/ValidateCommand.png}
 	\clsdcl{public class ValidateCommand : ICommand<ValidateOptions>}\\
 	\clsdsp{The validate command checks if a given configuration file can be validated and is correct. It also may give advice about an error in the configuration file. }
 	
@@ -229,7 +229,7 @@
 \subsection*{MORR.CORE.CLI.COMMANDS.PROCESS}
 
 \begin{class}{ProcessCommand}
-	\clsdiagram[width=0.3\textwidth]{resources/Classes/Core/CLI/ProcessCommand.png}
+	\clsdiagram[width=0.7\textwidth]{resources/Classes/Core/CLI/ProcessCommand.png}
 	\clsdcl{public class ProcessCommand : ICommand<ProcessOptions>}\\
 	\clsdsp{The process command starts a new processing session using the CORE. It loads the events of the input directory and processes them through the processing pipeline to finally save the processed events. }
 	
@@ -269,8 +269,8 @@
 
 \subsection*{MORR.CORE.CLI.COMMANDS.RECORD}
 
-\begin{class}{ProcessCommand}
-	\clsdiagram[width=0.3\textwidth]{resources/Classes/Core/CLI/RecordCommand.png}
+\begin{class}{RecordCommand}
+	\clsdiagram[width=0.7\textwidth]{resources/Classes/Core/CLI/RecordCommand.png}
 	\clsdcl{public class RecordCommand : ICommand<RecordOptions>}\\
 	\clsdsp{The record command starts a new recording session. It collects the events using modules and runs them through the recording pipeline to finally save the recorded events. }
 	
@@ -305,7 +305,7 @@
 	\end{methods}
 \end{class}
 
-\begin{class}{ProcessOptions}
+\begin{class}{RecordOptions}
 	\clsdiagram[width=0.3\textwidth]{resources/Classes/Core/CLI/RecordOptions.png}
 	\clsdcl{public class RecordOptions : CommandOptions}\\
 	\clsdsp{The RecordOptions are to be met to executed the RecordCommand. }

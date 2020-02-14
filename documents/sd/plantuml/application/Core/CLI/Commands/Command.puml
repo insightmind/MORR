@@ -8,4 +8,8 @@ interface "ICommand<T: CommandOptions>" {
 }
 !endsub
 
+!includesub CommandOptions.puml!default
+
+"ICommand<T: CommandOptions>" ..> CommandOptions
+
 @enduml

@@ -8,4 +8,9 @@ class ProcessOptions {
     + InputFile: string <<get>> <<set>>
 }
 !endsub
+
+!includesub ../CommandOptions.puml!default
+
+ProcessOptions --|> CommandOptions
+
 @enduml
