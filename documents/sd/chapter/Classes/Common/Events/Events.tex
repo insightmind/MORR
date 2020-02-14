@@ -96,7 +96,7 @@
 	\clsdsp{Provides a read-only queue for event types intended for encoding.}
 	
 	\begin{attributes}
-		\attribute{public bool IsClosed{get;}}{Describes whether the queue is currently enabled to queue new events or not.}
+		\attribute{public bool IsClosed \{ get; \}}{Describes whether the queue is currently enabled to queue new events or not.}
 	\end{attributes}
 	
 \end{interface}
@@ -277,5 +277,4 @@
 	
 	\clsdsp{A UnboundedSingleConsumerChannelStrategy is a Distributive-FIFO Queue which allows multiple producers and a single consumer. This queue is performance optimized for a single consumer and should be preferred in this case.  This queue is unbounded and will therefore don't dismiss any events.}
 \end{class}
-
 
