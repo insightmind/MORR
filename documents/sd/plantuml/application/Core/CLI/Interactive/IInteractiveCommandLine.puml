@@ -3,12 +3,9 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 
 !startsub default
-class InteractiveCommandLine {
+interface IInteractiveCommandLine {
     + Launch(cancelAction: Action) : void
 }
 !endsub
-
-!includesub IInteractiveCommandLine.puml!default
-InteractiveCommandLine ..|> IInteractiveCommandLine
 
 @enduml

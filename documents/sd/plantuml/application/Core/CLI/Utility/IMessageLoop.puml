@@ -3,9 +3,10 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 
 !startsub default
-class IOutputFormatter {
-
+interface IMessageLoop {
+    IsRunning: bool
+    Start() : void
+    Stop() : void
 }
 !endsub
-
 @enduml

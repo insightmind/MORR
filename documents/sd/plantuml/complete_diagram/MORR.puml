@@ -40,11 +40,8 @@ package MORR {
 
     ProcessCommand ..> ISessionManager : "uses"
     RecordCommand ..> ISessionManager : "uses"
-    RecordCommand ..> NativeMethods : "uses"
     ValidateCommand ..> IBootstrapper : "uses"
     ValidateCommand ..> IModuleManager : "uses"
-    IOutputFormatter --|> IEncoder
-    OutputFormatter --* "1 MetadataQueue" "IEncodeableEventQueue<T: Event>"
 
     package "MODULES" #E6E6E6 {
         !includesub ../packages_single/MODULES_CLIPBOARD.puml!default
