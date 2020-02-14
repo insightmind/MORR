@@ -2,10 +2,13 @@
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 
+interface IEncoder
 !startsub default
 class MpegEncoder {
-    + Encode(directoryRecordingPath: DirectoryPath) : void
+    + EncodeFinished : ManualResetEvent <<get>>
+    + Encode(recordingDirectoryPath: DirectoryPath) : void
 }
 !endsub
 
+IEncoder <|-- MpegEncoder
 @enduml

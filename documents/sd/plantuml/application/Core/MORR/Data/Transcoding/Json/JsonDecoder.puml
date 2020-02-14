@@ -2,11 +2,14 @@
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 
+interface IDecoder
 !startsub default
 class JsonDecoder {
-    + {static} Identifier: Guid <<get>>
-    + Decode(path: FilePath) : void
+    + DecodeFinished : ManualResetEvent <<get>>
+    + Decode(recordingDirectoryPath: DirectoryPath) : void
 }
 !endsub
 
+IDecoder <|-- JsonDecoder
+"DefaultDecodeableEventQueue<JsonIntermediateFormatSample>" <|-- JsonDecoder
 @enduml

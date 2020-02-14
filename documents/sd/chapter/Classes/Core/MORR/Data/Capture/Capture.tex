@@ -1,196 +1,125 @@
 \subsection*{MORR.Core.Data.Capture}
 
 \begin{class}{CaptureException}
-    \clsdiagram[width=0.3\textwidth]{resources/Classes/Core/MORR/Capture/CaptureException.png}
+    \clsdiagram{resources/Classes/Core/MORR/Data/Capture/CaptureException.png}
 
     \clsdcl{public class CaptureException : Exception}
 
     \clsdsp{A generic capture exception that all specialized capture exceptions derive from.}
+    
+    \begin{constructors}
+        \begin{constructor}{public CaptureException()}{Creates a new instance of a CaptureException without any specific error message.}
+        \end{constructor}
+        \begin{constructor}{public Exception(string message)}{Creates a new instance of a CaptureException with the specified error message.}
+            \begin{parameters}
+                \para{string message}{The error message to construct the instance with.}
+            \end{parameters}
+        \end{constructor}
+        \begin{constructor}{public CaptureException(string message, Exception innerException)}{Creates a new instance of a CaptureException with the specified error message and inner exception.}
+            \begin{parameters}
+                \para{string message}{The error message to construct the instance with.}
+                \para{Exception innerException}{The inner exception to construct the instance with.}
+            \end{parameters}
+        \end{constructor}
+    \end{constructors}
+\end{class}
+
+\subsection*{MORR.Core.Data.Capture.Video}
+
+\begin{class}{VideoSample}
+    \clsdiagram{resources/Classes/Core/MORR/Data/Capture/Video/VideoSample.png}
+
+    \clsdcl{public class VideoSample : Event}
+
+    \clsdsp{A single video capture sample.}  
+\end{class}
+
+\begin{class}{DirectXVideoSample}
+    \clsdiagram{resources/Classes/Core/MORR/Data/Capture/Video/DirectXVideoSample.png}
+
+    \clsdcl{public class DirectXVideoSample : VideoSample}
+    
+    \clsdsp{A single video capture sample in DirectX format.}
+
+    \begin{attributes}
+        \attribute{public IDirect3DSurface Surface \{ get; \}}{The surface containing the data for this sample.}
+    \end{attributes}
 \end{class}
 
 \subsection*{MORR.Core.Data.Capture.Video.Exceptions}
 
 \begin{class}{VideoCaptureException}
-    \clsdiagram[width=0.3\textwidth]{resources/Classes/Core/MORR/Capture/VideoCaptureException.png}
+    \clsdiagram{resources/Classes/Core/MORR/Data/Capture/Video/Exceptions/VideoCaptureException.png}
 
     \clsdcl{public class VideoCaptureException : CaptureException}
 
     \clsdsp{An exception thrown if video sample capturing fails.}
+
+    \begin{constructors}
+        \begin{constructor}{public VideoCaptureException()}{Creates a new instance of a VideoCaptureException without any specific error message.}
+        \end{constructor}
+        \begin{constructor}{public Exception(string message)}{Creates a new instance of a VideoCaptureException with the specified error message.}
+            \begin{parameters}
+                \para{string message}{The error message to construct the instance with.}
+            \end{parameters}
+        \end{constructor}
+        \begin{constructor}{public VideoCaptureException(string message, Exception innerException)}{Creates a new instance of a VideoCaptureException with the specified error message and inner exception.}
+            \begin{parameters}
+                \para{string message}{The error message to construct the instance with.}
+                \para{Exception innerException}{The inner exception to construct the instance with.}
+            \end{parameters}
+        \end{constructor}
+    \end{constructors}
 \end{class}
 
-\subsection*{MORR.Core.Data.Capture.Video}
+\subsection*{MORR.Core.Data.Capture.Video.Desktop}
 
-\begin{interface}{IVideoCapture}
-    \clsdiagram[width=0.35\textwidth]{resources/Classes/Core/MORR/Capture/IVideoCapture.png}
+\begin{class}{DesktopCapture}
+    \clsdiagram{resources/Classes/Core/MORR/Data/Capture/Video/Desktop/DesktopCapture.png}
 
-    \clsdcl{public interface IVideoCapture}
+    \clsdcl{public class DesktopCapture : IModule}
 
-    \clsdsp{Captures video output and provides it on a per-sample basis.}
-
-    \begin{methods}
-        \begin{method}{VideoSample NextSample()}{Gets the next VideoSample from the capture.}
-            \return{VideoSample}{The next VideoSample from the capture.}
-        \end{method}
-    \end{methods}
-\end{interface}
-
-\subsection*{MORR.Core.Data.Capture.Video.WinAPI}
-
-\begin{interface}{DesktopCapture}
-    \clsdiagram[width=0.6\textwidth]{resources/Classes/Core/MORR/Capture/DesktopCapture.png}
-
-    \clsdcl{public class DesktopCapture : IVideoCapture}
-
-    \clsdsp{Captures the desktop using the Windows API and provides the capture samples.}
+    \clsdsp{Capture video from the desktop using the Windows API.}
 
     \begin{attributes}
-        \attribute{[Import] DesktopCaptureConfiguration CaptureConfiguration \{ get; set; \}}{The IConfiguration instance specifying configuration options regarding desktop capture.}
+        \attribute{public bool IsActive \{ get; set; \}}{Indicates whether the module is active. True if it is active, false otherwise.}
+        \attribute{public Guid Identifier \{ get; \}}{The identifier of the module.}
     \end{attributes}
 
     \begin{methods}
-        \begin{method}{public VideoSample NextSample()}{Gets the next VideoSample from the capture.}
-            \return{VideoSample}{The next VideoSample from the capture.}
+        \begin{method}{public void Initialize(bool isEnabled)}{Initializes the module.}
+            \begin{parameters}
+                \para{bool isEnabled}{Indicates whether the module should be enabled. True if it should be enabled, false otherwise.}
+            \end{parameters}
         \end{method}
-    \end{methods}   
-\end{interface}
+    \end{methods}
+\end{class}
 
 \begin{class}{DesktopCaptureConfiguration}
-    \clsdiagram[width=0.35\textwidth]{resources/Classes/Core/MORR/Capture/DesktopCaptureConfiguration.png}
+    \clsdiagram{resources/Classes/Core/MORR/Data/Capture/Video/Desktop/DesktopCaptureConfiguration.png}
 
     \clsdcl{public class DesktopCaptureConfiguration : IConfiguration}
 
-    \clsdsp{Encapsulates all DesktopCapture configuration options.}
+    \clsdsp{Encapsulates all desktop capture configuration options.}
 
     \begin{attributes}
-        \attribute{string DeviceToRecord \{ get; set; \}}{The device name of the screen to record.}
+        \attribute{public Index MonitorIndex \{ get; \}}{The index of the monitor to capture.}
+        \attribute{public bool PromptUserForMonitorSelection \{ get; \}}{Indicates whether the user should be prompted to manually select the monitor to capture. True if the user should be prompted, false otherwise.}
     \end{attributes}
 
     \begin{methods}
-        \begin{method}{public void Parse(string configuration)}{Parses the configuration from the provided value.}
+        \begin{method}{public void Parse(RawConfiguration configuration)}{Parses the configuration from the provided value.}
             \begin{parameters}
-                \para{string configuration}{The configuration value to parse from.}
+                \para{RawConfiguration configuration}{The configuration value to parse from.}
             \end{parameters}
         \end{method}
     \end{methods}
 \end{class}
 
-\subsection*{MORR.Core.Data.Capture.Video.WinAPI.Utility}
+\begin{class}{VideoSampleProducer}
+    \clsdiagram{resources/Classes/Core/MORR/Data/Capture/Video/Desktop/VideoSampleProducer.png}
 
-\begin{class}{CaptureHelper}
-    \clsdiagram[width=0.55\textwidth]{resources/Classes/Core/MORR/Capture/CaptureHelper.png}
+    \clsdcl{public class VideoSampleProducer : DefaultEncodeableEventQueue<DirectXVideoSample>}
 
-    \clsdcl{internal static class CaptureHelper}
-
-    \clsdsp{Provides utility methods for working with Windows' GraphicsCaptureItems.}
-
-    \begin{attributes}
-        \attribute{public static bool CanCreateItemWithoutPicker \{ get; \}}{Indicates whether the creation of a GraphicsCaptureItem instance requires user interaction. True if GraphicsCaptureItems can be created without user interaction, false otherwise.}
-    \end{attributes}
-    \begin{methods}
-        \begin{method}{public static GraphicsCaptureItem CreateItemForMonitor(IntPtr hMon)}{Creates a GraphicsCaptureItem for the specified monitor.}
-            \begin{parameters}
-                \para{IntPtr hMon}{The handle of the monitor to create the GraphicsCaptureItem for.}
-            \end{parameters}
-        \end{method}
-    \end{methods}
-\end{class}
-
-\begin{class}{Direct3D11Helper}
-    \clsdiagram[width=0.8\textwidth]{resources/Classes/Core/MORR/Capture/Direct3D11Helper.png}
-
-    \clsdcl{internal static class Direct3D11Helper}
-
-    \clsdsp{Provides utility methods for using Direct3D11 objects.}
-
-    \begin{methods}
-        \begin{method}{public static IDirect3DDevice CreateDevice(bool useWARP = false)}{Creates a new IDirect3DDevice device using the specified driver type.}
-            \begin{parameters}
-                \para{bool useWARP}{Indicates whether the created device should utilize hardware support or software emulation. True if software emulation should be used, false otherwise.}
-            \end{parameters}
-            \return{IDirect3DDevice}{The created device.}
-        \end{method}
-        \begin{method}{public static IDirect3DSurface \\CreateDirect3DSurfaceFromSharpDXTexture(Texture2D texture)}{Creates a IDirect3DSurface from a SharpDX texture.}
-            \begin{parameters}
-                \para{Texture2D texture}{The SharpDX texture to convert.}
-            \end{parameters}
-            \return{IDirect3DSurface}{The created Direct3D surface.}
-        \end{method}
-        \begin{method}{public static Device CreateSharpDXDevice(IDirect3DDevice device)}{Create a SharpDX device from the specified Direct3D device.}
-            \begin{parameters}
-                \para{IDirect3DDevice device}{The device to create a SharpDX device from.}
-            \end{parameters}
-            \return{Device}{The created SharpDX device.}
-        \end{method}
-        \begin{method}{public static Texture2D CreateSharpDXTexture2D(IDirect3DSurface surface)}{Creates a SharpDX texture from the specified Direct3D surface.}
-            \begin{parameters}
-                \para{IDirect3DSurface surface}{The surface to convert.}
-            \end{parameters}
-            \return{Texture2D}{The created SharpDX texture.}
-        \end{method}
-    \end{methods}
-\end{class}
-
-\begin{class}{MonitorEnumerationHelper}
-    \clsdiagram[width=0.4\textwidth]{resources/Classes/Core/MORR/Capture/MonitorEnumerationHelper.png}
-
-    \clsdcl{internal static class MonitorEnumerationHelper}
-
-    \clsdsp{Provides utility methods for enumerating monitors.}
-
-    \begin{methods}
-        \begin{method}{public static IEnumerable<MonitorInfo> GetMonitors()}{Gets MonitorInfo instances containing information about all connected monitors.}
-            \return{IEnumerable<MonitorInfo>}{A list of MonitorInfo instances containing information about all connected monitors.}
-        \end{method}
-    \end{methods}
-\end{class}
-
-\begin{class}{MonitorInfo}
-    \clsdiagram[width=0.35\textwidth]{resources/Classes/Core/MORR/Capture/MonitorInfo.png}
-
-    \clsdcl{internal class MonitorInfo}
-
-    \clsdsp{Represents information about a connected monitor.}
-
-    \begin{attributes}
-        \attribute{public bool IsPrimary \{ get; private set; \}}{Indicates whether the describe monitor is the primary monitor. True if the monitor is the primary monitor, false otherwise.}
-        \attribute{public Vector2 ScreenSize \{ get; private set; \}}{The size of the screen as (width, height) vector.}
-        \attribute{public Rect MonitorArea \{ get; private set; \}}{The size of the monitor.}
-        \attribute{public Rect WorkArea \{ get; private set;\}}{The size of the working area.}
-        \attribute{public string DeviceName \{ get; private set;\}}{The name of the device.}
-        \attribute{public IntPtr HMon \{ get; private set;\}}{The handle of the monitor.}
-    \end{attributes}
-\end{class}
-
-\subsection*{MORR.Core.Data.Capture.Metadata}
-
-\begin{interface}{IMetadataCapture}
-    \clsdiagram[width=0.35\textwidth]{resources/Classes/Core/MORR/Capture/IMetadataCapture.png}
-
-    \clsdcl{public interface IMetadataCapture : IReceivingModule}
-
-    \clsdsp{Captures all events from all event queues and provides them on a per-sample basis.}
-
-    \begin{methods}
-        \begin{method}{MetadataSample NextSample()}{Gets the next MetadataSample from the capture.}
-            \return{MetadataSample}{The next MetadataSample from the capture.}
-        \end{method}
-    \end{methods}
-\end{interface}
-
-\begin{class}{MetadataCapture}
-    \clsdiagram[width=0.5\textwidth]{resources/Classes/Core/MORR/Capture/MetadataCapture.png}
-
-    \clsdcl{public class MetadataCapture : IMetadataCapture}
-
-    \clsdsp{Captures all events from all event queues and provides them on a per-sample basis.}
-
-    \begin{attributes}
-        \attribute{[ImportMany] IEnumerable<EventQueue<Event>> \{ get; private set; \}}{All available event queues.}
-    \end{attributes}
-
-    \begin{methods}
-        \begin{method}{public MetadataSample NextSample()}{Gets the next MetadataSample from the capture.}
-            \return{MetadataSample}{The next MetadataSample from the capture.}
-        \end{method}
-    \end{methods}
+    \clsdsp{Provides the captured video samples.}
 \end{class}

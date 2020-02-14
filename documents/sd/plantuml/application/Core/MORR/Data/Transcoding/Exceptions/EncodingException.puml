@@ -3,6 +3,9 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 !startsub default
 class EncodingException {
+    + <<create>> EncodingException()
+    + <<create>> EncodingException(message: string)
+    + <<create>> EncodingException(message: string, innerException: Exception)
 }
 !endsub
 Exception <|-- EncodingException

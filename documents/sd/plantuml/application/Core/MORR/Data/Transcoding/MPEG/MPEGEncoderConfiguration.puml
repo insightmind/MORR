@@ -2,15 +2,17 @@
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 
+interface IConfiguration
 !startsub default
 class MpegEncoderConfiguration {
     + Width: uint <<get>> <<set>>
     + Height: uint <<get>> <<set>>
     + KiloBitsPerSecond: uint <<get>> <<set>>
     + FramesPerSecond: uint <<get>> <<set>>
-    + RecordingName: string <<get>> <<set>>
-    + Parse(RawConfiguration: configuration)
+    + RelativeFilePath: FilePath <<get>> <<set>>
+    + Parse(configuration: RawConfiguration)
 }
 !endsub
 
+IConfiguration <|-- MpegEncoderConfiguration
 @enduml
