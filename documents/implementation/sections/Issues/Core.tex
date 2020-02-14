@@ -1,0 +1,69 @@
+\section{Core}
+\issue{Attribute-based exports have proven to be error-prone and difficult to read}
+{Remove attribute-based exports and export based on convention instead}
+{Removed MEF \keyword{[Export]} attributes and added \class{BootstrapperConventions} which provides conventions through a \class{RegistrationBuilder} for use in the \class{Bootstrapper}}
+\issue{MEF-imports are unneccessarily publicly accessible}
+{Make MEF-imports private}
+{<<all MEF imports>>}
+\issue{\class{ICollectingModules} are no different from \class{IModule}, as such the \class{IModuleManager} should not differentiate between them}
+{Do not differentiate between \class{ICollectingModule} and \class{IModule}}
+{Removed IModuleManager.CollectingModules}
+\issue{\class{RecordingManager} deals with more than just recording}
+{Rename \class{RecordingManager} and \package{Recording} namespace}
+{Renamed \class{MORR.Core.Recording.IRecordingManager} to \class{MORR.Core.Session.ISessionManager}}
+\issue{Modules are unaware of running sessions}
+{Make modules aware of running sessions through the \class{ModuleManager}}
+{Added \member{IModuleManager.NotifyModulesOnSessionStart} and \member{IModuleManager.NotifyModulesOnSessionStop} and implement those in \class{ModuleManager}}
+\issue{The sample-based encoding mechanism is too dependent on \class{Windows.Media.Transcoding.Transcoder}}
+{Make sample-producers (e.g. \class{MetadataCapture} and \class{VideoCapture}) be normal transforming modules}
+{Removed \member{IMetadataCapture.NextSample} and \member{IVideoCapture.NextSample} and instead implement \class{IModule} interface}
+\issue{\class{DesktopCapture} has multiple responsibilities}
+{Split the responsibilites of \class{DesktopCapture}}
+{Added \class{VideoSampleProducer} that produces \class{DirectXVideoSample} and is managed through the \class{IModule} \class{DesktopCapture}}
+\issue{\class{IVideoCapture} is just an \class{IModule} with no special properties that should not be treated differently}
+{Make implementers of \class{IVideoCapture} just be an \class{IModule} instead}
+{Remove \class{IVideoCapture}, made \class{DesktopCapture} an \class{IModule} instead}
+\issue{The concept of metadata is too tightly bound to MPEG encoding}
+{Introduce a concept of an intermediate format that sits inbetween the typed events and the untyped encodeable data}
+{Removed \class{IMetadataCapture}, renamed \class{MORR.Core.Data.Capture.Metadata.MetadataCapture} to \class{MORR.Core.Data.IntermediateFormat.Json.JsonIntermediateFormatSerializer}, renamed \class{MORR.Core.Data.Sample.Metadata.MetadataSample} to \class{MORR.Core.Data.IntermediateFormat.IntermediateFormatSample} and added \class{MORR.Core.Data.IntermediateFormat.Json.JsonIntermediateFormatSample}, removed \class{IMetadataDeserializer}, renamed \class{MORR.Core.Data.Transcoding.Metadata.MetadataDeserializer} to \class{MORR.Core.Data.IntermediateFormat.Json.JsonIntermediateFormatDeserializer}}
+\issue{There may be multiple different video sample formats}
+{Differentiate further between different video sample formats}
+{Renamed \class{MORR.Core.Data.Sample.Video.VideoSample} to \class{MORR.Core.Data.Capture.Video.VideoSample} and added \class{MORR.Core.Data.Capture.Video.DirectXVideoSample}}
+\issue{Event handlers intended for transcoding are now unused}
+{Remove unused event handlers}
+{Removed \class{MetadataSampleRequestedEventHandler}, \class{MetadataSampleDecodedEventHandler}, \class{VideoSampleRequestedEventHandler}, \class{VideoSampleDecodedEventHandler}, removed \member{IEncoder.VideoSampleRequested}, \member{IEncoder.MetadataSampleRequested}, removed \member{IDecoder.VideoSampleDecoded}, \member{IDecoder.MetadataSampleDecoded}}
+\issue{File paths should be distinguishable from normal strings}
+{Introduce \class{FilePath} and \class{DirectoryPath} class}
+{Added \class{MORR.Shared.Utility.FilePath}, \class{MORR.Shared.Utility.DirectoryPath}, adjusted \member{IEncoder.Encode} to use \class{DirectoryPath}, \member{IDecoder.Decode} to use \class{FilePath}, \member{MpegEncoderConfiguration.Directory} to use \class{FilePath}}
+\issue{Metadata-transcoding exceptions are now unused}
+{Remove unused exceptions}
+{Removed \class{MetadataEncodingException} and \class{MetadataDecodingException}}
+\issue{\class{SessionManager} does not have a way proper way to specify a filepath for processing and instead requires StartRecording and StartDecoding, which does not allow to differentiate between actually recording and recording during processing}
+{Separate processing from recording}
+{Removed \member{ISessionManager.StartDecoding} and \member{ISessionManager.StopDecoding}, added \class{Process(IEnumerable<FilePath>)}}
+\issue{\class{SessionManager} does not offer a way to get the current recording directory or the directory of all recordings needed to show these to the user from the UI}
+{Added corresponding properties}
+{Added \member{ISessionManager.CurrentRecordingDirectory} and \member{ISessionManager.RecordingsFolder}}
+\issue{\member{ISessionManager.IsRecording} is not accurate regarding the original design and no longer serves any purpose}
+{Remove the property}
+{Removed \member{ISessionManager.IsRecording}}
+\issue{\class{ISessionManager} needs to support multiple encoders and decoders, as data is split between video and interaction data}
+{Allow multiple encoders and decoders}
+{Adjusted \class{SessionConfiguration} to allow \class{IEnumerable<IEncoder>} and \class{IEnumerable<IDecoder>}, use those in \class{SessionManager}}
+\issue{\class{DesktopCaptureConfiguration} may be unintuitive to use for users, does not allow forcing the picker dialog for selecting a monitor to record}
+{Instead specify a monitor index and allow forcing the picker dialog}
+{Changed \member{DesktopCaptureConfiguration.DeviceToRecord} to \member{DesktopCaptureConfiguration.MonitorIndex} and \member{DesktopCaptureConfiguration.PromptUserForMonitorSelection}}
+\issue{MPEG-encoding with metadata is not properly possible using the UWP APIs, therefore MPEG-decoding serves no purpose}
+{Remove MPEG-decoding}
+{Removed \class{MPEGDecoder} and \class{MPEGDecoderConfiguration}}
+\issue{Use of JSON as the intermediate format conflicts with CSV output format}
+{Instead use JSON as the output format}
+{Removed \class{CSVEncoder}, added \class{JsonEncoder} and \class{JsonDecoder}}
+
+\issue{
+Unable to infer specific types in a configuration.
+}{
+Add support to deserialize type using its name from all imported assemblies.
+}{
+Alter behaviour of \class{ConfigurationManager} to manually deserialize sections of the main configuration.
+}
