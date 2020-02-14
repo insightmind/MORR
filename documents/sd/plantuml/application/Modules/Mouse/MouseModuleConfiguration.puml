@@ -6,5 +6,6 @@ class MouseModuleConfiguration {
     + Threshold : int <<get>> <<set>>
     + Parse(configuration:RawConfiguration) : void
 }
+interface IConfiguration
 IConfiguration <|-- MouseModuleConfiguration
 @enduml
