@@ -4,8 +4,6 @@ skinparam classAttributeIconSize 0
 
 !startsub default
 class "UnboundedSingleConsumerChannelStrategy<TEvent>" {
-    
-    # CreateChannel() : Channel<TEvent>
 }
 abstract class "SingleConsumerChannelStrategy<TEvent>" {
     + IsClosed : bool <<get>>
@@ -13,8 +11,6 @@ abstract class "SingleConsumerChannelStrategy<TEvent>" {
     + Enqueue(event: T) : void
     + Open() : void
     + Close() : void
-    # StartReceiving() : void
-    # {abstract} CreateChannel() : Channel<TEvent>
 }
 interface "IEventQueueStorageStrategy<TEvent>"
 "IEventQueueStorageStrategy<TEvent>" <|-- "SingleConsumerChannelStrategy<TEvent>"

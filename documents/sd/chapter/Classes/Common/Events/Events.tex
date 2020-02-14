@@ -174,25 +174,16 @@
 \begin{class}{BoundedMultiConsumerChannelStrategy<TEvent>}
 	\clsdiagram[width=0.5\textwidth]{resources/Classes/Common/Shared/Events/Queue/Strategy/MultiConsumer/BoundedMultiConsumerChannelStrategy.png}
 	
-	\clsdcl{public class BoundedMultiConsumerChannelStrategy<TEvent> : 
+	\clsdcl{public class BoundedMultiConsumerChannelStrategy<TEvent> : \\\
 	MultiConsumerChannelStrategy<TEvent> where TEvent : Event}
 	
 	\clsdsp{A BoundedMultiConsumerChannelStrategies is a Distributive-FIFO Queue which allows multiple producers and multiple consumers. However every event is propagated to each consumer once. This queue is bounded by a buffer capacity. To be more detailed each channel is bound by the bufferCapacity. Is the capacity reached for a specific channel it will drop the oldest event and write the new event.}
-	
-	\begin{methods}	
-		\begin{method}{protected override Channel<TEvent> CreateOfferingChannel()}
-			\return{Channel<TEvent>}{}
-		\end{method}
-		\begin{method}{protected override Channel<TEvent> CreateRecievingChannel()}
-			\return{Channel<TEvent>}{}
-		\end{method}
-	\end{methods}
 \end{class}
 
 \begin{absclass}{MultiConsumerChannelStrategy<TEvent>} 
 	\clsdiagram[width=0.5\textwidth]{resources/Classes/Common/Shared/Events/Queue/Strategy/MultiConsumer/MultiConsumerChannelStrategy.png}
 	
-	\clsdcl{public abstract class MultiConsumerChannelStrategy<TEvent> : 
+	\clsdcl{public abstract class MultiConsumerChannelStrategy<TEvent> : \\\
 	IEventQueueStorageStrategy<TEvent> where TEvent : Event}
 	
 	\clsdsp{A MultiConsumerChannelStrategies is a Distributive-FIFO Queue which allows multiple producers and multiple consumers. However every event is propagated to each consumer once.}
@@ -202,11 +193,6 @@
 	\end{attributes}
 	
 	\begin{methods}
-		\begin{method}{protected void StartReceiving(uint? maxChannelConsumers)}{Sets maximal number of consumers}
-			\begin{parameters}
-				\para{uint? maxChannelConsumers}{Maximal number of consumers}
-			\end{parameters}
-		\end{method}
 		\begin{method}{public IAsyncEnumerable<TEvent> GetEvents(CancellationToken token = default)}{Asynchronously gets all events as concrete type T}
 			\begin{parameters}
 				\para{CancellationToken token = default}
@@ -225,29 +211,16 @@
         \end{method}
         \begin{method}{public void Close()}{Notifies the event queue that no more events will be queued.}
         \end{method}
-        \begin{method}{protected abstract Channel<TEvent> CreateOfferingChannel()}{}
-        \end{method}
-        \begin{method}{protected abstract Channel<TEvent> CreateReceivingChannel()}{}
-        \end{method}
 	\end{methods}
 \end{absclass}
 
 \begin{class}{UnboundedMultiConsumerChannelStrategy<TEvent>}
 	\clsdiagram[width=0.5\textwidth]{resources/Classes/Common/Shared/Events/Queue/Strategy/MultiConsumer/UnboundedMultiConsumerChannelStrategy.png}
 	
-	\clsdcl{public class UnboundedMultiConsumerChannelStrategy<TEvent> : 
+	\clsdcl{public class UnboundedMultiConsumerChannelStrategy<TEvent> : \\\
 	MultiConsumerChannelStrategy<TEvent> where TEvent : Event}
 	
 	\clsdsp{An UnboundedMultiConsumerChannelStrategy is a Distributive-FIFO Queue which allows multiple producers and multiple consumers. However every event is propagated to each consumer once. This queue is unbound, which means that an event is never dismissed. Make sure to only use this queue if you are sure it is bound by a maximum number of events.}
-	
-	\begin{methods}	
-		\begin{method}{protected override Channel<TEvent> CreateOfferingChannel()}
-			\return{Channel<TEvent>}{}
-		\end{method}
-		\begin{method}{protected override Channel<TEvent> CreateRecievingChannel()}
-			\return{Channel<TEvent>}{}
-		\end{method}
-	\end{methods}
 \end{class}
 
 \subsubsection*{SingleConsumer}
@@ -255,22 +228,17 @@
 \begin{class}{BoundedSingleConsumerChannelStrategy<TEvent>}
 	\clsdiagram[width=0.5\textwidth]{resources/Classes/Common/Shared/Events/Queue/Strategy/SingleConsumer/BoundedSingleConsumerChannelStrategy.png}
 	
-	\clsdcl{public class BoundedSingleConsumerChannelStrategy<TEvent> :
+	\clsdcl{public class BoundedSingleConsumerChannelStrategy<TEvent> : \\\
 	 SingleConsumerChannelStrategy<TEvent> where TEvent : Event}
 	
 	\clsdsp{A BoundedSingleConsumerChannelStrategy is a Distributive-FIFO Queue which allows multiple producers and a single consumer. This queue is performance optimized for a single consumer and should be preferred in this case. This queue is bounded by a buffer capacity. If capacity is reached it will dismiss the oldest event and queue the new event.}
 	
-	\begin{methods}	
-		\begin{method}{protected override Channel<TEvent> CreateChannel()}
-			\return{Channel<TEvent>}{}
-		\end{method}
-	\end{methods}
 \end{class}
 
 \begin{absclass}{SingleConsumerChannelStrategy<TEvent>} 
 	\clsdiagram[width=0.5\textwidth]{resources/Classes/Common/Shared/Events/Queue/Strategy/SingleConsumer/SingleConsumerChannelStrategy.png}
 	
-	\clsdcl{public abstract class SingleConsumerChannelStrategy<TEvent> : 
+	\clsdcl{public abstract class SingleConsumerChannelStrategy<TEvent> : \\\
 	IEventQueueStorageStrategy<TEvent> where TEvent : Event}
 	
 	\clsdsp{A SingleConsumerChannelStrategies is a Distributive-FIFO Queue which allows multiple producers and singer consumers. This queue is performance optimized for a single consumer and should be preferred in this case.}
@@ -298,24 +266,16 @@
         \end{method}
         \begin{method}{public void Close()}{Notifies the event queue that no more events will be queued.}
         \end{method}
-        \begin{method}{protected abstract Channel<TEvent> CreateChannel()}{}
-        \end{method}
 	\end{methods}
 \end{absclass}
 
 \begin{class}{UnboundedSingleConsumerChannelStrategy<TEvent>}
 	\clsdiagram[width=0.5\textwidth]{resources/Classes/Common/Shared/Events/Queue/Strategy/SingleConsumer/UnboundedSingleConsumerChannelStrategy.png}
 	
-	\clsdcl{public class UnboundedSingleConsumerChannelStrategy<TEvent> : 
+	\clsdcl{public class UnboundedSingleConsumerChannelStrategy<TEvent> :\\\
 	SingleConsumerChannelStrategy<TEvent> where TEvent : Event}
 	
 	\clsdsp{A UnboundedSingleConsumerChannelStrategy is a Distributive-FIFO Queue which allows multiple producers and a single consumer. This queue is performance optimized for a single consumer and should be preferred in this case.  This queue is unbounded and will therefore don't dismiss any events.}
-	
-	\begin{methods}	
-		\begin{method}{protected override Channel<TEvent> CreateChannel()}
-			\return{Channel<TEvent>}{}
-		\end{method}
-	\end{methods}
 \end{class}
 
 

@@ -3,7 +3,8 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 !startsub default
 class RawConfiguration {
-    + RawValue: string
+    + RawValue: string <<get>>
+    + <<create>>RawConfiguration(rawValue: string)
 }
 !endsub
 @enduml

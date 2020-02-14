@@ -7,6 +7,15 @@
 	
 	\clsdsp{Encapsulates a directory path.}
 	
+	\begin{constructors}
+		\begin{constructor}{public DirectoryPath(string value, bool skipValidation = false)}{Creates a new instance of the DirectoryPath with provided value}
+			\begin{parameters}
+				\para{string value}{The value to create the DirectoryPath with}
+				\para{bool skipValidation}{Always false}
+			\end{parameters}
+		\end{constructor}
+	\end{constructors}
+	
 	\begin{methods}
 		\begin{method}{public override string ToString()}{A string representation of the directory path.}
 			\return{string}{DirectoryPath instance as a string}
@@ -21,6 +30,15 @@
 	
 	\clsdsp{Encapsulates a local file path.}
 	
+	\begin{constructors}
+		\begin{constructor}{public FilePath(string value, bool skipValidation = false)}{Creates a new instance of the FilePath with provided value}
+			\begin{parameters}
+				\para{string value}{The value to create the FilePath with}
+				\para{bool skipValidation}{Always false}
+			\end{parameters}
+		\end{constructor}
+	\end{constructors}
+	
 	\begin{methods}
 		\begin{method}{public override string ToString()}{A string representation of the file path.}
 			\return{string}{FilePath instance as a string}
@@ -33,7 +51,7 @@
 	
 	\clsdcl{public static class Utility}
 	
-	\clsdsp{}
+	\clsdsp{Contains the utility methods.}
 	
 	\begin{methods}
 		\begin{method}{public static void SetAndDispatch(ref bool variable, bool value, Action onTrue, Action onFalse)}{Sets a boolean property and dispatches based on its value.}

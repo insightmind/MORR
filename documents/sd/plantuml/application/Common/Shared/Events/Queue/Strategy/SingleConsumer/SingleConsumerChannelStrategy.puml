@@ -9,8 +9,6 @@ abstract class "SingleConsumerChannelStrategy<TEvent>" {
     + Enqueue(event: T) : void
     + Open() : void
     + Close() : void
-    # StartReceiving() : void
-    # {abstract} CreateChannel() : Channel<TEvent>
 }
 interface "IEventQueueStorageStrategy<TEvent>"
 "IEventQueueStorageStrategy<TEvent>" <|-- "SingleConsumerChannelStrategy<TEvent>"

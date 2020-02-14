@@ -4,8 +4,7 @@ skinparam classAttributeIconSize 0
 
 !startsub default
 class "UnboundedMultiConsumerChannelStrategy<TEvent>" {
-    # CreateOfferingChannel() : Channel<T: Event>
-    # CreateReceivingChannel() : Channel<T: Event>
+
 }
 interface "IEventQueueStorageStrategy<TEvent>"
 "IEventQueueStorageStrategy<TEvent>" <|-- "MultiConsumerChannelStrategy<TEvent>"
@@ -16,9 +15,6 @@ abstract class "MultiConsumerChannelStrategy<TEvent>" {
     + Enqueue(event: T) : void
     + Open() : void
     + Close() : void
-    # StartReceiving(maxChannelConsumers: uint?) : void
-    # {abstract} CreateOfferingChannel() : Channel<TEvent>
-    # {abstract} CreateReceivingChannel() : Channel<TEvent>
 }
 "MultiConsumerChannelStrategy<TEvent>" <|-- "UnboundedMultiConsumerChannelStrategy<TEvent>"
 !endsub

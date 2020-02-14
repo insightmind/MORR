@@ -3,6 +3,7 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 !startsub default
 interface IConfiguration {
+    parse(RawConfiguration configuration) : void
 }
 
 !endsub
