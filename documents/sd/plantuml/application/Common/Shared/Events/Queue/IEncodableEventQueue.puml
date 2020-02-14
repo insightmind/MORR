@@ -2,7 +2,7 @@
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 !startsub default
-interface "IEncodeableEventQueue<T: Event>" {
+interface "IEncodableEventQueue<T: Event>" {
     + IsClosed: bool <<get>>
 }
 !endsub

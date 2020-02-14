@@ -3,9 +3,9 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 
 !startsub default
-abstract class "NonDeserializableEventQueue<T>" {
+abstract class "DefaultEncodableEventQueue<T>" {
+    
 }
-interface "IReadOnlyEventQueue<T>"
 abstract class "BaseEventQueue<T>" {
     + IsClosed : bool <<get>>
     + GetEvents() : IAsyncEnumerable<TEvent>
@@ -13,7 +13,9 @@ abstract class "BaseEventQueue<T>" {
     + Open() : void
     + Close() : void
 }
-"IReadOnlyEventQueue<T>" <|-- "NonDeserializableEventQueue<T>"
-"BaseEventQueue<T>" <|-- "NonDeserializableEventQueue<T>"
+interface "IEncodableEventQueue<T>"
+abstract class "BaseEventQueue<T>"
+"IEncodableEventQueue<T>" <|-- "DefaultEncodableEventQueue<T>"
+"BaseEventQueue<T>" <|-- "DefaultEncodableEventQueue<T>"
 !endsub
 @enduml

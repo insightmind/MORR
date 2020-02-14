@@ -6,6 +6,15 @@ skinparam classAttributeIconSize 0
 abstract class "DefaultEventQueue<T>" {
 
 }
+abstract class "SupportDeserializationEventQueue<T>" {
+    + Enqueue(event: T) : void
+}
+abstract class "BaseEventQueue<T>"
+interface "IReadOnlyEventQueue<T>"
+interface "ISupportDeserializationEventQueue<T>"
+"BaseEventQueue<T>" <|-- "SupportDeserializationEventQueue<T>"
+"IReadOnlyEventQueue<T>" <|-- "SupportDeserializationEventQueue<T>"
+"ISupportDeserializationEventQueue<T>" <|-- "SupportDeserializationEventQueue<T>"
 abstract class "SupportDeserializationEventQueue<T>"
 "SupportDeserializationEventQueue<T>" <|-- "DefaultEventQueue<T>"
 !endsub
