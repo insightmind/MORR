@@ -9,7 +9,10 @@
 #include <stdio.h>
 #include "Win32HookHelper.h"
 
-int main() {
+int WINAPI WinMain(HINSTANCE hInstance,
+    HINSTANCE hPrevInstance,
+    LPSTR szCmdLine,
+    int iCmdShow) {
 #ifdef _WIN64
     fprintf(stderr, "Win32Helper error: Was compiled in 64bit mode, needs to be 32bit\n");
     return 1;
