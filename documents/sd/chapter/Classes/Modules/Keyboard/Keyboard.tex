@@ -2,7 +2,7 @@
 \begin{class}{KeyboardModule} 
     \clsdiagram[scale = 0.7]{resources/Classes/Modules/Keyboard/KeyboardModule.png}
 
-    \clsdcl{public class KeyboardModule : ICollectingModule}
+    \clsdcl{public class KeyboardModule : IModule}
 
     \clsdsp{The KeyboardModule is responsible for recording all keyboard related user interactions.}
 \end{class}
@@ -35,7 +35,7 @@
 \begin{class}{KeyboardInteractEventProducer} 
 	\clsdiagram[scale = 0.7]{resources/Classes/Modules/Keyboard/Producers/KeyboardInteractEventProducer.png}
     
-    \clsdcl{public class KeyboardInteractEventProducer : DefaultEventQueue<KeyboardInteractEvent>}
+    \clsdcl{public class KeyboardInteractEventProducer:\\\ DefaultEventQueue<KeyboardInteractEvent>}
 
     \clsdsp{Provides single-writer-multiple-reader queue for KeyboardInteractEvent}
 

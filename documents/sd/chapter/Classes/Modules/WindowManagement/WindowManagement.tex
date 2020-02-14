@@ -3,7 +3,7 @@
 \begin{class}{WindowManagementModule} 
     \clsdiagram[scale = 0.7]{resources/Classes/Modules/WindowManagement/WindowManagementModule.png}
 
-    \clsdcl{public class WindowManagementModule : ICollectingModule}
+    \clsdcl{public class WindowManagementModule : IModule}
 
     \clsdsp{The WindowManagementModule is responsible for recording all window related user interactions.}
 \end{class}
@@ -119,7 +119,7 @@
 \begin{class}{WindowStateChangedEventProducer} 
 	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WindowManagement/Producers/WindowStateChangedEventProducer.png}
     
-    \clsdcl{public class WindowStateChangedEventProducer : DefaultEventQueue<WindowStateChangedEvent>}
+    \clsdcl{public class WindowStateChangedEventProducer:\\\ DefaultEventQueue<WindowStateChangedEvent>}
 
     \clsdsp{A single-writer-multiple-reader queue for WindowStateChangedEvent}
 

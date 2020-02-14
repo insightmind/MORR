@@ -1,31 +1,31 @@
 \subsection{Webbrowser}
 
 \begin{class}{WebBrowserModule} 
-	\clsdiagram[scale = 0.45]{resources/Classes/Modules/WebBrowser/WebBrowserModule.png}
+	\clsdiagram[scale = 0.6]{resources/Classes/Modules/WebBrowser/WebBrowserModule.png}
 	
-    \clsdcl{public class WebBrowserModule : ICollectingModule}
+    \clsdcl{public class WebBrowserModule : IModule}
 
     \clsdsp{The WebBrowserModule is responsible for recording all browser related user interactions}
 
 \end{class}
 
 \begin{enum}{EventLabel}	
-	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/EventLabel.png}
+	\clsdiagram[scale = 1]{resources/Classes/Modules/WebBrowser/EventLabel.png}
 	
 	\clsdcl{public enum EventLabel}	
 	
 	\clsdsp{Enum used to map the incoming serialized data (from the browser extension)}
 	
 	\begin{elements}
-		\element{BUTTONCLICK}
-		\element{CLOSETAB}
-		\element{DOWNLOAD}
-		\element{HOVER}
-		\element{NAVIGATION}
-		\element{OPENTAB}
-		\element{SWITCHTAB}
-		\element{TEXTINPUT}
-		\element{TEXTSELECTION}
+		\element{BUTTONCLICK}{Maps to button click event}
+		\element{CLOSETAB}{Maps to close tab event}
+		\element{DOWNLOAD}{Maps to file download event}
+		\element{HOVER}{Maps to hover event}
+		\element{NAVIGATION}{Maps to navigation event}
+		\element{OPENTAB}{Maps to open tab event}
+		\element{SWITCHTAB}{Maps to switch tab event}
+		\element{TEXTINPUT}{Maps to text input event}
+		\element{TEXTSELECTION}{Maps to text selection event}
 	\end{elements}
 
 \end{enum}
@@ -196,6 +196,7 @@
 	
 	\begin{attributes}
 		\attribute{public virtual EventLabel HandledEventLabel}{The BrowserEvent label to be handled by the producer.}
+	\end{attributes}
 	
 	\begin{methods}
 		\begin{method}{public virtual void Notify(JsonElement eventJson)}{Simply forward the event to the internal queue if its of the appropriate type. Ignore otherwise.}
@@ -318,7 +319,7 @@
 \begin{class}{TextSelectionEventProducer} 
 	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/TextSelectionEventProducer.png}
     
-    \clsdcl{public class TextSelectionEventProducer : WebBrowserEventProducer<TextSelectionEvent>}
+    \clsdcl{public class TextSelectionEventProducer:\\\ WebBrowserEventProducer<TextSelectionEvent>}
 
     \clsdsp{Provides single-writer-multiple-reader queue for TextSelectionEvent}
 
