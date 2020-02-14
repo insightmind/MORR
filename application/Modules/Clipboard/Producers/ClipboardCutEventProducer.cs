@@ -9,10 +9,12 @@ namespace MORR.Modules.Clipboard.Producers
     ///     Provides a single-writer-multiple-reader queue for ClipboardCutEvent
     /// </summary>
     public class ClipboardCutEventProducer : DefaultEventQueue<ClipboardCutEvent>
-
     {
-        public void StartCapture()
+        private static INativeClipboard nativeClipboard;
+
+        public void StartCapture(INativeClipboard nativeCb)
         {
+            nativeClipboard = nativeCb;
             GlobalHook.IsActive = true;
             GlobalHook.AddListener(GlobalHookCallBack, GlobalHook.MessageType.WM_CUT);
         }
@@ -28,7 +30,7 @@ namespace MORR.Modules.Clipboard.Producers
 
         private void GlobalHookCallBack(GlobalHook.HookMessage message)
         {
-            var text = ClipboardNativeMethods.GetClipboardText();
+            var text = nativeClipboard.GetClipboardText();
 
             //create the corresponding new Event
             var clipboardCutEvent = new ClipboardCutEvent

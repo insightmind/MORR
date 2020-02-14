@@ -2,7 +2,6 @@
 using MORR.Modules.Clipboard.Native;
 using MORR.Shared.Events.Queue;
 using MORR.Shared.Hook;
-using MORR.Shared.Utility;
 
 namespace MORR.Modules.Clipboard.Producers
 {
@@ -10,10 +9,12 @@ namespace MORR.Modules.Clipboard.Producers
     ///     Provides a single-writer-multiple-reader queue for ClipboardPasteEvent
     /// </summary>
     public class ClipboardPasteEventProducer : DefaultEventQueue<ClipboardPasteEvent>
-
     {
-        public void StartCapture()
+        private static INativeClipboard nativeClipboard;
+
+        public void StartCapture(INativeClipboard nativeCb)
         {
+            nativeClipboard = nativeCb;
             GlobalHook.IsActive = true;
             GlobalHook.AddListener(GlobalHookCallBack, GlobalHook.MessageType.WM_PASTE);
         }
@@ -29,7 +30,7 @@ namespace MORR.Modules.Clipboard.Producers
 
         private void GlobalHookCallBack(GlobalHook.HookMessage message)
         {
-            var text = ClipboardNativeMethods.GetClipboardText();
+            var text = nativeClipboard.GetClipboardText();
 
             //create the corresponding new Event
             var clipboardPasteEvent = new ClipboardPasteEvent
