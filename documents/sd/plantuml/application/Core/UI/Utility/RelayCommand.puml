@@ -1,0 +1,12 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
+class RelayCommand {
+    + <<create>> RelayCommand(execute : Action<object>, canExecute : Predicate<object>?)
+    + CanExecute(parameter : object) : bool
+    + Execute(parameter : object)
+}
+!endsub
+RelayCommand .UP.|> ICommand
+@enduml

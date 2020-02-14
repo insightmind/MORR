@@ -17,9 +17,9 @@
 
     \clsdsp{Manages a tray icon}
 
-	\begin{attributes}
+    \begin{attributes}
+        \attribute{public Uri IconUri}{The uri of the icon shown in the tray.}
         \attribute{public string Tooltip}{The tooltip shown during hovering}
-        \attribute{public ImageSource IconSource}{The icon shown in the tray}
         \attribute{public ICommand Command}{The command to execute on left click}
         \attribute{public object CommandParameter}{The parameter of the command to execute on left click}
         \attribute{public new ContextMenu ContextMenu}{The context menu to show on right click}
@@ -109,7 +109,7 @@
 
 \end{class}
 
-\subsection*{ViewModels.Utility}
+\subsection*{Utility}
 
 \begin{class}{RelayCommand}
 	\clsdiagram[scale = 0.7]{resources/Classes/Core/UI/RelayCommand.png}

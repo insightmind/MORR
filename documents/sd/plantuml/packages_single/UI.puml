@@ -12,30 +12,15 @@ package "UI" #E6E6E6 {
         + ErrorMessage : string <<get>>
     }
 
-    class InformationDialog <<partial>> {
-        + InformationDialog()
-    }
+    !includesub ../application/Core/UI/Dialogs/InformationDialog.xaml.puml!default
 
-    class SaveDialog <<partial>> {
-        + SaveDialog()
-    }
+    !includesub ../application/Core/UI/Dialogs/SaveDialog.xaml.puml!default
 
-    class ApplicationViewModel {
-        + ApplicationViewModel()
-        + IsRecording : bool <<get>> <<set>>
-    }
+    !includesub ../application/Core/UI/ViewModels/ApplicationViewModel.puml!default
     
-    class NotifyIcon {
-        + NotifyIcon()
-        + Tooltip : string <<get>> <<set>>
-        + CommandParameter : object <<get>> <<set>>
-    }
+    !includesub ../application/Core/UI/Controls/NotifyIcon/NotifyIcon.puml!default
     
-    class RelayCommand {
-        + RelayCommand(execute:Action<object>, canExecute:Predicate<object>?)
-        + CanExecute(parameter:object) : bool
-        + Execute(parameter:object) : void
-    }
+    !includesub ../application/Core/UI/Utility/RelayCommand.puml!default
 
     interface ICommand {
 
@@ -49,13 +34,11 @@ package "UI" #E6E6E6 {
 
     }
 
-    class App <<partial>> {
-
-    }        
+    !includesub ../application/Core/UI/App.xaml.puml!default    
 }
 
 ' UI
-ApplicationViewModel --> "1" IRecordingManager : uses
+ApplicationViewModel --> "1" ISessionmanager : uses
 ApplicationViewModel o--> "n" ICommand
 App --> "1" ApplicationViewModel
 ApplicationViewModel o-> SaveDialog
