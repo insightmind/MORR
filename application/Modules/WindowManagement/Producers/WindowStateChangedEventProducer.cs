@@ -12,6 +12,8 @@ namespace MORR.Modules.WindowManagement.Producers
     /// </summary>
     public class WindowStateChangedEventProducer : DefaultEventQueue<WindowStateChangedEvent>
     {
+        private static INativeWindowManagement nativeWindowManagement;
+
         private const int SIZE_RESTORED = 0;
         private const int SIZE_MINIMIZED = 1;
         private const int SIZE_MAXIMIZED = 2;
@@ -41,8 +43,9 @@ namespace MORR.Modules.WindowManagement.Producers
                 GlobalHook.MessageType.WM_EXITSIZEMOVE
             };
 
-        public void StartCapture()
+        public void StartCapture(INativeWindowManagement nativeWM)
         {
+            nativeWindowManagement = nativeWM;
             GlobalHook.AddListener(WindowHookCallback, listenedMessageTypes);
             GlobalHook.IsActive = true;
         }
@@ -62,8 +65,8 @@ namespace MORR.Modules.WindowManagement.Producers
                 var @event = new WindowStateChangedEvent
                 {
                     IssuingModule = WindowManagementModule.Identifier,
-                    ProcessName = WindowManagementNativeMethods.GetProcessNameFromHwnd(msg.Hwnd),
-                    Title = WindowManagementNativeMethods.GetProcessNameFromHwnd(msg.Hwnd),
+                    ProcessName = nativeWindowManagement.GetProcessNameFromHwnd(msg.Hwnd),
+                    Title = nativeWindowManagement.GetProcessNameFromHwnd(msg.Hwnd),
                     // SIZE_MINIMIZED matches to the WindowState.Minimized in number
                     // SIZE_MAXIMIZED matches to the WindowState.Maximized in number
                     WindowState = (WindowState) msg.wParam
@@ -76,20 +79,20 @@ namespace MORR.Modules.WindowManagement.Producers
             {
                 windowUnderChangeHwnd = (int) msg.Hwnd;
                 windowRecBeforeChange = new Rectangle();
-                WindowManagementNativeMethods.GetWindowRect(windowUnderChangeHwnd, ref windowRecBeforeChange);
+                nativeWindowManagement.GetWindowRect(windowUnderChangeHwnd, ref windowRecBeforeChange);
             }
 
             if (msg.Type == (uint) GlobalHook.MessageType.WM_EXITSIZEMOVE)
             {
                 windowRecAfterChange = new Rectangle();
-                WindowManagementNativeMethods.GetWindowRect(windowUnderChangeHwnd, ref windowRecAfterChange);
-                if (!WindowManagementNativeMethods.IsRectSizeEqual(windowRecBeforeChange, windowRecAfterChange))
+                nativeWindowManagement.GetWindowRect(windowUnderChangeHwnd, ref windowRecAfterChange);
+                if (!nativeWindowManagement.IsRectSizeEqual(windowRecBeforeChange, windowRecAfterChange))
                 {
                     var @event = new WindowStateChangedEvent
                     {
                         IssuingModule = WindowManagementModule.Identifier,
-                        Title = WindowManagementNativeMethods.GetWindowTitleFromHwnd(msg.Hwnd),
-                        ProcessName = WindowManagementNativeMethods.GetProcessNameFromHwnd(msg.Hwnd),
+                        Title = nativeWindowManagement.GetWindowTitleFromHwnd(msg.Hwnd),
+                        ProcessName = nativeWindowManagement.GetProcessNameFromHwnd(msg.Hwnd),
                         WindowState = SIZE_RESTORED
                     };
                     Enqueue(@event);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using MORR.Modules.WindowManagement.Native;
 using MORR.Modules.WindowManagement.Producers;
 using MORR.Shared.Modules;
 using MORR.Shared.Utility;
@@ -36,7 +37,7 @@ namespace MORR.Modules.WindowManagement
         /// </summary>
         [Import]
         public WindowStateChangedEventProducer WindowStateChangedEventProducer { get; private set; }
-        
+
         public static Guid Identifier { get; } = new Guid("FAB5BC0D-8B33-4DFD-9FA3-C58E0F1435B5");
         Guid IModule.Identifier => Identifier;
 
@@ -71,10 +72,11 @@ namespace MORR.Modules.WindowManagement
 
         private void StartCapture()
         {
-            WindowFocusEventProducer?.StartCapture();
-            WindowMovementEventProducer?.StartCapture();
-            WindowResizingEventProducer?.StartCapture();
-            WindowStateChangedEventProducer?.StartCapture();
+            INativeWindowManagement nativeWM = new NativeWindowManagement();
+            WindowFocusEventProducer?.StartCapture(nativeWM);
+            WindowMovementEventProducer?.StartCapture(nativeWM);
+            WindowResizingEventProducer?.StartCapture(nativeWM);
+            WindowStateChangedEventProducer?.StartCapture(nativeWM);
         }
 
         private void StopCapture()
