@@ -1,7 +1,7 @@
 @startuml
 'skinparam monochrome true
 hide footbox
-title Event flow from KeyboardModule to MPEGEncoder
+title Event flow from KeyboardModule to JsonEncoder
 actor User
 
 participant ":KeyboardInteractEventProducer" as KeyboardEventProducer
@@ -10,14 +10,14 @@ activate KeyboardEventProducer
 create "keypressEvent :KeyboardInteractEvent" as KeyboardEvent
 KeyboardEventProducer -> KeyboardEvent : <<create>>
 KeyboardEventProducer <-- KeyboardEvent
-KeyboardEventProducer -> KeyboardEventProducer : enqueue(keypressEvent)
+KeyboardEventProducer -> KeyboardEventProducer : Enqueue(keypressEvent)
+activate KeyboardEventProducer
 deactivate KeyboardEventProducer
 
-participant ":MetadataCapture" as MetadataCapture
-MetadataCapture -> KeyboardEventProducer : GetEvents()
-activate MetadataCapture
-activate KeyboardEventProducer
-MetadataCapture <-- KeyboardEventProducer : <<keypressEvent>>
+participant ":JsonIntermediateFormatSerializer" as JsonIntermediateFormatSerializer
+JsonIntermediateFormatSerializer -> KeyboardEventProducer : GetEvents()
+activate JsonIntermediateFormatSerializer
+JsonIntermediateFormatSerializer <-- KeyboardEventProducer : <<keypressEvent>>
 note right
 This is an asynchronous stream
 that returns events in a loop
@@ -25,22 +25,19 @@ as they are enqueued
 end note
 deactivate KeyboardEventProducer
 
-create "metadataSample :MetadataSample" as MetadataSample
-MetadataCapture -> MetadataSample : <<create>>
-MetadataCapture <-- MetadataSample
-deactivate MetadataCapture
+create "intermediateFormatSample :JsonIntermediateFormatSample" as JsonIntermediateFormatSample
+JsonIntermediateFormatSerializer -> JsonIntermediateFormatSample : <<create>>
+JsonIntermediateFormatSerializer <-- JsonIntermediateFormatSample
+deactivate JsonIntermediateFormatSerializer
 
-participant ":RecordingManager" as RecordingManager
-participant ":MPEGEncoder" as MPEGEncoder
-activate MPEGEncoder
-MPEGEncoder -> RecordingManager : <<MetadataSampleRequestedEvent>>
-activate RecordingManager
-RecordingManager -> MetadataCapture : NextSample()
-activate MetadataCapture
-RecordingManager <-- MetadataCapture : <<metadataSample>>
-deactivate MetadataCapture
-MPEGEncoder <-- RecordingManager : <<metadataSample>>
-deactivate RecordingManager
-MPEGEncoder -> MPEGEncoder : <<perform encoding>>
+participant ":JsonEncoder" as JsonEncoder
+activate JsonEncoder
+JsonEncoder -> JsonIntermediateFormatSerializer : GetEvents()
+activate JsonIntermediateFormatSerializer
+JsonEncoder <-- JsonIntermediateFormatSerializer : <<intermediateFormatSample>>
+deactivate JsonIntermediateFormatSerializer
+JsonEncoder -> JsonEncoder : <<perform encoding>>
+activate JsonEncoder
+deactivate JsonEncoder
 
 @enduml

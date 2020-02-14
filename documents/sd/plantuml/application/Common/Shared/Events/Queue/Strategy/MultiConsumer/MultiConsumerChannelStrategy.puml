@@ -1,0 +1,13 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
+abstract class "MultiConsumerChannelStrategy<T: Event>" {
+    # StartReceiving(maxChannelConsumers: uint?) : void
+    + GetEvents(token: CancellationToken) : IAsyncEnumerable<T: Event>
+    + Enqueue(event: T) : void
+    # {abstract} CreateOfferingChannel() : Channel<T: Event>
+    # {abstract} CreateReceivingChannel() : Channel<T: Event>
+}
+!endsub
+@enduml

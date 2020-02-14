@@ -1,0 +1,11 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+!startsub default
+abstract class CommandOptions {
+    + IsVerbose: bool <<get>> <<set>>
+}
+!endsub
+
+@enduml

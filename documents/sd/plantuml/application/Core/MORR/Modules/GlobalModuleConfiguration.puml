@@ -1,0 +1,14 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+interface IConfiguration
+
+IConfiguration <|-- GlobalModuleConfiguration
+!startsub default
+class GlobalModuleConfiguration {
+    + EnabledModules : IEnumerable<Type> <<get>>
+    + Parse(RawConfiguration: configuration) : void
+}
+!endsub
+@enduml

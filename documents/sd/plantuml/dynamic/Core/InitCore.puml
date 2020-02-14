@@ -12,11 +12,11 @@ UIApp <-- TrayIcon
 create ":ApplicationViewModel" as ApplicationViewModel
 UIApp -> ApplicationViewModel : <<create>>
 activate ApplicationViewModel
-create ":RecordingManager" as RecordingManager
-ApplicationViewModel -> RecordingManager : <<create>>
-activate RecordingManager
+create ":SessionManager" as SessionManager
+ApplicationViewModel -> SessionManager : <<create>>
+activate SessionManager
 create ":Bootstrapper" as Bootstrapper
-RecordingManager -> Bootstrapper : <<create>>
+SessionManager -> Bootstrapper : <<create>>
 activate Bootstrapper
 create ":IEnumerable<IModule>" as IModulesImport
 Bootstrapper [#blue]-> IModulesImport : <<create>>
@@ -30,50 +30,55 @@ Implicitly created through MEF
 end note
 deactivate Bootstrapper
 create ":ModuleManager" as ModuleManager
-RecordingManager -> ModuleManager : <<create>>
-RecordingManager <-- ModuleManager
+SessionManager -> ModuleManager : <<create>>
+SessionManager <-- ModuleManager
 create ":ConfigurationManager" as ConfigurationManager
-RecordingManager -> ConfigurationManager : <<create>>
-RecordingManager <-- ConfigurationManager
+SessionManager -> ConfigurationManager : <<create>>
+SessionManager <-- ConfigurationManager
 
-RecordingManager -> Bootstrapper : ComposeImports(ModuleManager)
+SessionManager -> Bootstrapper : ComposeImports(ModuleManager)
 activate Bootstrapper
 Bootstrapper -> ModuleManager : <<Import IModules, GlobalModuleConfiguration through MEF>>
 deactivate Bootstrapper
-RecordingManager -> Bootstrapper : ComposeImports(ConfigurationManager)
+SessionManager -> Bootstrapper : ComposeImports(ConfigurationManager)
 activate Bootstrapper
 Bootstrapper -> ConfigurationManager : <<Import IConfiguration through MEF>>
-deactivate Bootstrapper
-
-RecordingManager -> ConfigurationManager : LoadConfiguration(path)
-activate ConfigurationManager
-ConfigurationManager -> IConfigurationsImport : <<foreach>> Parse(section)
-RecordingManager <-- ConfigurationManager
-deactivate ConfigurationManager
-
-RecordingManager -> ModuleManager : InitializeModules()
-activate ModuleManager
-ModuleManager -> IModulesImport : <<foreach>> Initialize()
-RecordingManager <-- ModuleManager
-deactivate ModuleManager
 
 create ":MPEGEncoder" as MPEGEncoder
-RecordingManager -> MPEGEncoder : <<create>>
-RecordingManager <-- MPEGEncoder
-create ":MPEGDecoder" as MPEGDecoder
-RecordingManager -> MPEGDecoder : <<create>>
-RecordingManager <-- MPEGDecoder
+Bootstrapper -> MPEGEncoder : <<create through MEF>>
+Bootstrapper <-- MPEGEncoder
+create ":JsonEncoder" as JsonEncoder
+Bootstrapper -> JsonEncoder : <<create through MEF>>
+Bootstrapper <-- JsonEncoder
+create ":JsonDecoder" as JsonDecoder
+Bootstrapper -> JsonDecoder : <<create through MEF>>
+Bootstrapper <-- JsonDecoder
 create ":DesktopCapture" as DesktopCapture
-RecordingManager -> DesktopCapture : <<create>>
-RecordingManager <-- DesktopCapture
-create ":MetadataCapture" as MetadataCapture
-RecordingManager -> MetadataCapture : <<create>>
-RecordingManager <-- MetadataCapture
-create ":MetadataDeserializer" as MetadataDeserializer
-RecordingManager -> MetadataDeserializer : <<create>>
-RecordingManager <-- MetadataDeserializer
-ApplicationViewModel <-- RecordingManager
-deactivate RecordingManager
+Bootstrapper -> DesktopCapture : <<create through MEF>>
+Bootstrapper <-- DesktopCapture
+create ":JsonIntermediateFormatSerializer" as JsonIntermediateFormatSerializer
+Bootstrapper -> JsonIntermediateFormatSerializer : <<create through MEF>>
+Bootstrapper <-- JsonIntermediateFormatSerializer
+create ":JsonIntermediateFormatDeserializer" as JsonIntermediateFormatDeserializer
+Bootstrapper -> JsonIntermediateFormatDeserializer : <<create through MEF>>
+Bootstrapper <-- JsonIntermediateFormatDeserializer
+
+deactivate Bootstrapper
+
+SessionManager -> ConfigurationManager : LoadConfiguration(path)
+activate ConfigurationManager
+ConfigurationManager -> IConfigurationsImport : <<foreach>> Parse(section)
+SessionManager <-- ConfigurationManager
+deactivate ConfigurationManager
+
+SessionManager -> ModuleManager : InitializeModules()
+activate ModuleManager
+ModuleManager -> IModulesImport : <<foreach>> Initialize()
+SessionManager <-- ModuleManager
+deactivate ModuleManager
+
+ApplicationViewModel <-- SessionManager
+deactivate SessionManager
 UIApp <-- ApplicationViewModel
 deactivate ApplicationViewModel
 deactivate UIApp

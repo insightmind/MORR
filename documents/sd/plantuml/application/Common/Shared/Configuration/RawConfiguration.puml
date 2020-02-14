@@ -1,0 +1,10 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
+class RawConfiguration {
+    + RawValue: string
+    + <<create>> RawConfiguration(rawValue: string)
+}
+!endsub
+@enduml

@@ -1,0 +1,11 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+!startsub default
+interface IInteractiveCommandLine {
+    + Launch(cancelAction: Action) : void
+}
+!endsub
+
+@enduml

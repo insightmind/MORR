@@ -1,8 +1,12 @@
 @startuml
 skinparam monochrome true
 skinparam classAttributeIconSize 0
-
+!startsub default
 class DecodingException {
+    + <<create>> DecodingException()
+    + <<create>> DecodingException(message: string)
+    + <<create>> DecodingException(message: string, innerException: Exception)
 }
+!endsub
 Exception <|-- DecodingException
 @enduml

@@ -1,8 +1,9 @@
 @startuml
 skinparam monochrome true
 skinparam classAttributeIconSize 0
-
+!startsub default
 interface IBootstrapper {
-    + ComposeImports(@object:object) : void
+    + ComposeImports(object:object) : void
 }
+!endsub
 @enduml

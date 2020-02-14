@@ -1,0 +1,12 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+!startsub default
+abstract class "SupportDeserializationEventQueue<T: Event>" {
+    # <<create>> SupportDeserializationEventQueue(storageStrategy: IEventQueueStorageStrategy<T: Event>)
+    + Enqueue(event: T) : void
+}
+!endsub
+
+@enduml

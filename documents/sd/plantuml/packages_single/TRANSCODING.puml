@@ -5,8 +5,40 @@ skinparam classAttributeIconSize 0
 
 left to right direction
 hide empty fields
-!includesub ../MORR.puml!TRANSCODING
-!includesub ../MORR.puml!TRANSCODING_INTERNAL
-!includesub ../MORR.puml!TRANSCODING_MPEG_INTERNAL
-!includesub ../MORR.puml!EXCEPTIONS
+!startsub default
+package Transcoding #E6E6E6 {
+    !includesub ../application/Core/MORR/Data/Transcoding/IDecoder.puml!default
+
+    !includesub ../application/Core/MORR/Data/Transcoding/IEncoder.puml!default
+
+    package Exceptions as TranscodingExceptions #BFBFBF {
+        !includesub ../application/Core/MORR/Data/Transcoding/Exceptions/DecodingException.puml!default
+        !includesub ../application/Core/MORR/Data/Transcoding/Exceptions/EncodingException.puml!default
+    }
+
+    package Mpeg #BFBFBF {
+        !includesub ../application/Core/MORR/Data/Transcoding/MPEG/MPEGEncoder.puml!default
+        
+        !includesub ../application/Core/MORR/Data/Transcoding/MPEG/MPEGEncoderConfiguration.puml!default
+    }
+
+    package Json as JsonTranscoding #BFBFBF {
+        !includesub ../application/Core/MORR/Data/Transcoding/Json/JsonDecoder.puml!default
+        !includesub ../application/Core/MORR/Data/Transcoding/Json/JsonDecoderConfiguration.puml!default
+
+        !includesub ../application/Core/MORR/Data/Transcoding/Json/JsonEncoder.puml!default
+        !includesub ../application/Core/MORR/Data/Transcoding/Json/JsonEncoderConfiguration.puml!default
+    }
+
+    IEncoder <|.. MpegEncoder
+    IDecoder <|.. JsonDecoder
+    IEncoder <|.. JsonEncoder
+    MpegEncoder --* "1 Configuration" MpegEncoderConfiguration
+    JsonEncoder --* "1 Configuration" JsonEncoderConfiguration
+    JsonDecoder --* "1 Configuration" JsonDecoderConfiguration
+    JsonDecoder ..> DecodingException: "throws"
+    MpegEncoder ..> EncodingException: "throws"
+    JsonEncoder ..> EncodingException: "throws"
+}
+!endsub
 @enduml

@@ -1,18 +1,22 @@
 @startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
 class NotifyIcon {
-    + NotifyIcon()
+    + <<create>> NotifyIcon()
     + Tooltip : string <<get>> <<set>>
     + CommandParameter : object <<get>> <<set>>
+    + IconUri : Uri
     + Dispose() : void
 }
+!endsub
 Control <|-- NotifyIcon
-IDisposable <|-- NotifyIcon
-NotifyIcon o-> "CommandProperty" DependencyProperty
+IDisposable <|.. NotifyIcon
+/'NotifyIcon o-> "CommandProperty" DependencyProperty
 NotifyIcon o-> "CommandParameterProperty" DependencyProperty
 NotifyIcon o-> "ContextMenuProperty" DependencyProperty
 NotifyIcon o-> "IconSourceProperty" DependencyProperty
-NotifyIcon o-> "TooltipProperty" DependencyProperty
-NotifyIcon --> "IconSource" ImageSource
+NotifyIcon o-> "TooltipProperty" DependencyProperty'/
 NotifyIcon --> "Command" ICommand
 NotifyIcon --> "ContextMenu" ContextMenu
 @enduml

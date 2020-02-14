@@ -1,7 +1,0 @@
-@startuml
-skinparam monochrome true
-skinparam classAttributeIconSize 0
-
-RecordingException <|-- AlreadyRecordingException
-Exception <|-- RecordingException
-@enduml

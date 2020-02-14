@@ -1,0 +1,11 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
+class NotRecordingException {
+
+}
+!endsub default
+RecordingException <|-- NotRecordingException
+Exception <|-- RecordingException
+@enduml

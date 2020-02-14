@@ -1,24 +1,19 @@
 @startuml Program
 skinparam monochrome true
+skinparam linetype ortho
 skinparam classAttributeIconSize 0
 hide empty fields
-
+!startsub default
 class Program {
-    {static} Main(args:string[]) : void
+    + {static} Main(args:string[]) : int
 }
+!endsub
 
-class ICLICommand {
-    + ExecuteCommand(options: Options)
-}
+!includesub Commands/Command.puml!default
+!includesub Commands/CommandOptions.puml!default
 
-class OutputFormatter {
-    + Verbose: bool <<get>>
+Program ..> "ICommand<T: CommandOptions>" : "uses"
+Program ..> CommandOptions : "uses"
+"ICommand<T: CommandOptions>" ..> CommandOptions
 
-    + PrintMessage(message: string, verbose: bool) : void
-    + PrintException(exception: Exception) : void
-}
-
-Program o-> ICLICommand
-Program --> OutputFormatter
-Program --> IRecordingManager
 @enduml

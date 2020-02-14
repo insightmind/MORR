@@ -4,17 +4,15 @@ skinparam linetype ortho
 
 package "MORR" {
     package "CORE" #E6E6E6 {
+        package "TRANSCODING" #E6E6E6 {
+            package "MPEG" #BFBFBF {
 
-    }
+            }
 
-    package "TRANSCODING" #E6E6E6 {
-        package "MPEG" #BFBFBF {
+            package "JSON" #BFBFBF {
 
+            } 
         }
-
-        package "CSV" #BFBFBF {
-
-        } 
     }
 
     package "UI" #E6E6E6 {
@@ -55,7 +53,6 @@ package "MORR" {
     CLI --> CORE
     UI --> CORE
     CORE --> SHARED
-    CORE --> TRANSCODING
     CORE --> MODULES
     MODULES --> SHARED
 }

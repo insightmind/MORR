@@ -1,0 +1,10 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
+class Utility {
+    + {static} SetAndDispatch(variable: bool, value: bool, onTrue: Action, onFalse: Action)
+    + {static} GetTypeFromAnyAssembly(type: string)
+}
+!endsub
+@enduml
