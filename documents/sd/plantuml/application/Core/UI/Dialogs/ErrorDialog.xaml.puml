@@ -1,6 +1,6 @@
 @startuml
 class ErrorDialog <<partial>> {
-    + ErrorDialog(errorMessage:string)
+    + <<create>> ErrorDialog(errorMessage:string)
     + ErrorMessage : string <<get>>
 }
 Window <|-- ErrorDialog

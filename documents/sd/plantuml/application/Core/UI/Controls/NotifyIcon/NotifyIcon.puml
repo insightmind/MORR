@@ -1,12 +1,14 @@
 @startuml
+!startsub default
 class NotifyIcon {
     + NotifyIcon()
     + Tooltip : string <<get>> <<set>>
     + CommandParameter : object <<get>> <<set>>
     + Dispose() : void
 }
+!endsub
 Control <|-- NotifyIcon
-IDisposable <|-- NotifyIcon
+IDisposable <|.. NotifyIcon
 NotifyIcon o-> "CommandProperty" DependencyProperty
 NotifyIcon o-> "CommandParameterProperty" DependencyProperty
 NotifyIcon o-> "ContextMenuProperty" DependencyProperty

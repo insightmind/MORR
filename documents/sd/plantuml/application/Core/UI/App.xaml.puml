@@ -1,5 +1,7 @@
 @startuml
+!startsub default
 class App <<partial>> {
 }
+!endsub
 Application <|-- App
 @enduml

@@ -1,0 +1,29 @@
+@startuml
+!startsub default
+class NativeMethods {
+    
+}
+/'class "<<Struct>> NotifyIconData" as NotifyIconData {
+
+}
+class "<<Struct>> WindowClass" as WindowClass {
+    
+}
+class "<<Struct>> Win32Point" as Win32Point {
+    
+}
+
+enum WindowMessages
+enum NotifyIconFlags
+enum NotifyIconInfoFlags
+enum NotifyIconMessage
+enum NotifyIconState
+enum NotifyIconVersion
+WindowMessages +-UP- NativeMethods
+NotifyIconFlags +-UP- NativeMethods
+NotifyIconInfoFlags +-UP- NativeMethods
+NotifyIconMessage +-UP- NativeMethods
+NotifyIconState +-UP- NativeMethods
+NotifyIconVersion +-UP- NativeMethods'/
+!endsub
+@enduml

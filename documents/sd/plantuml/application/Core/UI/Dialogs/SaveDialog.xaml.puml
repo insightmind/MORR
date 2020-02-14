@@ -1,6 +1,8 @@
 @startuml
+!startsub default
 class SaveDialog <<partial>> {
-    + SaveDialog()
+    + <<create>> SaveDialog()
 }
+!endsub
 Window <|-- SaveDialog
 @enduml

@@ -1,6 +1,8 @@
 @startuml
+!startsub default
 class InformationDialog <<partial>> {
-    + InformationDialog()
+    + <<create>> InformationDialog()
 }
+!endsub
 Window <|-- InformationDialog
 @enduml

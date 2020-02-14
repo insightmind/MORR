@@ -1,0 +1,11 @@
+@startuml
+!startsub default
+class RelayCommand {
+    + <<create>> RelayCommand(execute : Action<object>, canExecute : Predicate<object>?)
+    + CanExecuteChanged : event EventHandler
+    + CanExecute(parameter : object) : bool
+    + Execute(parameter : object)
+}
+!endsub
+RelayCommand .UP.|> ICommand
+@enduml
