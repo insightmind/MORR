@@ -2,6 +2,7 @@
 \chapter{Statistics}
 \DTLloaddb{Author}{stats/authors.csv}
 \DTLloaddb{LOC}{stats/loc.csv}
+\DTLloaddb{LOCTESTS}{stats/loctests.csv}
 \DTLsetpiesegmentcolor{1}{blue}
 \DTLsetpiesegmentcolor{2}{red}
 \DTLsetpiesegmentcolor{3}{green}
@@ -23,9 +24,20 @@
 
 \begin{figure}[htbp]
 \setlength{\DTLbaroutlinewidth}{1pt}
+\setlength{\DTLbarwidth}{0.8cm}
 \centering
 \DTLbarchart{variable=\theQuantity,barlabel=\theName,%
 upperbarlabel=\theQuantity,verticalbars=false}{LOC}{%
 \theQuantity=lines,\theName=Language}
-\caption*{Lines of code per language}
+\caption*{Lines of code per language (excluding tests)}
+\end{figure}
+
+\begin{figure}[htbp]
+\setlength{\DTLbaroutlinewidth}{1pt}
+\setlength{\DTLbarwidth}{0.8cm}
+\centering
+\DTLbarchart{variable=\theQuantity,barlabel=\theName,%
+upperbarlabel=\theQuantity,verticalbars=false}{LOCTESTS}{%
+\theQuantity=lines,\theName=Language}
+\caption*{Lines of code per language (including tests)}
 \end{figure}
