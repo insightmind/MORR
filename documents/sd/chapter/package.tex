@@ -36,95 +36,189 @@ The \textbf{MORR} package is the master package containing the whole application
     \includegraphics[width=1.0\textwidth]{resources/Packages/CORE.png}
 \end{center}
 
-The \textbf{CORE} package contains the central initializing logic to be called when the program is started and coordinates state-changes while the application is running.
+The \textbf{CORE} package contains the compositional facilities required for dynamic composition of the application.
 
 \begin{packif}
-\packobj{IModuleManager}
 \packobj{IBootstrapper}
-\packobj{IConfigurationManager}
-\packobj{ISessionManager}
 \end{packif}
 
 \begin{packclass}
-\packobj{SessionManager}
 \packobj{Bootstrapper}
-\packobj{ModuleManager}
+\packobj{BootstrapperConventions}
+\end{packclass}
+
+\begin{packpack}
+\packobj{CONFIGURATION}
+\packobj{DATA}
+\packobj{MODULES}
+\packobj{SESSION}
+\end{packpack}
+
+\section*{MORR.CORE.CONFIGURATION}
+
+The \textbf{CORE.CONFIGURATION} package is responsible for configuration of the application.
+
+\begin{packif}
+\packobj{IConfigurationManager}
+\end{packif}
+
+\begin{packclass}
 \packobj{ConfigurationManager}
-\packobj{RecordingException}
 \packobj{InvalidConfigurationException}
-\packobj{AlreadyRecordingException}
-\packobj{NotRecordingException}
-\packobj{GlobalModuleConfiguration}
 \end{packclass}
 
+\section*{MORR.CORE.DATA}
+
+The \textbf{CORE.DATA} package contains all subpackages responsible for data handling.
+
 \begin{packpack}
-\packobj{TRANSCODING}
 \packobj{CAPTURE}
+\packobj{INTERMEDIATEFORMAT}
+\packobj{TRANSCODING}
 \end{packpack}
 
-\section*{MORR.CORE.TRANSCODING}
+\section*{MORR.CORE.DATA.CAPTURE}
 
-The \textbf{CORE.TRANSCODING} package is responsible for serialization and deserialization of recorded video-, audio- and event-data.
-
-\begin{packif}
-\packobj{IDecoder}
-\packobj{IEncoder}
-\packobj{IMetadataDeserializer}
-\end{packif}
+The \textbf{CORE.DATA.CAPTURE} package is responsible for data capture that does not come from modules.
 
 \begin{packclass}
-\packobj{\abstract{VideoSample}}
-\packobj{\abstract{MetadataSample}}
-\packobj{DecodingException}
-\packobj{EncodingException}
 \packobj{CaptureException}
-\packobj{IntermediateFormatSample}
-\packobj{IntermediateFormatSerializer}
-\packobj{IntermediateFormatDeserializer}
-\packobj{JsonIntermediateFormatSample}
-\packobj{VideoCaptureException}
-\packobj{VideoSample}
-\packobj{MonitorEnumerationHelper}
 \end{packclass}
 
 \begin{packpack}
-\packobj{CSV}
-\packobj{MPEG}
+\packobj{VIDEO}
 \end{packpack}
 
-\section*{MORR.CORE.TRANSCODING.Json}
-The \textbf{CORE.TRANSCODING.Json} package is responsible for providing functionality which allows for encoding of event data to Json format.
+\section*{MORR.CORE.DATA.CAPTURE.VIDEO}
+
+The \textbf{CORE.DATA.CAPTURE.VIDEO} package is responsible for video capture.
 
 \begin{packclass}
-\packobj{JsonEncoder}
-\packobj{JsonDecoder}
+\packobj{DirectXVideoSample}
+\packobj{VideoSample}
 \end{packclass}
 
-\section*{MORR.CORE.TRANSCODING.MPEG}
-The \textbf{CORE.TRANSCODING.MPEG} package allows for storing video-, audio- and event-data in a MPEG container and also retrieving this data again from such a container.
+\begin{packpack}
+\packobj{DESKTOP}
+\packobj{EXCEPTIONS}
+\end{packpack}
+
+\section*{MORR.CORE.DATA.CAPTURE.VIDEO.EXCEPTIONS}
 
 \begin{packclass}
-\packobj{MPEGDecoder}
-\packobj{MPEGDecoderConfiguration}
+\packobj{VideoCaptureException}
 \end{packclass}
 
-\section*{MORR.CORE.CAPTURE}
+\section*{MORR.CORE.DATA.CAPTURE.VIDEO.DESKTOP}
 
-The \textbf{CORE.CAPTURE} package is responsible for capturing and supplying samples to the encoders.
-
-\begin{packif}
-\packobj{IVideoCapture}
-\packobj{IMetadataCapture}
-\end{packif}
+The \textbf{CORE.DATA.CAPTURE.VIDEO.DESKTOP} package is responsible for desktop video capture.
 
 \begin{packclass}
 \packobj{DesktopCapture}
 \packobj{DesktopCaptureConfiguration}
-\packobj{CaptureHelper}
-\packobj{Direct3D11Helper}
-\packobj{DirectXVideoSample}
-\packobj{CaptureException}
-\packobj{VideoCaptureException}
+\packobj{VideoSampleProducer}
+\end{packclass}
+
+\section*{MORR.CORE.DATA.INTERMEDIATEFORMAT}
+
+The \textbf{CORE.DATA.INTERMEDIATEFORMAT} package is responsible for intermediate format representations.
+
+\begin{packclass}
+\packobj{IntermediateFormatSample}
+\end{packclass}
+
+\begin{packpack}
+\packobj{JSON}
+\end{packpack}
+
+\section*{MORR.CORE.DATA.INTERMEDIATEFORMAT.JSON}
+
+The \textbf{CORE.DATA.INTERMEDIATEFORMAT.JSON} package is responsible for JSON intermediate format representations.
+
+\begin{packclass}
+\packobj{JsonIntermediateFormatSample}
+\packobj{JsonIntermediateFormatSerializer}
+\packobj{JsonIntermediateFormatDeserializer}
+\end{packclass}
+
+\section*{MORR.CORE.DATA.TRANSCODING}
+
+The \textbf{CORE.DATA.TRANSCODING} package is responsible for transcoding.
+
+\begin{packif}
+\packobj{IDecoder}
+\packobj{IEncoder}
+\end{packif}
+
+\begin{packpack}
+    \packobj{EXCEPTIONS}
+    \packobj{JSON}
+    \packobj{MPEG}
+\end{packpack}
+
+\section*{MORR.CORE.DATA.TRANSCODING.EXCEPTIONS}
+
+\begin{packclass}
+\packobj{DecodingException}
+\packobj{EncodingException}
+\end{packclass}
+
+\section*{MORR.CORE.DATA.TRANSCODING.JSON}
+
+The \textbf{CORE.DATA.TRANSCODING.JSON} package is responsible for JSON format transcoding.
+
+\begin{packclass}
+    \packobj{JsonDecoder}
+    \packobj{JsonDecoderConfiguration}
+    \packobj{JsonEncoder}
+    \packobj{JsonEncoderConfiguration}
+\end{packclass}
+
+\section*{MORR.CORE.DATA.TRANSCODING.MPEG}
+
+The \textbf{CORE.DATA.TRANSCODING.MPEG} package is responsible for MPEG format transcoding.
+
+\begin{packclass}
+    \packobj{MpegEncoder}
+    \packobj{MpegEncoderConfiguration}
+\end{packclass}
+
+\section*{MORR.CORE.MODULES}
+
+The \textbf{CORE.MODULES} package is responsible for module management.
+
+\begin{packif}
+\packobj{IModuleManager}
+\end{packif}
+
+\begin{packclass}
+\packobj{GlobalModuleConfiguration}
+\packobj{ModuleManager}
+\end{packclass}
+
+\section*{MORR.CORE.SESSION}
+
+The \textbf{CORE.SESSION} package is responsible for session management.
+
+\begin{packif}
+\packobj{ISessionManager}
+\end{packif}
+
+\begin{packclass}
+\packobj{SessionConfiguration}
+\packobj{SessionManager}
+\end{packclass}
+
+\begin{packpack}
+\packobj{EXCEPTIONS}
+\end{packpack}
+
+\section*{MORR.CORE.SESSION.EXCEPTIONS}
+
+\begin{packclass}
+\packobj{AlreadyRecordingException}
+\packobj{NotRecordingException}
+\packobj{RecordingException}
 \end{packclass}
 
 \newpage
