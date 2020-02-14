@@ -3,10 +3,14 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 
 class MouseClickEvent {
-    + HWnd: IntPtr
+    + HWnd : string <<get>> <<set>>
+    + MouseAction : MouseAction <<get>> <<set>>
 }
+abstract class MouseEvent {
+    + MousePosition : Point <<get>> <<set>>
+}
+abstract class Event
 MouseEvent <|-- MouseClickEvent
 Event <|-- MouseEvent
-MouseClickEvent --> "Button" MouseButton
-MouseClickEvent --> "State" MouseButtonState
+
 @enduml

@@ -4,8 +4,12 @@ skinparam classAttributeIconSize 0
 
 class MouseScrollEvent {
     + ScrollAmount : short <<get>> <<set>>
-    + HWnd: IntPtr
+    + HWnd : string <<get>> <<set>>
 }
+abstract class MouseEvent {
+    + MousePosition : Point <<get>> <<set>>
+}
+abstract class Event
 MouseEvent <|-- MouseScrollEvent
 Event <|-- MouseEvent
 @enduml

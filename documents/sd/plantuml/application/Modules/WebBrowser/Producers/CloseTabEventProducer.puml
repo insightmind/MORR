@@ -1,0 +1,12 @@
+@startuml
+skinparam monochrome true
+skinparam ClassAttributeIconSize 0
+class CloseTabEventProducer {
+    + <<override>> Notify(eventJson:JsonElement) : void
+}
+class "WebBrowserEventProducer<T>" {
+}
+enum "EventLabel"
+"WebBrowserEventProducer<T>" "<CloseTabEvent>" <|-- CloseTabEventProducer
+CloseTabEventProducer --> "HandledEventLabel" EventLabel
+@enduml

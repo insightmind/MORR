@@ -6,9 +6,12 @@ class TextSelectionEvent {
     + SelectedText : string <<get>> <<set>>
 }
 abstract class WebBrowserEvent {
-    + TabID: Guid
-    + CurrentURL: Uri
+    + TabID : int <<get>> <<set>>
+    + Deserialize(serialized:string) : void
+    + Deserialize(parsed:JsonElement) : void
+    + CurrentURL : Uri <<get>> <<set>>
 }
+abstract class Event
 WebBrowserEvent <|-- TextSelectionEvent
 Event <|-- WebBrowserEvent
 @enduml

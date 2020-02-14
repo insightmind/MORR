@@ -5,9 +5,12 @@ skinparam classAttributeIconSize 0
 class NavigationEvent {
 }
 abstract class WebBrowserEvent {
-    + TabID: Guid
-    + CurrentURL: Uri
+    + TabID : int <<get>> <<set>>
+    + Deserialize(serialized:string) : void
+    + Deserialize(parsed:JsonElement) : void
+    + CurrentURL : Uri <<get>> <<set>>
 }
+abstract class Event
 WebBrowserEvent <|-- NavigationEvent
 Event <|-- WebBrowserEvent
 @enduml

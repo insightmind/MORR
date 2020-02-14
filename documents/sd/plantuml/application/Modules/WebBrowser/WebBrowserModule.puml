@@ -5,13 +5,21 @@ skinparam classAttributeIconSize 0
 class WebBrowserModule {
 }
 
-ICollectingModule <|-- WebBrowserModule
 
 interface IModule {
     + Identifier : Guid
-    + IsEnabled : bool <<get>> <<set>>
+    + IsActive : bool <<get>> <<set>>
     + Initialize() : void
 }
 
-IModule <|-- ICollectingModule
+IModule <|-- WebBrowserModule
+WebBrowserModule --> "ButtonClickEventProducer" ButtonClickEventProducer
+WebBrowserModule =-> "CloseTabEventProducer" CloseTabEventProducer
+WebBrowserModule ---> "FileDownloadEventProducer" FileDownloadEventProducer
+WebBrowserModule ---> "HoverEventProducer" HoverEventProducer
+WebBrowserModule --> "NavigationEventProducer" NavigationEventProducer
+WebBrowserModule ---> "OpenTabEventProducer" OpenTabEventProducer
+WebBrowserModule ---> "SwitchTabEventProducer" SwitchTabEventProducer
+WebBrowserModule --> "TextInputEventProducer" TextInputEventProducer
+WebBrowserModule ---> "  TextSelectionEventProducer" TextSelectionEventProducer
 @enduml

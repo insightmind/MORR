@@ -3,7 +3,10 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 
 class MouseMoveEvent {
-    + Movement : Vector2
+}
+abstract class Event
+abstract class MouseEvent {
+    + MousePosition : Point <<get>> <<set>>
 }
 MouseEvent <|-- MouseMoveEvent
 Event <|-- MouseEvent

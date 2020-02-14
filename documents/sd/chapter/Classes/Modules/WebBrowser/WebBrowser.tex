@@ -1,12 +1,47 @@
 \subsection{Webbrowser}
 
 \begin{class}{WebBrowserModule} 
-	\clsdiagram[scale = 0.45]{resources/Classes/Modules/WebBrowser/WebBrowserModule.png}
+	\clsdiagram[scale = 0.6]{resources/Classes/Modules/WebBrowser/WebBrowserModule.png}
 	
-    \clsdcl{public class WebBrowserModule : ICollectingModule}
+    \clsdcl{public class WebBrowserModule : IModule}
 
     \clsdsp{The WebBrowserModule is responsible for recording all browser related user interactions}
 
+\end{class}
+
+\begin{enum}{EventLabel}	
+	\clsdiagram[scale = 1]{resources/Classes/Modules/WebBrowser/EventLabel.png}
+	
+	\clsdcl{public enum EventLabel}	
+	
+	\clsdsp{Enum used to map the incoming serialized data (from the browser extension)}
+	
+	\begin{elements}
+		\element{BUTTONCLICK}{Maps to button click event}
+		\element{CLOSETAB}{Maps to close tab event}
+		\element{DOWNLOAD}{Maps to file download event}
+		\element{HOVER}{Maps to hover event}
+		\element{NAVIGATION}{Maps to navigation event}
+		\element{OPENTAB}{Maps to open tab event}
+		\element{SWITCHTAB}{Maps to switch tab event}
+		\element{TEXTINPUT}{Maps to text input event}
+		\element{TEXTSELECTION}{Maps to text selection event}
+	\end{elements}
+
+\end{enum}
+
+\subsection*{Configuration}
+
+\begin{class}{WebBrowserModuleConfiguration}
+	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/WebBrowserModuleConfiguration.png}
+	
+	\clsdcl{public class WebBrowserModuleConfiguration: IConfiguration}
+	
+	\clsdsp{Configuration for WebBrowser module}
+	
+	\begin{attributes}
+		\attribute{public string UrlSuffix}{A combination of port number and optionally directory.}
+	\end{attributes}
 \end{class}
 
 \subsection*{Events}
@@ -19,9 +54,22 @@
     \clsdsp{A generic web browser event which all specific WebBrowserEvents inherit from}
 
     \begin{attributes}
-        \attribute{public Guid TabID}{The identifier of the tab where the web browser event occured in}
+        \attribute{public int TabID}{The identifier of the tab where the web browser event occured in}
         \attribute{public Uri CurrentURL}{The URL of the website where the web browser event occured in}
     \end{attributes}
+    
+    \begin{methods}
+    	\begin{method}{public void Deserialize(string serialized)}{Deserialize a browser event from a string.}
+    		\begin{parameters}
+    			\para{string serialized}{The serialized event}
+    		\end{parameters}
+    	\end{method}
+    	\begin{method}{public void Deserialize(JsonElement parsed)}{Deserialize a browser event from a JSONElement instance.}
+    		\begin{parameters}	
+    			\para{JsonElement parsed}{A JSONElement parsed from a serialized event.}
+    		\end{parameters}
+    	\end{method}
+    \end{methods}
 
 \end{absclass}
 
@@ -34,7 +82,7 @@
 
     \begin{attributes}
         \attribute{public string Button}{The title of the button item that was clicked on the website}
-        \attribute{public Uri URL}{The URL of the website that the button is linked to}
+        \attribute{public string Href}{The URL of the website that the button is linked to}
     \end{attributes}
 \end{class}
 
@@ -68,7 +116,7 @@
     \clsdsp{A hover user interaction}
 
     \begin{attributes}
-        \attribute{public string HoverElement}{The element on the website that has been hovered}
+        \attribute{public string HoveredElement}{The element on the website that has been hovered}
     \end{attributes}
 \end{class}
 
@@ -98,7 +146,7 @@
     \clsdsp{A switch tab user interaction}
 
     \begin{attributes}
-        \attribute{public Guid NewTabID}{The identifier of the tab that the user switched to}
+        \attribute{public int NewTabID}{The identifier of the tab that the user switched to}
     \end{attributes}
 \end{class}
 
@@ -129,174 +177,144 @@
 
 \subsection*{Producers}
 
-\begin{class}{ButtonClickEventProducer : EventQueue<ButtonClickEvent>} 
+\begin{absclass}{WebBrowserEventProducer}
+	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/WebBrowserEventProducer.png}
+	
+	\clsdcl{public abstract class WebBrowserEventProducer<T> : DefaultEventQueue<T>, IWebBrowserEventObserver where T : WebBrowserEvent}
+	
+	\clsdsp{A generic producer for WebBrowserEvents, which will need to be subscribed to a IWebBrowserEventObserver to gather incoming event data.}
+	
+	\begin{attributes}
+		\attribute{public virtual EventLabel HandledEventLabel}{The BrowserEvent label to be handled by the producer.}
+	\end{attributes}
+	
+	\begin{methods}
+		\begin{method}{public virtual void Notify(JsonElement eventJson)}{Simply forward the event to the internal queue if its of the appropriate type. Ignore otherwise.}
+			\begin{parameters}
+				\para{JsonElement eventJson}{A JsonElement holding an event.}
+			\end{parameters}
+			
+			\begin{exceptions}
+				\excp{NotSupportedException}{Exception is thrown when trying to invoke notify() on abstract WebBrowserEventProducer.}
+			\end{exceptions}
+			
+		\end{method}
+		
+		\begin{method}{public void EnqueueFinished()}{Lets consumers know that no more events will be enqueued.}
+		\end{method}
+	
+	\end{methods}
+\end{absclass}
+			
+\begin{class}{ButtonClickEventProducer}
+ 
 	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/ButtonClickEventProducer.png}
     
-    \clsdcl{public class ButtonClickEventProducer}
+    \clsdcl{public class ButtonClickEventProducer : WebBrowserEventProducer<ButtonClickEvent>}
 
-    \clsdsp{A single-writer-multiple-reader queue for ButtonClickEvent}
-
-    \begin{methods}
-        \begin{method}{public override IAsyncEnumerable<ButtonClickEvent> GetEvents()}{Asynchronously gets all button click events}
-          \return{IAsyncEnumerable<ButtonClickEvent>}{A stream of ButtonClickEvent}
-        \end{method}
-        \begin{method}{protected override void Enqueue(ButtonClickEvent event)}{Asynchronously enqueues a new button click event}
-            \begin{parameters}
-                \para{ButtonClickEvent event}{ButtonClickEvent to enqueue}
-            \end{parameters}
-        \end{method}
-    \end{methods}
+    \clsdsp{Provides single-writer-multiple-reader queue for ButtonClickEvent}
+    
+    \begin{attributes}
+    	\attribute{public override EventLabel HandledEventLabel => EventLabel.BUTTONCLICK}{The BrowserEvent label to be handled by ButtonClickEventProducer.}
+    \end{attributes}
+    
 \end{class}
 
 \begin{class}{CloseTabEventProducer} 
 	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/CloseTabEventProducer.png}
     
-    \clsdcl{public class CloseTabEventProducer : EventQueue<CloseTabEvent>}
+    \clsdcl{public class CloseTabEventProducer : WebBrowserEventProducer<CloseTabEvent>}
 
-    \clsdsp{A single-writer-multiple-reader queue for CloseTabEvent}
+    \clsdsp{Provides single-writer-multiple-reader queue for CloseTabEvent}
+    
+    \begin{attributes}
+    	\attribute{public override EventLabel HandledEventLabel => EventLabel.CLOSETAB}{The BrowserEvent label to be handled by CloseTabEventProducer.}
+    \end{attributes}
 
-    \begin{methods}
-        \begin{method}{public override IAsyncEnumerable<CloseTabEvent> GetEvents()}{Asynchronously gets all close tab events}
-          \return{IAsyncEnumerable<CloseTabEvent>}{A stream of CloseTabEvent}
-        \end{method}
-        \begin{method}{protected override void Enqueue(CloseTabEvent event)}{Asynchronously enqueues a new close tab event}
-            \begin{parameters}
-                \para{CloseTabEvent event}{CloseTabEvent to enqueue}
-            \end{parameters}
-        \end{method}
-    \end{methods}
 \end{class}
 
 \begin{class}{FileDownloadEventProducer} 
 	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/FileDownloadEventProducer.png}
     
-    \clsdcl{public class FileDownloadEventProducer : EventQueue<FileDownloadEvent>}
+    \clsdcl{public class FileDownloadEventProducer :  WebBrowserEventProducer<FileDownloadEvent>}
 
-    \clsdsp{A single-writer-multiple-reader queue for FileDownloadEvent}
+    \clsdsp{Provides single-writer-multiple-reader queue for FileDownloadEvent}
 
-    \begin{methods}
-        \begin{method}{public override IAsyncEnumerable<FileDownloadEvent> GetEvents()}{Asynchronously gets all file download events}
-          \return{IAsyncEnumerable<FileDownloadEvent>}{A stream of FileDownloadEvent}
-        \end{method}
-        \begin{method}{protected override void Enqueue(FileDownloadEvent event)}{Asynchronously enqueues a new file download event}
-            \begin{parameters}
-                \para{FileDownloadEvent event}{FileDownloadEvent to enqueue}
-            \end{parameters}
-        \end{method}
-    \end{methods}
+    \begin{attributes}
+    	\attribute{public override EventLabel HandledEventLabel => EventLabel.DOWNLOAD}{The BrowserEvent label to be handled by FileDownloadEventProducer.}
+    \end{attributes}
+    
 \end{class}
 
 \begin{class}{HoverEventProducer} 
 	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/HoverEventProducer.png}
     
-    \clsdcl{public class HoverEventProducer : EventQueue<HoverEvent>}
+    \clsdcl{public class HoverEventProducer : WebBrowserEventProducer<HoverEvent>}
 
-    \clsdsp{A single-writer-multiple-reader queue for HoverEvent}
+    \clsdsp{Provides single-writer-multiple-reader queue for HoverEvent}
 
-    \begin{methods}
-        \begin{method}{public override IAsyncEnumerable<HoverEvent> GetEvents()}{Asynchronously gets all hover events}
-          \return{IAsyncEnumerable<HoverEvent>}{A stream of HoverEvent}
-        \end{method}
-        \begin{method}{protected override void Enqueue(HoverEvent event)}{Asynchronously enqueues a new hover event}
-            \begin{parameters}
-                \para{HoverEvent event}{HoverEvent to enqueue}
-            \end{parameters}
-        \end{method}
-    \end{methods}
+    \begin{attributes}
+    	\attribute{public override EventLabel HandledEventLabel => EventLabel.HOVER}{The BrowserEvent label to be handled by HoverEventProducer.}
+    \end{attributes}
 \end{class}
 
 \begin{class}{NavigationEventProducer} 
 	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/NavigationEventProducer.png}
     
-    \clsdcl{public class NavigationEventProducer : EventQueue<NavigationEvent>}
+    \clsdcl{public class NavigationEventProducer :  WebBrowserEventProducer<NavigationEvent>}
 
-    \clsdsp{A single-writer-multiple-reader queue for NavigationEvent}
+    \clsdsp{Provides single-writer-multiple-reader queue for NavigationEvent}
 
-    \begin{methods}
-        \begin{method}{public override IAsyncEnumerable<NavigationEvent> GetEvents()}{Asynchronously gets all navigation events}
-          \return{IAsyncEnumerable<NavigationEvent>}{A stream of NavigationEvent}
-        \end{method}
-        \begin{method}{protected override void Enqueue(NavigationEvent event)}{Asynchronously enqueues a new navigation event}
-            \begin{parameters}
-                \para{NavigationEvent event}{NavigationEvent to enqueue}
-            \end{parameters}
-        \end{method}
-    \end{methods}
+    \begin{attributes}
+    	\attribute{public override EventLabel HandledEventLabel => EventLabel.NAVIGATION}{The BrowserEvent label to be handled by NavigationEventProducer.}
+    \end{attributes}
 \end{class}
 
 \begin{class}{OpenTabEventProducer} 
 	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/OpenTabEventProducer.png}
     
-    \clsdcl{public class OpenTabEventProducer : EventQueue<OpenTabEvent>}
+    \clsdcl{public class OpenTabEventProducer : WebBrowserEventProducer<OpenTabEvent>}
 
-    \clsdsp{A single-writer-multiple-reader queue for OpenTabEvent}
+    \clsdsp{Provides single-writer-multiple-reader queue for OpenTabEvent}
 
-    \begin{methods}
-        \begin{method}{public override IAsyncEnumerable<OpenTabEvent> GetEvents()}{Asynchronously gets all open tab events}
-          \return{IAsyncEnumerable<OpenTabEvent>}{A stream of OpenTabEvent}
-        \end{method}
-        \begin{method}{protected override void Enqueue(OpenTabEvent event)}{Asynchronously enqueues a new open tab event}
-            \begin{parameters}
-                \para{OpenTabEvent event}{OpenTabEvent to enqueue}
-            \end{parameters}
-        \end{method}
-    \end{methods}
+    \begin{attributes}
+    	\attribute{public override EventLabel HandledEventLabel => EventLabel.OPENTAB}{The BrowserEvent label to be handled by OpenTabEventProducer.}
+    \end{attributes}
 \end{class}
 
 \begin{class}{SwitchTabEventProducer} 
 	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/SwitchTabEventProducer.png}
     
-    \clsdcl{public class SwitchTabEventProducer : EventQueue<SwitchTabEvent>}
+    \clsdcl{public class SwitchTabEventProducer : WebBrowserEventProducer<SwitchTabEvent>}
 
-    \clsdsp{A single-writer-multiple-reader queue for SwitchTabEvent}
+    \clsdsp{Provides single-writer-multiple-reader queue for SwitchTabEvent}
 
-    \begin{methods}
-        \begin{method}{public override IAsyncEnumerable<SwitchTabEvent> GetEvents()}{Asynchronously gets all switch tab events}
-          \return{IAsyncEnumerable<SwitchTabEvent>}{A stream of SwitchTabEvent}
-        \end{method}
-        \begin{method}{protected override void Enqueue(SwitchTabEvent event)}{Asynchronously enqueues a new switch tab event}
-            \begin{parameters}
-                \para{SwitchTabEvent event}{SwitchTabEvent to enqueue}
-            \end{parameters}
-        \end{method}
-    \end{methods}
+    \begin{attributes}
+    	\attribute{public override EventLabel HandledEventLabel => EventLabel.SWITCHTAB}{The BrowserEvent label to be handled by SwitchTabEventProducer.}
+    \end{attributes}
 \end{class}
 
 \begin{class}{TextInputEventProducer} 
 	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/TextInputEventProducer.png}
     
-    \clsdcl{public class TextInputEventProducer : EventQueue<TextInputEvent>}
+    \clsdcl{public class TextInputEventProducer : WebBrowserEventProducer<TextInputEvent>}
 
-    \clsdsp{A single-writer-multiple-reader queue for TextInputEvent}
+    \clsdsp{Provides single-writer-multiple-reader queue for TextInputEvent}
 
-    \begin{methods}
-        \begin{method}{public override IAsyncEnumerable<TextInputEvent> GetEvents()}{Asynchronously gets all text input events}
-          \return{IAsyncEnumerable<TextInputEvent>}{A stream of TextInputEvent}
-        \end{method}
-        \begin{method}{protected override void Enqueue(TextInputEvent event)}{Asynchronously enqueues a new text input event}
-            \begin{parameters}
-                \para{TextInputEvent event}{TextInputEvent to enqueue}
-            \end{parameters}
-        \end{method}
-    \end{methods}
+    \begin{attributes}
+    	\attribute{public override EventLabel HandledEventLabel => EventLabel.TEXTINPUT}{The BrowserEvent label to be handled by TextInputEventProducer.}
+    \end{attributes}
 \end{class}
 
 \begin{class}{TextSelectionEventProducer} 
 	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/TextSelectionEventProducer.png}
     
-    \clsdcl{public class TextSelectionEventProducer : EventQueue<TextSelectionEvent>}
+    \clsdcl{public class TextSelectionEventProducer:\\\ WebBrowserEventProducer<TextSelectionEvent>}
 
-    \clsdsp{A single-writer-multiple-reader queue for TextSelectionEvent}
+    \clsdsp{Provides single-writer-multiple-reader queue for TextSelectionEvent}
 
-    \begin{methods}
-        \begin{method}{public override IAsyncEnumerable<TextSelectionEvent> GetEvents()}{Asynchronously gets all text selection events}
-          \return{IAsyncEnumerable<TextSelectionEvent>}{A stream of TextSelectionEvent}
-        \end{method}
-        \begin{method}{protected override void Enqueue(TextSelectionEvent event)}{Asynchronously enqueues a new text selection event}
-            \begin{parameters}
-                \para{TextSelectionEvent event}{TextSelectionEvent to enqueue}
-            \end{parameters}
-        \end{method}
-    \end{methods}
+    \begin{attributes}
+    	\attribute{public override EventLabel HandledEventLabel => EventLabel.TEXTSELECTION}{The BrowserEvent label to be handled by TextSelectionEventProducer.}
+    \end{attributes}
 \end{class}
 

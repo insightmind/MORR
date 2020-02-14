@@ -2,7 +2,7 @@
 \begin{class}{KeyboardModule} 
     \clsdiagram[scale = 0.7]{resources/Classes/Modules/Keyboard/KeyboardModule.png}
 
-    \clsdcl{public class KeyboardModule : ICollectingModule}
+    \clsdcl{public class KeyboardModule : IModule}
 
     \clsdsp{The KeyboardModule is responsible for recording all keyboard related user interactions.}
 \end{class}
@@ -25,7 +25,8 @@
     \clsdsp{A keyboard user interaction.}
 
     \begin{attributes}
-        \attribute{public Key System.Windows.Input.PressedKey}{The key that was pressed.}
+        \attribute{public Key PressedKey}{The key that was pressed.}
+        \attribute{public ModifierKeys ModifierKeys}{The modifier keys to the key pressed}
     \end{attributes}
 \end{class}
 
@@ -34,18 +35,14 @@
 \begin{class}{KeyboardInteractEventProducer} 
 	\clsdiagram[scale = 0.7]{resources/Classes/Modules/Keyboard/Producers/KeyboardInteractEventProducer.png}
     
-    \clsdcl{public class KeyboardInteractEventProducer : EventQueue<KeyboardInteractEvent>}
+    \clsdcl{public class KeyboardInteractEventProducer:\\\ DefaultEventQueue<KeyboardInteractEvent>}
 
-    \clsdsp{A single-writer-multiple-reader queue for KeyboardInteractEvent}
+    \clsdsp{Provides single-writer-multiple-reader queue for KeyboardInteractEvent}
 
     \begin{methods}
-        \begin{method}{public override IAsyncEnumerable<KeyboardInteractEvent> GetEvents()}{Asynchronously gets all keyboard interaction events}
-          \return{IAsyncEnumerable<KeyboardInteractEvent>}{A stream of KeyboardInteractEvent}
+        \begin{method}{public void StartCapture()}{Starts capturing keyboard interaction events}
         \end{method}
-        \begin{method}{protected override void Enqueue(KeyboardInteractEvent event)}{Asynchronously enqueues a new keyboard interaction event}
-            \begin{parameters}
-                \para{KeyboardInteractEvent event}{KeyboardInteractEvent to enqueue}
-            \end{parameters}
+        \begin{method}{public void StopCapture()}{Stops capturing keyboard interaction events}
         \end{method}
     \end{methods}
 \end{class}

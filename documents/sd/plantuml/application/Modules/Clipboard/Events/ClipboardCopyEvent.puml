@@ -1,0 +1,12 @@
+@startuml
+skinparam monochrome true
+skinparam ClassAttributeIconSize 0
+class ClipboardCopyEvent {
+}
+abstract class ClipboardEvent{
+    + ClipboardText : string <<get>> <<set>>
+}
+abstract class Event
+ClipboardEvent <|-- ClipboardCopyEvent
+Event <|-- ClipboardEvent
+@enduml
