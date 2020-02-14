@@ -2,10 +2,13 @@
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 
+interface IEncoder
 !startsub default
 class JsonEncoder {
-    + Encode(directoryRecordingPath: DirectoryPath) : void
+    + EncodeFinished : ManualResetEvent <<get>>
+    + Encode(recordingDirectoryPath: DirectoryPath) : void
 }
 !endsub
 
+IEncoder <|-- JsonEncoder
 @enduml

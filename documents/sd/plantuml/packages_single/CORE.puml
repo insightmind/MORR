@@ -14,7 +14,7 @@ package "CORE" #E6E6E6 {
 
     !includesub ../application/Core/MORR/BootstrapperConventions.puml!default
 
-    package ConfigurationManagement <<Rectangle>> #BFBFBF {
+    package Configuration #BFBFBF {
         !includesub ../application/Core/MORR/Configuration/IConfigurationManager.puml!default
 
         !includesub ../application/Core/MORR/Configuration/ConfigurationManager.puml!default
@@ -25,14 +25,14 @@ package "CORE" #E6E6E6 {
         ConfigurationManager ..> InvalidConfigurationException : "throws"
     }
 
-    package Session <<Rectangle>> #BFBFBF {
+    package Session #BFBFBF {
         !includesub ../application/Core/MORR/Session/ISessionManager.puml!default
 
         !includesub ../application/Core/MORR/Session/SessionManager.puml!default
 
         !includesub ../application/Core/MORR/Session/SessionConfiguration.puml!default
 
-        together {
+        package Exceptions as SessionExceptions {
             !includesub ../application/Core/MORR/Session/Exceptions/RecordingException.puml!default
 
             !includesub ../application/Core/MORR/Session/Exceptions/AlreadyRecordingException.puml!default
@@ -49,7 +49,7 @@ package "CORE" #E6E6E6 {
         SessionManager --* "1 Configuration" SessionConfiguration
     }
 
-    package Modules <<Rectangle>> #BFBFBF {
+    package Modules #BFBFBF {
         !includesub ../application/Core/MORR/Modules/IModuleManager.puml!default
 
         !includesub ../application/Core/MORR/Modules/ModuleManager.puml!default
@@ -57,43 +57,40 @@ package "CORE" #E6E6E6 {
         !includesub ../application/Core/MORR/Modules/GlobalModuleConfiguration.puml!default
 
         IModuleManager <|-- ModuleManager
-        ModuleManager *-- "1" GlobalModuleConfiguration
+        ModuleManager *-- "1 Configuration" GlobalModuleConfiguration
     }
 
-    package Data <<Rectangle>> #BFBFBF {
-        together {
-            package Capture #E6E6E6 {
-                !includesub ../application/Core/MORR/Data/Capture/CaptureException.puml!default
+    package Data #BFBFBF {
+        package Capture #E6E6E6 {
+            !includesub ../application/Core/MORR/Data/Capture/CaptureException.puml!default
 
-                package Video #BFBFBF {
-                    together {
-                        !includesub ../application/Core/MORR/Data/Capture/Video/DirectXVideoSample.puml!default
+            package Video #BFBFBF {
+                    !includesub ../application/Core/MORR/Data/Capture/Video/DirectXVideoSample.puml!default
 
-                        !includesub ../application/Core/MORR/Data/Capture/Video/VideoSample.puml!default
+                    !includesub ../application/Core/MORR/Data/Capture/Video/VideoSample.puml!default
 
-                        package Exceptions #E6E6E6 {
-                            !includesub ../application/Core/MORR/Data/Capture/Video/Exceptions/VideoCaptureException.puml!default
+                    package Exceptions as CaptureExceptions #E6E6E6 {
+                        !includesub ../application/Core/MORR/Data/Capture/Video/Exceptions/VideoCaptureException.puml!default
 
-                            CaptureException <|-- VideoCaptureException
-                        }
-
-                        package Desktop <<Rectangle>> #E6E6E6 {
-                            !includesub ../application/Core/MORR/Data/Capture/Video/Desktop/DesktopCapture.puml!default
-
-                            !includesub ../application/Core/MORR/Data/Capture/Video/Desktop/DesktopCaptureConfiguration.puml!default
-
-                            !includesub ../application/Core/MORR/Data/Capture/Video/Desktop/VideoSampleProducer.puml!default
-
-                            DesktopCapture --* "1 VideoSampleProducer" VideoSampleProducer
-                            DesktopCapture --* "1 Configuration" DesktopCaptureConfiguration
-                        }
-
-                        DesktopCapture ..> VideoCaptureException: "throws"
-                        DirectXVideoSample --|> VideoSample
+                        CaptureException <|-- VideoCaptureException
                     }
-                }
-            }        
-        }
+
+                    package Desktop #E6E6E6 {
+                        !includesub ../application/Core/MORR/Data/Capture/Video/Desktop/DesktopCapture.puml!default
+
+                        !includesub ../application/Core/MORR/Data/Capture/Video/Desktop/DesktopCaptureConfiguration.puml!default
+
+                        !includesub ../application/Core/MORR/Data/Capture/Video/Desktop/VideoSampleProducer.puml!default
+
+                        DesktopCapture --* "1 VideoSampleProducer" VideoSampleProducer
+                        DesktopCapture --* "1 Configuration" DesktopCaptureConfiguration
+                    }
+
+                    DesktopCapture ..> VideoCaptureException : "throws"
+                    DirectXVideoSample --|> VideoSample
+                    VideoSampleProducer ..> DirectXVideoSample : "generates"
+            }
+        }               
 
         package IntermediateFormat #E6E6E6 {
             !includesub ../application/Core/MORR/Data/IntermediateFormat/IntermediateFormatSample.puml!default
@@ -110,12 +107,16 @@ package "CORE" #E6E6E6 {
         }
 
         !includesub ../packages_single/TRANSCODING.puml!default
-    }
 
-    SessionManager --* "1" IEncoder
-    SessionManager --* "0..1" IDecoder
-    SessionManager --* "1" IModuleManager
+        JsonEncoder ..> JsonIntermediateFormatSerializer : "uses"
+        JsonIntermediateFormatDeserializer ..> JsonDecoder : "uses"
+    }
+    
     SessionManager ..> IBootstrapper : "uses"
+    SessionManager ..> IModuleManager : "uses"
+    SessionManager ..> IConfigurationManager : "uses"
+    SessionManager --* "1..* Encoders" IEncoder
+    SessionManager --* "1..* Decoders" IDecoder
     Bootstrapper ..> BootstrapperConventions : "uses"
     IBootstrapper <|.. Bootstrapper
 }

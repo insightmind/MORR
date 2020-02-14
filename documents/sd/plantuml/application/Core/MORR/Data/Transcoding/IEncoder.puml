@@ -3,7 +3,8 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 !startsub default
 interface IEncoder {
-    + Encode(directoryRecordingPath: DirectoryPath) : void
+    + EncodeFinished : ManualResetEvent <<get>>
+    + Encode(recordingDirectoryPath: DirectoryPath) : void
 }
 !endsub
 @enduml
