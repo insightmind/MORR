@@ -1,6 +1,6 @@
 \subsection{CLI}
 \begin{class}{Program}
-	\clsdiagram[width=0.6\textwidth]{resources/Classes/Core/CLI/Program.png}
+	\clsdiagram[width=0.5\textwidth]{resources/Classes/Core/CLI/Program.png}
 	
 	\clsdcl{public class Program}
 	
@@ -15,10 +15,10 @@
 	\end{methods}
 \end{class}
 
-\begin{class}{OutputFormatter}
-	\clsdiagram[width=0.7\textwidth]{resources/Classes/Core/CLI/OutputFormatter.png}
+\begin{class}{ConsoleFormatter}
+	\clsdiagram[width=0.3\textwidth]{resources/Classes/Core/CLI/ConsoleFormatter.png}
 	
-	\clsdcl{public class OutputFormatter}
+	\clsdcl{public class ConsoleFormatter : IConsoleFormatter}
 	
 	\clsdsp{The OutputFormatter's main functionality is about printing and formatting any output made by the program. It also filters them according of the users preferences, e.g. whether the user wants to see verbose ouput or not. }
 	
@@ -44,4 +44,3 @@
 	\end{methods}
 	
 \end{class}
-\input{chapter/Classes/Core/CLI/Classes/Command}
