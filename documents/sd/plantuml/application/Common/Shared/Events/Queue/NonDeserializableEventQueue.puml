@@ -1,0 +1,13 @@
+@startuml(id=default)
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+!startsub default
+abstract class "NonDeserializableEventQueue<T>" {
+}
+interface "IReadOnlyEventQueue<T>"
+abstract class "BaseEventQueue<T>"
+"IReadOnlyEventQueue<T>" <|-- "NonDeserializableEventQueue<T>"
+"BaseEventQueue<T>" <|-- "NonDeserializableEventQueue<T>"
+!endsub
+@enduml

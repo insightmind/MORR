@@ -1,0 +1,14 @@
+@startuml(id=default)
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+!startsub default
+abstract class "DefaultDecodeableEventQueue<T>" {
+    
+}
+interface "IDecodableEventQueue<T>"
+abstract class "BaseEventQueue<T>"
+"IDecodableEventQueue<T>" <|-- "DefaultDecodeableEventQueue<T>"
+"BaseEventQueue<T>" <|-- "DefaultDecodeableEventQueue<T>"
+!endsub
+@enduml
