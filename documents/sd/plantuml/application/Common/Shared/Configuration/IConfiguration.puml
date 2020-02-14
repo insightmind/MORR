@@ -3,7 +3,7 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 !startsub default
 interface IConfiguration {
-    + Parse(configuration:string) : void
 }
+
 !endsub
 @enduml
