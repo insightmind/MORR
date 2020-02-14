@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using MORR.Modules.Mouse.Native;
 using MORR.Modules.Mouse.Producers;
 using MORR.Shared.Modules;
 using MORR.Shared.Utility;
@@ -79,7 +80,7 @@ namespace MORR.Modules.Mouse
         {
             MouseClickEventProducer?.StartCapture();
             MouseScrollEventProducer?.StartCapture();
-            MouseMoveEventProducer?.StartCapture();
+            MouseMoveEventProducer?.StartCapture(new NativeMouse());
         }
 
         private void StopCapture()
