@@ -7,6 +7,7 @@ interface ICommunicationStrategy {
     + establishConnection() : Promise<void>
     + requestConfig() : Promise<string>
     + waitForStart() : Promise<void>
-    + sendData(data : string) : Promise<void>
+    + sendData(data : string) : Promise<string>
+    + addOnStopListener(callback: (error? : boolean) => void) : void
 }
 @enduml

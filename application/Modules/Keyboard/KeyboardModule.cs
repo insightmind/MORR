@@ -9,7 +9,7 @@ namespace MORR.Modules.Keyboard
     /// <summary>
     ///     The <see cref="KeyboardModule" /> is responsible for recording all keyboard related user interactions.
     /// </summary>
-    public class KeyboardModule : ICollectingModule
+    public class KeyboardModule : IModule
     {
         private bool isActive;
 
@@ -24,14 +24,22 @@ namespace MORR.Modules.Keyboard
         public bool IsActive
         {
             get => isActive;
-            set => Utility.SetAndDispatch(ref isActive, value, KeyboardInteractEventProducer.StartCapture,
-                                          KeyboardInteractEventProducer.StopCapture);
+            set => Utility.SetAndDispatch(ref isActive, value, KeyboardInteractEventProducer.StartCapture, KeyboardInteractEventProducer.StopCapture);
         }
 
-        public static Guid Identifier = new Guid("99F679D6-0D20-40EE-8604-F128F0E5AE3B");
-
+        public static Guid Identifier { get; } = new Guid("99F679D6-0D20-40EE-8604-F128F0E5AE3B");
         Guid IModule.Identifier => Identifier;
 
-        public void Initialize() { }
+        public void Initialize(bool isEnable)
+        {
+            if (isEnable)
+            {
+                KeyboardInteractEventProducer?.Open();
+            }
+            else
+            {
+                KeyboardInteractEventProducer?.Close();
+            }
+        }
     }
 }

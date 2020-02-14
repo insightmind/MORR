@@ -11,7 +11,7 @@ namespace MORR.Modules.WebBrowser.Producers
     ///     of the appropriate type.
     /// </summary>
     /// <typeparam name="T">The BrowserEvent type to produce.</typeparam>
-    public abstract class WebBrowserEventProducer<T> : DefaultEventQueue<T>, IWebBrowserEventObserver where T : WebBrowserEvent
+    public abstract class WebBrowserEventProducer<T> : DefaultEventQueue<T>, IWebBrowserEventObserver where T : WebBrowserEvent, new()
     {
         /// <summary>
         ///     Simply forward the event to the internal queue if its of the appropriate type. Ignore otherwise.
@@ -19,7 +19,9 @@ namespace MORR.Modules.WebBrowser.Producers
         /// <param name="eventJson">A JsonElement holding an event.</param>
         public virtual void Notify(JsonElement eventJson)
         {
-            throw new NotSupportedException("Can not invoke notify() on abstract WebBrowserEventProducer");
+            var @value = new T();
+            @value.Deserialize(eventJson);
+            Enqueue(@value);
         }
 
         /// <summary>

@@ -9,7 +9,7 @@ namespace MORR.Modules.Clipboard
     /// <summary>
     ///     The <see cref="ClipboardModule" /> is responsible for recording all clipboard related user interactions
     /// </summary>
-    public class ClipboardModule : ICollectingModule
+    public class ClipboardModule : IModule
     {
         private bool isActive;
 
@@ -35,6 +35,7 @@ namespace MORR.Modules.Clipboard
         ///     Unique module identifier
         /// </summary>
         public static Guid Identifier { get; } = new Guid("B9179D3D-2DB4-46FA-845E-B47F9DCF7745");
+        Guid IModule.Identifier => Identifier;
 
         /// <summary>
         ///     Gets or sets the value indicating whether the module is active in current recording session
@@ -44,26 +45,37 @@ namespace MORR.Modules.Clipboard
         public bool IsActive
         {
             get => isActive;
-            set => Utility.SetAndDispatch(ref isActive, value, StartCapture,
-                                          StopCapture);
+            set => Utility.SetAndDispatch(ref isActive, value, StartCapture, StopCapture);
         }
 
-        Guid IModule.Identifier => Identifier;
-
-        public void Initialize() { }
+        public void Initialize(bool isEnable)
+        {
+            if (isEnable)
+            {
+                ClipboardCutEventProducer?.Open();
+                ClipboardPasteEventProducer?.Open();
+                ClipboardCopyEventProducer?.Open();
+            }
+            else
+            {
+                ClipboardCutEventProducer?.Close();
+                ClipboardPasteEventProducer?.Close();
+                ClipboardCopyEventProducer?.Close();
+            }
+        }
 
         private void StartCapture()
         {
-            ClipboardCutEventProducer.StartCapture();
-            ClipboardPasteEventProducer.StartCapture();
-            ClipboardCopyEventProducer.StartCapture();
+            ClipboardCutEventProducer?.StartCapture();
+            ClipboardPasteEventProducer?.StartCapture();
+            ClipboardCopyEventProducer?.StartCapture();
         }
 
         private void StopCapture()
         {
-            ClipboardCutEventProducer.StopCapture();
-            ClipboardPasteEventProducer.StopCapture();
-            ClipboardCopyEventProducer.StopCapture();
+            ClipboardCutEventProducer?.StopCapture();
+            ClipboardPasteEventProducer?.StopCapture();
+            ClipboardCopyEventProducer?.StopCapture();
         }
     }
 }

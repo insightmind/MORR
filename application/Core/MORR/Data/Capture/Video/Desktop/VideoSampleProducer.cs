@@ -13,7 +13,7 @@ using Device = SharpDX.Direct3D11.Device;
 
 namespace MORR.Core.Data.Capture.Video.Desktop
 {
-    public class VideoSampleProducer : DefaultEncodeableEventQueue<DirectXVideoSample>
+    public class VideoSampleProducer : DefaultEncodableEventQueue<DirectXVideoSample>
     {
         /// <summary>
         ///     Starts a video capture from the provided capture item.
@@ -21,6 +21,8 @@ namespace MORR.Core.Data.Capture.Video.Desktop
         /// <param name="item">The <see cref="GraphicsCaptureItem" /> to start the video capture from.</param>
         public void StartCapture(GraphicsCaptureItem item)
         {
+            InitializeDevices();
+            InitializeEvents();
             InitializeCaptureItem(item);
             InitializeFramePool();
             InitializeSession();
@@ -37,18 +39,18 @@ namespace MORR.Core.Data.Capture.Video.Desktop
             closedEvent.Set();
             canCleanupNonPersistentResourcesEvent.WaitOne();
             CleanupSessionResources();
+            CleanupPersistentResources();
+            Close();
         }
 
         private void EnqueueFrames()
         {
             DirectXVideoSample? currentSample;
 
-            do
+            while ((currentSample = GetNextFrame()) != null)
             {
-                currentSample = GetNextFrame();
-                Enqueue(currentSample); // Intentionally enqueue null to stop encoder
+                Enqueue(currentSample);
             }
-            while (currentSample != null);
         }
 
         private DirectXVideoSample? GetNextFrame()
@@ -184,11 +186,7 @@ namespace MORR.Core.Data.Capture.Video.Desktop
             this.item.Closed += OnClosed;
         }
 
-        public VideoSampleProducer() : base(16)
-        {
-            InitializeDevices();
-            InitializeEvents();
-        }
+        public VideoSampleProducer() : base(16) { }
 
         private void InitializeBlankTexture()
         {
@@ -245,6 +243,7 @@ namespace MORR.Core.Data.Capture.Video.Desktop
             framePool = null;
 
             session?.Dispose();
+            session = null;
 
             if (item != null)
             {

@@ -18,7 +18,7 @@
 \begin{methods}
 \begin{method}{public start() : void}{Start the listener. While the listener is running, it will create events and invoke the callback function on them.}
 \end{method}
-\begin{method}{public stop() : void}{Start the listener. While the listener is running, it will create events and invoke the callback function on them.}
+\begin{method}{public stop() : void}{Stop the listener.}
 \end{method}
 \end{methods}
 \end{class}
@@ -29,7 +29,8 @@
 
 \clsdcl{class OpenTabEvent extends BrowserEvent}
 
-\clsdsp{An OpenTabEvent occurs when a new tab created. This does include the creation of a new browser window, which automatically creates at least one tab.}
+\clsdsp{An OpenTabEvent occurs when a new tab created. This does include the creation of a new browser window, which automatically creates at least one tab.
+As newly created tabs have not set an URL yet, the URL of the OpenTabEvent will always be set to 'url:unknown'.}
 
 \begin{constructors}
 \begin{constructor}{constructor(tabID : number, windowID: number)}{Create a new OpenTabEvent.}
@@ -50,11 +51,11 @@
 \clsdsp{A CloseTabEvent occurs when a tab is closed. This does include the closing of a browser window, where all attached tabs are automatically closed.}
 
 \begin{constructors}
-\begin{constructor}{constructor(tabID : number, windowID: number, url : string)}{Create a new CloseTabEvent.}
+\begin{constructor}{constructor(tabID : number, windowID: number, url? : string)}{Create a new CloseTabEvent.}
 \begin{parameters}
 \para{tabID : number}{The ID of the closed tab.}
 \para{windowID : number}{The ID of the window the tab with tabID belongs to.}
-\para{url : string}{The URL of the webpage which was opened in the now closed tab.}
+\para{url : string}{The URL of the webpage which was opened in the now closed tab or undefined if this information cannot be retrieved.}
 \end{parameters}
 \end{constructor}
 \end{constructors}
@@ -108,32 +109,35 @@
 
 \clsdcl{class TabEventFactory}
 
-\clsdsp{The TabEventFactory is responsible for creating BrowserEvent objects from the information a TabListener gathers. As different listeners get different input parameters, the createEvent method is overloaded several times to account for the possible combinations of parameters.}
+\clsdsp{The TabEventFactory is responsible for creating BrowserEvent objects from the information a TabListener gathers.}
 
 \begin{methods}
-\begin{method}{public createEvent(tabId : number, changeInfo : tabs.TabChangeInfo, tab : tabs.Tab) : BrowserEvent}{Create a new BrowserEvent from the input parameters.}
-\return{BrowserEvent}{A BrowserEvent.}
+\begin{method}{public createNavigationEvent(tabId : number, changeInfo : tabs.TabChangeInfo, tab : tabs.Tab) : NavigationEvent}{Create a new NavigationEvent from the input parameters.}
+\return{NavigationEvent}{A NavigationEvent.}
 \begin{parameters}
 \para{tabID : number}{The ID of the tab which provided the TabChangeInfo.}
-\para{changeInfo : tabs.TabChangeInfo}{Create a new BrowserEvent from the input parameters.}
-\para{tab : tabs.Tab}{}
+\para{changeInfo : tabs.TabChangeInfo}{The TabChangeInfo object created by the browser when navgiation occurs.}
+\para{tab : tabs.Tab}{The tab object associated with the TabChangeInfo}
 \end{parameters}
 \end{method}
-\begin{method}{public createEvent(activeInfo : tabs.TabActiveInfo) : BrowserEvent}{Create a new BrowserEvent from the input parameters.}
-\return{BrowserEvent}{A BrowserEvent.}
+\begin{method}{public createSwitchTabEvent(activeInfo : tabs.TabActiveInfo, prevtab : tabs.Tab) : SwitchTabEvent}{Create a new SwitchTabEvent from the input parameters.}
+\return{SwitchTabEvent}{A SwitchTabEvent.}
 \begin{parameters}
 \para{activeInfo : tabs.TabActiveInfo}{The TabActiveInfo to create the event from.}
+\para{prevtab : tabs.Tab}{The tab which was active before the switch occured.}
 \end{parameters}
 \end{method}
-\begin{method}{public createEvent(tabId : number, removeInfo: tabs.TabRemoveInfo) : BrowserEvent}{Create a new BrowserEvent from the input parameters.}
-\return{BrowserEvent}{A BrowserEvent.}
+\begin{method}{public createCloseTabEvent(tabId : number, removeInfo: tabs.TabRemoveInfo, tab : tabs.Tab) : CloseTabEvent}{Create a new CloseTabEvent from the input parameters.}
+\return{CloseTabEvent}{A CloseTabEvent.}
 \begin{parameters}
 \para{tabId : number}{The ID of the tab which notified the caller.}
 \para{removeInfo : tabs.TabRemoveInfo}{The TabRemoveInfo to create the event from.}
+\para{tab : tabs.Tab}{The tab which was active when the tabs.TabRemoveInfo was created. If this tab was the closed tab, the URL can be recovered from this tab. Otherwise the URl of
+the created CloseTabEvent will be set to 'url:unknown'.}
 \end{parameters}
 \end{method}
-\begin{method}{public createEvent(tab : tabs.Tab) : BrowserEvent}{Create a new BrowserEvent from the input parameters.}
-\return{BrowserEvent}{A BrowserEvent.}
+\begin{method}{public createOpenTabEvent(tab : tabs.Tab) : OpenTabEvent}{Create a new OpenTabEvent from the input parameters.}
+\return{OpenTabEvent}{An OpenTabEvent.}
 \begin{parameters}
 \para{tab : tabs.Tab}{The tab to create the event from.}
 \end{parameters}
@@ -161,7 +165,7 @@
 \begin{methods}
 \begin{method}{public start() : void}{Start the listener. While the listener is running, it will create events and invoke the callback function on them.}
 \end{method}
-\begin{method}{public stop() : void}{Start the listener. While the listener is running, it will create events and invoke the callback function on them.}
+\begin{method}{public stop() : void}{Stop the listener.}
 \end{method}
 \end{methods}
 \end{class}
@@ -187,6 +191,14 @@
 \end{parameters}
 \end{constructor}
 \end{constructors}
+\begin{methods}
+\begin{method}{static deserialize(parsed : any, sender? : chrome.runtime.MessageSender) : TextSelectionEvent}{Deserialize a TextSelectionEvent from the supplied parsed JSON.}
+\begin{parameters}
+\para{parsed : any}{The parsed JSON to deserialize from.}
+\para{sender? : chrome.runtime.MessageSender}{The sender object of the serialized data. Will usually be a tabs.Tab.}
+\end{parameters}
+\end{method}
+\end{methods}
 \end{class}
 
 \begin{class}{TextInputEvent}
@@ -212,6 +224,14 @@
 \end{parameters}
 \end{constructor}
 \end{constructors}
+\begin{methods}
+\begin{method}{static deserialize(parsed : any, sender? : chrome.runtime.MessageSender) : TextInputEvent}{Deserialize a TextInputEvent from the supplied parsed JSON.}
+\begin{parameters}
+\para{parsed : any}{The parsed JSON to deserialize from.}
+\para{sender? : chrome.runtime.MessageSender}{The sender object of the serialized data. Will usually be a tabs.Tab.}
+\end{parameters}
+\end{method}
+\end{methods}
 \end{class}
 
 \begin{class}{ButtonClickEvent}
@@ -237,6 +257,14 @@
 \end{parameters}
 \end{constructor}
 \end{constructors}
+\begin{methods}
+\begin{method}{static deserialize(parsed : any, sender? : chrome.runtime.MessageSender) : ButtonClickEvent}{Deserialize a ButtonClickEvent from the supplied parsed JSON.}
+\begin{parameters}
+\para{parsed : any}{The parsed JSON to deserialize from.}
+\para{sender? : chrome.runtime.MessageSender}{The sender object of the serialized data. Will usually be a tabs.Tab.}
+\end{parameters}
+\end{method}
+\end{methods}
 \end{class}
 
 \begin{class}{HoverEvent}
@@ -260,6 +288,14 @@
 \end{parameters}
 \end{constructor}
 \end{constructors}
+\begin{methods}
+\begin{method}{static deserialize(parsed : any, sender? : chrome.runtime.MessageSender) : HoverEvent}{Deserialize a HoverEvent from the supplied parsed JSON.}
+\begin{parameters}
+\para{parsed : any}{The parsed JSON to deserialize from.}
+\para{sender? : chrome.runtime.MessageSender}{The sender object of the serialized data. Will usually be a tabs.Tab.}
+\end{parameters}
+\end{method}
+\end{methods}
 \end{class}
 %%End DOM%%
 
@@ -282,7 +318,7 @@
 \begin{methods}
 \begin{method}{public start() : void}{Start the listener. While the listener is running, it will create events and invoke the callback function on them.}
 \end{method}
-\begin{method}{public stop() : void}{Start the listener. While the listener is running, it will create events and invoke the callback function on them.}
+\begin{method}{public stop() : void}{Stop the listener.}
 \end{method}
 \end{methods}
 \end{class}
@@ -318,11 +354,11 @@
 
 \clsdcl{class DownloadEventFactory}
 
-\clsdsp{The TabEventFactory is responsible for creating DownloadEvent objects from the information a DownloadListener gathers.}
+\clsdsp{The DownloadEventFactory is responsible for creating DownloadEvent objects from the information a DownloadListener gathers.}
 
 \begin{methods}
-\begin{method}{createEvent(downloadItem: downloads.DownloadItem) : DownloadEvent}{Create a new DownloadEvent from a DownLoadItem.}
-\return{BrowserEvent}{A BrowserEvent.}
+\begin{method}{createEvent(downloadItem: downloads.DownloadItem) : Promise<DownloadEvent>}{Asynchronously create a new DownloadEvent from a downloads.DownloadItem}
+\return{Promise<DownloadEvent>}{A promise which will be filled with a new DownloadEvent.}
 \begin{parameters}
 \para{downloadItem : downloads.DownloadItem}{The DownloadItem created by the browser when a download was started.}
 \end{parameters}

@@ -11,15 +11,16 @@ namespace BrowserExtension {
 namespace Shared #A1AAA1 {
 
 	enum EventType {
-		Navigation,
-		OpenTab,
-		CloseTab,
-		SwitchTab,
-		TextInput,
-		ButtonClick,
-		Hover,
-		TextSelection,
+		Navigation
+		OpenTab
+		CloseTab
+		SwitchTab
+		TextInput
+		ButtonClick
+		Hover
+		TextSelection
 		Download
+		Generic
 	}
 
 	interface IListener {
@@ -47,18 +48,19 @@ namespace Shared #A1AAA1 {
 		+ tabID : number
 		+ url : URL
         + windowID : number
+		+ serialize(noUnderScore : boolean) : string
 	}
 
 }
 namespace Background #D1D1DD {
 	class BackgroundScript {
-		+ start() : void
-		+ stop() : void
+		+ BackgroundScript()
+		+ run() : void
 		+ callback(event : Shared.BrowserEvent) : void
 	}
 
     class ListenerManager {
-        + ListenerManager(callback : (Shared.BrowserEvent) => void, configurationString : string)
+        + ListenerManager(callback : (Shared.BrowserEvent) => void, configurationString? : string)
         + startAll()
         + stopAll()
     }
@@ -67,14 +69,16 @@ namespace Background #D1D1DD {
         + establishConnection() : Promise<void>
 		+ requestConfig() : Promise<string>
 		+ waitForStart() : Promise<void>
-		+ sendData(data : string) : Promise<void>
+		+ sendData(data : string) : Promise<string>
+		+ addOnStopListener(callback: (error? : boolean) => void) : void
 	}
 	class PostHTTPInterface implements ICommunicationStrategy {
-		+ PostHTTPInterface(uri : string)
+		+ PostHTTPInterface(uri? : string)
         + establishConnection() : Promise<void>
 		+ requestConfig() : Promise<string>
 		+ waitForStart() : Promise<void>
-		+ sendData(data : string) : Promise<void>
+		+ sendData(data : string) : Promise<string>
+		+ addOnStopListener(callback: (error? : boolean) => void) : void
 	}
 
 	BackgroundScript "1" *-- "1" ListenerManager
@@ -94,19 +98,23 @@ namespace Listeners #AAAAA1{
 			+ text : string
 			+ target : string
 			+ TextInputEvent(tabID : number, windowID : number, text : string, target : string, url : string)
+			+ {static} deserialize(parsed : any, sender? : chrome.runtime.MessageSender) : TextInputEvent
 		}
 		class ButtonClickEvent extends BrowserExtension.Shared.BrowserEvent {
 			+ buttonTitle : string
 			+ buttonHref? : string
 			+ ButtonClickEvent(tabID : number, windowID : number, buttonTitle : string, buttonHref? : string, url : string)
+			+ {static} deserialize(parsed : any, sender? : chrome.runtime.MessageSender) : ButtonClickEvent
 		}
 		class HoverEvent extends BrowserExtension.Shared.BrowserEvent {
 			+ target : string
 			+ HoverEvent(tabID : number, windowID : number, target : string, url : string)
+			+ {static} deserialize(parsed : any, sender? : chrome.runtime.MessageSender) : HoverEvent
 		}
 		class TextSelectionEvent extends BrowserExtension.Shared.BrowserEvent {
 			+ textSelection : string
 			+ TextSelectionEvent(tabID : number, windowID : number, textSelection : string, url : string)
+			+ {static} deserialize(parsed : any, sender? : chrome.runtime.MessageSender) : TextSelectionEvent
 		}
 
 	}
@@ -117,10 +125,10 @@ namespace Listeners #AAAAA1{
 			+ stop()
 		}
 		class OpenTabEvent extends BrowserExtension.Shared.BrowserEvent {
-			+ OpenTabEvent(tabID : number, windowID : number, url : string)
+			+ OpenTabEvent(tabID : number, windowID : number)
 		}
 		class CloseTabEvent extends BrowserExtension.Shared.BrowserEvent {
-			+ CloseTabEvent(tabID : number, windowID : number, url : string)
+			+ CloseTabEvent(tabID : number, windowID : number, url? : string)
 		}
 		class SwitchTabEvent extends BrowserExtension.Shared.BrowserEvent {
 			+ newTab : number
@@ -130,10 +138,10 @@ namespace Listeners #AAAAA1{
 			+ NavigationEvent(tabID : number, windowID : number, url : string)
 		}
 		class TabEventFactory {
-			+ createEvent(tabId : number, changeInfo : tabs.TabChangeInfo, tab : tabs.Tab) : BrowserEvent
-			+ createEvent(activeInfo : tabs.TabActiveInfo) : BrowserEvent
-			+ createEvent(tabId : number, removeInfo: tabs.TabRemoveInfo) : BrowserEvent
-			+ createEvent(tab : tabs.Tab) : BrowserEvent
+			+ createNavigationEvent(tabId : number, changeInfo : tabs.TabChangeInfo, tab : tabs.Tab) : NavigationEvent
+			+ createSwitchTabEvent(activeInfo : tabs.TabActiveInfo, tabs.Tab) : SwitchTabEvent
+			+ createCloseTabEvent(tabId : number, removeInfo: tabs.TabRemoveInfom tab : tabs.Tab) : CloseTabEvent
+			+ createOpenTabEvent(tab : tabs.Tab) : OpenTabEvent
 		}
 		TabListener *-- TabEventFactory
 		TabEventFactory .DOWN.> OpenTabEvent : creates
@@ -149,11 +157,11 @@ namespace Listeners #AAAAA1{
 		}
 		class DownloadEvent extends BrowserExtension.Shared.BrowserEvent {
 		    + mimeType : string
-		    + fileURL : string
+		    + fileURL : URL
 		    + Download(tabID : number, windowID : number, mimeType : string, fileURL : string, url : string)
 		}
 		class DownloadEventFactory {
-			+ createEvent(downloadItem: downloads.DownloadItem) : DownloadEvent
+			+ createEvent(downloadItem: downloads.DownloadItem) : Promise<DownloadEvent>
 		}
 		DownloadListener *-- DownloadEventFactory
 		DownloadEventFactory .DOWN.> DownloadEvent : creates
@@ -163,11 +171,8 @@ namespace Listeners #AAAAA1{
 		CHANGE
 		DBCLICK
 		KEYUP
-		KEYDOWN
-		INPUT
 		MOUSEENTER
 		MOUSEUP
-		MOUSEDOWN
 		SELECT
 		SUBMIT
 		SEARCH
@@ -176,11 +181,12 @@ namespace Listeners #AAAAA1{
 }
 namespace WebsiteContext #FFF1F1 {
 	class DOMEventRecorder {
-		start() : void
-		stop() : void
+		+ DomEventRecorder()
+		+ start() : void
+		+ stop() : void
 	}
 			class DOMEventFactory {
-			+ createEvent(domEvent : Event) : BrowserEvent
+			+ createEvent(domEvent : Event) : Promise<BrowserEvent | undefined>
 		}
 	DOMEventFactory .DOWN.> BrowserExtension.Listeners.DOMListener.TextInputEvent : creates
 	DOMEventFactory .DOWN.> BrowserExtension.Listeners.DOMListener.TextSelectionEvent : creates

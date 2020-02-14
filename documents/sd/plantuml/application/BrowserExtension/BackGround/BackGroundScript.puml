@@ -5,21 +5,23 @@ skinparam classAttributeIconSize 0
 'scale max 500*1000
 'left to right direction
 class BackgroundScript {
-    + start() : void
-    + stop() : void
-    + callback(event : BrowserEvent) : void
+    + BackgroundScript()
+    + run() : void
+    + callback(event : Shared.BrowserEvent) : void
 }
 
 class ListenerManager {
-    + ListenerManager(callback : function(BrowserEvent) : void, configurationString : string)
+    + ListenerManager(callback : (Shared.BrowserEvent) => void, configurationString? : string)
     + startAll()
     + stopAll()
 }
+
 interface ICommunicationStrategy {
     + establishConnection() : Promise<void>
     + requestConfig() : Promise<string>
     + waitForStart() : Promise<void>
-    + sendData(data : string) : Promise<void>
+    + sendData(data : string) : Promise<string>
+    + addOnStopListener(callback: (error? : boolean) => void) : void
 }
 
 BackgroundScript *-- ListenerManager

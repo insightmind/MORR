@@ -15,37 +15,36 @@ namespace MORR.Core.Data.Transcoding.Mpeg
 {
     public class MpegEncoder : IEncoder
     {
-        private readonly ManualResetEvent onResolutionInferred = new ManualResetEvent(false);
         private readonly AutoResetEvent nextSampleReady = new AutoResetEvent(false);
+        private readonly ManualResetEvent onResolutionInferred = new ManualResetEvent(false);
         private readonly AutoResetEvent sampleProcessed = new AutoResetEvent(true);
         private DateTime encodingStart;
-        private DirectXVideoSample? nextSample;
         private Tuple<uint, uint>? inferredResolution;
+        private DirectXVideoSample? nextSample;
 
         [Import]
         private MpegEncoderConfiguration Configuration { get; set; }
 
         [Import]
-        private IEncodeableEventQueue<DirectXVideoSample> VideoQueue { get; set; }
+        private IEncodableEventQueue<DirectXVideoSample> VideoQueue { get; set; }
+
+        public ManualResetEvent EncodeFinished { get; } = new ManualResetEvent(false);
 
         public void Encode(DirectoryPath recordingDirectoryPath)
         {
             encodingStart = DateTime.Now;
-            var recordingFilePath = GetRecordingFile(recordingDirectoryPath);
 
             Task.Run(ConsumeVideoSamples);
-            Task.Run(() => InitializeTranscode(recordingFilePath));
+            Task.Run(() => InitializeTranscode(recordingDirectoryPath));
         }
 
-        private FilePath GetRecordingFile(DirectoryPath recordingDirectoryPath)
+        private FileStream GetFileStream(DirectoryPath recordingDirectoryPath)
         {
-            var recordingFilePath =
-                Path.Combine(recordingDirectoryPath.ToString(), $"{Configuration.RecordingName}.mp4");
-            var recordingFile = new FilePath(recordingFilePath);
-            return recordingFile;
+            var fullPath = Path.Combine(recordingDirectoryPath.ToString(), Configuration.RelativeFilePath.ToString());
+            return File.OpenWrite(fullPath);
         }
 
-        private async void InitializeTranscode(FilePath recordingFilePath)
+        private async void InitializeTranscode(DirectoryPath recordingDirectoryPath)
         {
             onResolutionInferred.WaitOne();
 
@@ -60,23 +59,25 @@ namespace MORR.Core.Data.Transcoding.Mpeg
             var mediaStreamSource = GetMediaStreamSource(streamDescriptor);
             var encodingProfile = GetEncodingProfile();
 
-            await using var destinationFile = File.Open(recordingFilePath.ToString(), FileMode.CreateNew);
+            await using var destinationFile = GetFileStream(recordingDirectoryPath);
 
+            EncodeFinished.Reset();
             var prepareTranscodeResult =
                 await transcoder.PrepareMediaStreamSourceTranscodeAsync(
                     mediaStreamSource, destinationFile.AsRandomAccessStream(), encodingProfile);
 
             if (!prepareTranscodeResult.CanTranscode)
             {
-                throw new EncodingException();
+                throw new EncodingException(
+                    $"Failed to start transcoding operation. Reason: {prepareTranscodeResult.FailureReason}");
             }
 
-            await prepareTranscodeResult.TranscodeAsync();
+            await prepareTranscodeResult.TranscodeAsync().AsTask().ContinueWith(_ => EncodeFinished.Set());
         }
 
         private async Task ConsumeVideoSamples()
         {
-            await foreach (var videoSample in VideoQueue.GetEvents())
+            await foreach (var videoSample in VideoQueue?.GetEvents())
             {
                 if (inferredResolution == null)
                 {
@@ -93,11 +94,16 @@ namespace MORR.Core.Data.Transcoding.Mpeg
                     inferredResolution = new Tuple<uint, uint>(inferredWidth, inferredHeight);
                     onResolutionInferred.Set();
                 }
-                
+
                 sampleProcessed.WaitOne();
                 nextSample = videoSample;
                 nextSampleReady.Set();
             }
+
+            // Stop encoding by sending null sample
+            sampleProcessed.WaitOne();
+            nextSample = null;
+            nextSampleReady.Set();
         }
 
         #region Transcoder setup

@@ -60,16 +60,16 @@ namespace MORR.Core
                                                          x, typeof(ISupportDeserializationEventQueue<>)))
                                .Export();
 
-            // Export implementers of IEncodeableEventQueue<'Event'> as IEncodeableEventQueue<'Event'> and themselves
-            registrationBuilder.ForTypesMatching(x => ImplementsQueueType(x, typeof(IEncodeableEventQueue<>)))
+            // Export implementers of IEncodableEventQueue<'Event'> as IEncodableEventQueue<'Event'> and themselves
+            registrationBuilder.ForTypesMatching(x => ImplementsQueueType(x, typeof(IEncodableEventQueue<>)))
                                .Export();
-            registrationBuilder.ForTypesMatching(x => IsQueueInterfaceType(x, typeof(IEncodeableEventQueue<>)))
+            registrationBuilder.ForTypesMatching(x => IsQueueInterfaceType(x, typeof(IEncodableEventQueue<>)))
                                .Export(x => x.Inherited());
 
             // Export implementers of IDecodeableEventQueue<'Event'> as IDecodeableEventQueue<'Event'> and themselves
-            registrationBuilder.ForTypesMatching(x => ImplementsQueueType(x, typeof(IDecodeableEventQueue<>)))
+            registrationBuilder.ForTypesMatching(x => ImplementsQueueType(x, typeof(IDecodableEventQueue<>)))
                                .Export();
-            registrationBuilder.ForTypesMatching(x => IsQueueInterfaceType(x, typeof(IDecodeableEventQueue<>)))
+            registrationBuilder.ForTypesMatching(x => IsQueueInterfaceType(x, typeof(IDecodableEventQueue<>)))
                                .Export(x => x.Inherited());
 
             // Export implementers of IEncoder as IEncoder

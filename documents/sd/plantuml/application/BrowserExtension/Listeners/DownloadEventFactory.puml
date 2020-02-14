@@ -3,7 +3,7 @@ skinparam linetype ortho
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 class DownloadEventFactory {
-	+ createEvent(downloadItem: downloads.DownloadItem) : DownloadEvent
+	+ createEvent(downloadItem: downloads.DownloadItem) : Promise<DownloadEvent>
 }
 DownloadListener *-- DownloadEventFactory
 DownloadEventFactory .DOWN.> DownloadEvent : creates

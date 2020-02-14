@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Morr.Core.UI.Dialogs
+namespace MORR.Core.UI.Dialogs
 {
     /// <summary>
     ///     Interaction logic for ErrorDialog.xaml

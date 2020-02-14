@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Windows.Input;
 using MORR.Modules.Keyboard.Events;
+using MORR.Modules.Keyboard.Native;
 using MORR.Shared.Events.Queue;
-using MORR.Shared.Utility;
+using MORR.Shared.Hook;
 
 namespace MORR.Modules.Keyboard.Producers
 {
@@ -11,13 +12,13 @@ namespace MORR.Modules.Keyboard.Producers
     /// </summary>
     public class KeyboardInteractEventProducer : DefaultEventQueue<KeyboardInteractEvent>
     {
-        private NativeMethods.LowLevelKeyboardProc? callback;
+        private KeyboardNativeMethods.LowLevelKeyboardProc? callback;
         private IntPtr keyboardHookHandle;
 
         public void StartCapture()
         {
             callback = KeyboardHookCallback; // Store callback to prevent GC
-            if (!NativeMethods.TrySetKeyboardHook(callback, out keyboardHookHandle))
+            if (!KeyboardNativeMethods.TrySetKeyboardHook(callback, out keyboardHookHandle))
             {
                 throw new Exception("Failed hook keyboard.");
             }
@@ -25,24 +26,24 @@ namespace MORR.Modules.Keyboard.Producers
 
         public void StopCapture()
         {
-            if (!NativeMethods.UnhookWindowsHookEx(keyboardHookHandle))
+            if (!KeyboardNativeMethods.UnhookWindowsHookEx(keyboardHookHandle))
             {
                 throw new Exception("Failed to unhook keyboard.");
             }
+
+            Close();
         }
 
-        private int KeyboardHookCallback(int nCode,
-                                         NativeMethods.MessageType wParam,
-                                         NativeMethods.KBDLLHOOKSTRUCT lParam)
+        private int KeyboardHookCallback(int nCode, GlobalHook.MessageType wParam, KeyboardNativeMethods.KBDLLHOOKSTRUCT lParam)
         {
             if (nCode < 0)
             {
                 // Required as per documentation
                 // see https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/ms644985(v=vs.85)#return-value
-                return NativeMethods.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
+                return KeyboardNativeMethods.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
             }
 
-            if (wParam == NativeMethods.MessageType.WM_KEYDOWN)
+            if (wParam == GlobalHook.MessageType.WM_KEYDOWN)
             {
                 var virtualKeyCode = lParam.VKCode;
                 var pressedKey = KeyInterop.KeyFromVirtualKey(virtualKeyCode);
@@ -59,30 +60,30 @@ namespace MORR.Modules.Keyboard.Producers
                 Enqueue(keyboardEvent);
             }
 
-            return NativeMethods.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
+            return KeyboardNativeMethods.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
         }
 
         private static ModifierKeys GetModifierKeys()
         {
             var modifierKeys = ModifierKeys.None;
 
-            if (NativeMethods.IsKeyPressed(NativeMethods.VirtualKeyCode.VK_MENU))
+            if (KeyboardNativeMethods.IsKeyPressed(KeyboardNativeMethods.VirtualKeyCode.VK_MENU))
             {
                 modifierKeys |= ModifierKeys.Alt;
             }
 
-            if (NativeMethods.IsKeyPressed(NativeMethods.VirtualKeyCode.VK_CONTROL))
+            if (KeyboardNativeMethods.IsKeyPressed(KeyboardNativeMethods.VirtualKeyCode.VK_CONTROL))
             {
                 modifierKeys |= ModifierKeys.Control;
             }
 
-            if (NativeMethods.IsKeyPressed(NativeMethods.VirtualKeyCode.VK_SHIFT))
+            if (KeyboardNativeMethods.IsKeyPressed(KeyboardNativeMethods.VirtualKeyCode.VK_SHIFT))
             {
                 modifierKeys |= ModifierKeys.Shift;
             }
 
-            if (NativeMethods.IsKeyPressed(NativeMethods.VirtualKeyCode.VK_LWIN)
-                || NativeMethods.IsKeyPressed(NativeMethods.VirtualKeyCode.VK_RWIN))
+            if (KeyboardNativeMethods.IsKeyPressed(KeyboardNativeMethods.VirtualKeyCode.VK_LWIN)
+                || KeyboardNativeMethods.IsKeyPressed(KeyboardNativeMethods.VirtualKeyCode.VK_RWIN))
             {
                 modifierKeys |= ModifierKeys.Windows;
             }

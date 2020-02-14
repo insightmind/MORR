@@ -13,19 +13,6 @@ interface IListener {
     + stop() : void
 }
 TabListener .UP.|> IListener : implements
-/'class OpenTabEvent {
-    + OpenTabEvent(tabID : int, windowID : int, url : string)
-}
-class CloseTabEvent {
-    + CloseTabEvent(tabID : int, windowID : int, url : string)
-}
-class SwitchTabEvent {
-    + newTab : int
-    + SwitchTabEvent(tabID : int, windowID : int, newTabID : int, url : string)
-}
-class NavigationEvent {
-    + NavigationEvent(tabID : int, windowID : int, url : string)
-} '/
 TabListener ..> OpenTabEvent : creates
 TabListener ..> CloseTabEvent : creates
 TabListener ..> SwitchTabEvent : creates
