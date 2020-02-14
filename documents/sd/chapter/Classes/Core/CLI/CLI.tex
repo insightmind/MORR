@@ -1,10 +1,8 @@
 \subsection{CLI}
 \begin{class}{Program}
 	\clsdiagram[width=0.5\textwidth]{resources/Classes/Core/CLI/Program.png}
-	
-	\clsdcl{public class Program}
-	
-	\clsdsp{Main entrypoint class for the CLI tool. Resolves all commands and validates their arguments using the CommandLineParser library. It uses the OutputFormatter for any outputs resulting of the commands. Lastly it keeps a reference to the RecordingManager within the main function which may be used by a command executing. }
+	\clsdcl{public class Program}\\
+	\clsdsp{Main entrypoint class for the CLI tool. Resolves all commands and validates their arguments using the CommandLineParser library, so the commands can be executed. }
 	
 	\begin{methods}
 		\begin{method}{public static void Main(string[] args)}{\\ Gets called on application start and parses the arguments to resolve the given command using CommandLine.Parser. }
@@ -15,32 +13,305 @@
 	\end{methods}
 \end{class}
 
-\begin{class}{ConsoleFormatter}
-	\clsdiagram[width=0.3\textwidth]{resources/Classes/Core/CLI/ConsoleFormatter.png}
-	
-	\clsdcl{public class ConsoleFormatter : IConsoleFormatter}
-	
-	\clsdsp{The OutputFormatter's main functionality is about printing and formatting any output made by the program. It also filters them according of the users preferences, e.g. whether the user wants to see verbose ouput or not. }
+\subsection*{MORR.CORE.CLI.OUTPUT}
+
+\begin{interface}{IConsoleFormatter}
+	\clsdiagram[width=0.3\textwidth]{resources/Classes/Core/CLI/IConsoleFormatter.png}
+	\clsdcl{public interface IConsoleFormatter}\\
+	\clsdsp{The IConsoleFormatter interface defines an interaction point for the application to interact and inform the user. }
 	
 	\begin{attributes}
-		\attribute{public readonly bool Verbose = false}{Defines whether verbose output should be printed or not.}
+		\attribute{public readonly bool IsVerbose = false}{\\ Defines whether verbose output should be printed or not. }
 	\end{attributes}
 	
 	\begin{methods}
-		\begin{method}{public void PrintMessage(string message, bool verbose)}{\\ Prints the message to the command line. It also filters out based on the verbosity of the message}
+		\begin{method}{public void PrintError(Exception exception)}{\\ Shows an exception to the user indicating that something went wrong. This is always non-verbose as it may interrupt the process of our program. }
 			\begin{parameters}
-				\para{string message}{\\ The message which should be printed to the command line.}
-				\para{bool verbose}{\\ The verbosity of the message. If it is false it will always be printed to the command line. Otherwise it will only be printed if the formatter is set to verbose itself.}
+				\para{Exception exception}{\\ The exception which should be shown to the user. }
 			\end{parameters}
-		
 		\end{method}
 		
-		\begin{method}{public void PrintException(Exception exception)}{\\ Prints out an exception to the user indicating that something went wrong. This is always non-verbose as it may interrupt the process of our program. }
+		\begin{method}{public void PrintDebug(string message)}{\\ Shows the debug messsage to the user. This only happens if IsVerbose is true }
+			\begin{parameters}
+				\para{string message}{\\ The debug message which should be presented to the user. }
+			\end{parameters}
+		\end{method}		
+	
+		\begin{method}{public void Print(string message)}{\\ Shows the message to the user. }
+			\begin{parameters}
+				\para{string message}{\\ The message which should be presented to the user. }
+			\end{parameters}
+		\end{method}
+		
+		\begin{method}{public string Read()}{\\ Reads an input from the user. }
+		\end{method}
+	\end{methods}
+\end{interface}
+
+\begin{class}{ConsoleFormatter}
+	\clsdiagram[width=0.3\textwidth]{resources/Classes/Core/CLI/ConsoleFormatter.png}
+	\clsdcl{public class ConsoleFormatter : IConsoleFormatter}\\
+	\clsdsp{The ConsoleFormatters main functionality is about printing and formatting any output made by the program to the console. It implements the IConsoleFormatter interface. }
+	
+	\begin{attributes}
+		\attribute{public bool IsVerbose = false \{ get; set;\} }{\\ Defines whether verbose output should be printed or not.}
+	\end{attributes}
+	
+	\begin{methods}
+		\begin{method}{public void PrintError(Exception exception)}{\\ Prints out an exception to the user indicating that something went wrong. This is always non-verbose as it may interrupt the process of our program. }
 			\begin{parameters}
 				\para{Exception exception}{\\ The exception which should be printed to the command line.}
 			\end{parameters}
+		\end{method}
 		
+		\begin{method}{public void PrintDebug(string message)}{\\ Prints the debug messsage to the command line. This only happens if IsVerbose is true. }
+			\begin{parameters}
+				\para{string message}{\\ The message which should be printed to the command line.}
+			\end{parameters}
+		\end{method}		
+	
+		\begin{method}{public void Print(string message)}{\\ Prints the message to the command line. }
+			\begin{parameters}
+				\para{string message}{\\ The message which should be printed to the command line.}
+			\end{parameters}
+		\end{method}
+		
+		\begin{method}{public string Read()}{\\ Reads a single line from the command line. }
 		\end{method}
 	\end{methods}
+\end{class}
+
+\subsection*{MORR.CORE.CLI.UTILITY}
+
+\begin{interface}{IMessageLoop}
+	\clsdiagram[width=0.3\textwidth]{resources/Classes/Core/CLI/IMessageLoop.png}
+	\clsdcl{public interface IMessageLoop}\\
+	\clsdsp{A IMessageLoop allows to instantiate a maybe thread blocking loop to catch messages. It therefore pretty much only needs loop characteristics, however it may be blocking.}
 	
+	\begin{attributes}
+		\attribute{public bool IsRunning \{ get; private set;\} }{\\ Describes whether the MessageLoop is running or not. }
+	\end{attributes}
+	
+	\begin{methods}
+		\begin{method}{public void Start()}{\\ Starts the message loop. This may block the calling thread. }
+		\end{method}
+		
+		\begin{method}{public void Stop()}{\\ Stops the message loop. Execution may continue in both calling thread and thread which was used to start the loop. }
+		\end{method}
+	\end{methods}
+\end{interface}
+
+\begin{class}{MessageLoop}
+	\clsdiagram[width=0.3\textwidth]{resources/Classes/Core/CLI/MessageLoop.png}
+	\clsdcl{public class MessageLoop}\\
+	\clsdsp{A MessageLoop instantiates a cancelable Win32 message loop. Make sure to start the loop only on the main thread! Keep in mind that the message loop does block its calling thread, so you have to cancel it via a separate thread!}
+	
+	\begin{attributes}
+		\attribute{public bool IsRunning \{ get; private set;\} }{\\ Describes whether the MessageLoop is running or not. }
+	\end{attributes}
+	
+	\begin{methods}
+		\begin{method}{public MessageLoop()}{\\ Creates a new message loop object which can be used to start a new Win32 message loop. }
+		\end{method}
+	
+		\begin{method}{public void Start()}{\\ Runs a standard Win32 message loop. Intended for use in contexts where a Win32 message loop is required for Windows-Hooks and no such loop already exists (e.g. ConsoleApp). }
+		\end{method}
+		
+		\begin{method}{public void Stop()}{\\ Stops a currently running message loop. }
+		\end{method}
+	\end{methods}
+\end{class}
+
+\subsection*{MORR.CORE.CLI.INTERACTIVE}
+
+\begin{interface}{IInteractiveCommandline}
+	\clsdiagram[width=0.3\textwidth]{resources/Classes/Core/CLI/IInteractiveCommandline.png}
+	\clsdcl{public interface IInteractiveCommandLine}\\
+	\clsdsp{The interactive command line interface supports adding a custom separate built-in command line interface in an addition to the default interface provided by CMD.exe. }
+	
+	\begin{methods}
+		\begin{method}{public void Launch(Action completionAction)}{\\ Launches the internal command line. }
+			\begin{parameters}
+				\para{Action completionAction}{\\ The action called on completion. }
+			\end{parameters}
+		\end{method}
+	\end{methods}
+\end{interface}
+
+\begin{class}{InteractiveCommandline}
+	\clsdiagram[width=0.3\textwidth]{resources/Classes/Core/CLI/InteractiveCommandline.png}
+	\clsdcl{public class InteractiveCommandLine}\\
+	\clsdsp{A MessageLoop instantiates a cancelable Win32 message loop. Make sure to start the loop only on the main thread! Keep in mind that the message loop does block its calling thread, so you have to cancel it via a separate thread!}
+	
+	\begin{attributes}
+		\attribute{public bool IsRunning \{ get; private set; \} }{\\ Describes whether the MessageLoop is running or not. }
+	\end{attributes}
+	
+	\begin{methods}
+		\begin{method}{public InteractiveCommandLine(IConsoleFormatter consoleFormatter)}{\\ Creates a new built-in command line with the specified interaction point to the user. }
+			\begin{parameters}
+				\para{IConsoleFormatter consoleFormatter}{\\ The console formater used to interact with the user in the internal command line. }
+			\end{parameters}
+		\end{method}
+	
+		\begin{method}{public void Launch(Action completionAction)}{\\ Launches the internal command line. It is launched on a separate thread so interactive usage can be provided. }
+			\begin{parameters}
+				\para{Action completionAction}{\\ The action called on completion. }
+			\end{parameters}
+		\end{method}
+	\end{methods}
+\end{class}
+
+\subsection*{MORR.CORE.CLI.COMMANDS}
+
+\begin{interface}{ICommand<T: CommandOptions>}
+	\clsdiagram[width=0.3\textwidth]{resources/Classes/Core/CLI/Command.png}
+	\clsdcl{public interface ICommand<in TOptions> where TOptions : CommandOptions}\\
+	\clsdsp{Simple interface to implement the command pattern for the CLI. TOptions are the options which are to be met for execution of the command. }
+	
+	\begin{methods}
+		\begin{method}{public int Execute(TOptions options)}{\\ Executes the command with the given options. Returns code: 0 if successful, -1 on failure. Custom return codes are allowed but must be handled independently. }
+			\begin{parameters}
+				\para{TOptions options}{\\ The resolved options used to customize the command. }
+			\end{parameters}
+		\end{method}
+	\end{methods}
+\end{interface}
+
+\begin{class}{CommandOptions}
+	\clsdiagram[width=0.3\textwidth]{resources/Classes/Core/CLI/CommandOptions.png}
+	\clsdcl{public abstract class CommandOptions}\\
+	\clsdsp{A CommandOption includes the default options for any command in the CLI. }
+	
+	\begin{attributes}
+		\attribute{public bool IsVerbose \{ get; set; \} = false }{\\ Defines whether the output of the command should be verbose. Default: false }
+	\end{attributes}
+\end{class}
+
+\subsection*{MORR.CORE.CLI.COMMANDS.VALIDATE}
+
+\begin{class}{ValidateCommand}
+	\clsdiagram[width=0.3\textwidth]{resources/Classes/Core/CLI/ValidateCommand.png}
+	\clsdcl{public class ValidateCommand : ICommand<ValidateOptions>}\\
+	\clsdsp{The validate command checks if a given configuration file can be validated and is correct. It also may give advice about an error in the configuration file. }
+	
+	\begin{methods}
+		\begin{method}{public ValidateCommand()}{\\ Creates a new ValidateCommand instantiated with the default implementations of the CORE. }
+		\end{method}
+		
+		\begin{method}{public ValidateCommand(\\IConfigurationManager configurationManager,\\ IConsoleFormatter consoleFormatter,\\ IBootstrapper bootstrapper) }{\\ Creates a new ValidateCommand with the given dependencies. }
+			\begin{parameters}
+				\para{IConfigurationManager configurationManager}{\\ The configuration manager used to validate the given configuration file. }
+				\para{IConsoleFormatter consoleFormatter}{\\ The console formatter is used to interact and inform the user while execution. }
+				\para{IBootstrapper bootstrapper}{\\ The bootstrapper supports the command in loading additional external configuration which need to be met by the configuration file. }
+			\end{parameters}
+		\end{method}
+	
+		\begin{method}{public int Execute(ValidateOptions options)}{\\ Executes the validate command using the configuration file defined in the options parameter. Returns -1 if an unforeseen error occurred, 1 if the configuration file is invalid and 0 if the configuration file is valid. }
+			\begin{parameters}
+				\para{ValidateOptions options}{\\ The resolved options used to customize the command. }
+			\end{parameters}
+		\end{method}
+	\end{methods}
+\end{class}
+
+\begin{class}{ValidateOptions}
+	\clsdiagram[width=0.3\textwidth]{resources/Classes/Core/CLI/ValidateOptions.png}
+	\clsdcl{public class ValidateOptions : CommandOptions}\\
+	\clsdsp{The ValidateOptions are to be met to executed the ValidateCommand. }
+	
+	\begin{attributes}
+		\attribute{public bool IsVerbose \{ get; set; \} = false }{\\ Defines whether the output of the command should be verbose. Default: false }
+		\attribute{public string ConfigPath \{ get; set; \} }{\\ Path to configuration file. Is required. }
+	\end{attributes}
+\end{class}
+
+\subsection*{MORR.CORE.CLI.COMMANDS.PROCESS}
+
+\begin{class}{ProcessCommand}
+	\clsdiagram[width=0.3\textwidth]{resources/Classes/Core/CLI/ProcessCommand.png}
+	\clsdcl{public class ProcessCommand : ICommand<ProcessOptions>}\\
+	\clsdsp{The process command starts a new processing session using the CORE. It loads the events of the input directory and processes them through the processing pipeline to finally save the processed events. }
+	
+	\begin{methods}
+		\begin{method}{public ProcessCommand(ISessionManager sessionManager)}{\\ Creates a new ProcessCommand using the session manager for execution. }
+			\begin{parameters}
+				\para{ISessionManager sessionManager}{\\ The session manager, which was previously initialized using a configuration file, used for the processing session. }
+			\end{parameters}
+		\end{method}
+		
+		\begin{method}{public ProcessCommand(\\ISessionManager sessionManager, \\IConsoleFormatter consoleFormatter) }{\\ Creates a new ProcessCommand with the given dependencies. }
+			\begin{parameters}
+				\para{ISessionManager sessionManager}{\\ The session manager, which was previously initialized using a configuration file, used for the processing session. }
+				\para{IConsoleFormatter consoleFormatter}{\\ The console formatter is used to interact and inform the user while execution. }
+			\end{parameters}
+		\end{method}
+	
+		\begin{method}{public int Execute(ProcessCommand options)}{\\ Executes the process command using the input directory and output file defined in the options parameter. Returns -1 if an unforeseen error occurred and 0 if the configuration file is valid. }
+			\begin{parameters}
+				\para{Process options}{\\ The resolved options used to customize the command. }
+			\end{parameters}
+		\end{method}
+	\end{methods}
+\end{class}
+
+\begin{class}{ProcessOptions}
+	\clsdiagram[width=0.3\textwidth]{resources/Classes/Core/CLI/ProcessOptions.png}
+	\clsdcl{public class ProcessOptions : CommandOptions}\\
+	\clsdsp{The ProcessOptions are to be met to executed the ProcessCommand. }
+	
+	\begin{attributes}
+		\attribute{public bool IsVerbose \{ get; set; \} = false }{\\ Defines whether the output of the command should be verbose. Default: false }
+		\attribute{public string ConfigPath \{ get; set; \} }{\\ Path to configuration file. Is required. }
+		\attribute{public string InputFile \{ get; set; \} }{\\ Path to input file, which should be processed. Is required. }
+	\end{attributes}
+\end{class}
+
+\subsection*{MORR.CORE.CLI.COMMANDS.RECORD}
+
+\begin{class}{ProcessCommand}
+	\clsdiagram[width=0.3\textwidth]{resources/Classes/Core/CLI/RecordCommand.png}
+	\clsdcl{public class RecordCommand : ICommand<RecordOptions>}\\
+	\clsdsp{The record command starts a new recording session. It collects the events using modules and runs them through the recording pipeline to finally save the recorded events. }
+	
+	\begin{methods}
+		\begin{method}{public RecordCommand(ISessionManager sessionManager)}{\\ Creates a new RecordCommand using the session manager for execution. Uses the default implementation for the interactive command line, message loop and console formatter provided by the CLI package.}
+			\begin{parameters}
+				\para{ISessionManager sessionManager}{\\ The session manager, which was previously initialized using a configuration file, used for the recording session. }
+			\end{parameters}
+		\end{method}
+		
+		\begin{method}{public RecordCommand(\\ISessionManager sessionManager, \\IConsoleFormatter consoleFormatter) }{\\ Creates a new RecordCommand with the given dependencies. Uses the default implementation for the interactive command line and message loop provided by the CLI package. }
+			\begin{parameters}
+				\para{ISessionManager sessionManager}{\\ The session manager, which was previously initialized using a configuration file, used for the recording session. }
+				\para{IConsoleFormatter consoleFormatter}{\\ The console formatter is used to interact and inform the user while execution. }
+			\end{parameters}
+		\end{method}
+		
+		\begin{method}{public RecordCommand(\\ISessionManager sessionManager, \\IConsoleFormatter consoleFormatter, \\IInteractiveCommandLine commandLine, \\IMessageLoop messageLoop) }{\\ Creates a new RecordCommand with the given dependencies. }
+			\begin{parameters}
+				\para{ISessionManager sessionManager}{\\ The session manager, which was previously initialized using a configuration file, used for the recording session. }
+				\para{IConsoleFormatter consoleFormatter}{\\ The console formatter is used to interact and inform the user while execution. }
+				\para{IInteractiveCommandline commandline}{\\ The interactable command line for the user to cancel the recording session. }
+				\para{IMessageLoop messageLoop}{\\ The message loop which is necessary to run a recording session using the command line application. }
+			\end{parameters}
+		\end{method}
+	
+		\begin{method}{public int Execute(RecordCommand options)}{\\ Executes the record command using the input directory and output file defined in the options parameter. Returns -1 if an unforeseen error occurred and 0 if the configuration file is valid. }
+			\begin{parameters}
+				\para{Process options}{\\ The resolved options used to customize the command. }
+			\end{parameters}
+		\end{method}
+	\end{methods}
+\end{class}
+
+\begin{class}{ProcessOptions}
+	\clsdiagram[width=0.3\textwidth]{resources/Classes/Core/CLI/RecordOptions.png}
+	\clsdcl{public class RecordOptions : CommandOptions}\\
+	\clsdsp{The RecordOptions are to be met to executed the RecordCommand. }
+	
+	\begin{attributes}
+		\attribute{public bool IsVerbose \{ get; set; \} = false }{\\ Defines whether the output of the command should be verbose. Default: false }
+		\attribute{public string ConfigPath \{ get; set; \} }{\\ Path to configuration file. Is required. }
+	\end{attributes}
 \end{class}
