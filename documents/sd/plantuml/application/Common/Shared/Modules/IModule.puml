@@ -3,7 +3,7 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 !startsub default
 interface IModule {
-    + Identifier : Guid
+    + Identifier : Guid <<get>>
     + IsActive : bool <<get>> <<set>>
     + Initialize() : void
 }
