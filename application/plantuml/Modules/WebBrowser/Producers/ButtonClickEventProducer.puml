@@ -1,9 +1,12 @@
 @startuml
+skinparam monochrome true
+skinparam ClassAttributeIconSize 0
 class ButtonClickEventProducer {
     + <<override>> Notify(eventJson:JsonElement) : void
 }
-class "WebBrowserEventProducer`1"<T> {
+class "WebBrowserEventProducer<T>" {
 }
-"WebBrowserEventProducer`1" "<ButtonClickEvent>" <|-- ButtonClickEventProducer
+enum "EventLabel"
+"WebBrowserEventProducer<T>" "<ButtonClickEvent>" <|-- ButtonClickEventProducer
 ButtonClickEventProducer --> "HandledEventLabel" EventLabel
 @enduml

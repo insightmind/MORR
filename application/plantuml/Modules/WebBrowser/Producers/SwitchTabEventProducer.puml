@@ -1,9 +1,12 @@
 @startuml
+skinparam monochrome true
+skinparam ClassAttributeIconSize 0
 class SwitchTabEventProducer {
     + <<override>> Notify(eventJson:JsonElement) : void
 }
-class "WebBrowserEventProducer`1"<T> {
+class "WebBrowserEventProducer<T>" {
 }
-"WebBrowserEventProducer`1" "<SwitchTabEvent>" <|-- SwitchTabEventProducer
+enum "EventLabel"
+"WebBrowserEventProducer<T>" "<SwitchTabEvent>" <|-- SwitchTabEventProducer
 SwitchTabEventProducer --> "HandledEventLabel" EventLabel
 @enduml

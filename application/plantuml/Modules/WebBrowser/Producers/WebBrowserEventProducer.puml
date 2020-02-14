@@ -1,11 +1,14 @@
 @startuml
-abstract class "WebBrowserEventProducer`1"<T> {
+skinparam monochrome true
+skinparam ClassAttributeIconSize 0
+abstract class "WebBrowserEventProducer<T>" {
     + <<virtual>> Notify(eventJson:JsonElement) : void
     + EnqueueFinished() : void
 }
-class "DefaultEventQueue`1"<T> {
+class "DefaultEventQueue<T>" {
 }
-"DefaultEventQueue`1" "<T>" <|-- "WebBrowserEventProducer`1"
-IWebBrowserEventObserver <|-- "WebBrowserEventProducer`1"
-"WebBrowserEventProducer`1" --> "HandledEventLabel" EventLabel
+interface "IWebBrowserEventObserver"
+"DefaultEventQueue<T>" "   <WebBrowserEvent>" <|-- "WebBrowserEventProducer<T>"
+IWebBrowserEventObserver <|-- "WebBrowserEventProducer<T>"
+"WebBrowserEventProducer<T>" --> "HandledEventLabel" EventLabel
 @enduml
