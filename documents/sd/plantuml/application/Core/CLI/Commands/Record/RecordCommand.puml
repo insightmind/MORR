@@ -1,0 +1,22 @@
+@startuml RecordCommand
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+!startsub default
+class RecordCommand {
+    + <<create>> RecordCommand(sessionManager: ISessionManager)
+    + <<create>> RecordCommand(sessionManager: ISessionManager, consoleFormatter: IConsoleFormatter)
+    + <<create>> RecordCommand(sessionManager: ISessionManager, consoleFormatter: IConsoleFormatter, commandline: IInteractiveCommandLine, messageLoop: IMessageLoop)
+    + Execute(options: RecordOptions) : int
+}
+!endsub
+
+!includesub RecordOptions.puml!default
+!includesub ../Command.puml!default
+!includesub ../CommandOptions.puml!default
+
+RecordOptions --|> CommandOptions
+RecordCommand ..> RecordOptions : "uses"
+RecordCommand ..|> "ICommand<T: CommandOptions>"
+
+@enduml

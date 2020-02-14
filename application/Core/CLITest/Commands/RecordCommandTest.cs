@@ -8,6 +8,7 @@ using MORR.Core.Session;
 using System;
 using System.Diagnostics;
 using System.Reflection;
+using MORR.Shared.Utility;
 
 namespace CLITest.Commands
 {

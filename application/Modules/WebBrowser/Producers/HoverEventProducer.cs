@@ -9,12 +9,5 @@ namespace MORR.Modules.WebBrowser.Producers
     public class HoverEventProducer : WebBrowserEventProducer<HoverEvent>
     {
         public override EventLabel HandledEventLabel => EventLabel.HOVER;
-
-        public override void Notify(JsonElement eventJson)
-        {
-            var @event = new HoverEvent();
-            @event.Deserialize(eventJson);
-            Enqueue(@event);
-        }
     }
 }

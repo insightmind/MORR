@@ -2,7 +2,9 @@
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 
-interface "IReadOnlyEventQueue<out T> where T : Event" {
-    GetEvents() : IAsyncEnumerable<T>
+!startsub default
+interface "IReadOnlyEventQueue<T: Event>" {
+    + IsClosed: bool <<get>>
 }
+!endsub
 @enduml

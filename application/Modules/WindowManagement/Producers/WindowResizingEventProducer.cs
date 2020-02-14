@@ -1,7 +1,8 @@
 ﻿using System.Drawing;
 using MORR.Modules.WindowManagement.Events;
+using MORR.Modules.WindowManagement.Native;
 using MORR.Shared.Events.Queue;
-using MORR.Shared.Utility;
+using MORR.Shared.Hook;
 
 namespace MORR.Modules.WindowManagement.Producers
 {
@@ -28,18 +29,18 @@ namespace MORR.Modules.WindowManagement.Producers
         /// </summary>
         private int windowUnderChangeHwnd;
 
+        private readonly GlobalHook.MessageType[] listenedMessageTypes = { GlobalHook.MessageType.WM_ENTERSIZEMOVE, GlobalHook.MessageType.WM_EXITSIZEMOVE };
+
         public void StartCapture()
         {
-            GlobalHook.AddListener(WindowHookCallback, NativeMethods.MessageType.WM_ENTERSIZEMOVE,
-                                   NativeMethods.MessageType.WM_EXITSIZEMOVE);
+            GlobalHook.AddListener(WindowHookCallback, listenedMessageTypes);
             GlobalHook.IsActive = true;
         }
 
         public void StopCapture()
         {
-            GlobalHook.RemoveListener(WindowHookCallback, NativeMethods.MessageType.WM_ENTERSIZEMOVE,
-                                      NativeMethods.MessageType.WM_EXITSIZEMOVE);
-            NotifyOnEnqueueFinished();
+            GlobalHook.RemoveListener(WindowHookCallback, listenedMessageTypes);
+            Close();
         }
 
         /// <summary>
@@ -55,36 +56,36 @@ namespace MORR.Modules.WindowManagement.Producers
         /// <param name="msg">the hook message</param>
         private void WindowHookCallback(GlobalHook.HookMessage msg)
         {
-            if (msg.Type == (uint) NativeMethods.MessageType.WM_ENTERSIZEMOVE)
+            if (msg.Type == (uint) GlobalHook.MessageType.WM_ENTERSIZEMOVE)
             {
                 windowUnderChangeHwnd = (int) msg.Hwnd;
                 windowRecBeforeChange = new Rectangle();
-                NativeMethods.GetWindowRect(windowUnderChangeHwnd, ref windowRecBeforeChange);
+                WindowManagementNativeMethods.GetWindowRect(windowUnderChangeHwnd, ref windowRecBeforeChange);
             }
 
-            if (msg.Type == (uint) NativeMethods.MessageType.WM_EXITSIZEMOVE)
+            if (msg.Type == (uint) GlobalHook.MessageType.WM_EXITSIZEMOVE)
             {
                 windowRecAfterChange = new Rectangle();
-                NativeMethods.GetWindowRect(windowUnderChangeHwnd, ref windowRecAfterChange);
-                if (!Utility.IsRectSizeEqual(windowRecBeforeChange, windowRecAfterChange))
+                WindowManagementNativeMethods.GetWindowRect(windowUnderChangeHwnd, ref windowRecAfterChange);
+                if (!WindowManagementNativeMethods.IsRectSizeEqual(windowRecBeforeChange, windowRecAfterChange))
                 {
                     var oldSize = new Size
                     {
-                        Width = Utility.GetWindowWidth(windowRecBeforeChange),
-                        Height = Utility.GetWindowHeight(windowRecBeforeChange)
+                        Width = WindowManagementNativeMethods.GetWindowWidth(windowRecBeforeChange),
+                        Height = WindowManagementNativeMethods.GetWindowHeight(windowRecBeforeChange)
                     };
                     var newSize = new Size
                     {
-                        Width = Utility.GetWindowWidth(windowRecAfterChange),
-                        Height = Utility.GetWindowHeight(windowRecAfterChange)
+                        Width = WindowManagementNativeMethods.GetWindowWidth(windowRecAfterChange),
+                        Height = WindowManagementNativeMethods.GetWindowHeight(windowRecAfterChange)
                     };
                     var @event = new WindowResizingEvent
                     {
                         IssuingModule = WindowManagementModule.Identifier,
                         OldSize = oldSize,
                         NewSize = newSize,
-                        Title = Utility.GetWindowTitleFromHwnd(msg.Hwnd),
-                        ProcessName = Utility.GetProcessNameFromHwnd(msg.Hwnd)
+                        Title = WindowManagementNativeMethods.GetWindowTitleFromHwnd(msg.Hwnd),
+                        ProcessName = WindowManagementNativeMethods.GetProcessNameFromHwnd(msg.Hwnd)
                     };
                     Enqueue(@event);
                 }

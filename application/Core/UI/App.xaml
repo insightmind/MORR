@@ -3,25 +3,51 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:Icon="clr-namespace:MORR.Core.UI.Controls.NotifyIcon"
              xmlns:ViewModel="clr-namespace:MORR.Core.UI.ViewModels"
+             xmlns:Utility="clr-namespace:MORR.Core.UI.Utility"
+             xmlns:System="clr-namespace:System;assembly=System.Runtime"
              ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Styles/DialogStyle.xaml" />
                 <ResourceDictionary>
-                    <Icon:NotifyIcon x:Key="Icon" Command="{Binding ToggleRecordingCommand}">
+                    <Utility:SwitchConverter x:Key="IconConverter" DefaultValue="Assets/Icon/MORR_Default.ico">
+                        <Utility:SwitchCase Out="Assets/Icon/MORR_Active_Recording.ico">
+                            <Utility:SwitchCase.In>
+                                <System:Boolean>True</System:Boolean>
+                            </Utility:SwitchCase.In>
+                        </Utility:SwitchCase>
+                        <Utility:SwitchCase Out="Assets/Icon/MORR_Default.ico">
+                            <Utility:SwitchCase.In>
+                                <System:Boolean>False</System:Boolean>
+                            </Utility:SwitchCase.In>
+                        </Utility:SwitchCase>
+                    </Utility:SwitchConverter>
+                    <Utility:SwitchConverter x:Key="RecordingButtonConverter" DefaultValue="Toggle recording">
+                        <Utility:SwitchCase Out="Stop recording">
+                            <Utility:SwitchCase.In>
+                                <System:Boolean>True</System:Boolean>
+                            </Utility:SwitchCase.In>
+                        </Utility:SwitchCase>
+                        <Utility:SwitchCase Out="Start recording">
+                            <Utility:SwitchCase.In>
+                                <System:Boolean>False</System:Boolean>
+                            </Utility:SwitchCase.In>
+                        </Utility:SwitchCase>
+                    </Utility:SwitchConverter>
+                    <Icon:NotifyIcon x:Key="Icon"
+                                     IconUri="{Binding IsRecording, Converter={StaticResource IconConverter}}">
                         <Icon:NotifyIcon.DataContext>
                             <ViewModel:ApplicationViewModel />
                         </Icon:NotifyIcon.DataContext>
-                        <Icon:NotifyIcon.IconSource>
-                            <BitmapImage UriSource="Assets/Icon/Icon.ico" />
-                        </Icon:NotifyIcon.IconSource>
                         <Icon:NotifyIcon.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="Toggle recording"
-                                          Command="{Binding ToggleRecordingCommand}" />
+                                <MenuItem
+                                    Header="{Binding IsRecording, Converter={StaticResource RecordingButtonConverter}}"
+                                    Command="{Binding ToggleRecordingCommand}" />
                                 <MenuItem Header="Open recordings directory"
                                           Command="{Binding OpenRecordingsDirectoryCommand}" />
+                                <Separator />
                                 <MenuItem Header="Exit" Command="{Binding ExitCommand}" />
                             </ContextMenu>
                         </Icon:NotifyIcon.ContextMenu>

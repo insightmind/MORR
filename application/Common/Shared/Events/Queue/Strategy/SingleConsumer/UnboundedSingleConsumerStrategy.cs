@@ -22,12 +22,10 @@ namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
         {
             options = new UnboundedChannelOptions()
             {
-                AllowSynchronousContinuations = true,
+                AllowSynchronousContinuations = false,
                 SingleWriter = false,
                 SingleReader = true
             };
-
-            StartReceiving();
         }
 
         protected override Channel<TEvent> CreateChannel()

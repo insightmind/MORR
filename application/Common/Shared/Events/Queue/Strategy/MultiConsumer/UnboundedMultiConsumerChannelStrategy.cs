@@ -26,14 +26,14 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
         {
             offeringOptions = new UnboundedChannelOptions()
             {
-                AllowSynchronousContinuations = true,
+                AllowSynchronousContinuations = false,
                 SingleWriter = true,
                 SingleReader = true
             };
 
             receivingOptions = new UnboundedChannelOptions()
             {
-                AllowSynchronousContinuations = true,
+                AllowSynchronousContinuations = false,
                 SingleWriter = false,
                 SingleReader = true
             };

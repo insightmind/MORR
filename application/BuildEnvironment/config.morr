@@ -4,7 +4,10 @@
       "MORR.Core.Data.IntermediateFormat.Json.JsonIntermediateFormatSerializer",
       "MORR.Core.Data.IntermediateFormat.Json.JsonIntermediateFormatDeserializer",
       "MORR.Core.Data.Capture.Video.Desktop.DesktopCapture",
-      "MORR.Modules.WindowManagement.WindowManagementModule"
+      "MORR.Modules.WindowManagement.WindowManagementModule",
+      "MORR.Modules.Keyboard.KeyboardModule",
+      "MORR.Modules.Mouse.MouseModule",
+      "MORR.Modules.Clipboard.ClipboardModule"
     ]
   },
   "MORR.Core.Session.SessionConfiguration": {
@@ -16,6 +19,13 @@
       "MORR.Core.Data.Transcoding.Json.JsonDecoder"
     ],
     "RecordingDirectory": "%userprofile%\\Videos\\MORR"
+  },
+  "MORR.Modules.Mouse.MouseModuleConfiguration": {
+    "SamplingRateInHz": 10,
+    "Threshold": 50
+  },
+  "MORR.Modules.WebBrowser.WebBrowserModuleConfiguration": {
+    "UrlSuffix": "60024/"
   },
   "MORR.Core.Data.Transcoding.Json.JsonEncoderConfiguration": {
     "RelativeFilePath": "event_data.json"

@@ -1,0 +1,16 @@
+@startuml ValidateOptions
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+!startsub default
+class ValidateOptions {
+    + IsVerbose: bool <<get>> <<set>>
+    + ConfigPath: string <<get>> <<set>>
+}
+!endsub
+
+!includesub ../CommandOptions.puml!default
+
+ValidateOptions --|> CommandOptions
+
+@enduml

@@ -1,0 +1,19 @@
+@startuml(id=default)
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+!startsub default
+abstract class "NonDeserializableEventQueue<T>" {
+}
+interface "IReadOnlyEventQueue<T>"
+abstract class "BaseEventQueue<T>" {
+    + IsClosed : bool <<get>>
+    + GetEvents() : IAsyncEnumerable<TEvent>
+    + Enqueue(@event:TEvent) : void
+    + Open() : void
+    + Close() : void
+}
+"IReadOnlyEventQueue<T>" <|-- "NonDeserializableEventQueue<T>"
+"BaseEventQueue<T>" <|-- "NonDeserializableEventQueue<T>"
+!endsub
+@enduml

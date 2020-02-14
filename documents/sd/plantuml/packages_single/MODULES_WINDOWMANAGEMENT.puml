@@ -5,6 +5,42 @@ skinparam classAttributeIconSize 0
 
 left to right direction
 hide empty fields
-!includesub ../MORR.puml!MODULES_WINDOWMANAGEMENT
-'!includesub ../MORR.puml!MODULES_WINDOWMANAGEMENT_INTERNAL
+!startsub default
+package "WINDOWMANAGEMENT" #BFBFBF {
+    class WindowManagementModule {
+
+    }
+
+    abstract class WindowEvent {
+        + Title : string <<get>> <<set>>
+        + ProcessName : string <<get>> <<set>>
+    }
+    
+    class WindowFocusEvent {
+
+    }
+
+    class WindowMovementEvent {
+        + OldLocation: Vector2
+        + NewLocation: Vector2
+    }
+
+    class WindowResizingEvent {
+        + OldSize: Size
+        + NewSize: Size
+    }
+
+    class WindowStateChangedEvent {
+        + State: WindowState
+    }
+}
+
+' WindowManagement
+Event <|-- WindowEvent
+IModule <|.. WindowManagementModule
+WindowEvent <|-- WindowFocusEvent
+WindowEvent <|-- WindowMovementEvent
+WindowEvent <|-- WindowResizingEvent
+WindowEvent <|-- WindowStateChangedEvent
+!endsub
 @enduml

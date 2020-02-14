@@ -1,0 +1,14 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+interface IModule
+!startsub default
+class JsonIntermediateFormatDeserializer {
+    + IsActive: bool <<get>> <<set>>
+    + Identifier: Guid <<get>>
+}
+!endsub
+
+IModule <|-- JsonIntermediateFormatDeserializer
+@enduml

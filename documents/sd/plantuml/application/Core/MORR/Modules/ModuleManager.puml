@@ -1,0 +1,14 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
+class ModuleManager {
+    + InitializeModules() : void
+    + NotifyModulesOnSessionStart() : void
+    + NotifyModulesOnSessionStop() : void
+}
+!endsub
+!include IModuleManager.puml
+
+IModuleManager <|-- ModuleManager
+@enduml

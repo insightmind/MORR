@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using MORR.Core.CLI.Interactive;
 using MORR.Core.CLI.Utility;
+using MORR.Shared.Hook;
 
 namespace MORR.Core.CLI.Commands.Record
 {
@@ -66,6 +67,7 @@ namespace MORR.Core.CLI.Commands.Record
 
                 // Load Configuration File
                 consoleFormatter.PrintDebug(loadedFileMessage);
+                var configPath = new FilePath(Path.GetFullPath(options.ConfigPath));
 
                 // Load Session Manager
                 consoleFormatter.PrintDebug(sessionManagerMessage);

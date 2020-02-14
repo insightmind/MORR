@@ -9,7 +9,7 @@ namespace MORR.Modules.WindowManagement
     /// <summary>
     ///     The <see cref="WindowManagementModule" /> is responsible for recording all window related user interactions
     /// </summary>
-    public class WindowManagementModule : ICollectingModule
+    public class WindowManagementModule : IModule
     {
         private bool isActive;
 
@@ -36,8 +36,9 @@ namespace MORR.Modules.WindowManagement
         /// </summary>
         [Import]
         public WindowStateChangedEventProducer WindowStateChangedEventProducer { get; private set; }
-
+        
         public static Guid Identifier { get; } = new Guid("FAB5BC0D-8B33-4DFD-9FA3-C58E0F1435B5");
+        Guid IModule.Identifier => Identifier;
 
         /// <summary>
         ///     if the module is active or not.
@@ -47,31 +48,41 @@ namespace MORR.Modules.WindowManagement
         public bool IsActive
         {
             get => isActive;
-            set => Utility.SetAndDispatch(ref isActive, value, StartCapture,
-                                          StopCapture);
+            set => Utility.SetAndDispatch(ref isActive, value, StartCapture, StopCapture);
         }
 
-        Guid IModule.Identifier => Identifier;
-
-        /// <summary>
-        ///     Initialize the module with Configuration and Producers.
-        /// </summary>
-        public void Initialize() { }
+        public void Initialize(bool isEnabled)
+        {
+            if (isEnabled)
+            {
+                WindowFocusEventProducer?.Open();
+                WindowMovementEventProducer?.Open();
+                WindowResizingEventProducer?.Open();
+                WindowStateChangedEventProducer?.Open();
+            }
+            else
+            {
+                WindowFocusEventProducer?.Close();
+                WindowMovementEventProducer?.Close();
+                WindowResizingEventProducer?.Close();
+                WindowStateChangedEventProducer?.Close();
+            }
+        }
 
         private void StartCapture()
         {
-            WindowFocusEventProducer.StartCapture();
-            WindowMovementEventProducer.StartCapture();
-            WindowResizingEventProducer.StartCapture();
-            WindowStateChangedEventProducer.StartCapture();
+            WindowFocusEventProducer?.StartCapture();
+            WindowMovementEventProducer?.StartCapture();
+            WindowResizingEventProducer?.StartCapture();
+            WindowStateChangedEventProducer?.StartCapture();
         }
 
         private void StopCapture()
         {
-            WindowFocusEventProducer.StopCapture();
-            WindowMovementEventProducer.StopCapture();
-            WindowResizingEventProducer.StopCapture();
-            WindowStateChangedEventProducer.StopCapture();
+            WindowFocusEventProducer?.StopCapture();
+            WindowMovementEventProducer?.StopCapture();
+            WindowResizingEventProducer?.StopCapture();
+            WindowStateChangedEventProducer?.StopCapture();
         }
     }
 }

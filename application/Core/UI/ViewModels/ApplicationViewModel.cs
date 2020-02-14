@@ -1,28 +1,40 @@
-﻿using System.Windows;
+﻿using System;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
+using System.Windows;
 using System.Windows.Input;
-using Morr.Core.UI.Dialogs;
-using MORR.Core.UI.ViewModels.Utility;
+using System.Windows.Interop;
+using MORR.Core.Data.Capture.Video.Desktop.Utility;
+using MORR.Core.Session;
+using MORR.Core.UI.Dialogs;
+using MORR.Core.UI.Utility;
+using MORR.Shared.Utility;
 
 namespace MORR.Core.UI.ViewModels
 {
     public class ApplicationViewModel : DependencyObject
     {
+        private SessionManager sessionManager;
+
         public ApplicationViewModel()
         {
+            DesktopCaptureNativeMethods.WindowRequestedHandler = CreateWindowForPicker;
             Initialize();
         }
 
         private void Initialize()
         {
-            // TODO Configure application here
-
-            var configurationSuccessful = true;
-
-            if (!configurationSuccessful)
+            try
             {
-                // Invalid configuration
-                new ErrorDialog("The configuration could not be loaded. \nPlease check the configuration file or contact an administrator.").ShowDialog();
-                Exit();
+                var configurationPath = GetConfigurationPathFromCommandLine();
+                sessionManager = new SessionManager(configurationPath);
+            }
+            catch (Exception)
+            {
+                ExitWithError(
+                    "The configuration could not be loaded correctly. \nPlease check the configuration file or contact an administrator.");
             }
         }
 
@@ -31,10 +43,16 @@ namespace MORR.Core.UI.ViewModels
             Application.Current?.Shutdown();
         }
 
-        private static void OnOpenRecordingsDirectory(object _)
+        private void OnOpenRecordingsDirectory(object _)
         {
-            // TODO Get correct file path
-            // Process.Start("explorer.exe", "file-path-here");
+            var recordingsFolder = sessionManager.RecordingsFolder;
+
+            if (recordingsFolder == null)
+            {
+                ExitWithError("The recordings folder could not be found. \nPlease contact an administrator.");
+            }
+
+            Process.Start("explorer.exe", recordingsFolder.ToString());
         }
 
         private void OnExitApplication(object _)
@@ -61,23 +79,100 @@ namespace MORR.Core.UI.ViewModels
 
         private void StartRecording()
         {
-            if (new InformationDialog().ShowDialog() ?? false)
+            if (!ShowDialogWithResult<InformationDialog>())
             {
-                IsRecording = true;
-                // TODO Start recording
+                return;
+            }
+
+            IsRecording = true;
+
+            try
+            {
+                sessionManager.StartRecording();
+            }
+            catch (Exception)
+            {
+                // We cannot recover from an error here, as the modules might be in an invalid state
+                // We have to exit immediately as otherwise threads might throw new exceptions
+                Environment.Exit(-1); // Exit with non-zero value to indicate error
             }
         }
 
         private void StopRecording()
         {
-            // TODO Stop recording
-
             IsRecording = false;
-            if (new SaveDialog().ShowDialog() ?? false)
+            sessionManager.StopRecording();
+
+            if (ShowDialogWithResult<SaveDialog>())
             {
-                // TODO Save recording
+                // Recordings are automatically saved - no further action required
+                return;
             }
+
+            var recordingDirectory = sessionManager.CurrentRecordingDirectory?.ToString();
+
+            if (recordingDirectory == null)
+            {
+                return;
+            }
+
+            Directory.Delete(recordingDirectory, true);
         }
+
+        #region Utility
+
+        private static FilePath GetConfigurationPathFromCommandLine()
+        {
+            var commandLineArguments = Environment.GetCommandLineArgs();
+
+            if (commandLineArguments.Length < 2)
+            {
+                ExitWithError("No configuration has been specified. Please specify a configuration file as the command line argument.");
+            }
+
+            // The first argument is the current assembly, the second argument is the first actual command line argument
+            var configurationPathArgument = commandLineArguments.ElementAt(1);
+            return new FilePath(Path.GetFullPath(configurationPathArgument));
+        }
+
+        [DoesNotReturn]
+        private static void ExitWithError(string errorMessage)
+        {
+            new ErrorDialog(errorMessage).ShowDialog();
+            Exit();
+        }
+
+        private static bool ShowDialogWithResult<T>() where T : Window, new()
+        {
+            var dialogResult = new T().ShowDialog();
+            return dialogResult ?? false;
+        }
+
+        private static DesktopCaptureNativeMethods.WindowHandleWrapper CreateWindowForPicker()
+        {
+            var window = new Window
+            {
+                WindowStyle = WindowStyle.None,
+                Top = 0.0d,
+                Left = 0.0d,
+                Width = 0.0d,
+                Height = 0.0d,
+                ShowInTaskbar = false
+            };
+
+            window.Show();
+
+            void CleanupCallback()
+            {
+                window.Close();
+            }
+
+            var windowInteropHelper = new WindowInteropHelper(window);
+            return new DesktopCaptureNativeMethods.WindowHandleWrapper(windowInteropHelper.EnsureHandle(),
+                                                                       CleanupCallback);
+        }
+
+        #endregion
 
         #region Commands
 

@@ -9,7 +9,7 @@ namespace MORR.Shared.Events.Queue
     public interface ISupportDeserializationEventQueue<out T> where T : Event
     {
         /// <summary>
-        ///     The actual type of the events enqueued in this queue.
+        ///     The actual type of the events queued in this queue.
         /// </summary>
         Type EventType => typeof(T);
 
@@ -20,8 +20,13 @@ namespace MORR.Shared.Events.Queue
         void Enqueue(object @event);
 
         /// <summary>
-        ///     Notifies the event queue that no more events will be enqueued.
+        ///     Opens the EventQueue so new events can be queued.
         /// </summary>
-        void NotifyOnEnqueueFinished();
+        public void Open();
+
+        /// <summary>
+        ///     Closes the EventQueue so no new event can be queued.
+        /// </summary>
+        public void Close();
     }
 }

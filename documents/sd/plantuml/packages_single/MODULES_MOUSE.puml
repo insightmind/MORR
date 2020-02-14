@@ -5,6 +5,47 @@ skinparam classAttributeIconSize 0
 
 left to right direction
 hide empty fields
-!includesub ../MORR.puml!MODULES_MOUSE
-'!includesub ../MORR.puml!MODULES_MOUSE_INTERNAL
+!startsub default
+package "MOUSE" #BFBFBF {
+    class MouseModule {
+
+    }
+
+    
+    abstract class MouseEvent {
+    }
+
+    class MouseMoveEvent {
+        + Movement: Vector2
+    }
+
+    enum MouseButton {
+        LEFT,
+        CENTER,
+        RIGHT
+    }
+
+    enum MouseButtonState {
+
+    }
+    
+    class MouseClickEvent {
+        + HWnd: IntPtr
+    }
+    
+    class MouseScrollEvent {
+        + HWnd: IntPtr
+        + ScrollAmount : short <<get>> <<set>>
+    }
+}
+
+' Mouse
+Event <|-- MouseEvent
+IModule <|.. MouseModule
+MouseEvent <|-- MouseClickEvent
+MouseEvent <|-- MouseScrollEvent
+MouseEvent <|-- MouseMoveEvent
+MouseClickEvent --> "Button" MouseButton
+MouseClickEvent --> "State" MouseButtonState
+!endsub
 @enduml

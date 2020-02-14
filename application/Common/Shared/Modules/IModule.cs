@@ -21,6 +21,6 @@ namespace MORR.Shared.Modules
         /// <summary>
         ///     Initializes the module.
         /// </summary>
-        void Initialize();
+        void Initialize(bool isEnabled) { /* The default implementation is empty */ }
     }
 }

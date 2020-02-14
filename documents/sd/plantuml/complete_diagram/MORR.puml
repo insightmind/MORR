@@ -1,0 +1,58 @@
+@startuml MORR
+skinparam monochrome true
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+!pragma useNewPackage
+
+left to right direction
+hide empty fields
+
+package MORR {
+    !includesub ../packages_single/SHARED.puml!default
+
+    !includesub ../packages_single/CORE.puml!default
+
+    VideoSample --|> Event
+    DesktopCapture ..|> IModule
+    DesktopCaptureConfiguration ..|> IConfiguration
+
+    GlobalModuleConfiguration ..|> IConfiguration
+    GlobalModuleConfiguration --* "* EnabledModules" IModule
+    ModuleManager --* "* Modules" IModule
+
+    IConfigurationManager --* "*" IConfiguration
+
+    IntermediateFormatSample --|> Event
+    JsonIntermediateFormatDeserializer ..|> IModule
+    JsonIntermediateFormatDeserializer --* "* EventQueues" "ISupportDeserializationEventQueue<T: Event>"
+    JsonIntermediateFormatDeserializer --* "1 IntermediateFormatSampleQueue" "IDecodeableEventQueue<T: Event>"
+    JsonIntermediateFormatSerializer ..|> IModule
+    JsonIntermediateFormatSerializer --|> "DefaultEncodeableEventQueue<T: Event>"
+    JsonIntermediateFormatSerializer --* "* EventQueues" "IReadOnlyEventQueue<T: Event>"
+
+    MpegEncoderConfiguration ..|> IConfiguration
+    JsonDecoder --|> "DefaultDecodeableEventQueue<T: Event>"
+    JsonEncoder --* "1 IntermediateFormatSampleQueue" "IEncodeableEventQueue<T: Event>"
+
+    !includesub ../packages_single/UI.puml!default
+
+    !includesub ../packages_single/CLI.puml!default
+
+    ProcessCommand ..> ISessionManager : "uses"
+    RecordCommand ..> ISessionManager : "uses"
+    ValidateCommand ..> IBootstrapper : "uses"
+    ValidateCommand ..> IModuleManager : "uses"
+
+    package "MODULES" #E6E6E6 {
+        !includesub ../packages_single/MODULES_CLIPBOARD.puml!default
+
+        !includesub ../packages_single/MODULES_KEYBOARD.puml!default
+
+        !includesub ../packages_single/MODULES_MOUSE.puml!default
+
+        !includesub ../packages_single/MODULES_WEBBROWSER.puml!default
+
+        !includesub ../packages_single/MODULES_WINDOWMANAGEMENT.puml!default
+    }
+}
+@enduml

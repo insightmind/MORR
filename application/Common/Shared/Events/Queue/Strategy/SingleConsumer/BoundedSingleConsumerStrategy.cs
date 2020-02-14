@@ -23,13 +23,11 @@ namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
         {
             options = new BoundedChannelOptions(bufferCapacity)
             {
-                AllowSynchronousContinuations = true,
+                AllowSynchronousContinuations = false,
                 FullMode = BoundedChannelFullMode.DropOldest,
                 SingleWriter = true,
                 SingleReader = true
             };
-
-            StartReceiving();
         }
 
         protected override Channel<TEvent> CreateChannel()

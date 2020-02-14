@@ -1,6 +1,10 @@
 @startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
 class InformationDialog <<partial>> {
-    + InformationDialog()
+    + <<create>> InformationDialog()
 }
+!endsub
 Window <|-- InformationDialog
 @enduml

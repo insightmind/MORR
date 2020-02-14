@@ -1,76 +1,80 @@
 \chapter{Directory structure}
 \label{ch:dirstructure}
-\newcommand{\tab}[1][1cm]{\hspace*{#1}}
-\newcommand{\dir}[2]{\tab[#1cm] \textbullet \ #2 \\}
 
-\dir{0}{application}
-    \dir{0.5}{Core}
-        \dir{1}{CLI}
-            \dir{1.5}{CLI}
-            \dir{1.5}{Execution}
-        \dir{1}{MORR}
-            \dir{1.5}{Recording}
-                \dir{2}{Exceptions}
-            \dir{1.5}{Configuration}
-                \dir{2}{Exceptions}
-            \dir{1.5}{ModuleManagement}
-            \dir{1.5}{Data}
-                \dir{2}{Capture}
-                    \dir{2.5}{Video}
-                        \dir{3}{Exceptions}
-                        \dir{3}{WinAPI}
-                            \dir{3.5}{Utility}
-                \dir{2}{Sample}
-                    \dir{2.5}{Metadata}
-                    \dir{2.5}{Video}
-                \dir{2}{Transcoding}
-                    \dir{2.5}{Exceptions}
-                    \dir{2.5}{Metadata}
-                        \dir{3}{EventHandlers}
-                        \dir{3}{Exceptions}
-                    \dir{2.5}{Video}
-                        \dir{3}{EventHandlers}
-                        \dir{3}{Exceptions}
-                    \dir{2.5}{WinAPI}
-        \dir{1}{UI}
-            \dir{1.5}{Assets}
-                \dir{2}{Icon}
-            \dir{1.5}{Controls}
-                \dir{2}{NotifyIcon}
-                \dir{2}{Utility}
-            \dir{1.5}{Dialogs}
-            \dir{1.5}{Styles}
-            \dir{1.5}{ViewModules}
-                \dir{2}{Utility}
-    \dir{0.5}{BrowserExtension}
-        \dir{1}{materials}
-        \dir{1}{src}
-            \dir{1.5}{ApplicationInterface}
-            \dir{1.5}{Shared}
-            \dir{1.5}{Listeners}
-                \dir{2}{Download}
-                \dir{2}{Tab}
-                \dir{2}{DOM}
-                    \dir{2.5}{ContentScript}
-    \dir{0.5}{Common}
-        \dir{1}{Shared}
-            \dir{1.5}{Configuration}
-            \dir{1.5}{Events}
-                \dir{2}{Queue}
-            \dir{1.5}{Modules}
-    \dir{0.5}{Modules}
-        \dir{1}{Clipboard}
-            \dir{1.5}{Producers}
-            \dir{1.5}{Events}
-        \dir{1}{Keyboard}
-            \dir{1.5}{Producers}
-            \dir{1.5}{Events}
-        \dir{1}{Mouse}
-            \dir{1.5}{Producers}
-            \dir{1.5}{Events}
-        \dir{1}{Webbrowser}
-            \dir{1.5}{Producers}
-            \dir{1.5}{Events}
-        \dir{1}{WindowManagement}
-            \dir{1.5}{Producers}
-            \dir{1.5}{Events}
+\dirtree{%
+.1 application.
+	.2 BrowserExtension.
+		.3 materials.
+			.4 logos.
+		.3 src.
+			.4 ApplicationInterface.
+			.4 Listeners.
+				.5 DOM.
+					.6 ContentScript.
+				.5 Download.
+				.5 Tab.
+			.4 Shared.
+	.2 Common.
+		.3 Shared.
+			.4 Configuration.
+			.4 Events.
+				.5 Queue.
+					.6 Strategy.
+						.7 MultiConsumer.
+						.8 SingleConsumer.
+			.4 Modules.
+			.4 Utility.
+				.5 Exceptions.
+		.3 HookLibrary.
+	.2 Core.
+		.3 CLI.
+			.4 Commands.
+				.5 Processing.
+				.5 Recording.
+				.5 Validate.
+			.4 Interactive.
+			.4 Output.
+		.3 MORR.
+			.4 Configuration.
+			.4 Data.
+				.5 Capture.
+					.6 Video.
+						.7 Desktop.
+							.8 Utility.
+						.7 Exceptions.
+					.6 IntermediateFormat.
+						.7 Json.
+					.6 Transcoding.
+						.7 Exceptions.
+						.7 Json.
+						.7 MPEG.
+			.4 Modules.
+			.4 Session.
+				.5 Exceptions.
+		.3 UI.
+			.4 Assets.
+				.5 Icon.
+			.4 Controls.
+				.5 NotifyIcon.
+					.6 Utility.
+			.4 Dialogs.
+			.4 Styles.
+			.4 ViewModels.
+				.5 Utility.
+	.2 Modules.
+		.3 Clipboard.
+			.4 Events.
+			.4 Producers.
+		.3 Keyboard.
+			.4 Events.
+			.4 Producers.
+		.3 Mouse.
+			.4 Events.
+			.4 Producers.
+		.3 WebBrowser.
+			.4 Events.
+			.4 Producers.
+		.3 WindowManagement.
+			.4 Events.
+			.4 Producers.
+}

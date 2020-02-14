@@ -1,9 +1,0 @@
-@startuml
-skinparam monochrome true
-skinparam classAttributeIconSize 0
-
-class MetadataDecodingException {
-}
-DecodingException <|-- MetadataDecodingException
-Exception <|-- DecodingException
-@enduml

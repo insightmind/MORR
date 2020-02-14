@@ -5,6 +5,49 @@ skinparam classAttributeIconSize 0
 
 left to right direction
 hide empty fields
-!includesub ../MORR.puml!UI
-'!includesub ../MORR.puml!UI_INTERNAL
+!startsub default
+package "UI" #E6E6E6 {
+    class ErrorDialog <<partial>> {
+        + ErrorDialog(errorMessage:string)
+        + ErrorMessage : string <<get>>
+    }
+
+    !includesub ../application/Core/UI/Dialogs/InformationDialog.xaml.puml!default
+
+    !includesub ../application/Core/UI/Dialogs/SaveDialog.xaml.puml!default
+
+    !includesub ../application/Core/UI/ViewModels/ApplicationViewModel.puml!default
+    
+    !includesub ../application/Core/UI/Controls/NotifyIcon/NotifyIcon.puml!default
+    
+    !includesub ../application/Core/UI/Utility/RelayCommand.puml!default
+
+    interface ICommand {
+
+    }
+
+    class ContextMenu {
+
+    }
+
+    class ImageSource {
+
+    }
+
+    !includesub ../application/Core/UI/App.xaml.puml!default    
+}
+
+' UI
+ApplicationViewModel --> "1" ISessionManager : uses
+ApplicationViewModel o--> "n" ICommand
+App --> "1" ApplicationViewModel
+ApplicationViewModel o-> SaveDialog
+ApplicationViewModel o-> ErrorDialog
+ApplicationViewModel o-> InformationDialog
+App o-> NotifyIcon
+NotifyIcon --> "IconSource" ImageSource
+NotifyIcon --> "Command" ICommand
+NotifyIcon --> "ContextMenu" ContextMenu
+ICommand <|.. RelayCommand
+!endsub
 @enduml

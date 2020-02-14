@@ -1,0 +1,11 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
+class InvalidConfigurationException {
+    + <<create>> InvalidConfigurationException()
+    + <<create>> InvalidConfigurationException(message: string)
+    + <<create>> InvalidConfigurationException(message: string, innerException: exception)
+}
+!endsub
+@enduml

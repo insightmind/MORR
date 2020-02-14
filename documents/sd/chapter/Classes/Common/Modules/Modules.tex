@@ -12,31 +12,10 @@
         \attribute{Guid Identifier \{ get; \}}{The identifier of the module.}
     \end{attributes}
     \begin{methods}
-        \begin{method}{void Initialize()}{Initializes the module.}
+        \begin{method}{void Initialize(bool isEnabled)}{Initializes the module.}
+       		\begin{parameters}
+       			\para{bool isEnabled}{True if the module is active, false otherwise}
+       		\end{parameters}
         \end{method}
     \end{methods}
-\end{interface}
-
-\begin{interface}{ICollectingModule}
-    \clsdiagram[width=0.25\textwidth]{resources/Classes/Common/Shared/Modules/ICollectingModule.png}
-
-    \clsdcl{public interface ICollectingModule : IModule}
-
-    \clsdsp{A module that accepts no events as an input and generates one or more events s an output.}
-\end{interface}
-
-\begin{interface}{ITransformingModule}
-    \clsdiagram[width=0.28\textwidth]{resources/Classes/Common/Shared/Modules/ITransformingModule.png}
-
-    \clsdcl{public interface ITransformingModule : IModule}
-
-    \clsdsp{A module that accepts one or more events as an input and generates one or more events as an output.}
-\end{interface}
-
-\begin{interface}{IReceivingModule}
-    \clsdiagram[width=0.25\textwidth]{resources/Classes/Common/Shared/Modules/IReceivingModule.png}
-
-    \clsdcl{public interface IReceivingModule : IModule}
-
-    \clsdsp{A module that accepts one or more events as an input and generates no events as an output.}
 \end{interface}

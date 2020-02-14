@@ -1,0 +1,11 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
+interface "ISupportDeserializationEventQueue<T: Event>" {
+    + IsClosed: bool <<get>>
+    + Open() : void
+    + Close() : void
+}
+!endsub
+@enduml

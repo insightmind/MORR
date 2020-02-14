@@ -12,7 +12,7 @@ using MORR.Shared.Utility;
 
 namespace MORR.Core.Data.Transcoding.Json
 {
-    public class JsonDecoder : DefaultDecodeableEventQueue<JsonIntermediateFormatSample>, IDecoder
+    public class JsonDecoder : DefaultDecodableEventQueue<JsonIntermediateFormatSample>, IDecoder
     {
         [Import]
         private JsonDecoderConfiguration Configuration { get; set; }
@@ -37,6 +37,7 @@ namespace MORR.Core.Data.Transcoding.Json
             await using var fileStream = GetFileStream(recordingDirectoryPath);
             var document = JsonDocument.Parse(fileStream).RootElement;
 
+            Open();
             DecodeFinished.Reset();
 
             foreach (var eventElement in document.EnumerateArray())
@@ -62,7 +63,7 @@ namespace MORR.Core.Data.Transcoding.Json
                 Enqueue(intermediateFormatSample);
             }
 
-            NotifyOnEnqueueFinished();
+            Close();
             DecodeFinished.Set();
         }
     }
