@@ -177,7 +177,7 @@
 	\clsdcl{public class BoundedMultiConsumerChannelStrategy<TEvent> : \\\
 	MultiConsumerChannelStrategy<TEvent> where TEvent : Event}
 	
-	\clsdsp{A BoundedMultiConsumerChannelStrategies is a Distributive-FIFO Queue which allows multiple producers and multiple consumers. However every event is propagated to each consumer once. This queue is bounded by a buffer capacity. To be more detailed each channel is bound by the bufferCapacity. Is the capacity reached for a specific channel it will drop the oldest event and write the new event.}
+	\clsdsp{A BoundedMultiConsumerChannelStrategy is a Distributive-FIFO Queue which allows multiple producers and multiple consumers. However every event is propagated to each consumer once. This queue is bounded by a buffer capacity. To be more detailed each channel is bound by the bufferCapacity. Is the capacity reached for a specific channel it will drop the oldest event and write the new event.}
 \end{class}
 
 \begin{absclass}{MultiConsumerChannelStrategy<TEvent>} 
@@ -277,6 +277,5 @@
 	
 	\clsdsp{A UnboundedSingleConsumerChannelStrategy is a Distributive-FIFO Queue which allows multiple producers and a single consumer. This queue is performance optimized for a single consumer and should be preferred in this case.  This queue is unbounded and will therefore don't dismiss any events.}
 \end{class}
-
 
 
