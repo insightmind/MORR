@@ -1,4 +1,6 @@
 @startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
 !startsub default
 class ApplicationViewModel {
     + <<create>> ApplicationViewModel()
@@ -6,8 +8,8 @@ class ApplicationViewModel {
 }
 !endsub
 DependencyObject <|-- ApplicationViewModel
-ApplicationViewModel --> "OpenRecordingsDirectoryCommand" ICommand
+/'ApplicationViewModel --> "OpenRecordingsDirectoryCommand" ICommand
 ApplicationViewModel --> "ExitCommand" ICommand
 ApplicationViewModel --> "ToggleRecordingCommand" ICommand
-ApplicationViewModel o-> "IsRecordingProperty" DependencyProperty
+ApplicationViewModel o-> "IsRecordingProperty" DependencyProperty '/
 @enduml
