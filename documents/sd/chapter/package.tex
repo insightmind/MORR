@@ -138,11 +138,13 @@ The \textbf{CLI} package contains all logic exclusively needed for the command l
 
 \begin{packif}
 \packobj{ICommand<T: CommandOptions>}
-\packobj{IOutputFormatter}
+\packobj{IConsoleFormatter}
+\packobj{IMessageLoop}
+\packobj{IInteractiveCommandLine}
 \end{packif}
 
 \begin{packclass}
-\packobj{OutputFormatter}
+\packobj{ConsoleFormatter}
 \packobj{CommandOptions}
 \packobj{RecordCommand}
 \packobj{RecordOptions}
@@ -151,7 +153,7 @@ The \textbf{CLI} package contains all logic exclusively needed for the command l
 \packobj{ProcessCommand}
 \packobj{ProcessOptions}
 \packobj{InteractiveCommandLine}
-\packobj{ProcessOptions}
+\packobj{MessageLoop}
 \packobj{Program}
 \end{packclass}
 
