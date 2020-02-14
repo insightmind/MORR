@@ -12,11 +12,12 @@ namespace MORR.Modules.WindowManagement.Producers
     public class WindowFocusEventProducer : DefaultEventQueue<WindowFocusEvent>
     {
         private const int WA_ACTIVE = 1;
-
+        private static INativeWindowManagement nativeWindowManagement;
         private IntPtr lastHwnd = IntPtr.Zero;
 
-        public void StartCapture()
+        public void StartCapture(INativeWindowManagement nativeWM)
         {
+            nativeWindowManagement = nativeWM;
             GlobalHook.AddListener(WindowHookCallback, GlobalHook.MessageType.WM_ACTIVATE);
             GlobalHook.IsActive = true;
         }
@@ -38,11 +39,11 @@ namespace MORR.Modules.WindowManagement.Producers
         {
             if ((int) msg.wParam == WA_ACTIVE)
             {
-                var hwnd = WindowManagementNativeMethods.GetForegroundWindow();
+                var hwnd = nativeWindowManagement.GetForegroundWindow();
                 if (lastHwnd != hwnd)
                 {
-                    var processName = WindowManagementNativeMethods.GetProcessNameFromHwnd(hwnd);
-                    var windowTitle = WindowManagementNativeMethods.GetWindowTitleFromHwnd(hwnd);
+                    var processName = nativeWindowManagement.GetProcessNameFromHwnd(hwnd);
+                    var windowTitle = nativeWindowManagement.GetWindowTitleFromHwnd(hwnd);
                     var @event = new WindowFocusEvent
                     {
                         IssuingModule = WindowManagementModule.Identifier,

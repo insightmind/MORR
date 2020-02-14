@@ -3,14 +3,9 @@ using System.Runtime.InteropServices;
 
 namespace MORR.Modules.Mouse.Native
 {
-    internal sealed class MouseNativeMethods
+    public interface INativeMouse
     {
-        #region DllImports
-
-        [DllImport("user32.dll")]
-        internal static extern bool GetCursorPos(out POINT lpPoint);
-
-        #endregion
+        bool GetCursorPos(out POINT lpPoint);
 
         /// <summary>
         ///     The POINT is of two int(32 bits) for the usage in MSLLHOOKSTRUCT.
@@ -44,7 +39,7 @@ namespace MORR.Modules.Mouse.Native
 
             public static implicit operator POINT(System.Windows.Point p)
             {
-                return new POINT((int)p.X, (int)p.Y);
+                return new POINT((int) p.X, (int) p.Y);
             }
         }
     }

@@ -15,7 +15,7 @@ namespace MORR.Modules.WebBrowser
         ///     Must end in a slash ('/') character.
         ///     Examples for valid values are "60024/" or "60024/johndoe/".
         /// </summary>
-        public string UrlSuffix { get; private set; }
+        public string UrlSuffix { get; protected set; }
 
         public void Parse(RawConfiguration configuration)
         {

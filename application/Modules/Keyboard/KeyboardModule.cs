@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using MORR.Modules.Keyboard.Native;
 using MORR.Modules.Keyboard.Producers;
 using MORR.Shared.Modules;
 using MORR.Shared.Utility;
@@ -24,7 +25,7 @@ namespace MORR.Modules.Keyboard
         public bool IsActive
         {
             get => isActive;
-            set => Utility.SetAndDispatch(ref isActive, value, KeyboardInteractEventProducer.StartCapture, KeyboardInteractEventProducer.StopCapture);
+            set => Utility.SetAndDispatch(ref isActive, value, StartCapture, StopCapture);
         }
 
         public static Guid Identifier { get; } = new Guid("99F679D6-0D20-40EE-8604-F128F0E5AE3B");
@@ -40,6 +41,16 @@ namespace MORR.Modules.Keyboard
             {
                 KeyboardInteractEventProducer?.Close();
             }
+        }
+
+        private void StartCapture()
+        {
+            KeyboardInteractEventProducer?.StartCapture(new NativeKeyboard());
+        }
+
+        private void StopCapture()
+        {
+            KeyboardInteractEventProducer?.StopCapture();
         }
     }
 }

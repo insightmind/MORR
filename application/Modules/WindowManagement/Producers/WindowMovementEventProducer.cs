@@ -12,6 +12,11 @@ namespace MORR.Modules.WindowManagement.Producers
     /// </summary>
     public class WindowMovementEventProducer : DefaultEventQueue<WindowMovementEvent>
     {
+        private static INativeWindowManagement nativeWindowManagement;
+
+        private readonly GlobalHook.MessageType[] listenedMessageTypes =
+            { GlobalHook.MessageType.WM_ENTERSIZEMOVE, GlobalHook.MessageType.WM_EXITSIZEMOVE };
+
         /// <summary>
         ///     The rectangle that holds the size and location of the window
         ///     after the change.
@@ -30,11 +35,9 @@ namespace MORR.Modules.WindowManagement.Producers
         /// </summary>
         private int windowUnderChangeHwnd;
 
-        private readonly GlobalHook.MessageType[] listenedMessageTypes =
-            { GlobalHook.MessageType.WM_ENTERSIZEMOVE, GlobalHook.MessageType.WM_EXITSIZEMOVE };
-
-        public void StartCapture()
+        public void StartCapture(INativeWindowManagement nativeWM)
         {
+            nativeWindowManagement = nativeWM;
             GlobalHook.AddListener(WindowHookCallback, listenedMessageTypes);
             GlobalHook.IsActive = true;
         }
@@ -62,14 +65,14 @@ namespace MORR.Modules.WindowManagement.Producers
             {
                 windowUnderChangeHwnd = (int) msg.Hwnd;
                 windowRecBeforeChange = new Rectangle();
-                WindowManagementNativeMethods.GetWindowRect(windowUnderChangeHwnd, ref windowRecBeforeChange);
+                nativeWindowManagement.GetWindowRect(windowUnderChangeHwnd, ref windowRecBeforeChange);
             }
 
             if (msg.Type == (uint) GlobalHook.MessageType.WM_EXITSIZEMOVE)
             {
                 windowRecAfterChange = new Rectangle();
-                WindowManagementNativeMethods.GetWindowRect(windowUnderChangeHwnd, ref windowRecAfterChange);
-                if (WindowManagementNativeMethods.IsRectSizeEqual(windowRecBeforeChange, windowRecAfterChange))
+                nativeWindowManagement.GetWindowRect(windowUnderChangeHwnd, ref windowRecAfterChange);
+                if (nativeWindowManagement.IsRectSizeEqual(windowRecBeforeChange, windowRecAfterChange))
                 {
                     var oldLocation = new Point { X = windowRecBeforeChange.X, Y = windowRecBeforeChange.Y };
                     var newLocation = new Point { X = windowRecAfterChange.X, Y = windowRecAfterChange.Y };
@@ -78,8 +81,8 @@ namespace MORR.Modules.WindowManagement.Producers
                         IssuingModule = WindowManagementModule.Identifier,
                         OldLocation = oldLocation,
                         NewLocation = newLocation,
-                        Title = WindowManagementNativeMethods.GetWindowTitleFromHwnd(msg.Hwnd),
-                        ProcessName = WindowManagementNativeMethods.GetProcessNameFromHwnd(msg.Hwnd)
+                        Title = nativeWindowManagement.GetWindowTitleFromHwnd(msg.Hwnd),
+                        ProcessName = nativeWindowManagement.GetProcessNameFromHwnd(msg.Hwnd)
                     };
                     Enqueue(@event);
                 }

@@ -11,12 +11,14 @@ namespace MORR.Modules.Mouse.Producers
     /// </summary>
     public class MouseMoveEventProducer : DefaultEventQueue<MouseMoveEvent>
     {
+        private static INativeMouse nativeMouse;
+
         /// <summary>
         ///     The mouse position in screen coordinates in the last period.
         ///     This field will be initialized to the mouse position
         ///     when the StartTimer() is called.
         /// </summary>
-        private MouseNativeMethods.POINT lastMousePosition;
+        private INativeMouse.POINT lastMousePosition;
 
         /// <summary>
         ///     A timer that records the mouse position at specific intervals.
@@ -45,7 +47,7 @@ namespace MORR.Modules.Mouse.Producers
         private void GetMousePosition(object stateInfo)
         {
             // get the current mouse position as Point
-            MouseNativeMethods.GetCursorPos(out var currentMousePosition);
+            nativeMouse.GetCursorPos(out var currentMousePosition);
 
             var currentMousePositionAsPoint = new Point(currentMousePosition.X, currentMousePosition.Y);
             var lastMousePositionAsPoint = new Point(lastMousePosition.X, lastMousePosition.Y);
@@ -59,7 +61,8 @@ namespace MORR.Modules.Mouse.Producers
             //record the new Position in the created MouseMoveEvent and enqueue it
             if (distance >= Threshold)
             {
-                var @event = new MouseMoveEvent { MousePosition = currentMousePositionAsPoint, IssuingModule = MouseModule.Identifier};
+                var @event = new MouseMoveEvent
+                    { MousePosition = currentMousePositionAsPoint, IssuingModule = MouseModule.Identifier };
                 Enqueue(@event);
             }
         }
@@ -67,12 +70,11 @@ namespace MORR.Modules.Mouse.Producers
         /// <summary>
         ///     start the mouse movement capture by starting the timer that records mouse position.
         /// </summary>
-        public void StartCapture()
+        public void StartCapture(INativeMouse nativeM)
         {
-            MouseNativeMethods.GetCursorPos(out lastMousePosition);
-
+            nativeMouse = nativeM;
+            nativeMouse.GetCursorPos(out lastMousePosition);
             var samplingTimeIntervalInMilliseconds = (int) ((double) 1 / SamplingRateInHz * 1000);
-
             mousePositionRecordingTimer = new Timer(GetMousePosition, null, 0, samplingTimeIntervalInMilliseconds);
         }
 

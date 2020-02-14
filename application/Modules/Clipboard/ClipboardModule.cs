@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using MORR.Modules.Clipboard.Native;
 using MORR.Modules.Clipboard.Producers;
 using MORR.Shared.Modules;
 using MORR.Shared.Utility;
@@ -35,6 +36,7 @@ namespace MORR.Modules.Clipboard
         ///     Unique module identifier
         /// </summary>
         public static Guid Identifier { get; } = new Guid("B9179D3D-2DB4-46FA-845E-B47F9DCF7745");
+
         Guid IModule.Identifier => Identifier;
 
         /// <summary>
@@ -66,8 +68,9 @@ namespace MORR.Modules.Clipboard
 
         private void StartCapture()
         {
-            ClipboardCutEventProducer?.StartCapture();
-            ClipboardPasteEventProducer?.StartCapture();
+            INativeClipboard nativeCb = new NativeClipboard();
+            ClipboardCutEventProducer?.StartCapture(nativeCb);
+            ClipboardPasteEventProducer?.StartCapture(nativeCb);
             ClipboardCopyEventProducer?.StartCapture();
         }
 
