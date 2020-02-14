@@ -6,6 +6,7 @@ class NotifyIcon {
     + <<create>> NotifyIcon()
     + Tooltip : string <<get>> <<set>>
     + CommandParameter : object <<get>> <<set>>
+    + IconUri : Uri
     + Dispose() : void
 }
 !endsub
