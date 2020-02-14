@@ -1,0 +1,49 @@
+\subsection*{MORR.Shared.Hook}
+
+\begin{class}{GlobalHook}
+	\clsdiagram[width=0.3\textwidth]{resources/Classes/Common/Shared/Hook/GlobalHook.png}
+	
+	\clsdcl{public static class GlobalHook}
+	
+	\clsdsp{}
+	
+	\begin{attributes}
+		\attribute{public static bool IsActive}{Represents if the GlobalHook is active or not.}
+	\end{attributes}
+	
+	\begin{methods}
+		\begin{method}{public delegate void RetrieveMessageCallBack(HookMessage message)}{CallBack definition for addListener and removeListener methods.}
+			\begin{parameters}
+				\para{HookMessage message}{The HookMessage to be passed to the callback}
+			\end{parameters}
+		\end{method}					
+			
+		\begin{method}{public static void AddListener(RetrieveMessageCallBack callback, params MessageType[] types)}{Add a listener to multiple message types.}
+			\begin{parameters}
+				\para{RetrieveMessageCallBack callback}{The RetrieveMessageCallBack function to be called on}
+				\para{params MessageType[] types}{An array of the types to listen for}	
+			\end{parameters}
+		\end{method}
+		
+		\begin{method}{public static void RemoveListener(RetrieveMessageCallBack callback, params MessageType[] types)}{Remove a listener from multiple message types.}
+			\begin{parameters}
+				\para{RetrieveMessageCallBack callback}{The RetrieveMessageCallBack to remove}
+				\para{params MessageType[] types}{An array of the types to remove the callback for}	
+			\end{parameters}
+		\end{method}
+		
+		\begin{method}{public static void FreeLibrary()}{Free the loaded library. To be called when this application terminates.}
+		\end{method}
+	\end{methods}
+\end{class}
+
+\subsubsection*{MORR.Shared.Hook.Exception}
+
+\begin{class}{HookLibraryException}
+	\clsdiagram[width=0.3\textwidth]{resources/Classes/Common/Shared/Hook/HookLibraryException/HookLibraryException.png}
+	
+	\clsdcl{public class HookLibraryException : Exception}
+	
+	\clsdsp{Respresents Exception thrown when HookLibrary can not be loaded.}
+	
+\end{class}

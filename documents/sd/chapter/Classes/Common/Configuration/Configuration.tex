@@ -6,12 +6,19 @@
     \clsdcl{public interface IConfiguration}
 
     \clsdsp{Encapsulates a self-contained unit of configuration.}
-
-    \begin{methods}
-        \begin{method}{void Parse(string configuration)}{Parses the configuration from the provided value.}
-            \begin{parameters}
-                \para{string configuration}{The configuration to parse from.}
-            \end{parameters}
-        \end{method}
-    \end{methods}
+    
 \end{interface}
+
+\begin{class}{RawConfiguration}
+	\clsdiagram[scale = 0.5]{resources/Classes/Common/Shared/Configuration/RawConfiguration.png}
+	
+	\clsdcl{public class RawConfiguration}
+	
+	\clsdsp{}
+	
+	\begin{attributes}
+		\attribute{public string RawValue \{ get; \}}{Value of the configuration}
+	\end{attributes}
+	
+\end{class}
+		
