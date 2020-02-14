@@ -1,8 +1,0 @@
-@startuml
-class ModuleManager {
-    + InitializeModules() : void
-    + NotifyModulesOnSessionStart() : void
-    + NotifyModulesOnSessionStop() : void
-}
-IModuleManager <|-- ModuleManager
-@enduml

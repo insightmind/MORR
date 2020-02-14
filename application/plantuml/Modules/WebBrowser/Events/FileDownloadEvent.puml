@@ -1,7 +1,0 @@
-@startuml
-class FileDownloadEvent {
-    + MIMEType : string <<get>> <<set>>
-}
-WebBrowserEvent <|-- FileDownloadEvent
-FileDownloadEvent --> "FileURL" Uri
-@enduml

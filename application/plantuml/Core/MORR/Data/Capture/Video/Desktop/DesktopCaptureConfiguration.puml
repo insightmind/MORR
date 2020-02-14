@@ -1,8 +1,0 @@
-@startuml
-class DesktopCaptureConfiguration {
-    + PromptUserForMonitorSelection : bool <<get>>
-    + Parse(configuration:RawConfiguration) : void
-}
-IConfiguration <|-- DesktopCaptureConfiguration
-DesktopCaptureConfiguration --> "MonitorIndex" Index
-@enduml

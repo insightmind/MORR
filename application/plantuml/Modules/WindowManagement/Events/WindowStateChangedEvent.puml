@@ -1,6 +1,0 @@
-@startuml
-class WindowStateChangedEvent {
-}
-WindowEvent <|-- WindowStateChangedEvent
-WindowStateChangedEvent --> "WindowState" WindowState
-@enduml

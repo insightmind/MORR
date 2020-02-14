@@ -1,6 +1,0 @@
-@startuml
-class ValidateOptions {
-    + ConfigPath : string <<get>> <<set>>
-}
-CommandOptions <|-- ValidateOptions
-@enduml

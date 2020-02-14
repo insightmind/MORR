@@ -1,5 +1,0 @@
-@startuml
-class VideoDecodingException {
-}
-DecodingException <|-- VideoDecodingException
-@enduml

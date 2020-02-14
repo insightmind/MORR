@@ -1,6 +1,0 @@
-@startuml
-interface "IReadOnlyEventQueue`1"<out T> {
-    GetEvents() : IAsyncEnumerable<T>
-}
-"IReadOnlyEventQueue`1" --> "EventType" Type
-@enduml

@@ -1,5 +1,0 @@
-@startuml
-abstract class CommandOptions {
-    + IsVerbose : bool <<get>> <<set>>
-}
-@enduml

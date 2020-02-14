@@ -1,7 +1,0 @@
-@startuml
-interface IDirect3DDxgiInterfaceAccess {
-    GetInterface(iid:Guid) : IntPtr
-}
-class Direct3D11Helper <<static>> {
-}
-@enduml

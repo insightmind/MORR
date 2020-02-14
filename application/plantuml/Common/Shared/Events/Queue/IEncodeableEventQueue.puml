@@ -1,5 +1,0 @@
-@startuml
-interface "IEncodeableEventQueue`1"<out T> {
-    GetEvents() : IAsyncEnumerable<T>
-}
-@enduml

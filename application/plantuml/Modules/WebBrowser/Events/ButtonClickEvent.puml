@@ -1,9 +1,0 @@
-@startuml
-skinparam monochrome true
-skinparam ClassAttributeIconSize 0
-class ButtonClickEvent {
-    + Button : string <<get>> <<set>>
-    + Href : string? <<get>> <<set>>
-}
-WebBrowserEvent <|-- ButtonClickEvent
-@enduml

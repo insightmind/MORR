@@ -1,5 +1,0 @@
-@startuml
-interface IReceivingModule {
-}
-IModule <|-- IReceivingModule
-@enduml

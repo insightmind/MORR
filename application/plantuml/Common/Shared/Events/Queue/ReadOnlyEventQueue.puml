@@ -1,8 +1,0 @@
-@startuml
-abstract class "ReadOnlyEventQueue`1"<T> {
-    + GetEvents() : IAsyncEnumerable<T>
-}
-class "IReadOnlyEventQueue`1"<T> {
-}
-"IReadOnlyEventQueue`1" "<T>" <|-- "ReadOnlyEventQueue`1"
-@enduml

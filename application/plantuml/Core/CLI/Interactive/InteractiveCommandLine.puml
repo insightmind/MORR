@@ -1,7 +1,0 @@
-@startuml
-class InteractiveCommandLine {
-    + InteractiveCommandLine(consoleFormatter:IConsoleFormatter)
-    + Launch(completionAction:Action) : void
-}
-IInteractiveCommandLine <|-- InteractiveCommandLine
-@enduml

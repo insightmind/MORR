@@ -1,5 +1,0 @@
-@startuml
-class AlreadyRecordingException {
-}
-RecordingException <|-- AlreadyRecordingException
-@enduml

@@ -1,7 +1,0 @@
-@startuml
-class MpegEncoder {
-    + Encode(recordingDirectoryPath:DirectoryPath) : void
-}
-IEncoder <|-- MpegEncoder
-MpegEncoder o-> "EncodeFinished" ManualResetEvent
-@enduml

@@ -1,8 +1,0 @@
-@startuml
-class InteractiveCommandLineTest {
-    + BeforeTest() : void
-    + TestInteractive_Completion() : void
-    + TestInteractive_Retry() : void
-    + TestInteractive_NullOutputFormatter() : void
-}
-@enduml

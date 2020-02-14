@@ -1,6 +1,0 @@
-@startuml
-class FilePath <<sealed>> {
-    + FilePath(value:string, skipValidation:bool)
-    + <<override>> ToString() : string
-}
-@enduml

@@ -1,6 +1,0 @@
-@startuml
-class ConfigurationManager {
-    + LoadConfiguration(path:FilePath) : void
-}
-IConfigurationManager <|-- ConfigurationManager
-@enduml

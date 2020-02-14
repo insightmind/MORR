@@ -1,8 +1,0 @@
-@startuml
-class "UnboundedMultiConsumerChannelStrategy`1"<TEvent> {
-    + UnboundedMultiConsumerChannelStrategy(maxChannelConsumers:uint?)
-}
-class "MultiConsumerChannelStrategy`1"<T> {
-}
-"MultiConsumerChannelStrategy`1" "<TEvent>" <|-- "UnboundedMultiConsumerChannelStrategy`1"
-@enduml

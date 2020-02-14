@@ -1,5 +1,0 @@
-@startuml
-abstract class KeyboardEvent {
-}
-Event <|-- KeyboardEvent
-@enduml

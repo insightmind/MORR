@@ -1,6 +1,0 @@
-@startuml
-interface IEncoder {
-    Encode(recordingDirectoryPath:DirectoryPath) : void
-}
-IEncoder --> "EncodeFinished" ManualResetEvent
-@enduml

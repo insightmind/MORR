@@ -1,6 +1,0 @@
-@startuml
-class HoverEvent {
-    + HoveredElement : string <<get>> <<set>>
-}
-WebBrowserEvent <|-- HoverEvent
-@enduml

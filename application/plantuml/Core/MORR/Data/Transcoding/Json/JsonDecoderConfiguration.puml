@@ -1,7 +1,0 @@
-@startuml
-class JsonDecoderConfiguration {
-    + Parse(configuration:RawConfiguration) : void
-}
-IConfiguration <|-- JsonDecoderConfiguration
-JsonDecoderConfiguration --> "RelativeFilePath" FilePath
-@enduml

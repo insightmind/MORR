@@ -1,8 +1,0 @@
-@startuml
-class ChannelConsumingException {
-    + ChannelConsumingException()
-    + ChannelConsumingException(message:string)
-    + ChannelConsumingException(message:string, innerException:Exception)
-}
-Exception <|-- ChannelConsumingException
-@enduml

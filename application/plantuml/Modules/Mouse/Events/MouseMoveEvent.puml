@@ -1,7 +1,0 @@
-@startuml
-skinparam monochrome true
-skinparam ClassAttributeIconSize 0
-class MouseMoveEvent {
-}
-MouseEvent <|-- MouseMoveEvent
-@enduml

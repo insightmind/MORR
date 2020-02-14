@@ -1,7 +1,0 @@
-@startuml
-class TextInputEvent {
-    + InputtedText : string <<get>> <<set>>
-    + Textbox : string <<get>> <<set>>
-}
-WebBrowserEvent <|-- TextInputEvent
-@enduml
