@@ -7,7 +7,7 @@ interface IConfiguration
 IConfiguration <|-- JsonDecoderConfiguration
 !startsub default
 class JsonDecoderConfiguration {
-    + RelativeFilePath : FilePath <<get>
+    + RelativeFilePath : FilePath <<get> <<set>>
     + Parse(configuration : RawConfiguration) : void
 }
 !endsub
