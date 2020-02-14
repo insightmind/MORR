@@ -38,7 +38,7 @@ package "UI" #E6E6E6 {
 }
 
 ' UI
-ApplicationViewModel --> "1" ISessionmanager : uses
+ApplicationViewModel --> "1" ISessionManager : uses
 ApplicationViewModel o--> "n" ICommand
 App --> "1" ApplicationViewModel
 ApplicationViewModel o-> SaveDialog
