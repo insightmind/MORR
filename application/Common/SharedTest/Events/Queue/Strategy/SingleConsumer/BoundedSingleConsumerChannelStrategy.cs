@@ -3,7 +3,7 @@
 namespace SharedTest.Events.Queue.Strategy.SingleConsumer
 {
     [TestClass]
-    public class SingleConsumerChannelStrategy
+    public class BoundedSingleConsumerChannelStrategy
     {
         // TODO
     }
