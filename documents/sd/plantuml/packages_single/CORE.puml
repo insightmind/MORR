@@ -62,45 +62,37 @@ package "CORE" #E6E6E6 {
 
     package Data <<Rectangle>> #BFBFBF {
         together {
-            !includesub ../application/Core/MORR/Data/Capture/CaptureException.puml!default
+            package Capture {
+                !includesub ../application/Core/MORR/Data/Capture/CaptureException.puml!default
 
-            together {
-                !includesub ../application/Core/MORR/Data/Capture/Video/DirectXVideoSample.puml!default
-
-                !includesub ../application/Core/MORR/Data/Capture/Video/VideoSample.puml!default
-
-                together {
-                    !includesub ../application/Core/MORR/Data/Capture/Video/Exceptions/VideoCaptureException.puml!default
-
-                    CaptureException <|-- VideoCaptureException
-                }
-
-                package Desktop <<Rectangle>> #E6E6E6 {
-                    !includesub ../application/Core/MORR/Data/Capture/Video/Desktop/DesktopCapture.puml!default
-
-                    !includesub ../application/Core/MORR/Data/Capture/Video/Desktop/DesktopCaptureConfiguration.puml!default
-
-                    !includesub ../application/Core/MORR/Data/Capture/Video/Desktop/VideoSampleProducer.puml!default
-
+                package Video {
                     together {
-                        !includesub ../application/Core/MORR/Data/Capture/Video/Desktop/Utility/Direct3D11Helper.puml!default
+                        !includesub ../application/Core/MORR/Data/Capture/Video/DirectXVideoSample.puml!default
 
-                        !includesub ../application/Core/MORR/Data/Capture/Video/Desktop/Utility/GraphicsCaptureHelper.puml!default
+                        !includesub ../application/Core/MORR/Data/Capture/Video/VideoSample.puml!default
 
-                        !includesub ../application/Core/MORR/Data/Capture/Video/Desktop/Utility/MonitorEnumerationHelper.puml!default
+                        package Exceptions {
+                            !includesub ../application/Core/MORR/Data/Capture/Video/Exceptions/VideoCaptureException.puml!default
 
-                        MonitorEnumerationHelper ..> MonitorInfo : "uses"
+                            CaptureException <|-- VideoCaptureException
+                        }
+
+                        package Desktop <<Rectangle>> #E6E6E6 {
+                            !includesub ../application/Core/MORR/Data/Capture/Video/Desktop/DesktopCapture.puml!default
+
+                            !includesub ../application/Core/MORR/Data/Capture/Video/Desktop/DesktopCaptureConfiguration.puml!default
+
+                            !includesub ../application/Core/MORR/Data/Capture/Video/Desktop/VideoSampleProducer.puml!default
+
+                            DesktopCapture --* "1 VideoSampleProducer" VideoSampleProducer
+                            DesktopCapture --* "1 Configuration" DesktopCaptureConfiguration
+                        }
+
+                        DesktopCapture ..> VideoCaptureException: "throws"
+                        DirectXVideoSample --|> VideoSample
                     }
-
-                    DesktopCapture --* "1 VideoSampleProducer" VideoSampleProducer
-                    DesktopCapture --* "1 Configuration" DesktopCaptureConfiguration
-                    DesktopCapture ..> MonitorEnumerationHelper : "uses"
-                    VideoSampleProducer ..> Direct3D11Helper : "uses"
                 }
-
-                DesktopCapture ..> VideoCaptureException: "throws"
-                DirectXVideoSample --|> VideoSample
-            }
+            }        
         }
 
         together {

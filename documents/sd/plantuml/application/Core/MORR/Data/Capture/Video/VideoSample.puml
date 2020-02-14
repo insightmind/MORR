@@ -7,5 +7,5 @@ class VideoSample {
 
 }
 !endsub
-
+Event <|-- VideoSample
 @enduml

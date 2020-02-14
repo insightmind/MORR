@@ -2,15 +2,13 @@
 skinparam monochrome true
 skinparam classAttributeIconSize 0
 
-interface IVideoCapture
+interface IModule
 !startsub default
 class DesktopCapture {
-    + IsActive : bool
-    + Identifier: Guid
-    + Initialize() : void
-    - StartCapture() : void
-    - StopCapture() : void
+    + IsActive : bool <<get>> <<set>>
+    + Identifier: Guid <<get>>
+    + Initialize(isEnabled : bool) : void
 }
 !endsub
-IVideoCapture <|-- DesktopCapture
+IModule <|-- DesktopCapture
 @enduml
