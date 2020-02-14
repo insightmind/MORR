@@ -29,7 +29,7 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
         {
             offeringOptions = new BoundedChannelOptions(bufferCapacity)
             {
-                AllowSynchronousContinuations = true,
+                AllowSynchronousContinuations = false,
                 FullMode = BoundedChannelFullMode.DropOldest,
                 SingleWriter = true,
                 SingleReader = true
@@ -37,7 +37,7 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
 
             receivingOptions = new BoundedChannelOptions(bufferCapacity)
             {
-                AllowSynchronousContinuations = true,
+                AllowSynchronousContinuations = false,
                 FullMode = BoundedChannelFullMode.DropOldest,
                 SingleWriter = false,
                 SingleReader = true

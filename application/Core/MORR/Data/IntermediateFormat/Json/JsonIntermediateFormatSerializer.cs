@@ -35,7 +35,7 @@ namespace MORR.Core.Data.IntermediateFormat.Json
         public bool IsActive
         {
             get => isActive;
-            set => Utility.SetAndDispatch(ref isActive, value, LinkAllQueues, () => { /* We wait until all queues are closed */ });
+            set => Utility.SetAndDispatch(ref isActive, value, LinkAllQueues, () => { });
         }
 
         public Guid Identifier { get; } = new Guid("2D61FFB2-9CC1-4AAD-B1B9-A362FCF022A0");

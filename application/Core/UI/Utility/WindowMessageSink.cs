@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace Morr.Core.UI.Controls.NotifyIcon.Utility
+namespace MORR.Core.UI.Utility
 {
     /// <summary>
     /// Creates a window procedure to receive window and taskbar messages
     /// </summary>
-    public class WindowMessageSink : IDisposable
+    internal class WindowMessageSink : IDisposable
     {
         /// <summary>
         /// Handles the taskbar created event

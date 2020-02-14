@@ -21,6 +21,8 @@ namespace MORR.Core.Data.Capture.Video.Desktop
         /// <param name="item">The <see cref="GraphicsCaptureItem" /> to start the video capture from.</param>
         public void StartCapture(GraphicsCaptureItem item)
         {
+            InitializeDevices();
+            InitializeEvents();
             InitializeCaptureItem(item);
             InitializeFramePool();
             InitializeSession();
@@ -37,6 +39,7 @@ namespace MORR.Core.Data.Capture.Video.Desktop
             closedEvent.Set();
             canCleanupNonPersistentResourcesEvent.WaitOne();
             CleanupSessionResources();
+            CleanupPersistentResources();
             Close();
         }
 
@@ -183,11 +186,7 @@ namespace MORR.Core.Data.Capture.Video.Desktop
             this.item.Closed += OnClosed;
         }
 
-        public VideoSampleProducer() : base(16)
-        {
-            InitializeDevices();
-            InitializeEvents();
-        }
+        public VideoSampleProducer() : base(16) { }
 
         private void InitializeBlankTexture()
         {
@@ -244,6 +243,7 @@ namespace MORR.Core.Data.Capture.Video.Desktop
             framePool = null;
 
             session?.Dispose();
+            session = null;
 
             if (item != null)
             {

@@ -32,6 +32,7 @@ namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
 
             isOccupied = true;
             token.Register(FreeReading);
+            eventChannel = CreateChannel();
             return eventChannel.Reader.ReadAllAsync(token);
         }
 
@@ -46,13 +47,15 @@ namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
 
         public void Open()
         {
-            eventChannel = CreateChannel();
+            if (!IsClosed) return;
             FreeReading();
             IsClosed = false;
         }
 
         public void Close()
         {
+            if (IsClosed) return;
+
             IsClosed = true;
             eventChannel.Writer.Complete();
             FreeReading();
