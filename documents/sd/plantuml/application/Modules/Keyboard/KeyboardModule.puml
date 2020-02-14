@@ -4,8 +4,6 @@ skinparam classAttributeIconSize 0
 
 class KeyboardModule {
 }
-interface ICollectingModule
-ICollectingModule <|-- KeyboardModule
 
 interface IModule {
     + Identifier : Guid
@@ -13,6 +11,6 @@ interface IModule {
     + Initialize() : void
 }
 
-IModule <|-- ICollectingModule
+IModule <|-- KeyboardModule
 KeyboardModule --> "  KeyboardInteractEventProducer" KeyboardInteractEventProducer
 @enduml

@@ -5,15 +5,14 @@ skinparam classAttributeIconSize 0
 class WebBrowserModule {
 }
 
-ICollectingModule <|-- WebBrowserModule
-interface ICollectingModule
+
 interface IModule {
     + Identifier : Guid
     + IsActive : bool <<get>> <<set>>
     + Initialize() : void
 }
 
-IModule <|-- ICollectingModule
+IModule <|-- WebBrowserModule
 WebBrowserModule --> "ButtonClickEventProducer" ButtonClickEventProducer
 WebBrowserModule =-> "CloseTabEventProducer" CloseTabEventProducer
 WebBrowserModule ---> "FileDownloadEventProducer" FileDownloadEventProducer

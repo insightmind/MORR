@@ -4,8 +4,7 @@ skinparam classAttributeIconSize 0
 
 class ClipboardModule {
 }
-interface ICollectingModule
-ICollectingModule <|-- ClipboardModule
+
 
 interface IModule {
     + Identifier : Guid
@@ -13,7 +12,7 @@ interface IModule {
     + Initialize() : void
 }
 
-IModule <|-- ICollectingModule
+IModule <|-- ClipboardModule
 ClipboardModule --> "  ClipboardCutEventProducer" ClipboardCutEventProducer
 ClipboardModule --> "ClipboardCopyEventProducer" ClipboardCopyEventProducer
 ClipboardModule --> "   ClipboardPasteEventProducer" ClipboardPasteEventProducer

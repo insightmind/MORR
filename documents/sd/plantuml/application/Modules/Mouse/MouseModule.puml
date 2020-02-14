@@ -5,15 +5,13 @@ skinparam classAttributeIconSize 0
 class MouseModule {
 }
 
-ICollectingModule <|-- MouseModule
-interface ICollectingModule
 interface IModule {
     + Identifier : Guid
     + IsActive : bool <<get>> <<set>>
     + Initialize() : void
 }
 
-IModule <|-- ICollectingModule
+IModule <|-- MouseModule
 MouseModule --> "  MouseScrollEventProducer" MouseScrollEventProducer
 MouseModule --> " MouseMoveEventProducer " MouseMoveEventProducer
 MouseModule --> "   MouseClickEventProducer" MouseClickEventProducer

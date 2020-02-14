@@ -5,15 +5,14 @@ skinparam classAttributeIconSize 0
 class WindowManagementModule {
 }
 
-ICollectingModule <|-- WindowManagementModule
-interface ICollectingModule
+
 interface IModule {
     + Identifier : Guid
     + IsActive : bool <<get>> <<set>>
     + Initialize() : void
 }
 
-IModule <|-- ICollectingModule
+IModule <|-- WindowManagementModule
 WindowManagementModule --> "WindowFocusEventProducer" WindowFocusEventProducer
 WindowManagementModule ---> "WindowMovementEventProducer" WindowMovementEventProducer
 WindowManagementModule --> "       WindowResizingEventProducer" WindowResizingEventProducer
