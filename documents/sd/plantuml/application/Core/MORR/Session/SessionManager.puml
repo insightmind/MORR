@@ -3,14 +3,16 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 !startsub default
 class SessionManager {
-    - videoCapture : IVideoCapture
-    + IsRecording : bool <<get>> <<private set>>
+    + <<create>> SessionManager(configurationPath : FilePath)
+    + <<create>> SessionManager(configurationPath : FilePath, bootstrapper : IBootstrapper, configurationManager : IConfigurationManager, moduleManager : IModuleManager)
+    + CurrentRecordingDirectory : DirectoryPath? <<get>>
+    + RecordingsFolder : DirectoryPath? <<get>>
     + StartRecording() : void
     + StopRecording() : void
-    + Process(files: IEnumerable<FilePath>) : void
+    + Process(recordings: IEnumerable<DirectoryPath>) : void
 }
 !endsub
 !include ISessionManager.puml
-ISessionManager <|-- SessionManager
+SessionManager .UP.|> ISessionManager : implements
 
 @enduml

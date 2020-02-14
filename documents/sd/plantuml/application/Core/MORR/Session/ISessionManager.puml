@@ -3,10 +3,11 @@ skinparam monochrome true
 skinparam classAttributeIconSize 0
 !startsub default
 interface ISessionManager {
-    + IsRecording : bool <<get>>
+    + CurrentRecordingDirectory : DirectoryPath? <<get>>
+    + RecordingsFolder : DirectoryPath? <<get>>
     + StartRecording() : void
     + StopRecording() : void
-    + Process(files: IEnumerable<FilePath>) : void
+    + Process(recordings: IEnumerable<DirectoryPath>) : void
 }
 !endsub
 @enduml

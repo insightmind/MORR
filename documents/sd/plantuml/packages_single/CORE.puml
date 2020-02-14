@@ -30,6 +30,8 @@ package "CORE" #E6E6E6 {
 
         !includesub ../application/Core/MORR/Session/SessionManager.puml!default
 
+        !includesub ../application/Core/MORR/Session/SessionConfiguration.puml!default
+
         together {
             !includesub ../application/Core/MORR/Session/Exceptions/RecordingException.puml!default
 
@@ -44,6 +46,7 @@ package "CORE" #E6E6E6 {
         ISessionManager <|-- SessionManager
         SessionManager ..> AlreadyRecordingException : "throws"
         SessionManager ..> NotRecordingException : "throws
+        SessionManager --* "1 Configuration" SessionConfiguration
     }
 
     package Modules <<Rectangle>> #BFBFBF {
