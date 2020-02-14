@@ -62,16 +62,16 @@ package "CORE" #E6E6E6 {
 
     package Data <<Rectangle>> #BFBFBF {
         together {
-            package Capture {
+            package Capture #E6E6E6 {
                 !includesub ../application/Core/MORR/Data/Capture/CaptureException.puml!default
 
-                package Video {
+                package Video #BFBFBF {
                     together {
                         !includesub ../application/Core/MORR/Data/Capture/Video/DirectXVideoSample.puml!default
 
                         !includesub ../application/Core/MORR/Data/Capture/Video/VideoSample.puml!default
 
-                        package Exceptions {
+                        package Exceptions #E6E6E6 {
                             !includesub ../application/Core/MORR/Data/Capture/Video/Exceptions/VideoCaptureException.puml!default
 
                             CaptureException <|-- VideoCaptureException
@@ -95,10 +95,10 @@ package "CORE" #E6E6E6 {
             }        
         }
 
-        together {
+        package IntermediateFormat #E6E6E6 {
             !includesub ../application/Core/MORR/Data/IntermediateFormat/IntermediateFormatSample.puml!default
 
-            together {
+            package Json {
                 !includesub ../application/Core/MORR/Data/IntermediateFormat/Json/JsonIntermediateFormatDeserializer.puml!default
 
                 !includesub ../application/Core/MORR/Data/IntermediateFormat/Json/JsonIntermediateFormatSample.puml!default
