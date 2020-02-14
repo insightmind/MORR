@@ -141,19 +141,9 @@
 \begin{class}{InteractiveCommandline}
 	\clsdiagram[width=0.7\textwidth]{resources/Classes/Core/CLI/InteractiveCommandline.png}
 	\clsdcl{public class InteractiveCommandLine}\\
-	\clsdsp{A MessageLoop instantiates a cancelable Win32 message loop. Make sure to start the loop only on the main thread! Keep in mind that the message loop does block its calling thread, so you have to cancel it via a separate thread!}
-	
-	\begin{attributes}
-		\attribute{public bool IsRunning \{ get; private set; \} }{\\ Describes whether the MessageLoop is running or not. }
-	\end{attributes}
+	\clsdsp{A InteractiveCommandLine implements a built-in command line which allows the user to cancel the current process by entering `x` command. }
 	
 	\begin{methods}
-		\begin{method}{public InteractiveCommandLine(IConsoleFormatter consoleFormatter)}{\\ Creates a new built-in command line with the specified interaction point to the user. }
-			\begin{parameters}
-				\para{IConsoleFormatter consoleFormatter}{\\ The console formater used to interact with the user in the internal command line. }
-			\end{parameters}
-		\end{method}
-	
 		\begin{method}{public void Launch(Action completionAction)}{\\ Launches the internal command line. It is launched on a separate thread so interactive usage can be provided. }
 			\begin{parameters}
 				\para{Action completionAction}{\\ The action called on completion. }
