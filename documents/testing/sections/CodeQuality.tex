@@ -1,3 +1,16 @@
 \chapter{Ensuring code quality}
 
 Implementing a project on the scale of MORR with multiple collaborators requires care to be taken to ensure code quality and consistency. This chapter lists the tools and approaches that were chosen to ensure code quality.
+
+\section{Tools}
+
+\begin{itemize}
+    \item Visual Studio's integrated code analysis tools and annotations
+    \item Jetbrains' Resharper
+\end{itemize}
+
+We set up common .editorconfig and .DotSettings files that contained our code quality conventions. These conventions encouraged use of modern C\# features (try-casts, coalescing null operators, pattern matching and more) and enforced use of const, readonly, nameof and correct accessibility modifiers. We activated nullability to force potentially nullable variables to be clearly declared as such. We also used attributes consumed by code analyzers and compiler directives to indicate certain exceptions to the agreed upon conventions.
+
+\section{Reviews}
+
+Besides focusing on correctness, our code reviews also focused on readability of the code. Suggestions for alternative implementations or different variable names were a frequent occurence and helped raise code quality and ensure a consistent style.
