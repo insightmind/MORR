@@ -1,9 +1,9 @@
 ﻿using MORR.Shared.Events.Queue.Strategy;
+using SharedTest.TestHelpers;
 using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace SharedTest.Events.Queue.Strategy
 {
@@ -29,26 +29,44 @@ namespace SharedTest.Events.Queue.Strategy
         /// Starts a async producing operation which allows to set a condition on
         /// how many events are queued.
         /// </summary>
+        /// <param name="runsAsync">Defines whether the producing action should run asynchronously ('true') or synchronously ('false').</param>
         /// <param name="continueCondition">The condition action for defining a producing completion.</param>
+        /// <param name="completionAction">The completion action is called on completion. It is also called if any exception occurred.</param>
         /// <returns>Returns a ManualResetEvent which can be used to wait for the process to finish.</returns>
-        public ManualResetEvent ProduceAsync(Func<int, bool> continueCondition)
+        public void Produce(bool runsAsync, Func<int, bool> continueCondition, Action<TestResult> completionAction)
         {
             Debug.Assert(continueCondition != null);
             Debug.Assert(strategy != null);
-            var manualResetEvent = new ManualResetEvent(false);
 
             task = new Task(() =>
             {
-                for (var count = 0; continueCondition.Invoke(count); count++)
+                var result = new TestResult();
+
+                try
                 {
-                    strategy.Enqueue(new TestEvent(count));
+                    for (var count = 0; continueCondition.Invoke(count); count++)
+                    {
+                        strategy.Enqueue(new TestEvent(count));
+                    }
+
+                    result.Complete();
+                }
+                catch (Exception exception)
+                {
+                    result.Fail(exception);
                 }
 
-                manualResetEvent.Set();
+                completionAction(result);
             });
 
-            task.Start();
-            return manualResetEvent;
+            if (runsAsync)
+            {
+                task.Start();
+            }
+            else
+            {
+                task.RunSynchronously();
+            }
         }
     }
 }

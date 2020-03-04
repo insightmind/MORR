@@ -85,8 +85,10 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
             Debug.Assert(strategy != null);
 
             /* GIVEN */
+            strategy.Open();
 
             /* WHEN */
+            var producer = new TestProducer(strategy);
 
             /* THEN */
         }
