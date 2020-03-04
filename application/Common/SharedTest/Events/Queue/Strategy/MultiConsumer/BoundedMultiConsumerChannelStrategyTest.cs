@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MORR.Shared.Events.Queue.Strategy;
 using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
@@ -8,8 +9,9 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
     [TestClass]
     public class BoundedMultiConsumerChannelStrategyTest
     {
-        const uint defaultMaxConsumer = 2;
-        const int defaultMaxEvents = 2;
+        private const uint defaultMaxConsumer = 2;
+        private const int defaultMaxEvents = 2;
+        protected const int maxWaitTime = 500;
         private BoundedMultiConsumerChannelStrategy<TestEvent> strategy;
 
         [TestInitialize]
@@ -26,9 +28,9 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
             const int maxEvents = 10;
 
             /* WHEN */
+            // This should throw as a maximum of 1 consumer is respectively not allowed with a multi consumer strategy.
+            // In this case the programmer should use the BoundedSingleConsumerChannelStrategy.
             Assert.ThrowsException<ChannelConsumingException>(() => new BoundedMultiConsumerChannelStrategy<TestEvent>(maxEvents, maxConsumers));
-
-            /* THEN */
         }
 
         [TestMethod]
@@ -48,11 +50,32 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
             /* PRECONDITION */
             Debug.Assert(strategy != null);
 
+            var allowedConsumerDidNotFailed = new ManualResetEvent(true);
+            var invalidConsumerFailed = new ManualResetEvent(false);
+
             /* GIVEN */
+            strategy.Open();
+
+            for (var index = 0; index < defaultMaxConsumer; index++)
+            {
+                var consumer = new TestConsumer(strategy);
+                consumer.Consume(
+                    false,
+                    (@event, index) => true,
+                    result => result?.WasSuccess(allowedConsumerDidNotFailed));
+            }
 
             /* WHEN */
+            var invalidConsumer = new TestConsumer(strategy);
+            invalidConsumer.Consume(
+                true,
+                (@event, num) => true,
+                result => result?.DidFailThrowing<ChannelConsumingException>(invalidConsumerFailed));
+                
 
             /* THEN */
+            Assert.IsTrue(allowedConsumerDidNotFailed.WaitOne(maxWaitTime), "An Error occurred while consuming using valid consumers.");
+            Assert.IsTrue(invalidConsumerFailed.WaitOne(maxWaitTime), "InvalidConsumer should fail.");
         }
 
         [TestMethod]

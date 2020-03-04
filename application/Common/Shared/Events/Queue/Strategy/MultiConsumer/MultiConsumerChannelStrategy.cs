@@ -15,6 +15,7 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
         private uint? maxChannelConsumers;
         private Channel<TEvent> receivingChannel;
         private readonly List<Channel<TEvent>> offeringChannels = new List<Channel<TEvent>>();
+        private readonly Mutex subscriptionMutex = new Mutex();
 
         protected void StartReceiving(uint? maxChannelConsumers)
         {
@@ -39,6 +40,8 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
         /// <returns>A stream of <typeparamref name="T" /></returns>
         public IAsyncEnumerable<TEvent> GetEvents(CancellationToken token = default)
         {
+            subscriptionMutex.WaitOne();
+
             if ((maxChannelConsumers != null) && (offeringChannels.Count >= maxChannelConsumers))
             {
                 throw new ChannelConsumingException($"Maximum number ({maxChannelConsumers}) of consumers reached!");
@@ -47,6 +50,9 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
             var channel = CreateOfferingChannel();
             offeringChannels?.Add(channel);
             token.Register(FreeChannel, channel);
+
+            subscriptionMutex.ReleaseMutex();
+
             return channel.Reader.ReadAllAsync(token);
         }
 
