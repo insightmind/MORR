@@ -15,7 +15,7 @@ namespace MORR.Modules.Keyboard.Producers
         private static INativeKeyboard nativeKeyboard;
         private INativeKeyboard.LowLevelKeyboardProc? callback;
         private IntPtr keyboardHookHandle;
-
+        
         public void StartCapture(INativeKeyboard nativeKb)
         {
             nativeKeyboard = nativeKb;
@@ -50,23 +50,32 @@ namespace MORR.Modules.Keyboard.Producers
             if (wParam == GlobalHook.MessageType.WM_KEYDOWN)
             {
                 var virtualKeyCode = lParam.VKCode;
-                var pressedKey = KeyInterop.KeyFromVirtualKey(virtualKeyCode);
-
+                var pressedKey = KeyInterop.KeyFromVirtualKey((int)virtualKeyCode);
                 var modifierKeys = GetModifierKeys();
+
+                byte[] keyState = new byte[256];
+                nativeKeyboard.GetKeyboardState(keyState);
+                System.Text.StringBuilder sbString = new System.Text.StringBuilder(256);
+
+                nativeKeyboard.ToUnicodeEx((uint)(lParam.VKCode),
+                    0, keyState, sbString, sbString.Capacity, 0, IntPtr.Zero);
+
+                string keyString = sbString.ToString();
+                char key = '\0';
+                if(!String.IsNullOrEmpty(keyString)) key = sbString.ToString()[0];
 
                 var keyboardEvent = new KeyboardInteractEvent
                 {
+                    MappedCharacter = key,
                     PressedKey = pressedKey,
                     ModifierKeys = modifierKeys,
                     IssuingModule = KeyboardModule.Identifier
                 };
-
                 Enqueue(keyboardEvent);
             }
-
             return nativeKeyboard.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
         }
-
+       
         private static ModifierKeys GetModifierKeys()
         {
             var modifierKeys = ModifierKeys.None;
@@ -91,7 +100,6 @@ namespace MORR.Modules.Keyboard.Producers
             {
                 modifierKeys |= ModifierKeys.Windows;
             }
-
             return modifierKeys;
         }
     }

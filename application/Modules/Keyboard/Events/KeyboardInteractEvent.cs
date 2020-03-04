@@ -17,5 +17,10 @@ namespace MORR.Modules.Keyboard.Events
         ///     The modifier keys to the key pressed
         /// </summary>
         public ModifierKeys ModifierKeys { get; set; }
+
+        /// <summary>
+        ///     The actual user input according to Input locale
+        /// </summary>
+        public char MappedCharacter { get; set; }
     }
 }
