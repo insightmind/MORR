@@ -35,7 +35,12 @@ namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
 
             isOccupied = true;
             token.Register(FreeReading);
-            
+
+            if (eventChannel == null)
+            {
+                eventChannel = CreateChannel();
+            }
+
             subscriptionMutex.ReleaseMutex();
             return eventChannel.Reader.ReadAllAsync(token);
         }
