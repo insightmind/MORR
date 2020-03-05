@@ -16,7 +16,8 @@ namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
     {
         private Channel<TEvent> eventChannel;
         private bool isOccupied;
-
+        private readonly Mutex subscriptionMutex = new Mutex();
+        private const int timeOut = 500;
         public bool IsClosed { get; private set; } = true;
 
         /// <summary>
@@ -25,14 +26,18 @@ namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
         /// <returns>A stream of <typeparamref name="T" /></returns>
         public IAsyncEnumerable<TEvent> GetEvents(CancellationToken token = default)
         {
+            subscriptionMutex.WaitOne(timeOut);
+
             if (isOccupied)
             {
+                subscriptionMutex.ReleaseMutex();
                 throw new ChannelConsumingException("Channel already occupied!");
             }
 
             isOccupied = true;
             token.Register(FreeReading);
             eventChannel = CreateChannel();
+            subscriptionMutex.ReleaseMutex();
             return eventChannel.Reader.ReadAllAsync(token);
         }
 
@@ -73,7 +78,9 @@ namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
 
         private void FreeReading()
         {
+            subscriptionMutex.WaitOne(timeOut);
             isOccupied = false;
+            subscriptionMutex.ReleaseMutex();
         }
 
         protected abstract Channel<TEvent> CreateChannel();

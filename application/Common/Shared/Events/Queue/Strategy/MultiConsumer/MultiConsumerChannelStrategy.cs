@@ -16,6 +16,7 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
         private Channel<TEvent> receivingChannel;
         private readonly List<Channel<TEvent>> offeringChannels = new List<Channel<TEvent>>();
         private readonly Mutex subscriptionMutex = new Mutex();
+        private const int timeOut = 500;
 
         protected void StartReceiving(uint? maxChannelConsumers)
         {
@@ -40,10 +41,11 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
         /// <returns>A stream of <typeparamref name="T" /></returns>
         public IAsyncEnumerable<TEvent> GetEvents(CancellationToken token = default)
         {
-            subscriptionMutex.WaitOne();
+            subscriptionMutex.WaitOne(timeOut);
 
             if ((maxChannelConsumers != null) && (offeringChannels.Count >= maxChannelConsumers))
             {
+                subscriptionMutex.ReleaseMutex();
                 throw new ChannelConsumingException($"Maximum number ({maxChannelConsumers}) of consumers reached!");
             }
 
@@ -69,15 +71,18 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
         {
             if (!IsClosed) return;
 
+            mutex.WaitOne(timeOut);
             offeringChannels.Clear();
             receivingChannel = CreateReceivingChannel();
             _ = DistributeEventsAsync();
             IsClosed = false;
+            mutex.ReleaseMutex();
         }
 
         public void Close()
         {
-            if (IsClosed) return;
+            
+            subscriptionMutex.WaitOne(timeOut);
 
             IsClosed = true;
             receivingChannel?.Writer?.Complete();
@@ -111,12 +116,15 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
 
         private void FreeChannel(object? channelObject)
         {
+            subscriptionMutex.WaitOne(timeOut);
             if (!(channelObject is Channel<TEvent> channel))
             {
+                subscriptionMutex.ReleaseMutex();
                 return;
             }
 
             offeringChannels?.Remove(channel);
+            subscriptionMutex.ReleaseMutex();
         }
 
         protected abstract Channel<TEvent> CreateOfferingChannel();
