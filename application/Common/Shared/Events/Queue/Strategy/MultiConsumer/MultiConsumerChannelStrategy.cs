@@ -70,12 +70,10 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
         {
             if (!IsClosed) return;
 
-            subscriptionMutex.WaitOne(timeOut);
             offeringChannels.Clear();
             receivingChannel = CreateReceivingChannel();
             _ = DistributeEventsAsync();
             IsClosed = false;
-            subscriptionMutex.ReleaseMutex();
         }
 
         public void Close()
@@ -108,15 +106,11 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
             }
         }
 
-        private void FreeChannel(object? channelObject)
+        public void FreeChannel(object? channelObject)
         {
-            subscriptionMutex.WaitOne(timeOut);
-            if (!(channelObject is Channel<TEvent> channel))
-            {
-                subscriptionMutex.ReleaseMutex();
-                return;
-            }
+            if (!(channelObject is Channel<TEvent> channel)) return;
 
+            subscriptionMutex.WaitOne(timeOut);
             offeringChannels?.Remove(channel);
             subscriptionMutex.ReleaseMutex();
         }

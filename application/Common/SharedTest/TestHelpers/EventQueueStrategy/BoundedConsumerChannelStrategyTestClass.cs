@@ -21,19 +21,21 @@ namespace SharedTest.TestHelpers.EventQueueStrategy
 
             /* GIVEN */
             var expectedEventCount = (maxEventCount < maxEvents) ? maxEventCount : maxEvents;
-            strategy.Open();
             var producer = new TestProducer(strategy);
             var consumer = new TestConsumer(strategy);
             var produceEvent = new ManualResetEvent(false);
             var consumeEvent = new ManualResetEvent(false);
 
             /* WHEN */
-            producer.Produce(false, num => num < maxEvents, result => result.EventSuccess(produceEvent));
+            strategy.Open();
+            Assert.IsTrue(!strategy.IsClosed);
+
             consumer.Consume(false, (@event, num) => num < expectedEventCount, result => result.EventSuccess(consumeEvent));
+            producer.Produce(false, num => num < maxEvents, result => result.EventSuccess(produceEvent));
 
             /* THEN */
-            Assert.IsTrue(produceEvent.WaitOne(maxWaitTime));
-            Assert.IsTrue(consumeEvent.WaitOne(maxWaitTime));
+            Assert.IsTrue(produceEvent.WaitOne(maxWaitTime), "Producer did not complete successfully");
+            Assert.IsTrue(consumeEvent.WaitOne(maxWaitTime), "Consumer did not complete successfully");
         }
     }
 }

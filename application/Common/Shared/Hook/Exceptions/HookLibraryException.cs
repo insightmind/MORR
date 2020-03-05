@@ -3,8 +3,6 @@
 namespace MORR.Shared.Hook.Exceptions
 {
     public class HookLibraryException : Exception {
-
-        public HookLibraryException() { }
         public HookLibraryException(string message) : base(message) { }
     }
 }

@@ -47,23 +47,26 @@ namespace SharedTest.TestHelpers.EventQueueStrategy
         {
             /* PRECONDITION */
             Debug.Assert(strategy != null);
+            Debug.Assert(strategy.IsClosed);
 
-            var allowedConsumerDidNotFailed = new ManualResetEvent(true);
-            var invalidConsumerFailed = new ManualResetEvent(false);
+            var allowedConsumerDidFail = new ManualResetEvent(false);
+            var retryConsumerDidFail = new ManualResetEvent(false);
             var validationConsumer = new TestConsumer(strategy);
             var shouldContinue = true;
 
-            /* GIVEN */
+            strategy.Open();
+
             for (var index = 0; index < maxConsumer - 1; index++)
             {
                 var consumer = new TestConsumer(strategy);
                 _ = consumer.ConsumeUnconditionally();
             }
 
+            /* GIVEN */
             validationConsumer.Consume(
                 true,
                 (@event, index) => shouldContinue,
-                result => result?.EventSuccess(allowedConsumerDidNotFailed));
+                result => result.EventThrows<ChannelConsumingException>(allowedConsumerDidFail));
 
             /* WHEN */
             var producer = new TestProducer(strategy);
@@ -72,13 +75,14 @@ namespace SharedTest.TestHelpers.EventQueueStrategy
             shouldContinue = false;
 
             // We wait until the current consumer exits. After that we can try to retry consuming which should not cause an error.
-            Assert.IsTrue(allowedConsumerDidNotFailed.WaitOne(maxWaitTime));
+            Assert.IsFalse(allowedConsumerDidFail.WaitOne(maxWaitTime));
 
-            validationConsumer.Consume(false,(@event, num) => true, result => result.EventThrows<ChannelConsumingException>(invalidConsumerFailed));
+            var newConsumer = new TestConsumer(strategy);
+            newConsumer.Consume(true,(@event, num) => true, result => result.EventThrows<ChannelConsumingException>(retryConsumerDidFail));
 
             /* THEN */
-            Assert.IsTrue(allowedConsumerDidNotFailed.WaitOne(maxWaitTime), "An Error occurred while consuming using valid consumers.");
-            Assert.IsFalse(invalidConsumerFailed.WaitOne(maxWaitTime), "InvalidConsumer should fail.");
+            Assert.IsFalse(allowedConsumerDidFail.WaitOne(maxWaitTime), "An Error occurred while consuming using valid consumers.");
+            Assert.IsFalse(retryConsumerDidFail.WaitOne(maxWaitTime), "The retry consumer did unexpectedly fail with an exception.");
         }
     }
 }

@@ -15,5 +15,8 @@ namespace SharedTest.Events.Queue.Strategy.SingleConsumer
 
         [TestMethod]
         public void TestUnboundedSingleConsumer_Enqueue() => EventQueueStorageStrategyTestClass.Assert_EnqueueSingleProducerUnbounded(Strategy);
+
+        [TestMethod]
+        public void TestUnboundedSingleConsumer_IsOccupied() => SingleConsumerChannelStrategyTestClass.Assert_IsOccupied(Strategy);
     }
 }

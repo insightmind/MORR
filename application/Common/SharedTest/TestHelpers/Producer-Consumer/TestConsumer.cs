@@ -44,13 +44,14 @@ namespace SharedTest.Events.Queue.Strategy
 
                 try
                 {
-                    await foreach (var @event in strategy.GetEvents())
+                    var tokenSource = new CancellationTokenSource();
+                    await foreach (var @event in strategy.GetEvents(tokenSource.Token))
                     {
                         count++;
-                        if (!continueCondition.Invoke(@event, count))
-                        {
-                            break;
-                        }
+                        if (continueCondition.Invoke(@event, count)) continue;
+
+                        tokenSource.Cancel();
+                        break;
                     }
 
                     result.Complete();

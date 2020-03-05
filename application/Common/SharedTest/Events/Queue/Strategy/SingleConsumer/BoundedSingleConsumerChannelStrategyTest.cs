@@ -17,5 +17,8 @@ namespace SharedTest.Events.Queue.Strategy.SingleConsumer
 
         [TestMethod]
         public void TestBoundedSingleConsumer_MaxEventBoundReached() => BoundedConsumerChannelStrategyTestClass.Assert_EnqueueSingleProducerBounded(Strategy, defaultMaxEvents);
+
+        [TestMethod]
+        public void TestBoundedSingleConsumer_IsOccupied() => SingleConsumerChannelStrategyTestClass.Assert_IsOccupied(Strategy);
     }
 }
