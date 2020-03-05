@@ -66,9 +66,6 @@ namespace MORR.Core.Session
 
         public void StartRecording()
         {
-            
-            LoadUsingConfig(configurationPath);
-
             if (isRecording)
             {
                 throw new AlreadyRecordingException();

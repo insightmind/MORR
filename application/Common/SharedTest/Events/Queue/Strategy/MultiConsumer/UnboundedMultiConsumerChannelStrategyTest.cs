@@ -15,8 +15,6 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
 
             /* WHEN */
             Assert.ThrowsException<ChannelConsumingException>(() => new UnboundedMultiConsumerChannelStrategy<TestEvent>(maxConsumers));
-
-            /* THEN */
         }
 
         [TestMethod]

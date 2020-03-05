@@ -22,33 +22,18 @@ namespace SharedTest.Events.Queue
         }
 
         [TestMethod]
-        public void TestEventQueue_IsClosedPropagation()
-        {
-            Assert_IsClosedPropagation(queue);
-        }
+        public void TestEventQueue_IsClosedPropagation() => Assert_IsClosedPropagation(queue);
 
         [TestMethod]
-        public void TestEventQueue_CloseCalled()
-        {
-            Assert_CloseCalled(queue);
-        }
+        public void TestEventQueue_CloseCalled() => Assert_CloseCalled(queue);
 
         [TestMethod]
-        public void TestEventQueue_OpenCalled()
-        {
-            Assert_OpenCalled(queue);
-        }
+        public void TestEventQueue_OpenCalled() => Assert_OpenCalled(queue);
 
         [TestMethod]
-        public void TestEventQueue_EnqueueCalled()
-        {
-            Assert_EnqueueCalled(queue);
-        }
+        public void TestEventQueue_EnqueueCalled() => Assert_EnqueueCalled(queue);
 
         [TestMethod]
-        public void TestEventQueue_GetEventsCalled()
-        {
-            Assert_GetEventsCalled(queue);
-        }
+        public void TestEventQueue_GetEventsCalled() => Assert_GetEventsCalled(queue);
     }
 }

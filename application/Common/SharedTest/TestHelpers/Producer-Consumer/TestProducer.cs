@@ -1,9 +1,8 @@
 ﻿using MORR.Shared.Events.Queue.Strategy;
-using SharedTest.TestHelpers;
 using System;
 using System.Diagnostics;
-using System.Threading;
 using System.Threading.Tasks;
+using SharedTest.TestHelpers.Result;
 
 namespace SharedTest.Events.Queue.Strategy
 {
@@ -33,7 +32,7 @@ namespace SharedTest.Events.Queue.Strategy
         /// <param name="continueCondition">The condition action for defining a producing completion.</param>
         /// <param name="completionAction">The completion action is called on completion. It is also called if any exception occurred.</param>
         /// <returns>Returns a ManualResetEvent which can be used to wait for the process to finish.</returns>
-        public void Produce(bool runsAsync, Func<int, bool> continueCondition, Action<TestResult> completionAction)
+        public void Produce(bool runsAsync, Func<int, bool> continueCondition, Action<ITestResult> completionAction)
         {
             Debug.Assert(continueCondition != null);
             Debug.Assert(strategy != null);
@@ -59,6 +58,15 @@ namespace SharedTest.Events.Queue.Strategy
                 completionAction(result);
             });
 
+            /*
+             * This defines the way the producer is actually run. In minor cases
+             * you may want to run it synchronously on the current scheduler
+             * e.g. if you want to commit all events prior to testing.
+             *
+             * Otherwise I encourage you to choose the default
+             * asynchronous running. However you may than need to listen to the completion action
+             * to gather test information.
+             */
             if (runsAsync)
             {
                 task.Start();

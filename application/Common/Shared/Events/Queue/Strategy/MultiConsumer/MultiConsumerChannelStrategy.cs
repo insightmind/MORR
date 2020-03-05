@@ -71,12 +71,12 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
         {
             if (!IsClosed) return;
 
-            mutex.WaitOne(timeOut);
+            subscriptionMutex.WaitOne(timeOut);
             offeringChannels.Clear();
             receivingChannel = CreateReceivingChannel();
             _ = DistributeEventsAsync();
             IsClosed = false;
-            mutex.ReleaseMutex();
+            subscriptionMutex.ReleaseMutex();
         }
 
         public void Close()
