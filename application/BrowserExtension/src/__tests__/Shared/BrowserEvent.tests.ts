@@ -37,3 +37,9 @@ test("Event serialization", () => {
     expect(evt.serialize()).toBe("{\"_issuingModule\":0,\"_type\":\"Generic\",\"_timeStamp\":"
                                 + JSON.stringify(evt.timeStamp) + ",\"_tabID\":7,\"_windowID\":3,\"_url\":\"http://kit.edu/\"}");
 })
+
+test("Event serialization (no underscore)", () => {
+    let evt : BrowserEvent = new BrowserEvent(testData._type, testData._tabID, testData._windowID, testData._url.toString());
+    expect(evt.serialize(true)).toBe("{\"issuingModule\":0,\"type\":\"Generic\",\"timeStamp\":"
+                                + JSON.stringify(evt.timeStamp) + ",\"tabID\":7,\"windowID\":3,\"url\":\"http://kit.edu/\"}");
+})
