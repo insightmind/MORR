@@ -37,7 +37,7 @@ jobs:
       run: dotnet build application/MORR.sln --configuration Release --nologo
     
     - name: Run tests
-      run: dotnet test application/MORR.sln -t
+      run: dotnet test application/MORR.sln
 
   TypeScript:
     name: Build Typescript
