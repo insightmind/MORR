@@ -6,6 +6,7 @@ using MORR.Shared.Events.Queue.Strategy;
 using System.Diagnostics;
 using System.Linq;
 using MORR.Shared.Events;
+using SharedTest.TestHelpers.EventQueue;
 
 namespace SharedTest.Events.Queue
 {

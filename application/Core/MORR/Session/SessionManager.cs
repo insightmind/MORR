@@ -31,6 +31,8 @@ namespace MORR.Core.Session
             this.moduleManager = moduleManager;
             this.configurationManager = configurationManager;
 
+            GlobalHook.Initialize();
+
             bootstrapper.ComposeImports(this);
             bootstrapper.ComposeImports(configurationManager);
             bootstrapper.ComposeImports(moduleManager);

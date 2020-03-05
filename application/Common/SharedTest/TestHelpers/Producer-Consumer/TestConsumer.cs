@@ -1,6 +1,7 @@
 ﻿using MORR.Shared.Events.Queue.Strategy;
 using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using SharedTest.TestHelpers.Result;
 
@@ -80,6 +81,19 @@ namespace SharedTest.Events.Queue.Strategy
             {
                 task.RunSynchronously();
             }
+        }
+
+        /// <summary>
+        /// Runs the Consumer unconditionally as long as the queue does not cancel the consuming itself
+        /// through closing the event channel.
+        /// </summary>
+        /// <param name="runsAsync">Defines whether the producing action should run asynchronously ('true') or synchronously ('false').</param>
+        /// <returns>A ManualResetEvent defining whether the consumer was cancelled using the event channel closing.</returns>
+        public ManualResetEvent ConsumeUnconditionally(bool runsAsync = true)
+        {
+            var resetEvent = new ManualResetEvent(false);
+            Consume(runsAsync, (@event, num) => true, result => result.EventSuccess(resetEvent));
+            return resetEvent;
         }
     }
 }

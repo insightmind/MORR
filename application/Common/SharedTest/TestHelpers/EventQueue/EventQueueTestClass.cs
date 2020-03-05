@@ -6,8 +6,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using MORR.Shared.Events.Queue;
 using MORR.Shared.Events.Queue.Strategy;
+using SharedTest.Events;
 
-namespace SharedTest.Events.Queue
+namespace SharedTest.TestHelpers.EventQueue
 {
     public abstract class EventQueueTestClass<TQueue> where TQueue : EventQueue<TestEvent>
     {

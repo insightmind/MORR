@@ -3,14 +3,16 @@ using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MORR.Shared.Events.Queue.Strategy;
 using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
+using SharedTest.Events;
+using SharedTest.Events.Queue.Strategy;
 
-namespace SharedTest.Events.Queue.Strategy.MultiConsumer
+namespace SharedTest.TestHelpers.EventQueueStrategy
 {
-    public class MultiConsumerChannelStrategyTestClass
+    public static class MultiConsumerChannelStrategyTestClass
     {
-        protected const int maxWaitTime = 500;
+        private const int maxWaitTime = 500;
 
-        public void Assert_MaxConsumerReached(MultiConsumerChannelStrategy<TestEvent> strategy, int maxConsumer)
+        public static void Assert_MaxConsumerReached(MultiConsumerChannelStrategy<TestEvent> strategy, int maxConsumer)
         {
             /* PRECONDITION */
             Debug.Assert(strategy != null);
@@ -39,6 +41,44 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
             /* THEN */
             Assert.IsTrue(allowedConsumerDidNotFailed.WaitOne(maxWaitTime), "An Error occurred while consuming using valid consumers.");
             Assert.IsTrue(invalidConsumerFailed.WaitOne(maxWaitTime), "InvalidConsumer should fail.");
+        }
+
+        public static void Assert_ConsumerFreed(MultiConsumerChannelStrategy<TestEvent> strategy, int maxConsumer)
+        {
+            /* PRECONDITION */
+            Debug.Assert(strategy != null);
+
+            var allowedConsumerDidNotFailed = new ManualResetEvent(true);
+            var invalidConsumerFailed = new ManualResetEvent(false);
+            var validationConsumer = new TestConsumer(strategy);
+            var shouldContinue = true;
+
+            /* GIVEN */
+            for (var index = 0; index < maxConsumer - 1; index++)
+            {
+                var consumer = new TestConsumer(strategy);
+                _ = consumer.ConsumeUnconditionally();
+            }
+
+            validationConsumer.Consume(
+                true,
+                (@event, index) => shouldContinue,
+                result => result?.EventSuccess(allowedConsumerDidNotFailed));
+
+            /* WHEN */
+            var producer = new TestProducer(strategy);
+            producer.ProduceUnconditionally();
+
+            shouldContinue = false;
+
+            // We wait until the current consumer exits. After that we can try to retry consuming which should not cause an error.
+            Assert.IsTrue(allowedConsumerDidNotFailed.WaitOne(maxWaitTime));
+
+            validationConsumer.Consume(false,(@event, num) => true, result => result.EventThrows<ChannelConsumingException>(invalidConsumerFailed));
+
+            /* THEN */
+            Assert.IsTrue(allowedConsumerDidNotFailed.WaitOne(maxWaitTime), "An Error occurred while consuming using valid consumers.");
+            Assert.IsFalse(invalidConsumerFailed.WaitOne(maxWaitTime), "InvalidConsumer should fail.");
         }
     }
 }

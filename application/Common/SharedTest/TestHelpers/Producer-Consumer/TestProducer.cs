@@ -76,5 +76,14 @@ namespace SharedTest.Events.Queue.Strategy
                 task.RunSynchronously();
             }
         }
+
+        /// <summary>
+        /// Produces new TestEvents unconditionally.
+        /// </summary>
+        /// <param name="runsAsync">Defines whether the producing action should run asynchronously ('true') or synchronously ('false').</param>
+        public void ProduceUnconditionally(bool runsAsync = true)
+        {
+            Produce(runsAsync, num => true, _ => { });
+        }
     }
 }

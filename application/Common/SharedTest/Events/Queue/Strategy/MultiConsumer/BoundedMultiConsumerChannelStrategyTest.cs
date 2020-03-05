@@ -1,22 +1,21 @@
 ﻿using System.Diagnostics;
-using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MORR.Shared.Events.Queue.Strategy;
 using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
+using SharedTest.TestHelpers.EventQueueStrategy;
 
 namespace SharedTest.Events.Queue.Strategy.MultiConsumer
 {
     [TestClass]
-    public class BoundedMultiConsumerChannelStrategyTest: MultiConsumerChannelStrategyTestClass
+    public class BoundedMultiConsumerChannelStrategyTest: EventQueueStorageStrategyTest<BoundedMultiConsumerChannelStrategy<TestEvent>>
     {
-        private const uint defaultMaxConsumer = 2;
+        private const int defaultMaxConsumer = 2;
         private const int defaultMaxEvents = 2;
-        private BoundedMultiConsumerChannelStrategy<TestEvent> strategy;
 
         [TestInitialize]
         public void BeforeTest()
         {
-            strategy = new BoundedMultiConsumerChannelStrategy<TestEvent>(defaultMaxEvents, defaultMaxConsumer);
+            Strategy = new BoundedMultiConsumerChannelStrategy<TestEvent>(defaultMaxEvents, defaultMaxConsumer);
         }
 
         [TestMethod]
@@ -44,21 +43,12 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
         }
 
         [TestMethod]
-        public void TestBoundedMultiConsumer_MaxConsumerReached() => Assert_MaxConsumerReached(strategy, defaultMaxEvents);
+        public void TestBoundedMultiConsumer_MaxConsumerReached() => MultiConsumerChannelStrategyTestClass.Assert_MaxConsumerReached(Strategy, defaultMaxConsumer);
 
         [TestMethod]
-        public void TestBoundedMultiConsumer_MaxEventBoundReached()
-        {
-            /* PRECONDITION */
-            Debug.Assert(strategy != null);
+        public void TestBoundedMultiConsumer_MaxEventBoundReached() => BoundedConsumerChannelStrategyTestClass.Assert_EnqueueSingleProducerBounded(Strategy, defaultMaxEvents);
 
-            /* GIVEN */
-            strategy.Open();
-
-            /* WHEN */
-            var producer = new TestProducer(strategy);
-
-            /* THEN */
-        }
+        [TestMethod]
+        public void TestBoundedMultiConsumer_FreeConsumer() => MultiConsumerChannelStrategyTestClass.Assert_ConsumerFreed(Strategy, defaultMaxConsumer);
     }
 }

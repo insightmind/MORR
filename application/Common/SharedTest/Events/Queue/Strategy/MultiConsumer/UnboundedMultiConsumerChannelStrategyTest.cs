@@ -1,14 +1,23 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MORR.Shared.Events.Queue.Strategy;
 using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
+using SharedTest.TestHelpers.EventQueueStrategy;
 
 namespace SharedTest.Events.Queue.Strategy.MultiConsumer
 {
     [TestClass]
-    class UnboundedMultiConsumerChannelStrategyTest
+    public class UnboundedMultiConsumerChannelStrategyTest: EventQueueStorageStrategyTest<UnboundedMultiConsumerChannelStrategy<TestEvent>>
     {
+        private const int defaultMaxConsumer = 2;
+
+        [TestInitialize]
+        public void BeforeTest()
+        {
+            Strategy = new UnboundedMultiConsumerChannelStrategy<TestEvent>(defaultMaxConsumer);
+        }
+
         [TestMethod]
-        public void TestBoundedMultiConsumer_MaxSingleConsumer()
+        public void TestUnboundedMultiConsumer_MaxSingleConsumer()
         {
             /* GIVEN */
             const uint maxConsumers = 1;
@@ -18,7 +27,7 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
         }
 
         [TestMethod]
-        public void TestBoundedMultiConsumer_NoConsumer()
+        public void TestUnboundedMultiConsumer_NoConsumer()
         {
             /* GIVEN */
             const uint maxConsumers = 0;
@@ -26,5 +35,14 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
             /* WHEN */
             Assert.ThrowsException<ChannelConsumingException>(() => new UnboundedMultiConsumerChannelStrategy<TestEvent>(maxConsumers));
         }
+
+        [TestMethod]
+        public void TestUnboundedMultiConsumer_MaxConsumerReached() => MultiConsumerChannelStrategyTestClass.Assert_MaxConsumerReached(Strategy, defaultMaxConsumer);
+
+        [TestMethod]
+        public void TestUnboundedMultiConsumer_Enqueue() => EventQueueStorageStrategyTestClass.Assert_EnqueueSingleProducerUnbounded(Strategy);
+
+        [TestMethod]
+        public void TestUnboundedMultiConsumer_FreeConsumer() => MultiConsumerChannelStrategyTestClass.Assert_ConsumerFreed(Strategy, defaultMaxConsumer);
     }
 }

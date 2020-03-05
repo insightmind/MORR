@@ -54,7 +54,6 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
             token.Register(FreeChannel, channel);
 
             subscriptionMutex.ReleaseMutex();
-
             return channel.Reader.ReadAllAsync(token);
         }
 
@@ -81,8 +80,7 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
 
         public void Close()
         {
-            
-            subscriptionMutex.WaitOne(timeOut);
+            if (IsClosed) return;
 
             IsClosed = true;
             receivingChannel?.Writer?.Complete();
@@ -95,11 +93,7 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
 
         private ValueTask EnqueueAsync(Channel<TEvent> channel, TEvent @event)
         {
-            async Task AsyncSlowPath(TEvent @event)
-            {
-                await channel.Writer.WriteAsync(@event);
-            }
-
+            async Task AsyncSlowPath(TEvent @event) => await channel.Writer.WriteAsync(@event);
             return channel.Writer.TryWrite(@event) ? default : new ValueTask(AsyncSlowPath(@event));
         }
 

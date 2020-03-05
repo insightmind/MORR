@@ -49,6 +49,21 @@ namespace SharedTest.Hook
         }
 
         [TestMethod]
+        public void TestGlobalHook_IsActiveTrue_NullNativeHook()
+        {
+            /* PRECONDITIONS */
+
+            /* GIVEN */
+            GlobalHook.Initialize(null);
+
+            /* WHEN */
+            GlobalHook.IsActive = true;
+
+            /* THEN */
+            Assert.IsFalse(GlobalHook.IsActive);
+        }
+
+        [TestMethod]
         public void TestGlobalHook_IsActiveTrue_ErrorLoadingLibrary()
         {
             /* PRECONDITIONS */
