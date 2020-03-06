@@ -34,7 +34,15 @@ namespace MORR.Modules.Clipboard.Producers
                 return;
             }
 
-            var text = nativeClipboard.GetClipboardText();
+            string text;
+            try
+            {
+                text = nativeClipboard.GetClipboardText();
+            }
+            catch (Exception)
+            {
+                return;
+            }
 
             var clipboardCopyEvent = new ClipboardCopyEvent
                 { ClipboardText = text, IssuingModule = ClipboardModule.Identifier };
