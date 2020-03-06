@@ -1,5 +1,4 @@
 import { chrome, resetChrome } from '../__mock__/chrome_mock'
-//import chrome from 'sinon-chrome'
 const globalAny:any = global;
 globalAny.chrome = chrome
 import PostHTTPInterface from '../ApplicationInterface/PostHTTPInterface'
@@ -17,6 +16,9 @@ const sample : any = {_issuingModule : 0, _windowID : 3, _tabID : 7,  _url : new
 
 beforeAll(() => {
     jest.resetAllMocks();
+})
+
+beforeEach(() => {
     comm = new PostHTTPInterface("http://localhost:60024");
 })
 
