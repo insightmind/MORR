@@ -66,10 +66,12 @@ namespace MORR.Modules.Keyboard.Producers
 
                 var keyboardEvent = new KeyboardInteractEvent
                 {
-                    MappedCharacter = key,
-                    PressedKey = pressedKey,
-                    ModifierKeys = modifierKeys,
-                    IssuingModule = KeyboardModule.Identifier
+                    MappedCharacter_Unicode = key,
+                    PressedKey_System_Windows_Input_Key = pressedKey,
+                    ModifierKeys_System_Windows_Input_ModifierKeys = modifierKeys,
+                    IssuingModule = KeyboardModule.Identifier,
+                    PressedKeyName = pressedKey.ToString(),
+                    ModifierKeysName = modifierKeys.ToString()
                 };
                 Enqueue(keyboardEvent);
             }
