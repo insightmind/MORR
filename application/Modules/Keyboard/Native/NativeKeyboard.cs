@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text;
 using MORR.Shared.Hook;
 
 namespace MORR.Modules.Keyboard.Native
@@ -70,6 +71,20 @@ namespace MORR.Modules.Keyboard.Native
             return SetWindowsHookEx(hookType, lpFn, hMod, dwThreadId);
         }
 
+        IntPtr INativeKeyboard.GetKeyboardLayout(uint idThread) { return GetKeyboardLayout(idThread);}
+
+        int INativeKeyboard.ToUnicodeEx(uint wVirtKey, uint wScanCode, byte[]
+        lpKeyState, [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pwszBuff,
+        int cchBuff, uint wFlags, IntPtr dwhkl)
+        {
+            return ToUnicodeEx(wVirtKey, wScanCode, lpKeyState, pwszBuff, cchBuff, wFlags, dwhkl
+                );
+        }
+
+        bool INativeKeyboard.GetKeyboardState(byte[] lpKeyState) {
+            return GetKeyboardState(lpKeyState);
+        }
+
         private bool TryGetCurrentModuleHandle(out IntPtr handle)
         {
             using var currentProcess = Process.GetCurrentProcess();
@@ -107,6 +122,18 @@ namespace MORR.Modules.Keyboard.Native
 
         [DllImport("kernel32.dll")]
         private static extern IntPtr GetModuleHandle(string lpModuleName);
+
+        [DllImport("user32.dll")]
+        static extern IntPtr GetKeyboardLayout(uint idThread);
+
+        [DllImport("user32.dll")]
+        static extern int ToUnicodeEx(uint wVirtKey, uint wScanCode, byte[]
+   lpKeyState, [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pwszBuff,
+   int cchBuff, uint wFlags, IntPtr dwhkl);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool GetKeyboardState(byte[] lpKeyState);
 
         #endregion
     }
