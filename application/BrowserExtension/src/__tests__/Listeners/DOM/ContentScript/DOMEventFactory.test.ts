@@ -20,11 +20,6 @@ test("TestSetup", () => {
     expect(document.location.href).toBe(sampleDocument.url);
 })
 
-//nothing to check here really, just for completeness' sake
-test("Constructor", () => {
-    expect(factory).toBeInstanceOf(DOMEventFactory);
-});
-
 //create a ButtonClickEvent (base scenario)
 test("Create ButtonClickEvent (success, type button)", done => {
     factory.createEvent(<Event>(<any>{type : DOMEventTypes.CLICK, target : sampleTarget}))

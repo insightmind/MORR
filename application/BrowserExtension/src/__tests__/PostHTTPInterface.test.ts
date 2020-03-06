@@ -22,6 +22,7 @@ beforeEach(() => {
     comm = new PostHTTPInterface("http://localhost:60024");
 })
 
+//confirm that connection is established when receiving a valid answer
 test("Establish connection", done => {
     class Response {
         json() {
@@ -36,6 +37,7 @@ test("Establish connection", done => {
     }).catch((e) => fail(e));
 })
 
+//confirm that connection is not established when receiving an invalid answer
 test("Establish connection (wrong response)", done => {
     class Response {
         json() {
@@ -47,6 +49,7 @@ test("Establish connection (wrong response)", done => {
     comm.establishConnection().then(() => fail(invalidAppString)).catch(() => done());
 })
 
+//confirm that config is correctly received
 test("Request config", done => {
     class Response {
         json() {
@@ -58,6 +61,7 @@ test("Request config", done => {
     comm.requestConfig().then((config) => {expect(config).toBe("Somevalue"); done();});
 })
 
+//confirm that requestConfig rejects when receiving an invalid answer
 test("Request config (wrong response)", done => {
     class Response {
         json() {
@@ -69,6 +73,7 @@ test("Request config (wrong response)", done => {
     comm.requestConfig().then(() => fail(invalidAppString)).catch(() => done());
 })
 
+//confirm that waitForStart is resolved when receiving the expected answer
 test("Wait for start", done => {
     class Response {
         json() {
@@ -80,6 +85,7 @@ test("Wait for start", done => {
     comm.waitForStart().then(() => done());
 })
 
+//confirm that waitForStart is rejected when receiving an unexpected answer
 test("Wait for start (invalid response)", done => {
     class Response {
         json() {
@@ -91,6 +97,7 @@ test("Wait for start (invalid response)", done => {
     comm.waitForStart().then(() => fail("Should only resolve when recieiving Start-command")).catch(() => done());
 })
 
+//confirm that the onStopCallback passed to the PostHTTPInterface is invoked when receiving a stop-message
 test("OnStopListener", done => {
     class Response {
         private running : boolean = false;
@@ -117,6 +124,7 @@ test("OnStopListener", done => {
     });
 })
 
+//confirm that sending data works
 test("Send data", done => {
     class Response {
         json() {
@@ -128,11 +136,17 @@ test("Send data", done => {
     mySample._buttonHref = "https://sample.com/redirect";
     let fetch = jest.fn((...args : any[]) => new Promise((resolve) => resolve(new Response)));
     globalAny.fetch = fetch;
-    comm.sendData(new ButtonClickEvent(mySample._tabID, mySample._windowID, mySample._buttonTitle,mySample._url).serialize()).then(() => {
+    let data = new ButtonClickEvent(mySample._tabID, mySample._windowID, mySample._buttonTitle,mySample._url).serialize();
+    comm.sendData(data).then(() => {
+        expect(fetch).toHaveBeenCalledWith("http://localhost:60024", {
+            method : "POST",
+            body: `{"request" : "sendData", "data" : ${data}}`,
+        });
         done();
     })
 })
 
+//confirm that sending data also throws when receiving an invalid answer
 test("Send data (invalid answer)", done => {
     class Response {
         json() {
@@ -149,6 +163,7 @@ test("Send data (invalid answer)", done => {
     }).catch(() => done());
 })
 
+//confirm that sendData will pass through Stop-commands
 test("Send data (stop answer)", done => {
     class Response {
         json() {
@@ -171,6 +186,7 @@ test("Send data (stop answer)", done => {
     });
 })
 
+//test if PostHTTPInterface will create a port-entry in browser storage when the extension is installed.
 test("Set port", () => {
     expect(chrome.storage.local.set.calledOnceWith({"port": "No Port Set!"})).toBeFalsy();
     chrome.runtime.onInstalled.trigger({reason : "install"});

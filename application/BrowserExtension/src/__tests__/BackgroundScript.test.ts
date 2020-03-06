@@ -25,6 +25,7 @@ beforeEach(() => {
     jest.mock('../ListenerManager')
 })
 
+//Check if invoking run calls the correct functions on the communication interface mock
 test("Regular run", (done) => {
     setUpCommonMocks();
     let startAllMock = ListenerManager.prototype.startAll = jest.fn();
@@ -40,7 +41,7 @@ test("Regular run", (done) => {
     }, WAITTIME);
 })
 
-//Check if invoking run calls the correct function on the Communication Interface mock.
+//Check if backgroundscript takes appropriate action when its stop-callback is invoked
 test("Run stop", (done) => {
     setUpCommonMocks();
     let stopcallback : (error? : boolean) => void;
@@ -75,7 +76,7 @@ test("Run stop", (done) => {
     })
 })
 
-//Check if invoking run calls the correct function on the Communication Interface mock.
+//Check if backgroundscript takes appropriate action when its stop-callback is invoked with an errorstatus
 test("Run stop on error", (done) => {
     setUpCommonMocks();
     let stopcallback : (error? : boolean) => void;
