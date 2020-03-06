@@ -47,7 +47,7 @@ namespace MORR.Modules.Keyboard.Producers
                 return nativeKeyboard.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
             }
 
-            if (wParam == GlobalHook.MessageType.WM_KEYDOWN)
+            if(wParam == GlobalHook.MessageType.WM_KEYDOWN || wParam == GlobalHook.MessageType.WM_SYSKEYDOWN)
             {
                 var virtualKeyCode = lParam.VKCode;
                 var pressedKey = KeyInterop.KeyFromVirtualKey((int)virtualKeyCode);
