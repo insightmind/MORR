@@ -5,6 +5,7 @@
              xmlns:ViewModel="clr-namespace:MORR.Core.UI.ViewModels"
              xmlns:Utility="clr-namespace:MORR.Core.UI.Utility"
              xmlns:System="clr-namespace:System;assembly=System.Runtime"
+             xmlns:localization="clr-namespace:MORR.Core.UI.Properties"
              ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
         <ResourceDictionary>
@@ -24,12 +25,12 @@
                         </Utility:SwitchCase>
                     </Utility:SwitchConverter>
                     <Utility:SwitchConverter x:Key="RecordingButtonConverter" DefaultValue="Toggle recording">
-                        <Utility:SwitchCase Out="Stop recording">
+                        <Utility:SwitchCase Out="{x:Static localization:Resources.TrayIcon_ContextMenu_StopRecording}">
                             <Utility:SwitchCase.In>
                                 <System:Boolean>True</System:Boolean>
                             </Utility:SwitchCase.In>
                         </Utility:SwitchCase>
-                        <Utility:SwitchCase Out="Start recording">
+                        <Utility:SwitchCase Out="{x:Static localization:Resources.TrayIcon_ContextMenu_StartRecording}">
                             <Utility:SwitchCase.In>
                                 <System:Boolean>False</System:Boolean>
                             </Utility:SwitchCase.In>
@@ -45,10 +46,12 @@
                                 <MenuItem
                                     Header="{Binding IsRecording, Converter={StaticResource RecordingButtonConverter}}"
                                     Command="{Binding ToggleRecordingCommand}" />
-                                <MenuItem Header="Open recordings directory"
-                                          Command="{Binding OpenRecordingsDirectoryCommand}" />
+                                <MenuItem
+                                    Header="{x:Static localization:Resources.TrayIcon_ContextMenu_OpenRecordingsDirectory}"
+                                    Command="{Binding OpenRecordingsDirectoryCommand}" />
                                 <Separator />
-                                <MenuItem Header="Exit" Command="{Binding ExitCommand}" />
+                                <MenuItem Header="{x:Static localization:Resources.TrayIcon_ContextMenu_Exit}"
+                                          Command="{Binding ExitCommand}" />
                             </ContextMenu>
                         </Icon:NotifyIcon.ContextMenu>
                     </Icon:NotifyIcon>
