@@ -64,7 +64,7 @@ namespace SharedTest.TestHelpers.EventQueueStrategy
 
             /* GIVEN */
             validationConsumer.Consume(
-                true,
+                false,
                 (@event, index) => shouldContinue,
                 result => result.EventThrows<ChannelConsumingException>(allowedConsumerDidFail));
 
@@ -101,7 +101,7 @@ namespace SharedTest.TestHelpers.EventQueueStrategy
             {
                 var consumer = new TestConsumer(strategy);
                 consumer.Consume(
-                    true,
+                    false,
                     (@event, index) => index <= maxEvents,
                     result =>
                     {
@@ -111,11 +111,11 @@ namespace SharedTest.TestHelpers.EventQueueStrategy
 
             /* WHEN */
             var producer = new TestProducer(strategy);
-            producer.Produce(true, num => num <= maxEvents, result => { });
+            producer.Produce(false, num => num <= maxEvents, result => { });
 
 
             /* THEN */
-            Assert.IsTrue(consumersReceivedEventsIndividually.Wait(maxWaitTime), "Not all consumers received the event!");
+            Assert.IsTrue(consumersReceivedEventsIndividually.Wait(maxWaitTime * maxConsumer), "Not all consumers received the event!");
         }
     }
 }
