@@ -11,20 +11,14 @@ namespace MORR.Modules.Clipboard.Producers
     /// </summary>
     public class ClipboardCopyEventProducer : DefaultEventQueue<ClipboardCopyEvent>
     {
-        /// <summary>
-        ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        ///     When I initialize the nativeClipboard in the StartCapture() method
-        ///     like i did in the other producers, an Exception will be thrown.
-        ///     ERROR: The type initializer for
-        ///     'MORR.Modules.Clipboard.Producers.ClipboardCopyEventProducer'
-        ///     threw an exception.
-        ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
-        /// </summary>
+        private const int wparamnull = 0;
+
+        private const int wparamcopy = 18;
 
         private static readonly ClipboardWindowMessageSink
             clipboardWindowMessageSink = new ClipboardWindowMessageSink();
 
-        private INativeClipboard nativeClipboard = clipboardWindowMessageSink.NativeClipboard;
+        private readonly INativeClipboard nativeClipboard = ClipboardWindowMessageSink.NativeClipboard;
 
         #region Private methods
 
@@ -45,7 +39,7 @@ namespace MORR.Modules.Clipboard.Producers
                 return;
             }
 
-            if (Convert.ToString(wParam) == "0" || Convert.ToString(wParam) == "18")
+            if (wParam.ToInt64() == wparamnull || wParam.ToInt64() == wparamcopy)
             {
                 var clipboardCopyEvent = new ClipboardCopyEvent
                     { ClipboardText = text, IssuingModule = ClipboardModule.Identifier };

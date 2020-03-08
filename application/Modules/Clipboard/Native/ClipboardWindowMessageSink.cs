@@ -4,8 +4,7 @@ using MORR.Shared.Hook;
 namespace MORR.Modules.Clipboard.Native
 {
     public class ClipboardWindowMessageSink
-    {
-        private static INativeClipboard nativeClipboard = new NativeClipboard();
+    { 
 
         /// <summary>
         ///     Handles a window message when clipboard is updated
@@ -16,11 +15,7 @@ namespace MORR.Modules.Clipboard.Native
         /// <param name="lParam">The LPARAM of the message</param>
         public delegate void ClipboardEventHandler(IntPtr hwnd, uint uMsg, IntPtr wParam, IntPtr lParam);
 
-        public INativeClipboard NativeClipboard
-        {
-            get { return nativeClipboard; }
-            private set { }
-        }
+        public static INativeClipboard NativeClipboard { get; } = new NativeClipboard();
 
 
         private INativeClipboard.WindowProcedureHandler internalWindowMessageHandler;
@@ -45,10 +40,10 @@ namespace MORR.Modules.Clipboard.Native
             windowClass.lpszClassName = className;
 
 
-            nativeClipboard.RegisterClass(ref windowClass);
+            NativeClipboard.RegisterClass(ref windowClass);
 
             // Creates window to register clipboard update messages
-            WindowHandle = nativeClipboard.CreateWindowEx(0,
+            WindowHandle = NativeClipboard.CreateWindowEx(0,
                                                           className,
                                                           "",
                                                           0,
@@ -59,7 +54,7 @@ namespace MORR.Modules.Clipboard.Native
                                                           IntPtr.Zero,
                                                           IntPtr.Zero);
 
-            nativeClipboard.AddClipboardFormatListener(WindowHandle);
+            NativeClipboard.AddClipboardFormatListener(WindowHandle);
         }
 
         /// <summary>
@@ -79,7 +74,7 @@ namespace MORR.Modules.Clipboard.Native
                 ClipboardUpdated?.Invoke(hWnd, messageId, wParam, lParam);
             }
 
-            return nativeClipboard.DefWindowProc(hWnd, messageId, wParam, lParam);
+            return NativeClipboard.DefWindowProc(hWnd, messageId, wParam, lParam);
         }
 
         #region Dispose
@@ -107,14 +102,11 @@ namespace MORR.Modules.Clipboard.Native
             }
 
             isDisposed = true;
-            nativeClipboard.RemoveClipboardFormatListener(WindowHandle);
-            nativeClipboard.DestroyWindow(WindowHandle);
+            NativeClipboard.RemoveClipboardFormatListener(WindowHandle);
+            NativeClipboard.DestroyWindow(WindowHandle);
             internalWindowMessageHandler = null;
         }
 
         #endregion
     }
 }
-
-
-    

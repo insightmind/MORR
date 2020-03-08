@@ -11,8 +11,13 @@ namespace MORR.Modules.Clipboard.Producers
     /// </summary>
     public class ClipboardCutEventProducer : DefaultEventQueue<ClipboardCutEvent>
     {
+        private const int wparamnull = 0;
+
+        private const int wparamcut = 14;
+
         private static readonly ClipboardWindowMessageSink clipboardWindowMessageSink = new ClipboardWindowMessageSink();
-        private INativeClipboard nativeClipboard = clipboardWindowMessageSink.NativeClipboard;
+
+        private readonly INativeClipboard nativeClipboard = ClipboardWindowMessageSink.NativeClipboard;
 
         #region Private methods
 
@@ -34,7 +39,7 @@ namespace MORR.Modules.Clipboard.Producers
                 return;
             }
 
-            if (Convert.ToString(wParam) == "0" || Convert.ToString(wParam) == "14")
+            if (wParam.ToInt64() == wparamnull || wParam.ToInt64() == wparamcut)
             {
                 var clipboardCutEvent = new ClipboardCutEvent
                     { ClipboardText = text, IssuingModule = ClipboardModule.Identifier };
