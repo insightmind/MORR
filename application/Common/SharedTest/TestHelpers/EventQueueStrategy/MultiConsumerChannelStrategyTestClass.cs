@@ -94,6 +94,7 @@ namespace SharedTest.TestHelpers.EventQueueStrategy
             Debug.Assert(strategy.IsClosed);
 
             var consumersReceivedEventsIndividually = new CountdownEvent(maxConsumer);
+            var producerFinished = new ManualResetEvent(false);
 
             /* GIVEN */
             strategy.Open();
@@ -111,10 +112,10 @@ namespace SharedTest.TestHelpers.EventQueueStrategy
 
             /* WHEN */
             var producer = new TestProducer(strategy);
-            producer.Produce(false, num => num <= maxEvents, result => { });
-
+            producer.Produce(false, num => num <= maxEvents, result => result.EventSuccess(producerFinished));
 
             /* THEN */
+            Assert.IsTrue(producerFinished.WaitOne(maxWaitTime), "Producer was not able to queue all events!");
             Assert.IsTrue(consumersReceivedEventsIndividually.Wait(maxWaitTime * maxConsumer), "Not all consumers received the event!");
         }
     }
