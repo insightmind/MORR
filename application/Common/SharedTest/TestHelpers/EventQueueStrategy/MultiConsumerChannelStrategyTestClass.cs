@@ -84,5 +84,38 @@ namespace SharedTest.TestHelpers.EventQueueStrategy
             Assert.IsFalse(allowedConsumerDidFail.WaitOne(maxWaitTime), "An Error occurred while consuming using valid consumers.");
             Assert.IsFalse(retryConsumerDidFail.WaitOne(maxWaitTime), "The retry consumer did unexpectedly fail with an exception.");
         }
+
+        public static void Assert_DistributeElements(MultiConsumerChannelStrategy<TestEvent> strategy, int maxConsumer, int maxEvents = 10)
+        {
+            /* PRECONDITION */
+            Debug.Assert(maxConsumer > 1);
+            Debug.Assert(maxEvents > 0);
+            Debug.Assert(strategy != null);
+            Debug.Assert(strategy.IsClosed);
+
+            var consumersReceivedEventsIndividually = new CountdownEvent(maxConsumer);
+
+            /* GIVEN */
+            strategy.Open();
+            for (var index = 0; index < maxConsumer; index++)
+            {
+                var consumer = new TestConsumer(strategy);
+                consumer.Consume(
+                    true,
+                    (@event, index) => index <= maxEvents,
+                    result =>
+                    {
+                        if (result != null && result.IsSuccess()) consumersReceivedEventsIndividually.Signal();
+                    });
+            }
+
+            /* WHEN */
+            var producer = new TestProducer(strategy);
+            producer.Produce(true, num => num <= maxEvents, result => { });
+
+
+            /* THEN */
+            Assert.IsTrue(consumersReceivedEventsIndividually.Wait(maxWaitTime), "Not all consumers received the event!");
+        }
     }
 }

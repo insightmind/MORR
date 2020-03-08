@@ -10,6 +10,12 @@ namespace SharedTest.TestHelpers.Result
     public interface ITestResult
     {
         /// <summary>
+        /// Returns whether the Test did finish successfully
+        /// </summary>
+        /// <returns>True if the result marks successfully execution.</returns>
+        public bool IsSuccess();
+
+        /// <summary>
         /// Asserts whether the result marks a successfully completed execution.
         /// </summary>
         public void AssertSuccess();

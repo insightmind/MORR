@@ -38,6 +38,11 @@ namespace SharedTest.TestHelpers.Result
             exception = thrownException;
         }
 
+        public bool IsSuccess()
+        {
+            return didComplete && exception == null;
+        }
+
         /// <summary>
         /// Asserts whether the result marks a successfully completed execution.
         /// </summary>
@@ -67,7 +72,7 @@ namespace SharedTest.TestHelpers.Result
         {
             Debug.Assert(resetEvent != null);
 
-            if (didComplete && exception == null)
+            if (IsSuccess())
             {
                 resetEvent.Set();
             }

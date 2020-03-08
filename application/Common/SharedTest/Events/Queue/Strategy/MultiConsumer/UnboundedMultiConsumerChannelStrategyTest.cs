@@ -44,5 +44,8 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
 
         [TestMethod]
         public void TestUnboundedMultiConsumer_FreeConsumer() => MultiConsumerChannelStrategyTestClass.Assert_ConsumerFreed(Strategy, defaultMaxConsumer);
+
+        [TestMethod]
+        public void TestUnboundedMultiConsumer_DistributeEvents() => MultiConsumerChannelStrategyTestClass.Assert_DistributeElements(Strategy, defaultMaxConsumer);
     }
 }

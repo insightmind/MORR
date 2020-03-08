@@ -9,8 +9,8 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
     [TestClass]
     public class BoundedMultiConsumerChannelStrategyTest: EventQueueStorageStrategyTest<BoundedMultiConsumerChannelStrategy<TestEvent>>
     {
-        private const int defaultMaxConsumer = 2;
-        private const int defaultMaxEvents = 2;
+        private const int defaultMaxConsumer = 5;
+        private const int defaultMaxEvents = 10;
 
         [TestInitialize]
         public void BeforeTest()
@@ -50,5 +50,8 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
 
         [TestMethod]
         public void TestBoundedMultiConsumer_FreeConsumer() => MultiConsumerChannelStrategyTestClass.Assert_ConsumerFreed(Strategy, defaultMaxConsumer);
+
+        [TestMethod]
+        public void TestBoundedMultiConsumer_DistributeEvents() => MultiConsumerChannelStrategyTestClass.Assert_DistributeElements(Strategy, defaultMaxConsumer, defaultMaxEvents / 2);
     }
 }
