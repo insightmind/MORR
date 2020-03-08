@@ -69,7 +69,7 @@ namespace MORR.Modules.Clipboard
         private void StartCapture()
         {
             INativeClipboard nativeCb = new NativeClipboard();
-            ClipboardCutEventProducer?.StartCapture(nativeCb);
+            ClipboardCutEventProducer?.StartCapture();
             ClipboardPasteEventProducer?.StartCapture(nativeCb);
             ClipboardCopyEventProducer?.StartCapture();
         }
