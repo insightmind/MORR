@@ -84,5 +84,16 @@ namespace MORR.Modules.WebBrowser
                 producers.ForEach(producer => producer.Close());
             }
         }
+
+        //revert back to unitialized state, only needed for (unit-)testing
+        public void Reset()
+        {
+            if (listener != null)
+            {
+                listener.StopListening();
+                listener = null;
+            }
+            producers = null;
+        }
     }
 }

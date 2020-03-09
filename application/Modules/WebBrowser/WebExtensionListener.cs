@@ -26,7 +26,7 @@ namespace MORR.Modules.WebBrowser
         //depends on the way the asynchronous BeginGetContext is handled internally
         private readonly ConcurrentQueue<HttpListenerResponse> startQueue;
         private readonly ConcurrentQueue<HttpListenerResponse> stopQueue;
-
+        private const int ERROR_OPERATION_ABORTED = 995; //errorcode thrown by the async function when listener is stopped
         private bool recordingActive;
 
         /// <summary>
@@ -158,6 +158,8 @@ namespace MORR.Modules.WebBrowser
         /// </summary>
         private void Start()
         {
+            //start listening in case the listener is not yet doing so
+            StartListening();
             foreach (var response in startQueue)
             {
                 AnswerRequest(response, new WebBrowserResponse(ResponseStrings.STARTRESPONSE));
@@ -182,7 +184,19 @@ namespace MORR.Modules.WebBrowser
         //retrieve and parse another incoming request
         private void RetrieveRequest(IAsyncResult result)
         {
-            var context = listener.EndGetContext(result);
+            HttpListenerContext context;
+            try
+            {
+                context = listener.EndGetContext(result);
+            }
+            catch(HttpListenerException ex)
+            {
+                //if the following condition is correct, the listener has been stopped, which is handled by simply cancelling the operation.
+                if (ex.NativeErrorCode == ERROR_OPERATION_ABORTED)
+                    return;
+                else
+                    throw(ex);
+            }
             var request = context.Request;
 
             //get post data and decode it (will come in URL encoding)
