@@ -119,7 +119,7 @@
   </resheader>
   <data name="Error_Configuration_Invalid" xml:space="preserve">
     <value>Die Konfiguration konnte nicht korrekt geladen werden.
-Bitte überprüfen Sie die Konfiguration oder kontaktieren sie einen Administrator.</value>
+Bitte überprüfen Sie die Konfiguration oder kontaktieren Sie einen Administrator.</value>
   </data>
   <data name="Error_No_Configuration_Specified" xml:space="preserve">
     <value>Keine Konfigurationsdatei spezifiziert. Bitte spezifizieren Sie eine Konfigurationsdatei als Kommandozeilenparameter.</value>
