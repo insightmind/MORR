@@ -243,7 +243,7 @@ namespace MORR.Modules.WebBrowser
                     case WebBrowserRequestType.CONFIG:
                         AnswerRequest(context.Response,
                                       new WebBrowserResponse(ResponseStrings.POSITIVERESPONSE,
-                                                             "undefined")); //TODO: retrieve and send config
+                                                             "undefined")); //only stub-implementation in case it should find usage later
                         break;
                     case WebBrowserRequestType.START:
                         if (recordingActive)
@@ -257,15 +257,23 @@ namespace MORR.Modules.WebBrowser
 
                         break;
                     case WebBrowserRequestType.SENDDATA:
-                        if (request.Data != null && DeserializeEventAndBroadcast(request))
+                        if (!recordingActive)
                         {
-                            AnswerRequest(context.Response, new WebBrowserResponse(ResponseStrings.POSITIVERESPONSE));
+                            //this code is only reached if the recording has been stopped in MORR,
+                            //but the webextension has not yet been informed.
+                            AnswerRequest(context.Response, new WebBrowserResponse(ResponseStrings.STOPRESPONSE));
                         }
                         else
                         {
-                            AnswerInvalid(context.Response);
+                            if (request.Data != null && DeserializeEventAndBroadcast(request))
+                            {
+                                AnswerRequest(context.Response, new WebBrowserResponse(ResponseStrings.POSITIVERESPONSE));
+                            }
+                            else
+                            {
+                                AnswerInvalid(context.Response);
+                            }
                         }
-
                         break;
                     case WebBrowserRequestType.WAITSTOP:
                         if (!recordingActive)

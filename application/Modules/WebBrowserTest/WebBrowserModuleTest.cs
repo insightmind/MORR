@@ -34,6 +34,15 @@ namespace WebBrowserTest
         private static HttpClient testClient;
         private JsonElement? lastJson = null;
 
+        private struct StringConstants
+        {
+            public const string appIdentifier = "MORR";
+            public const string okString = "Ok";
+            public const string startString = "Start";
+            public const string stopString = "Stop";
+            public const string invalidString = "Invalid Request";
+        }
+
         [ClassInitialize]
         public static void InitializeClass(TestContext context)
         {
@@ -118,8 +127,8 @@ namespace WebBrowserTest
             var result = await SendHTTPMessage(new { Request = "Connect" });
 
             /* THEN */
-            Assert.AreEqual("Ok", result.GetProperty("response").GetString());
-            Assert.AreEqual("MORR", result.GetProperty("application").GetString());
+            Assert.AreEqual(StringConstants.okString, result.GetProperty("response").GetString());
+            Assert.AreEqual(StringConstants.appIdentifier, result.GetProperty("application").GetString());
         }
 
         [TestMethod]
@@ -134,8 +143,8 @@ namespace WebBrowserTest
             var result = await SendHTTPMessage(new { Request = "HelloItsMe" });
 
             /* THEN */
-            Assert.AreEqual("Invalid Request", result.GetProperty("response").GetString());
-            Assert.AreEqual("MORR", result.GetProperty("application").GetString());
+            Assert.AreEqual(StringConstants.invalidString, result.GetProperty("response").GetString());
+            Assert.AreEqual(StringConstants.appIdentifier, result.GetProperty("application").GetString());
         }
 
         [TestMethod]
@@ -150,8 +159,8 @@ namespace WebBrowserTest
             var result = await SendHTTPMessage(new { Request = "Config" });
 
             /* THEN */
-            Assert.AreEqual("Ok", result.GetProperty("response").GetString());
-            Assert.AreEqual("MORR", result.GetProperty("application").GetString());
+            Assert.AreEqual(StringConstants.okString, result.GetProperty("response").GetString());
+            Assert.AreEqual(StringConstants.appIdentifier, result.GetProperty("application").GetString());
             Assert.IsTrue(result.TryGetProperty("config", out var config));
             //Sending a config from MORR to the webextension is only added as a stub (unused),
             //so we only verify that any config string is sent.
@@ -182,8 +191,8 @@ namespace WebBrowserTest
             });
 
             /* THEN */
-            Assert.AreEqual("Ok", result.GetProperty("response").GetString());
-            Assert.AreEqual("MORR", result.GetProperty("application").GetString());
+            Assert.AreEqual(StringConstants.okString, result.GetProperty("response").GetString());
+            Assert.AreEqual(StringConstants.appIdentifier, result.GetProperty("application").GetString());
 
             buttonClickEventProducer.Verify(mock => mock.Notify(It.IsAny<JsonElement>()), Times.Once);
             Assert.IsNotNull(lastJson);
@@ -198,6 +207,33 @@ namespace WebBrowserTest
         }
 
         [TestMethod]
+        //verify that senddata-request is correctly handled of no recording is active
+        public async Task SendDataNotRecording()
+        {
+            // Preconditions
+            webBrowserModule.Initialize(true);
+            var data = new
+            {
+                buttonTitle = "SomeText",
+                buttonHref = "https://sample.com/redirect",
+                tabID = 5,
+                url = "https://sample.com",
+                timeStamp = new DateTime(2015, 5, 6, 7, 8, 9, 512),
+                type = "BUTTONCLICK"
+            };
+            /* WHEN */
+            var result = await SendHTTPMessage(new
+            {
+                Request = "SendData",
+                Data = data
+            });
+
+            /* THEN */
+            Assert.AreEqual(StringConstants.stopString, result.GetProperty("response").GetString());
+            Assert.AreEqual(StringConstants.appIdentifier, result.GetProperty("application").GetString());
+        }
+
+        [TestMethod]
         //verify that start-request is correctly answered
         public async Task IssueStart()
         {
@@ -209,8 +245,8 @@ namespace WebBrowserTest
             var result = await SendHTTPMessage(new { Request = "Start" });
 
             /* THEN */
-            Assert.AreEqual("Start", result.GetProperty("response").GetString());
-            Assert.AreEqual("MORR", result.GetProperty("application").GetString());
+            Assert.AreEqual(StringConstants.startString, result.GetProperty("response").GetString());
+            Assert.AreEqual(StringConstants.appIdentifier, result.GetProperty("application").GetString());
         }
 
 
@@ -247,8 +283,8 @@ namespace WebBrowserTest
             var result = await SendHTTPMessage(new { Request = "WAITSTOP" });
 
             /* THEN */
-            Assert.AreEqual("Stop", result.GetProperty("response").GetString());
-            Assert.AreEqual("MORR", result.GetProperty("application").GetString());
+            Assert.AreEqual(StringConstants.stopString, result.GetProperty("response").GetString());
+            Assert.AreEqual(StringConstants.appIdentifier, result.GetProperty("application").GetString());
         }
 
         [TestMethod]
