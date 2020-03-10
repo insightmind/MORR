@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using MORR.Modules.WebBrowser;
+using MORR.Modules.WebBrowser.Events;
 using MORR.Modules.WebBrowser.Producers;
 
 namespace WebBrowserTest
@@ -31,6 +32,7 @@ namespace WebBrowserTest
         private WebBrowserModule webBrowserModule;
         private static WebBrowserModuleConfiguration config = new TestWebBrowserModuleConfiguration();
         private static HttpClient testClient;
+        private JsonElement? lastJson = null;
 
         [ClassInitialize]
         public static void InitializeClass(TestContext context)
@@ -45,8 +47,10 @@ namespace WebBrowserTest
         [TestInitialize]
         public void BeforeTest()
         {
+            lastJson = null;
             webBrowserModule = new WebBrowserModule();
             buttonClickEventProducer = new Mock<ButtonClickEventProducer>();
+            buttonClickEventProducer.Setup(p => p.Notify(It.IsAny<JsonElement>())).Callback<JsonElement>(r => lastJson = r);
             closeTabEventProducer = new Mock<CloseTabEventProducer>();
             fileDownloadEventProducer = new Mock<FileDownloadEventProducer>();
             hoverEventProducer = new Mock<HoverEventProducer>();
@@ -105,11 +109,80 @@ namespace WebBrowserTest
         [TestMethod]
         public async Task SendConnectionRequest()
         {
+            // Preconditions
             webBrowserModule.Initialize(true);
             webBrowserModule.IsActive = true;
-            var result = await SendHTTPMessage("{\"Request\":\"Connect\"}");
 
+            /* WHEN */
+            var result = await SendHTTPMessage(new { Request = "Connect" });
+
+            /* THEN */
             Assert.AreEqual("Ok", result.GetProperty("response").GetString());
+            Assert.AreEqual("MORR", result.GetProperty("application").GetString());
+        }
+
+        [TestMethod]
+        public async Task SendConfigRequest()
+        {
+            // Preconditions
+            webBrowserModule.Initialize(true);
+            webBrowserModule.IsActive = true;
+
+            /* WHEN */
+            var result = await SendHTTPMessage(new { Request = "Config" });
+
+            /* THEN */
+            Assert.AreEqual("Ok", result.GetProperty("response").GetString());
+            Assert.AreEqual("MORR", result.GetProperty("application").GetString());
+            Assert.IsTrue(result.TryGetProperty("config", out var config));
+            Assert.AreNotEqual(0, config.ToString().Length);
+        }
+
+        [TestMethod]
+        public async Task SendData()
+        {
+            // Preconditions
+            webBrowserModule.Initialize(true);
+            webBrowserModule.IsActive = true;
+            var data = new
+            {
+                buttonTitle = "SomeText",
+                buttonHref = "https://sample.com/redirect",
+                tabID = 5,
+                url = "https://sample.com",
+                timeStamp = new DateTime(2015, 5, 6, 7, 8, 9, 512),
+                type = "BUTTONCLICK"
+            };
+            /* WHEN */
+            var result = await SendHTTPMessage(new
+            {
+                Request = "SendData",
+                Data = data
+            });
+
+            /* THEN */
+            Assert.AreEqual("Ok", result.GetProperty("response").GetString());
+            Assert.AreEqual("MORR", result.GetProperty("application").GetString());
+            await QueueModuleStop();
+            buttonClickEventProducer.Verify(mock => mock.Notify(It.IsAny<JsonElement>()), Times.Once);
+            Assert.IsNotNull(lastJson);
+            var parsedEvent = new ButtonClickEvent();
+            parsedEvent.Deserialize((JsonElement)lastJson);
+
+            Assert.AreEqual(data.timeStamp, parsedEvent.Timestamp);
+            Assert.AreEqual(data.buttonTitle, parsedEvent.Button);
+            Assert.AreEqual(data.buttonHref, parsedEvent.Href);
+            Assert.AreEqual(data.tabID, parsedEvent.TabID);
+            Assert.AreEqual(new Uri(data.url), parsedEvent.CurrentURL);
+        }
+
+        private async Task QueueModuleStop()
+        {
+            await Task.Run(() =>
+            {
+                Task.Delay(500);
+                webBrowserModule.IsActive = false;
+            });
         }
 
         private static JsonElement GetJsonFromString(string data)
@@ -135,14 +208,14 @@ namespace WebBrowserTest
                   .Add(new MediaTypeWithQualityHeaderValue("application/json"));//ACCEPT header
         }
 
-        private async Task<JsonElement> SendHTTPMessage(string data)
+        private async Task<JsonElement> SendHTTPMessage(object data)
         {
             Uri requestUri = new Uri("http://localhost:" + config.UrlSuffix);
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "relativeAddress");
             /*request.Content = new StringContent("{\"name\":\"John Doe\",\"age\":33}",
                                                 Encoding.UTF8,
                                                 "application/json");//CONTENT-TYPE header */
-            request.Content = new StringContent(data,
+            request.Content = new StringContent(JsonSerializer.Serialize(data),
                                                  Encoding.UTF8,
                                                 "application/json");//CONTENT-TYPE header
 
