@@ -107,6 +107,7 @@ namespace WebBrowserTest
         }
 
         [TestMethod]
+        //verify that connect-request is correctly handled
         public async Task SendConnectionRequest()
         {
             // Preconditions
@@ -122,6 +123,23 @@ namespace WebBrowserTest
         }
 
         [TestMethod]
+        //verify that an invalid request is correctly answered
+        public async Task SendInvalidRequest()
+        {
+            // Preconditions
+            webBrowserModule.Initialize(true);
+            webBrowserModule.IsActive = true;
+
+            /* WHEN */
+            var result = await SendHTTPMessage(new { Request = "HelloItsMe" });
+
+            /* THEN */
+            Assert.AreEqual("Invalid Request", result.GetProperty("response").GetString());
+            Assert.AreEqual("MORR", result.GetProperty("application").GetString());
+        }
+
+        [TestMethod]
+        //verify that config-request is correctly handled
         public async Task SendConfigRequest()
         {
             // Preconditions
@@ -135,10 +153,13 @@ namespace WebBrowserTest
             Assert.AreEqual("Ok", result.GetProperty("response").GetString());
             Assert.AreEqual("MORR", result.GetProperty("application").GetString());
             Assert.IsTrue(result.TryGetProperty("config", out var config));
+            //Sending a config from MORR to the webextension is only added as a stub (unused),
+            //so we only verify that any config string is sent.
             Assert.AreNotEqual(0, config.ToString().Length);
         }
 
         [TestMethod]
+        //verify that senddata-request is correctly handled
         public async Task SendData()
         {
             // Preconditions
@@ -163,7 +184,7 @@ namespace WebBrowserTest
             /* THEN */
             Assert.AreEqual("Ok", result.GetProperty("response").GetString());
             Assert.AreEqual("MORR", result.GetProperty("application").GetString());
-            await QueueModuleStop();
+
             buttonClickEventProducer.Verify(mock => mock.Notify(It.IsAny<JsonElement>()), Times.Once);
             Assert.IsNotNull(lastJson);
             var parsedEvent = new ButtonClickEvent();
@@ -176,12 +197,87 @@ namespace WebBrowserTest
             Assert.AreEqual(new Uri(data.url), parsedEvent.CurrentURL);
         }
 
-        private async Task QueueModuleStop()
+        [TestMethod]
+        //verify that start-request is correctly answered
+        public async Task IssueStart()
+        {
+            // Preconditions
+            webBrowserModule.Initialize(true);
+
+            /* WHEN */
+            ChangeModuleActiveState(true);
+            var result = await SendHTTPMessage(new { Request = "Start" });
+
+            /* THEN */
+            Assert.AreEqual("Start", result.GetProperty("response").GetString());
+            Assert.AreEqual("MORR", result.GetProperty("application").GetString());
+        }
+
+
+        [TestMethod]
+        //verify that start-request is not answered until module is started
+        public async Task QueueStart()
+        {
+            // Preconditions
+            webBrowserModule.Initialize(true);
+
+            /* WHEN */
+            Task result = SendHTTPMessage(new { Request = "Start" });
+
+            /* THEN */
+            //wait for two seconds since waiting for an infinite time is not practical
+            if (await Task.WhenAny(result, Task.Delay(2000)) == result)
+            {
+                Assert.Fail("Start request should not receive response until module is active.");
+            }
+            webBrowserModule.IsActive = true;
+            await result;
+        }
+
+        [TestMethod]
+        //verify that stop-request is correctly answered
+        public async Task IssueStop()
+        {
+            // Preconditions
+            webBrowserModule.Initialize(true);
+            webBrowserModule.IsActive = false;
+
+            /* WHEN */
+            ChangeModuleActiveState(false);
+            var result = await SendHTTPMessage(new { Request = "WAITSTOP" });
+
+            /* THEN */
+            Assert.AreEqual("Stop", result.GetProperty("response").GetString());
+            Assert.AreEqual("MORR", result.GetProperty("application").GetString());
+        }
+
+        [TestMethod]
+        //verify that stop-request is not answered until module is stopped
+        public async Task QueueStop()
+        {
+            // Preconditions
+            webBrowserModule.Initialize(true);
+            webBrowserModule.IsActive = true;
+
+            /* WHEN */
+            Task result = SendHTTPMessage(new { Request = "WAITSTOP" });
+
+            /* THEN */
+            //wait for two seconds since waiting for an infinite time is not practical
+            if (await Task.WhenAny(result, Task.Delay(2000)) == result)
+            {
+                Assert.Fail("Stop request should not receive response until module is inactive.");
+            }
+            webBrowserModule.IsActive = false;
+            await result;
+        }
+
+        private async Task ChangeModuleActiveState(bool active)
         {
             await Task.Run(() =>
             {
-                Task.Delay(500);
-                webBrowserModule.IsActive = false;
+                Task.Delay(200);
+                webBrowserModule.IsActive = active;
             });
         }
 
