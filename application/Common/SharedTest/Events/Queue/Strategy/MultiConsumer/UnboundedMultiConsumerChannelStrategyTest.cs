@@ -6,10 +6,8 @@ using SharedTest.TestHelpers.EventQueueStrategy;
 namespace SharedTest.Events.Queue.Strategy.MultiConsumer
 {
     [TestClass]
-    public class UnboundedMultiConsumerChannelStrategyTest: EventQueueStorageStrategyTest<UnboundedMultiConsumerChannelStrategy<TestEvent>>
+    public class UnboundedMultiConsumerChannelStrategyTest: MultiConsumerChannelStrategyTest<UnboundedMultiConsumerChannelStrategy<TestEvent>>
     {
-        private const int defaultMaxConsumer = 2;
-
         [TestInitialize]
         public void BeforeTest()
         {
@@ -37,15 +35,6 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
         }
 
         [TestMethod]
-        public void TestUnboundedMultiConsumer_MaxConsumerReached() => MultiConsumerChannelStrategyTestClass.Assert_MaxConsumerReached(Strategy, defaultMaxConsumer);
-
-        [TestMethod]
-        public void TestUnboundedMultiConsumer_Enqueue() => EventQueueStorageStrategyTestClass.Assert_EnqueueSingleProducerUnbounded(Strategy);
-
-        [TestMethod]
-        public void TestUnboundedMultiConsumer_FreeConsumer() => MultiConsumerChannelStrategyTestClass.Assert_ConsumerFreed(Strategy, defaultMaxConsumer);
-
-        [TestMethod]
-        public void TestUnboundedMultiConsumer_DistributeEvents() => MultiConsumerChannelStrategyTestClass.Assert_DistributeElements(Strategy, defaultMaxConsumer);
+        public void TestUnboundedMultiConsumer_Enqueue() => UnboundedConsumerChannelStrategyTestClass.Assert_EnqueueSingleProducerUnbounded(Strategy);
     }
 }

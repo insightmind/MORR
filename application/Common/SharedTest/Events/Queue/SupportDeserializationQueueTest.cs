@@ -5,27 +5,26 @@ using MORR.Shared.Events.Queue;
 using MORR.Shared.Events.Queue.Strategy;
 using System.Diagnostics;
 using System.Linq;
-using MORR.Shared.Events;
-using SharedTest.TestHelpers.EventQueue;
 
 namespace SharedTest.Events.Queue
 {
 
     [TestClass]
-    public class SupportDeserializationEventQueueTest : EventQueueTestClass<SupportDeserializationEventQueue<TestEvent>>
+    public class SupportDeserializationEventQueueTest
     {
-        public class EventQueueImp : SupportDeserializationEventQueue<TestEvent>
+        public class SupportDeserializationEventQueueImp : SupportDeserializationEventQueue<TestEvent>
         {
-            public EventQueueImp(IEventQueueStorageStrategy<TestEvent> storageStrategy) : base(storageStrategy) { }
+            public SupportDeserializationEventQueueImp(IEventQueueStorageStrategy<TestEvent> storageStrategy) : base(storageStrategy) { }
         }
 
+        public Mock<IEventQueueStorageStrategy<TestEvent>> mockStrategy;
         private SupportDeserializationEventQueue<TestEvent> queue;
 
         [TestInitialize]
-        public override void BeforeTest()
+        public void BeforeTest()
         {
-            base.BeforeTest();
-            queue = new EventQueueImp(mockStrategy.Object);
+            mockStrategy = new Mock<IEventQueueStorageStrategy<TestEvent>>();
+            queue = new SupportDeserializationEventQueueImp(mockStrategy.Object);
         }
 
         [TestMethod]

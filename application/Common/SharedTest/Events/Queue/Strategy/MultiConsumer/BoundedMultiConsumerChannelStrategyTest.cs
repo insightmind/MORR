@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MORR.Shared.Events.Queue.Strategy;
 using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
 using SharedTest.TestHelpers.EventQueueStrategy;
@@ -7,10 +6,9 @@ using SharedTest.TestHelpers.EventQueueStrategy;
 namespace SharedTest.Events.Queue.Strategy.MultiConsumer
 {
     [TestClass]
-    public class BoundedMultiConsumerChannelStrategyTest: EventQueueStorageStrategyTest<BoundedMultiConsumerChannelStrategy<TestEvent>>
+    public class BoundedMultiConsumerChannelStrategyTest: MultiConsumerChannelStrategyTest<BoundedMultiConsumerChannelStrategy<TestEvent>>
     {
-        private const int defaultMaxConsumer = 5;
-        private const int defaultMaxEvents = 10;
+       
 
         [TestInitialize]
         public void BeforeTest()
@@ -43,15 +41,6 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
         }
 
         [TestMethod]
-        public void TestBoundedMultiConsumer_MaxConsumerReached() => MultiConsumerChannelStrategyTestClass.Assert_MaxConsumerReached(Strategy, defaultMaxConsumer);
-
-        [TestMethod]
         public void TestBoundedMultiConsumer_MaxEventBoundReached() => BoundedConsumerChannelStrategyTestClass.Assert_EnqueueSingleProducerBounded(Strategy, defaultMaxEvents);
-
-        [TestMethod]
-        public void TestBoundedMultiConsumer_FreeConsumer() => MultiConsumerChannelStrategyTestClass.Assert_ConsumerFreed(Strategy, defaultMaxConsumer);
-
-        [TestMethod]
-        public void TestBoundedMultiConsumer_DistributeEvents() => MultiConsumerChannelStrategyTestClass.Assert_DistributeElements(Strategy, defaultMaxConsumer, defaultMaxEvents / 2);
     }
 }

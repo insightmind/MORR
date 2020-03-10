@@ -2,33 +2,31 @@
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MORR.Shared.Events.Queue.Strategy;
-using MORR.Shared.Events.Queue.Strategy.SingleConsumer;
-using SharedTest.Events;
-using SharedTest.Events.Queue.Strategy;
 
-namespace SharedTest.TestHelpers.EventQueueStrategy
+namespace SharedTest.Events.Queue.Strategy.SingleConsumer
 {
-    public static class SingleConsumerChannelStrategyTestClass
+    public abstract class SingleConsumerChannelStrategyTest<T> : EventQueueStorageStrategyTest<T> where T: IEventQueueStorageStrategy<TestEvent>
     {
-        private const int maxWaitTime = 500;
+        private const int maxWaitTime = 1000;
 
-        public static void Assert_IsOccupied(SingleConsumerChannelStrategy<TestEvent> strategy)
+        [TestMethod]
+        public void TestBoundedSingleConsumer_IsOccupied()
         {
             /* PRECONDITION */
-            Debug.Assert(strategy != null);
+            Debug.Assert(Strategy != null);
 
             var allowedConsumerDidNotFailed = new ManualResetEvent(true);
             var invalidConsumerFailed = new ManualResetEvent(false);
 
             /* GIVEN */
-            var consumer = new TestConsumer(strategy);
+            var consumer = new TestConsumer(Strategy);
             consumer.Consume(
                 false,
                 (@event, index) => true,
                 result => result?.EventSuccess(allowedConsumerDidNotFailed));
 
             /* WHEN */
-            var invalidConsumer = new TestConsumer(strategy);
+            var invalidConsumer = new TestConsumer(Strategy);
             invalidConsumer.Consume(
                 true,
                 (@event, num) => true,

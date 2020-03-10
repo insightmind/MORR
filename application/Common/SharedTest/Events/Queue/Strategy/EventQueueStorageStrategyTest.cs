@@ -1,6 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Diagnostics;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MORR.Shared.Events.Queue.Strategy;
-using SharedTest.TestHelpers.EventQueueStrategy;
 
 namespace SharedTest.Events.Queue.Strategy
 {
@@ -9,15 +9,69 @@ namespace SharedTest.Events.Queue.Strategy
         protected T Strategy;
 
         [TestMethod]
-        public void TestBoundedMultiConsumer_OpenSuccess() => EventQueueStorageStrategyTestClass.Assert_OpenSuccess(Strategy);
+        public void TestEventQueueStorageStrategy_OpenSuccess()
+        {
+            /* PRECONDITION */
+            Debug.Assert(Strategy != null);
+            Debug.Assert(Strategy.IsClosed);
+
+            /* WHEN */
+            Strategy.Open();
+
+            /* THEN */
+            Assert.IsFalse(Strategy.IsClosed);
+        }
 
         [TestMethod]
-        public void TestBoundedMultiConsumer_OpenMultiple() => EventQueueStorageStrategyTestClass.Assert_MultipleOpen(Strategy);
+        public void TestEventQueueStorageStrategy_OpenMultiple()
+        {
+            /* PRECONDITION */
+            Debug.Assert(Strategy != null);
+            Debug.Assert(Strategy.IsClosed);
+
+            /* WHEN */
+            Strategy.Open();
+            Strategy.Open();
+
+            /* THEN */
+            Assert.IsFalse(Strategy.IsClosed);
+        }
 
         [TestMethod]
-        public void TestBoundedMultiConsumer_CloseSuccess() => EventQueueStorageStrategyTestClass.Assert_CloseSuccess(Strategy);
+        public void TestEventQueueStorageStrategy_CloseSuccess()
+        {
+            /* PRECONDITION */
+            Debug.Assert(Strategy != null);
+            Debug.Assert(Strategy.IsClosed);
+
+            /* GIVEN */
+            Strategy.Open();
+            Assert.IsFalse(Strategy.IsClosed);
+
+            /* WHEN */
+            Strategy.Close();
+
+            /* THEN */
+            Assert.IsTrue(Strategy.IsClosed);
+        }
 
         [TestMethod]
-        public void TestBoundedMultiConsumer_CloseMultiple() => EventQueueStorageStrategyTestClass.Assert_MultipleClose(Strategy);
+        public void TestEventQueueStorageStrategy_CloseMultiple()
+        {
+            /* PRECONDITION */
+            Debug.Assert(Strategy != null);
+            Debug.Assert(Strategy.IsClosed);
+
+            /* GIVEN */
+            Strategy.Open();
+            Assert.IsFalse(Strategy.IsClosed);
+
+            /* WHEN */
+            Strategy.Close();
+            Strategy.Close();
+
+            /* THEN */
+            Assert.IsTrue(Strategy.IsClosed);
+        }
     }
 }
