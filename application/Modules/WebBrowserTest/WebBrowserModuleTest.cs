@@ -18,11 +18,14 @@ namespace WebBrowserTest
     [TestClass]
     public class WebBrowserModuleTest
     {
+        private static readonly WebBrowserModuleConfiguration config = new TestWebBrowserModuleConfiguration();
+        private static HttpClient testClient;
         private Mock<ButtonClickEventProducer> buttonClickEventProducer;
         private Mock<CloseTabEventProducer> closeTabEventProducer;
         private CompositionContainer container;
         private Mock<FileDownloadEventProducer> fileDownloadEventProducer;
         private Mock<HoverEventProducer> hoverEventProducer;
+        private JsonElement? lastJson;
         private Mock<NavigationEventProducer> navigationEventProducer;
         private Mock<OpenTabEventProducer> openTabEventProducer;
         private Mock<SwitchTabEventProducer> switchTabEventProducer;
@@ -30,36 +33,27 @@ namespace WebBrowserTest
         private Mock<TextInputEventProducer> textInputEventProducer;
         private Mock<TextSelectionEventProducer> textSelectionEventProducer;
         private WebBrowserModule webBrowserModule;
-        private static WebBrowserModuleConfiguration config = new TestWebBrowserModuleConfiguration();
-        private static HttpClient testClient;
-        private JsonElement? lastJson = null;
-
-        private struct StringConstants
-        {
-            public const string appIdentifier = "MORR";
-            public const string okString = "Ok";
-            public const string startString = "Start";
-            public const string stopString = "Stop";
-            public const string invalidString = "Invalid Request";
-        }
 
         [ClassInitialize]
         public static void InitializeClass(TestContext context)
         {
             InitializeHTTPClient(config.UrlSuffix);
         }
+
         [TestCleanup]
         public void AfterTest()
         {
             webBrowserModule.Reset();
         }
+
         [TestInitialize]
         public void BeforeTest()
         {
             lastJson = null;
             webBrowserModule = new WebBrowserModule();
             buttonClickEventProducer = new Mock<ButtonClickEventProducer>();
-            buttonClickEventProducer.Setup(p => p.Notify(It.IsAny<JsonElement>())).Callback<JsonElement>(r => lastJson = r);
+            buttonClickEventProducer.Setup(p => p.Notify(It.IsAny<JsonElement>()))
+                                    .Callback<JsonElement>(r => lastJson = r);
             closeTabEventProducer = new Mock<CloseTabEventProducer>();
             fileDownloadEventProducer = new Mock<FileDownloadEventProducer>();
             hoverEventProducer = new Mock<HoverEventProducer>();
@@ -197,7 +191,7 @@ namespace WebBrowserTest
             buttonClickEventProducer.Verify(mock => mock.Notify(It.IsAny<JsonElement>()), Times.Once);
             Assert.IsNotNull(lastJson);
             var parsedEvent = new ButtonClickEvent();
-            parsedEvent.Deserialize((JsonElement)lastJson);
+            parsedEvent.Deserialize((JsonElement) lastJson);
 
             Assert.AreEqual(data.timeStamp, parsedEvent.Timestamp);
             Assert.AreEqual(data.buttonTitle, parsedEvent.Button);
@@ -266,6 +260,7 @@ namespace WebBrowserTest
             {
                 Assert.Fail("Start request should not receive response until module is active.");
             }
+
             webBrowserModule.IsActive = true;
             await result;
         }
@@ -304,6 +299,7 @@ namespace WebBrowserTest
             {
                 Assert.Fail("Stop request should not receive response until module is inactive.");
             }
+
             webBrowserModule.IsActive = false;
             await result;
         }
@@ -322,38 +318,47 @@ namespace WebBrowserTest
             return JsonDocument.Parse(data).RootElement;
         }
 
+        private static void InitializeHTTPClient(string UrlSuffix)
+        {
+            testClient = new HttpClient();
+            var requestUri = new Uri("http://localhost:" + UrlSuffix);
+            testClient.BaseAddress = requestUri;
+            testClient.DefaultRequestHeaders
+                      .Accept
+                      .Add(new MediaTypeWithQualityHeaderValue("application/json")); //ACCEPT header
+        }
+
+        private async Task<JsonElement> SendHTTPMessage(object data)
+        {
+            var requestUri = new Uri("http://localhost:" + config.UrlSuffix);
+            var request = new HttpRequestMessage(HttpMethod.Post, "relativeAddress");
+            /*request.Content = new StringContent("{\"name\":\"John Doe\",\"age\":33}",
+                                                Encoding.UTF8,
+                                                "application/json");//CONTENT-TYPE header */
+            request.Content = new StringContent(JsonSerializer.Serialize(data),
+                                                Encoding.UTF8,
+                                                "application/json"); //CONTENT-TYPE header
+
+            var response = await testClient.PostAsync(requestUri, request.Content);
+            var result = response.Content.ReadAsStringAsync().Result;
+            return GetJsonFromString(result);
+        }
+
+        private struct StringConstants
+        {
+            public const string appIdentifier = "MORR";
+            public const string okString = "Ok";
+            public const string startString = "Start";
+            public const string stopString = "Stop";
+            public const string invalidString = "Invalid Request";
+        }
+
         private class TestWebBrowserModuleConfiguration : WebBrowserModuleConfiguration
         {
             public TestWebBrowserModuleConfiguration()
             {
                 UrlSuffix = "60024/";
             }
-        }
-
-        private static void InitializeHTTPClient(string UrlSuffix)
-        {
-            testClient = new HttpClient();
-            Uri requestUri = new Uri("http://localhost:" + UrlSuffix);
-            testClient.BaseAddress = requestUri;
-            testClient.DefaultRequestHeaders
-                  .Accept
-                  .Add(new MediaTypeWithQualityHeaderValue("application/json"));//ACCEPT header
-        }
-
-        private async Task<JsonElement> SendHTTPMessage(object data)
-        {
-            Uri requestUri = new Uri("http://localhost:" + config.UrlSuffix);
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "relativeAddress");
-            /*request.Content = new StringContent("{\"name\":\"John Doe\",\"age\":33}",
-                                                Encoding.UTF8,
-                                                "application/json");//CONTENT-TYPE header */
-            request.Content = new StringContent(JsonSerializer.Serialize(data),
-                                                 Encoding.UTF8,
-                                                "application/json");//CONTENT-TYPE header
-
-            var response = await testClient.PostAsync(requestUri, request.Content);
-            string result = response.Content.ReadAsStringAsync().Result;
-            return GetJsonFromString(result);
         }
     }
 }

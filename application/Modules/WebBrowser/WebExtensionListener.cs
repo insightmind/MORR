@@ -17,6 +17,10 @@ namespace MORR.Modules.WebBrowser
     internal class WebExtensionListener : IWebBrowserEventObservable
     {
         private const string serializedTypeField = "type";
+
+        private const int
+            ERROR_OPERATION_ABORTED = 995; //errorcode thrown by the async function when listener is stopped
+
         private readonly HttpListener listener;
 
         //deliberately don't use IList, as RemoveAll function is used later
@@ -26,7 +30,6 @@ namespace MORR.Modules.WebBrowser
         //depends on the way the asynchronous BeginGetContext is handled internally
         private readonly ConcurrentQueue<HttpListenerResponse> startQueue;
         private readonly ConcurrentQueue<HttpListenerResponse> stopQueue;
-        private const int ERROR_OPERATION_ABORTED = 995; //errorcode thrown by the async function when listener is stopped
         private bool recordingActive;
 
         /// <summary>
@@ -189,14 +192,17 @@ namespace MORR.Modules.WebBrowser
             {
                 context = listener.EndGetContext(result);
             }
-            catch(HttpListenerException ex)
+            catch (HttpListenerException ex)
             {
                 //if the following condition is correct, the listener has been stopped, which is handled by simply cancelling the operation.
                 if (ex.NativeErrorCode == ERROR_OPERATION_ABORTED)
+                {
                     return;
-                else
-                    throw(ex);
+                }
+
+                throw ex;
             }
+
             var request = context.Request;
 
             //get post data and decode it (will come in URL encoding)
@@ -267,13 +273,15 @@ namespace MORR.Modules.WebBrowser
                         {
                             if (request.Data != null && DeserializeEventAndBroadcast(request))
                             {
-                                AnswerRequest(context.Response, new WebBrowserResponse(ResponseStrings.POSITIVERESPONSE));
+                                AnswerRequest(context.Response,
+                                              new WebBrowserResponse(ResponseStrings.POSITIVERESPONSE));
                             }
                             else
                             {
                                 AnswerInvalid(context.Response);
                             }
                         }
+
                         break;
                     case WebBrowserRequestType.WAITSTOP:
                         if (!recordingActive)
