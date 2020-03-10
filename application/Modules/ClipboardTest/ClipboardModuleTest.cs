@@ -7,6 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using MORR.Modules.Clipboard;
 using MORR.Modules.Clipboard.Producers;
+using MORR.Shared.Hook;
 
 namespace ClipboardTest
 {
@@ -19,6 +20,8 @@ namespace ClipboardTest
         private Mock<ClipboardPasteEventProducer> clipboardPasteEventProducer;
         private CompositionContainer container;
 
+        private Mock<IHookNativeMethods> nativeHook;
+
         [TestInitialize]
         public void BeforeTest()
         {
@@ -26,11 +29,23 @@ namespace ClipboardTest
             clipboardCopyEventProducer = new Mock<ClipboardCopyEventProducer>();
             clipboardCutEventProducer = new Mock<ClipboardCutEventProducer>();
             clipboardPasteEventProducer = new Mock<ClipboardPasteEventProducer>();
+            nativeHook = new Mock<IHookNativeMethods>();
+
             container = new CompositionContainer();
             container.ComposeExportedValue(clipboardCopyEventProducer.Object);
             container.ComposeExportedValue(clipboardCutEventProducer.Object);
             container.ComposeExportedValue(clipboardPasteEventProducer.Object);
             container.ComposeParts(clipboardModule);
+
+            nativeHook
+                .Setup(hook => hook.Capture(It.IsAny<uint>()))?
+                .Returns(true);
+
+            nativeHook
+                .Setup(mock => mock.LoadLibrary())?
+                .Returns(new IntPtr(0x1)); // We just return a non null pointer
+
+            GlobalHook.Initialize(nativeHook.Object);
         }
 
         [TestMethod]

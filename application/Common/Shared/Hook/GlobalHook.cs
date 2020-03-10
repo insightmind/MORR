@@ -14,6 +14,9 @@ namespace MORR.Shared.Hook
         /// <param name="message">the  <see cref="HookMessage" /> to be passed to the callback.</param>
         public delegate void RetrieveMessageCallBack(HookMessage message);
 
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+        public delegate void CppGetMessageCallback(GlobalHook.HookMessage message);
+
         /// <summary>
         ///     If the GlobalHook is active or not. 
         /// </summary>
@@ -33,38 +36,15 @@ namespace MORR.Shared.Hook
             }
         }
 
-        private const string hookLibName = @"HookLibrary64";
         private static bool isActive;
         private static IntPtr hookLibrary;
+        private static IHookNativeMethods nativeHook;
+
         //map message types to lists of interested listeners
         private static readonly Dictionary<MessageType, List<RetrieveMessageCallBack>> listeners = new Dictionary<MessageType, List<RetrieveMessageCallBack>>();
 
         //this callback will get called by the native DLL code
         private static readonly CppGetMessageCallback cppCallback = message => Trigger((MessageType) message.Type, message);
-
-        #region Imports
-
-        [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Ansi)]
-        static extern IntPtr LoadLibrary([MarshalAs(UnmanagedType.LPStr)]string lpFileName);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool FreeLibrary(IntPtr hModule);
-
-        [DllImport(hookLibName, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void
-            SetHook([MarshalAs(UnmanagedType.FunctionPtr)] CppGetMessageCallback callbackPointer, [MarshalAs(UnmanagedType.Bool)] bool blocking);
-
-        [DllImport(hookLibName, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void RemoveHook();
-
-        [DllImport(hookLibName, CallingConvention = CallingConvention.Cdecl)]
-        [return: MarshalAs(UnmanagedType.I1)]
-        private static extern bool Capture([MarshalAs(UnmanagedType.U4)] uint type);
-
-        [DllImport(hookLibName, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void StopCapture([MarshalAs(UnmanagedType.U4)] uint type);
-        #endregion
 
         #region Public functions
 
@@ -75,7 +55,7 @@ namespace MORR.Shared.Hook
         /// <param name="types">An array of the types to listen for.</param>
         public static void AddListener(RetrieveMessageCallBack callback, params MessageType[] types)
         {
-            if (types.Any(type => !Capture((uint)type)))
+            if (types.Any(type => !nativeHook.Capture((uint)type)))
             {
                 throw new NotSupportedException();
             }
@@ -106,10 +86,25 @@ namespace MORR.Shared.Hook
                     if (listeners[type].Any())
                     {
                         listeners.Remove(type);
-                        StopCapture((uint)type);
+                        nativeHook.StopCapture((uint)type);
                     }
                 }
             }
+        }
+
+        /// <summary>
+        ///     Initializes the Library with the default hook.
+        /// </summary>
+        public static void Initialize() => Initialize(new HookNativeMethods());
+
+        /// <summary>
+        ///     Initializes the Library with the given hook
+        /// </summary>
+        /// <param name="hook">The hook used as an interaction point.</param>
+        public static void Initialize(IHookNativeMethods hook)
+        {
+            FreeLibrary();
+            nativeHook = hook;
         }
 
         /// <summary>
@@ -122,8 +117,8 @@ namespace MORR.Shared.Hook
             {
                 //the library is loaded twice. Once for the DLLImports above, once by LoadLibrary.
                 //LoadLibrary is only used to safely get a handle to the library.
-                FreeLibrary(hookLibrary);
-                FreeLibrary(hookLibrary);
+                nativeHook.FreeLibrary(hookLibrary);
+                nativeHook.FreeLibrary(hookLibrary);
                 hookLibrary = IntPtr.Zero;
             }
         }
@@ -134,6 +129,7 @@ namespace MORR.Shared.Hook
 
         private static void Trigger(MessageType type, HookMessage message)
         {
+
             if (listeners.ContainsKey(type))
             {
                 foreach (var callback in listeners[type])
@@ -145,24 +141,36 @@ namespace MORR.Shared.Hook
 
         private static void Hook()
         {
+            if (nativeHook == null)
+            {
+                isActive = false;
+                return;
+            }
+
             if (!isActive)
             {
                 if (hookLibrary == IntPtr.Zero)
                 {
-                    hookLibrary = LoadLibrary(hookLibName);
-                    if (hookLibrary == IntPtr.Zero)
-                        throw new HookLibraryException($"Error loading {hookLibName}");
+                    hookLibrary = nativeHook.LoadLibrary();
+                    if (hookLibrary == IntPtr.Zero) throw new HookLibraryException($"Error loading {nativeHook.HookLibraryName}");
                 }
-                SetHook(cppCallback, false);
+
+                nativeHook.SetHook(cppCallback, false);
                 isActive = true;
             }
         }
 
         private static void Unhook()
         {
+            if (nativeHook == null)
+            {
+                isActive = false;
+                return;
+            }
+
             if (isActive)
             {
-                RemoveHook();
+                nativeHook.RemoveHook();
                 isActive = false;
             }
         }
@@ -184,8 +192,6 @@ namespace MORR.Shared.Hook
             public int[] Data; //General purpose fields for message specific data
         }
 
-        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-        private delegate void CppGetMessageCallback(HookMessage message);
         #endregion
 
         #region Message Types

@@ -7,14 +7,6 @@ namespace MORR.Shared.Events.Queue.Strategy
     /// </summary>
     public class ChannelConsumingException : Exception
     {
-        public ChannelConsumingException()
-        { }
-
-        public ChannelConsumingException(string message) : base(message)
-        { }
-
-        public ChannelConsumingException(string message, Exception innerException)
-            : base(message, innerException)
-        { }
+        public ChannelConsumingException(string message) : base(message) { }
     }
 }

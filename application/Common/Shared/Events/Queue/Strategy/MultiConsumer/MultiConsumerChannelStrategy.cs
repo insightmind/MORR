@@ -15,6 +15,8 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
         private uint? maxChannelConsumers;
         private Channel<TEvent> receivingChannel;
         private readonly List<Channel<TEvent>> offeringChannels = new List<Channel<TEvent>>();
+        private readonly Mutex subscriptionMutex = new Mutex();
+        private const int timeOut = 500;
 
         protected void StartReceiving(uint? maxChannelConsumers)
         {
@@ -39,14 +41,19 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
         /// <returns>A stream of <typeparamref name="T" /></returns>
         public IAsyncEnumerable<TEvent> GetEvents(CancellationToken token = default)
         {
+            subscriptionMutex.WaitOne(timeOut);
+
             if ((maxChannelConsumers != null) && (offeringChannels.Count >= maxChannelConsumers))
             {
+                subscriptionMutex.ReleaseMutex();
                 throw new ChannelConsumingException($"Maximum number ({maxChannelConsumers}) of consumers reached!");
             }
 
             var channel = CreateOfferingChannel();
             offeringChannels?.Add(channel);
             token.Register(FreeChannel, channel);
+
+            subscriptionMutex.ReleaseMutex();
             return channel.Reader.ReadAllAsync(token);
         }
 
@@ -84,11 +91,7 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
 
         private ValueTask EnqueueAsync(Channel<TEvent> channel, TEvent @event)
         {
-            async Task AsyncSlowPath(TEvent @event)
-            {
-                await channel.Writer.WriteAsync(@event);
-            }
-
+            async Task AsyncSlowPath(TEvent @event) => await channel.Writer.WriteAsync(@event);
             return channel.Writer.TryWrite(@event) ? default : new ValueTask(AsyncSlowPath(@event));
         }
 
@@ -103,14 +106,13 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
             }
         }
 
-        private void FreeChannel(object? channelObject)
+        public void FreeChannel(object? channelObject)
         {
-            if (!(channelObject is Channel<TEvent> channel))
-            {
-                return;
-            }
+            if (!(channelObject is Channel<TEvent> channel)) return;
 
+            subscriptionMutex.WaitOne(timeOut);
             offeringChannels?.Remove(channel);
+            subscriptionMutex.ReleaseMutex();
         }
 
         protected abstract Channel<TEvent> CreateOfferingChannel();

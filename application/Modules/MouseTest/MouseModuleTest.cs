@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
@@ -5,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using MORR.Modules.Mouse;
 using MORR.Modules.Mouse.Producers;
+using MORR.Shared.Hook;
 
 namespace MouseTest
 {
@@ -18,6 +20,8 @@ namespace MouseTest
         private Mock<MouseMoveEventProducer> mouseMoveEventProducer;
         private Mock<MouseScrollEventProducer> mouseScrollEventProducer;
 
+        private Mock<IHookNativeMethods> nativeHook;
+
         [TestInitialize]
         public void BeforeTest()
         {
@@ -26,12 +30,24 @@ namespace MouseTest
             mouseMoveEventProducer = new Mock<MouseMoveEventProducer>();
             mouseScrollEventProducer = new Mock<MouseScrollEventProducer>();
             mouseModuleConfiguration = new TestMouseModuleConfiguration();
+            nativeHook = new Mock<IHookNativeMethods>();
+
             container = new CompositionContainer();
             container.ComposeExportedValue(mouseClickEventProducer.Object);
             container.ComposeExportedValue(mouseMoveEventProducer.Object);
             container.ComposeExportedValue(mouseScrollEventProducer.Object);
             container.ComposeExportedValue(mouseModuleConfiguration);
             container.ComposeParts(mouseModule);
+
+            nativeHook
+                .Setup(hook => hook.Capture(It.IsAny<uint>()))?
+                .Returns(true);
+
+            nativeHook
+                .Setup(mock => mock.LoadLibrary())?
+                .Returns(new IntPtr(0x1)); // We just return a non null pointer
+
+            GlobalHook.Initialize(nativeHook.Object);
         }
 
         [TestMethod]
