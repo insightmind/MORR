@@ -115,7 +115,7 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
 
             /* WHEN */
             var producer = new TestProducer(Strategy);
-            producer.Produce(true, num => num < maxEvents, result => result.EventSuccess(producerFinished));
+            producer.Produce(false, num => num < maxEvents, result => result.EventSuccess(producerFinished));
 
             /* THEN */
             Assert.IsTrue(producerFinished.WaitOne(maxWaitTime), "Producer was not able to queue all events!");
