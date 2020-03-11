@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MORRTest.Data.Capture.Video.Desktop.Utility
 {
-    class Class1
+    class GraphicsCaptureHelperTest
     {
     }
 }

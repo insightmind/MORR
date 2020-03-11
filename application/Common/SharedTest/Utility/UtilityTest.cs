@@ -1,6 +1,9 @@
 ﻿using System.Threading;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MORR.Shared.Configuration;
+using MORR.Shared.Events.Queue;
+using SharedTest.Events;
 
 namespace SharedTest.Utility
 {
@@ -72,13 +75,12 @@ namespace SharedTest.Utility
             Assert.AreEqual(newValue, prevValue);
         }
 
-        [Ignore] // A bug is preventing this test to complete successfully.
         [TestMethod]
         public void TestUtility_GetTypeFromAnyAssembly_Valid()
         {
             /* GIVEN */
-            var expectedType = typeof(MORR.Shared.Utility.Utility);
-            var typeName = nameof(expectedType);
+            var expectedType = GetType();
+            var typeName = expectedType.AssemblyQualifiedName;
 
             /* WHEN */
             var type = MORR.Shared.Utility.Utility.GetTypeFromAnyAssembly(typeName);
