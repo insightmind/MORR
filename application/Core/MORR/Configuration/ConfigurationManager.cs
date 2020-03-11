@@ -43,12 +43,6 @@ namespace MORR.Core.Configuration
         public void LoadConfiguration(FilePath path)
         {
             using var document = LoadJsonDocument(path);
-
-            if (document == null)
-            {
-                throw new InvalidConfigurationException("Invalid configuration file path!");
-            }
-
             CommitConfigurations(document);
         }
 
@@ -71,14 +65,9 @@ namespace MORR.Core.Configuration
 
         private void CommitConfigurations(JsonDocument document)
         {
-            if (Configurations == null)
+            if (Configurations == null || document == null)
             {
                 return; // We simply return as we do not need to commit any configs.
-            }
-
-            if (document == null)
-            {
-                throw new InvalidConfigurationException("Invalid configuration file path!");
             }
 
             foreach (var configurationObject in document.RootElement.EnumerateObject())

@@ -1,11 +1,16 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MORR.Core.Configuration;
 using System;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Abstractions.TestingHelpers;
 using System.Reflection;
+using Moq;
 using MORR.Shared.Utility;
+using MORR.Shared.Configuration;
+using MORRTest.TestHelper.Configuration;
 
 namespace MORRTest.Configuration
 {
@@ -14,6 +19,8 @@ namespace MORRTest.Configuration
     {
         public IConfigurationManager configManager;
         private readonly MockFileSystem fileSystem = new MockFileSystem();
+
+        private const string defaultPath = "C:\\temp\\config.morr";
 
         [TestInitialize]
         public void BeforeTest()
@@ -52,21 +59,78 @@ namespace MORRTest.Configuration
             Debug.Assert(fileSystem != null);
 
             /* GIVEN */
-            const string path = "C:\\temp\\config.morr";
             var mockData = new MockFileData("{}");
-            fileSystem.AddFile(path, mockData);
+            fileSystem.AddFile(defaultPath, mockData);
 
-            var filePath = new FilePath(path, true);
-            
             /* WHEN */
             try
             {
-                configManager.LoadConfiguration(filePath);
+                configManager.LoadConfiguration(new FilePath(defaultPath, true));
             }
             catch (Exception exception)
             {
                 Assert.Fail("ConfigManager did throw an error (" + exception.Message + ") however an empty config should still be sufficient");
             }
+        }
+
+        [TestMethod]
+        public void TestConfigurationManager_AssignConfig()
+        {
+            /* PRECONDITION */
+            Debug.Assert(configManager != null);
+            Debug.Assert(fileSystem != null);
+
+            /* GIVEN */
+            var configType = typeof(TestConfiguration).FullName;
+            const string testConfig = "{\n\"isEnabled\": true\n}";
+            var fullConfig = "{\n\"" + configType + "\":" + testConfig + "\n}";
+
+            var configurationMock = new TestConfiguration(new RawConfiguration(testConfig));
+            var container = new CompositionContainer();
+            container.ComposeExportedValue<IConfiguration>(configurationMock);
+            container.ComposeParts(configManager);
+
+            var mockData = new MockFileData(fullConfig);
+            fileSystem.AddFile(defaultPath, mockData);
+
+            /* WHEN */
+            try
+            {
+                configManager.LoadConfiguration(new FilePath(defaultPath, true));
+            }
+            catch (Exception exception)
+            {
+                Assert.Fail("ConfigManager did throw an error (" + exception.Message + ") however was supplied with valid config.");
+            }
+
+            /* THEN */
+            Debug.Assert(configurationMock.testResult != null);
+            configurationMock.testResult.AssertSuccess();
+        }
+
+        [TestMethod]
+        public void TestConfigurationManager_AssignUnknownConfig()
+        {
+            /* PRECONDITION */
+            Debug.Assert(configManager != null);
+            Debug.Assert(fileSystem != null);
+
+            /* GIVEN */
+            // We use the normal name here as this does not uniquely identify the type
+            var configType = typeof(TestConfiguration).Name;
+            const string testConfig = "{\n\"isEnabled\": true\n}";
+            var fullConfig = "{\n\"" + configType + "\":" + testConfig + "\n}";
+
+            var configurationMock = new TestConfiguration(new RawConfiguration(testConfig));
+            var container = new CompositionContainer();
+            container.ComposeExportedValue<IConfiguration>(configurationMock);
+            container.ComposeParts(configManager);
+
+            var mockData = new MockFileData(fullConfig);
+            fileSystem.AddFile(defaultPath, mockData);
+
+            /* WHEN */
+            Assert.ThrowsException<InvalidConfigurationException>(() => configManager.LoadConfiguration(new FilePath(defaultPath, true)));
         }
     }
 }

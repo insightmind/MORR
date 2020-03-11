@@ -33,7 +33,7 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
             /* WHEN */
             var invalidConsumer = new TestConsumer(Strategy);
             invalidConsumer.Consume(
-                true,
+                false,
                 (@event, num) => true,
                 result => result?.EventThrows<ChannelConsumingException>(invalidConsumerFailed));
 
