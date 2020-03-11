@@ -1,12 +1,13 @@
 ﻿using MORR.Shared.Configuration;
 using SharedTest.TestHelpers.Result;
 using System;
+using System.Diagnostics;
 
 namespace MORRTest.TestHelper.Configuration
 {
-    class TestConfiguration : IConfiguration
+    public class TestConfiguration : IConfiguration
     {
-        public TestResult testResult = new TestResult();
+        public TestResult TestResult = new TestResult();
         private readonly RawConfiguration expectedConfiguration;
 
         public TestConfiguration(RawConfiguration expectedConfiguration)
@@ -16,13 +17,16 @@ namespace MORRTest.TestHelper.Configuration
 
         public void Parse(RawConfiguration configuration)
         {
+            Debug.Assert(expectedConfiguration != null);
+            Debug.Assert(TestResult != null);
+
             if (expectedConfiguration.RawValue.Equals(configuration.RawValue))
             {
-                testResult.Complete();
+                TestResult.Complete();
             } 
             else
             {
-                testResult.Fail(new ArgumentException());
+                TestResult.Fail(new ArgumentException());
             }
         }
     }

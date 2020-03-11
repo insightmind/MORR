@@ -104,8 +104,8 @@ namespace MORRTest.Configuration
             }
 
             /* THEN */
-            Debug.Assert(configurationMock.testResult != null);
-            configurationMock.testResult.AssertSuccess();
+            Debug.Assert(configurationMock.TestResult != null);
+            configurationMock.TestResult.AssertSuccess();
         }
 
         [TestMethod]

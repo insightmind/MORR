@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.Text.Json;
 using MORR.Core.Configuration;
 using MORR.Shared.Configuration;
 using MORR.Shared.Utility;
@@ -34,6 +35,11 @@ namespace MORR.Core.Data.Transcoding.Mpeg
 
         public void Parse(RawConfiguration configuration)
         {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException();
+            }
+
             var element = JsonDocument.Parse(configuration.RawValue).RootElement;
 
             Width = GetUintFromProperty(element, nameof(Width));
@@ -58,6 +64,23 @@ namespace MORR.Core.Data.Transcoding.Mpeg
             }
 
             return parsedValue;
+        }
+
+        protected bool Equals(MpegEncoderConfiguration other)
+        {
+            return other != null 
+                   && Width == other.Width 
+                   && Height == other.Height 
+                   && KiloBitsPerSecond == other.KiloBitsPerSecond 
+                   && FramesPerSecond == other.FramesPerSecond 
+                   && RelativeFilePath.ToString().Equals(other.RelativeFilePath.ToString());
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is null) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == GetType() && Equals((MpegEncoderConfiguration) obj);
         }
     }
 }
