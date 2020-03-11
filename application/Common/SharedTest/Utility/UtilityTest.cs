@@ -1,9 +1,5 @@
 ﻿using System.Threading;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MORR.Shared.Configuration;
-using MORR.Shared.Events.Queue;
-using SharedTest.Events;
 
 namespace SharedTest.Utility
 {

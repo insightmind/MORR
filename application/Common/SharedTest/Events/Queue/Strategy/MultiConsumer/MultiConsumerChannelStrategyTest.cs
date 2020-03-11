@@ -97,6 +97,7 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
 
             var consumersReceivedEventsIndividually = new CountdownEvent(defaultMaxConsumer);
             var producerFinished = new ManualResetEvent(false);
+            var maxEvents = defaultMaxEvents / 2;
 
             /* GIVEN */
             Strategy.Open();
@@ -105,7 +106,7 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
                 var consumer = new TestConsumer(Strategy);
                 consumer.Consume(
                     false,
-                    (@event, index) => index < defaultMaxEvents,
+                    (@event, index) => index < maxEvents,
                     result =>
                     {
                         if (result != null && result.IsSuccess()) consumersReceivedEventsIndividually.Signal();
@@ -114,7 +115,7 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
 
             /* WHEN */
             var producer = new TestProducer(Strategy);
-            producer.Produce(false, num => num < defaultMaxEvents, result => result.EventSuccess(producerFinished));
+            producer.Produce(true, num => num < maxEvents, result => result.EventSuccess(producerFinished));
 
             /* THEN */
             Assert.IsTrue(producerFinished.WaitOne(maxWaitTime), "Producer was not able to queue all events!");

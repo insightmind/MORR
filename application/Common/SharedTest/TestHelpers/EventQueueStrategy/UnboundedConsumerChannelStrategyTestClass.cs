@@ -26,12 +26,12 @@ namespace SharedTest.TestHelpers.EventQueueStrategy
             var consumeEvent = new ManualResetEvent(false);
 
             /* WHEN */
-            consumer.Consume(true, (@event, num) => num < maxEvents, result => result.EventSuccess(consumeEvent));
-            producer.Produce(true, num => num < maxEvents, result => result.EventSuccess(produceEvent));
+            consumer.Consume(false, (@event, num) => num < maxEvents, result => result.EventSuccess(consumeEvent));
+            producer.Produce(false, num => num < maxEvents, result => result.EventSuccess(produceEvent));
 
             /* THEN */
-            Assert.IsTrue(produceEvent.WaitOne(maxWaitTime));
-            Assert.IsTrue(consumeEvent.WaitOne(maxWaitTime));
+            Assert.IsTrue(produceEvent.WaitOne(maxWaitTime), "Producer did not finish in time");
+            Assert.IsTrue(consumeEvent.WaitOne(maxWaitTime), "Consumer did not receive events in time");
         }
     }
 }
