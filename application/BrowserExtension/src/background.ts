@@ -12,7 +12,7 @@ enum ExtensionState {
 /**
  * The "main" class of the webextension
  */
-class BackgroundScript {
+export default class BackgroundScript {
     /**
      * ListenerManager controlled by background script
      */

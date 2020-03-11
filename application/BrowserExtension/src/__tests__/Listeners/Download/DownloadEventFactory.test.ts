@@ -9,10 +9,9 @@ beforeAll(() => {
     globalAny.chrome = chrome
 })
 
-test('Factory Constructor Test', () => {
-    expect(new DownloadEventFactory()).toBeInstanceOf(DownloadEventFactory);
-})
-
+/**
+ * Create a new DownloadEvent
+ */
 test('Create DownloadEvent', async () => {
     let now : Date = new Date();
     let factory : DownloadEventFactory = new DownloadEventFactory();

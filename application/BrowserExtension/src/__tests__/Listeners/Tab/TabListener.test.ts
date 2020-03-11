@@ -78,6 +78,17 @@ test("Capture OpenTabEvent", done => {
     });
 })
 
+//ensure that the callback is not triggered if no tabID has been created
+test("OpenTabEvent no TabID", done => {
+    listener.start();
+    expect(mockCallback).toHaveBeenCalledTimes(0);
+    chrome.tabs.onCreated.trigger({windowId : 3});
+    wait().then(() => {
+        expect(mockCallback).toHaveBeenCalledTimes(0);
+        done();
+    });
+})
+
 //capture an CloseTabEvent and check its fields
 test("Capture CloseTabEvent", done => {
     listener.start();
