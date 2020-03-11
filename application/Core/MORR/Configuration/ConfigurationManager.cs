@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Text.Json;
 using MORR.Shared.Configuration;
@@ -21,6 +21,22 @@ namespace MORR.Core.Configuration
         private IEnumerable<IConfiguration>? Configurations { get; set; }
 
         /// <summary>
+        /// The file system used to load the configuration file.
+        /// </summary>
+        private readonly IFileSystem fileSystem;
+
+        /// <summary>
+        /// Initializes the configuration manager using the default file system.
+        /// </summary>
+        public ConfigurationManager() : this(new FileSystem()) { }
+
+        /// <summary>
+        /// Initializes the configuration manager using the specified file system.
+        /// </summary>
+        /// <param name="fileSystem">The file system used to load the configuration file.</param>
+        public ConfigurationManager(IFileSystem fileSystem) => this.fileSystem = fileSystem;
+
+        /// <summary>
         ///     Loads the configuration from the specified path
         /// </summary>
         /// <param name="path">The path to load the configuration from</param>
@@ -36,15 +52,14 @@ namespace MORR.Core.Configuration
             CommitConfigurations(document);
         }
 
-        private static JsonDocument LoadJsonDocument(FilePath path)
+        private JsonDocument LoadJsonDocument(FilePath path)
         {
-
-            if (path == null)
+            if (path == null || fileSystem?.File == null)
             {
                 throw new ArgumentNullException(nameof(path), "Invalid file path to configuration file.");
             }
 
-            var jsonString = File.ReadAllText(path.ToString());
+            var jsonString = fileSystem.File.ReadAllText(path.ToString());
             var options = new JsonDocumentOptions()
             {
                 AllowTrailingCommas = true,
