@@ -332,9 +332,6 @@ namespace WebBrowserTest
         {
             var requestUri = new Uri("http://localhost:" + config.UrlSuffix);
             var request = new HttpRequestMessage(HttpMethod.Post, "relativeAddress");
-            /*request.Content = new StringContent("{\"name\":\"John Doe\",\"age\":33}",
-                                                Encoding.UTF8,
-                                                "application/json");//CONTENT-TYPE header */
             request.Content = new StringContent(JsonSerializer.Serialize(data),
                                                 Encoding.UTF8,
                                                 "application/json"); //CONTENT-TYPE header
