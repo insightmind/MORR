@@ -52,17 +52,18 @@ namespace MORRTest.TestHelper.Configuration
         [TestMethod]
         public void TestConfiguration_ValidConfiguration()
         {
-            /* PRECONDITION */
-            Debug.Assert(Config != null);
-
             /* GIVEN */
             var expectedConfig = GenerateDefaultExpectedParsedConfig();
             var rawConfig = GenerateDefaultExpectedRawConfig();
 
             /* WHEN */
+            Debug.Assert(Config != null);
             Config.Parse(rawConfig);
 
             /* THEN */
+            Console.WriteLine(rawConfig.RawValue);
+            Console.WriteLine();
+            Console.WriteLine(Config);
             Assert.AreEqual(expectedConfig, Config);
         }
 

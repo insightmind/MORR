@@ -6,7 +6,6 @@ using MORRTest.TestHelper.Configuration;
 using MORRTest.TestHelper.Decoder;
 using MORRTest.TestHelper.Encoder;
 using System;
-using System.Text;
 
 namespace MORRTest.Session
 {
@@ -15,7 +14,7 @@ namespace MORRTest.Session
     {
         private readonly Type[] encoderTypes = new Type[1] { typeof(TestEncoder) };
         private readonly Type[] decoderTypes = new Type[1] { typeof(TestDecoder) };
-        private readonly DirectoryPath path = new DirectoryPath("%userprofile%", true);
+        private readonly DirectoryPath path = new DirectoryPath(@"""%userprofile%\\Videos\\MORR""", true);
 
         protected override SessionConfiguration GenerateDefaultExpectedParsedConfig()
         {
@@ -29,16 +28,15 @@ namespace MORRTest.Session
 
         protected override RawConfiguration GenerateDefaultExpectedRawConfig()
         {
-            var config = @"
-            {
-                ""Encoders"": [
-                    ""MORRTest.TestHelper.Encoder.TestEncoder""
-                ],
-                ""Decoders"": [
-                    ""MORRTest.TestHelper.Decoder.TestDecoder""
-                ],
-                ""RecordingDirectory"": ""%userprofile%\\Videos\\MORR""
-            }";
+            var config = @"{
+    ""Encoders"": [
+      ""MORRTest.TestHelper.Encoder.TestEncoder""
+    ],
+    ""Decoders"": [
+      ""MORRTest.TestHelper.Decoder.TestDecoder""
+    ],
+    ""RecordingDirectory"": ""%userprofile%\\Videos\\MORR""
+  }";
 
             return new RawConfiguration(config);
         }
