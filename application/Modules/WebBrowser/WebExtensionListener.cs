@@ -112,6 +112,8 @@ namespace MORR.Modules.WebBrowser
         //Stop listening, but respond to context just before stopping
         private void StopListening(HttpListenerContext? context)
         {
+            if (listener == null)
+                return;
             if (listener.IsListening)
             {
                 //inform all the connected applications about the listener having stopped
