@@ -33,8 +33,7 @@ namespace MORR.Core.UI.ViewModels
             }
             catch (Exception)
             {
-                ExitWithError(
-                    "The configuration could not be loaded correctly. \nPlease check the configuration file or contact an administrator.");
+                ExitWithError(Properties.Resources.Error_Configuration_Invalid);
             }
         }
 
@@ -49,7 +48,7 @@ namespace MORR.Core.UI.ViewModels
 
             if (recordingsFolder == null)
             {
-                ExitWithError("The recordings folder could not be found. \nPlease contact an administrator.");
+                ExitWithError(Properties.Resources.Error_No_Recordings_Directory);
             }
 
             Process.Start("explorer.exe", recordingsFolder.ToString());
@@ -127,7 +126,7 @@ namespace MORR.Core.UI.ViewModels
 
             if (commandLineArguments.Length < 2)
             {
-                ExitWithError("No configuration has been specified. Please specify a configuration file as the command line argument.");
+                ExitWithError(Properties.Resources.Error_No_Configuration_Specified);
             }
 
             // The first argument is the current assembly, the second argument is the first actual command line argument

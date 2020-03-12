@@ -3,8 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:localization="clr-namespace:MORR.Core.UI.Properties"
         mc:Ignorable="d"
-        Title="MORR Information" Style="{StaticResource Dialog.WindowStyle}" WindowStartupLocation="CenterScreen">
+        Title="MORR" Style="{StaticResource Dialog.WindowStyle}" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -12,22 +13,20 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" TextAlignment="Center">
-            The MORR application records screen, keyboard, mouse, clipboard and browser data.
-            <LineBreak />
-            The stored data may be personally identifiable.
-            <LineBreak />
-            Remember not to enter any personal information.
-        </TextBlock>
+        <TextBlock Grid.Row="0" TextAlignment="Center"
+                   Text="{x:Static localization:Resources.Information_Dialog_Content}" />
         <Grid Grid.Row="2" HorizontalAlignment="Center">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" SharedSizeGroup="Button" />
                 <ColumnDefinition Width="15" />
                 <ColumnDefinition Width="Auto" SharedSizeGroup="Button" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" IsDefault="True" Content="I understand" Width="200" Click="OnAccept"
+            <Button Grid.Column="0" IsDefault="True"
+                    Content="{x:Static localization:Resources.Information_Dialog_Button_OK}" Width="200"
+                    Click="OnAccept"
                     Style="{StaticResource Dialog.ButtonStyle}" />
-            <Button Grid.Column="2" IsCancel="True" Content="Cancel recording" Width="200"
+            <Button Grid.Column="2" IsCancel="True"
+                    Content="{x:Static localization:Resources.Information_Dialog_Button_Cancel}" Width="200"
                     Style="{StaticResource Dialog.ButtonStyle}" />
         </Grid>
     </Grid>
