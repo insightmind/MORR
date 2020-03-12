@@ -71,7 +71,7 @@ namespace MORR.Core.UI.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No configuration has been specified. Please specify a configuration file as the command line argument..
+        ///   Looks up a localized string similar to No configuration has been specified. Please specify a configuration file as the command line argument or ensure a configuration file named &quot;config.morr&quot; exists relative to the executable..
         /// </summary>
         public static string Error_No_Configuration_Specified {
             get {

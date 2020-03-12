@@ -122,7 +122,7 @@
 Bitte überprüfen Sie die Konfiguration oder kontaktieren Sie einen Administrator.</value>
   </data>
   <data name="Error_No_Configuration_Specified" xml:space="preserve">
-    <value>Keine Konfigurationsdatei spezifiziert. Bitte spezifizieren Sie eine Konfigurationsdatei als Kommandozeilenparameter.</value>
+    <value>Keine Konfigurationsdatei spezifiziert. Bitte spezifizieren Sie eine Konfigurationsdatei als Kommandozeilenparameter oder stellen Sie sicher, dass eine Datei mit dem Namen "config.morr" relativ zur Applikation existiert.</value>
   </data>
   <data name="Error_No_Recordings_Directory" xml:space="preserve">
     <value>Das Aufnahmeverzeichnis konnte nicht gefunden werden.
