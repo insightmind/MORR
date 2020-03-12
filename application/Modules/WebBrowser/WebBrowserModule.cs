@@ -66,19 +66,18 @@ namespace MORR.Modules.WebBrowser
                 switchTabEventProducer, textInputEventProducer, textSelectionEventProducer
             };
 
-            if (listener == null)
-            {
-                listener = new WebExtensionListener(Configuration.UrlSuffix);
-            }
-
-            listener.StartListening();
-            foreach (var producer in producers)
-            {
-                listener.Subscribe(producer, producer.HandledEventLabel);
-            }
-
             if (isEnabled)
             {
+                if (listener == null)
+                {
+                    listener = new WebExtensionListener(Configuration.UrlSuffix);
+                }
+
+                foreach (var producer in producers)
+                {
+                    listener.Subscribe(producer, producer.HandledEventLabel);
+                }
+                listener.StartListening();
                 producers.ForEach(producer => producer.Open());
             }
             else
