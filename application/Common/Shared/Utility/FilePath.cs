@@ -59,5 +59,9 @@ namespace MORR.Shared.Utility
         {
             return value;
         }
+
+        public override bool Equals(object? obj) => obj is FilePath path && value == path.value;
+
+        public override int GetHashCode() => HashCode.Combine(value);
     }
 }

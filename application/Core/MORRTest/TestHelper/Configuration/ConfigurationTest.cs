@@ -27,7 +27,7 @@ namespace MORRTest.TestHelper.Configuration
         public virtual void BeforeTest() { }
 
         [TestMethod]
-        public void TestMpegEncoderConfiguration_NullConfiguration()
+        public void TestConfiguration_NullConfiguration()
         {
             /* PRECONDITION */
             Debug.Assert(Config != null);
@@ -37,7 +37,7 @@ namespace MORRTest.TestHelper.Configuration
         }
 
         [TestMethod]
-        public void TestMpegEncoderConfiguration_InvalidConfiguration()
+        public void TestConfiguration_InvalidConfiguration()
         {
             /* PRECONDITION */
             Debug.Assert(Config != null);
@@ -50,7 +50,7 @@ namespace MORRTest.TestHelper.Configuration
         }
 
         [TestMethod]
-        public void TestMpegEncoderConfiguration_ValidConfiguration()
+        public void TestConfiguration_ValidConfiguration()
         {
             /* PRECONDITION */
             Debug.Assert(Config != null);
@@ -67,7 +67,7 @@ namespace MORRTest.TestHelper.Configuration
         }
 
         [TestMethod]
-        public void TestMpegEncoderConfiguration_EqualsSameObject()
+        public void TestConfiguration_EqualsSameObject()
         {
             var expectedConfig = GenerateDefaultExpectedParsedConfig();
 
@@ -75,13 +75,13 @@ namespace MORRTest.TestHelper.Configuration
         }
 
         [TestMethod]
-        public void TestMpegEncoderConfiguration_EqualsSameValues()
+        public void TestConfiguration_EqualsSameValues()
         {
             Assert.AreEqual(GenerateDefaultExpectedParsedConfig(), GenerateDefaultExpectedParsedConfig());
         }
 
         [TestMethod]
-        public void TestMpegEncoderConfiguration_NotEqualsDifferentObject()
+        public void TestConfiguration_NotEqualsDifferentObject()
         {
             Debug.Assert(Config != null);
 
@@ -90,7 +90,7 @@ namespace MORRTest.TestHelper.Configuration
         }
 
         [TestMethod]
-        public void TestMpegEncoderConfiguration_NotEqualsNullObject()
+        public void TestConfiguration_NotEqualsNullObject()
         {
             var expectedConfig = GenerateDefaultExpectedParsedConfig();
             Assert.AreNotEqual(expectedConfig, null);

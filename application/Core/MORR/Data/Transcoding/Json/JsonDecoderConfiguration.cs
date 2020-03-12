@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.Json;
 using MORR.Core.Configuration;
 using MORR.Shared.Configuration;
@@ -29,5 +30,13 @@ namespace MORR.Core.Data.Transcoding.Json
 
             RelativeFilePath = new FilePath(relativeFilePathElement.GetString(), true);
         }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is JsonDecoderConfiguration configuration
+                && RelativeFilePath.Equals(configuration.RelativeFilePath);
+        }
+
+        public override int GetHashCode() => HashCode.Combine(RelativeFilePath);
     }
 }

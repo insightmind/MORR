@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.Json;
 using MORR.Core.Configuration;
 using MORR.Shared.Configuration;
@@ -11,7 +12,7 @@ namespace MORR.Core.Data.Transcoding.Json
         /// <summary>
         ///     The path to the file to store the data in relative to the recording directory.
         /// </summary>
-        public FilePath RelativeFilePath { get; set; }
+        public FilePath? RelativeFilePath { get; set; }
 
         public void Parse(RawConfiguration configuration)
         {
@@ -29,5 +30,13 @@ namespace MORR.Core.Data.Transcoding.Json
 
             RelativeFilePath = new FilePath(relativeFilePathElement.GetString(), true);
         }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is JsonEncoderConfiguration configuration
+                && RelativeFilePath.Equals(configuration.RelativeFilePath);
+        }
+
+        public override int GetHashCode() => HashCode.Combine(RelativeFilePath);
     }
 }

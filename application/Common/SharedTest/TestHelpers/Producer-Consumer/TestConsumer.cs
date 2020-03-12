@@ -35,8 +35,8 @@ namespace SharedTest.Events.Queue.Strategy
         {
             Debug.Assert(continueCondition != null);
             Debug.Assert(completionAction != null);
-            Debug.Assert(strategy != null); 
-            
+            Debug.Assert(strategy != null);
+
             task = new Task(async () =>
             {
                 var count = 0;
