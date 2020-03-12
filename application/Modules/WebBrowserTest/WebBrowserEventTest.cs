@@ -9,7 +9,7 @@ namespace WebBrowserTest
     [TestClass]
     public class WebBrowserEventTest
     {
-        private readonly DateTime commonDateTime = new DateTime(2020, 03, 05, 10, 10, 51, 123);
+        private readonly DateTime commonDateTime = DateTime.Parse("2020-03-05T10:10:51.1230000+01:00");
         private const int commonTabId = 5;
         private const string commonText = "SomeText";
         private readonly Uri commonUrl = new Uri("https://sample.com/");
