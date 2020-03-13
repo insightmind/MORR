@@ -14,7 +14,7 @@ namespace MORRTest.TestHelper.Modules
             get
             {
                 Debug.Assert(Mock?.Object != null);
-                return Mock?.Object?.IsActive ?? false;
+                return Mock.Object.IsActive;
             }
             set
             {
@@ -28,8 +28,14 @@ namespace MORRTest.TestHelper.Modules
             get
             {
                 Debug.Assert(Mock?.Object != null);
-                return (Guid) Mock?.Object.Identifier;
+                return Mock.Object.Identifier;
             }
+        }
+
+        public void Initialize(bool isEnabled)
+        {
+            Debug.Assert(Mock?.Object != null);
+            Mock.Object.Initialize(isEnabled);
         }
     }
 }
