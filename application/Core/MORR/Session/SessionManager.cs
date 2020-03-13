@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using MORR.Core.Configuration;
 using MORR.Core.Data.Transcoding;
@@ -19,17 +20,21 @@ namespace MORR.Core.Session
         private IEnumerable<IDecoder> decoders = new IDecoder[0];
         private readonly IModuleManager moduleManager;
         private readonly IConfigurationManager configurationManager;
-        private bool isRecording;
+        private readonly IFileSystem fileSystem;
 
-        public SessionManager(FilePath configurationPath) : this(configurationPath, new Bootstrapper(), new ConfigurationManager(), new ModuleManager()) { }
+        public bool isRecording { get; private set; }
+
+        public SessionManager(FilePath configurationPath) : this(configurationPath, new Bootstrapper(), new ConfigurationManager(), new ModuleManager(), new FileSystem()) { }
 
         public SessionManager(FilePath configurationPath,
                               IBootstrapper bootstrapper,
                               IConfigurationManager configurationManager,
-                              IModuleManager moduleManager)
+                              IModuleManager moduleManager,
+                              IFileSystem fileSystem)
         {
             this.moduleManager = moduleManager;
             this.configurationManager = configurationManager;
+            this.fileSystem = fileSystem;
 
             GlobalHook.Initialize();
 
@@ -59,10 +64,11 @@ namespace MORR.Core.Session
 
         private DirectoryPath CreateNewRecordingDirectory()
         {
+            
             var timeNow = DateTime.Now;
             var sessionId = Guid.NewGuid();
-            var directory = Path.Combine(Configuration.RecordingDirectory.ToString(), timeNow.ToString(dateFormat) + "-" + sessionId.ToString());
-            Directory.CreateDirectory(directory);
+            var directory = fileSystem.Path.Combine(Configuration.RecordingDirectory.ToString(), timeNow.ToString(dateFormat) + "-" + sessionId);
+            fileSystem.Directory.CreateDirectory(directory);
             return new DirectoryPath(directory);
         }
 

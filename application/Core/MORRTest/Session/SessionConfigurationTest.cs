@@ -6,6 +6,8 @@ using MORRTest.TestHelper.Configuration;
 using MORRTest.TestHelper.Decoder;
 using MORRTest.TestHelper.Encoder;
 using System;
+using System.Diagnostics;
+using MORR.Core.Configuration;
 
 namespace MORRTest.Session
 {
@@ -44,6 +46,75 @@ namespace MORRTest.Session
             }";
 
             return new RawConfiguration(config);
+        }
+
+        [TestMethod]
+        public void TestSessionConfiguration_ParseFailsInvalidEncoder()
+        {
+            /* PRECONDITION */
+            Debug.Assert(Config != null);
+
+            /* GIVEN */
+            const string config = @"{
+                ""Encoders"": [
+                    ""MORRTest.TestHelper.Encoder.""
+                ],
+                ""Decoders"": [
+                    ""MORRTest.TestHelper.Decoder.TestDecoder""
+                ],
+                ""RecordingDirectory"": ""C:\\""
+            }";
+
+            var rawConfig = new RawConfiguration(config);
+
+            /* WHEN */
+            Assert.ThrowsException<InvalidConfigurationException>(() => Config.Parse(rawConfig));
+        }
+
+        [TestMethod]
+        public void TestSessionConfiguration_ParseFailsInvalidDecoder()
+        {
+            /* PRECONDITION */
+            Debug.Assert(Config != null);
+
+            /* GIVEN */
+            const string config = @"{
+                ""Encoders"": [
+                    ""MORRTest.TestHelper.Encoder.TestEncoder""
+                ],
+                ""Decoders"": [
+                    ""MORRTest.TestHelper.Decoder.""
+                ],
+                ""RecordingDirectory"": ""C:\\""
+            }";
+
+            var rawConfig = new RawConfiguration(config);
+
+            /* WHEN */
+            Assert.ThrowsException<InvalidConfigurationException>(() => Config.Parse(rawConfig));
+        }
+
+        [TestMethod]
+        public void TestSessionConfiguration_ParseFailsInvalidDirectory()
+        {
+            /* PRECONDITION */
+            Debug.Assert(Config != null);
+
+            /* GIVEN */
+            const string config = @"{
+                ""Encoders"": [
+                    ""MORRTest.TestHelper.Encoder.TestEncoder""
+                ],
+                ""Decoders"": [
+                    ""MORRTest.TestHelper.Decoder.TestDecoder""
+                ],
+                ""RecordingDirectory"": ""C:\\temp\\file.cs""
+            }";
+
+            var rawConfig = new RawConfiguration(config);
+
+            /* WHEN */
+            Assert.ThrowsException<InvalidConfigurationException>(() => Config.Parse(rawConfig));
         }
     }
 }

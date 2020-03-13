@@ -76,9 +76,16 @@ namespace MORR.Core.Session
                 throw new InvalidConfigurationException("Failed to parse directory path.");
             }
 
-            var directoryPath = directoryElement.GetString();
-            directoryPath = Environment.ExpandEnvironmentVariables(directoryPath);
-            RecordingDirectory = new DirectoryPath(directoryPath);
+            try
+            {
+                var directoryPath = directoryElement.GetString();
+                directoryPath = Environment.ExpandEnvironmentVariables(directoryPath);
+                RecordingDirectory = new DirectoryPath(directoryPath);
+            }
+            catch (ArgumentException innerException)
+            {
+                throw new InvalidConfigurationException("Failed to evaluate directory path.", innerException);
+            }
         }
 
         private static bool TryGetType(JsonElement element, [NotNullWhen(true)] out Type? value)

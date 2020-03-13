@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Diagnostics;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MORR.Core.Data.Transcoding.Json;
 using MORR.Shared.Configuration;
 using MORR.Shared.Utility;
@@ -19,7 +20,9 @@ namespace MORRTest.Data.Transcoding.Json
 
         protected override RawConfiguration GenerateDefaultExpectedRawConfig()
         {
-            return new RawConfiguration("{\n\"RelativeFilePath\":\"" + GenerateDefaultExpectedParsedConfig().RelativeFilePath + "\"\n}");
+            var config = GenerateDefaultExpectedParsedConfig();
+            Debug.Assert(config != null);
+            return new RawConfiguration("{\n\"RelativeFilePath\":\"" + config.RelativeFilePath + "\"\n}");
         }
     }
 }

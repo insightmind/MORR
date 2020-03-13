@@ -6,6 +6,14 @@ using MORR.Shared.Configuration;
 
 namespace MORRTest.TestHelper.Configuration
 {
+    /// <summary>
+    /// The ConfigurationTest class implements certain shared tests for any class which implements the
+    /// IConfiguration Interface.
+    ///
+    /// However this class should provide a custom Equals and GetHashCode method to
+    /// allow proper validation of the correct properties of an parsed configuration.
+    /// </summary>
+    /// <typeparam name="T">The IConfiguration Type to be tested by this class</typeparam>
     public abstract class ConfigurationTest<T> where T: IConfiguration, new()
     {
         public T Config = new T();
@@ -23,9 +31,9 @@ namespace MORRTest.TestHelper.Configuration
         /// <returns>The RawConfiguration which presents the DefaultConfig of GenerateDefaultConfig</returns>
         protected abstract RawConfiguration GenerateDefaultExpectedRawConfig();
 
-        [TestInitialize]
-        public virtual void BeforeTest() { }
-
+        /// <summary>
+        /// Tests whether the Parse method correctly asserts a null configuration call.
+        /// </summary>
         [TestMethod]
         public void TestConfiguration_NullConfiguration()
         {
@@ -36,6 +44,9 @@ namespace MORRTest.TestHelper.Configuration
             Assert.ThrowsException<ArgumentNullException>(() => Config.Parse(null));
         }
 
+        /// <summary>
+        /// Tests whether the Parse function correctly handles an empty json body.
+        /// </summary>
         [TestMethod]
         public void TestConfiguration_InvalidConfiguration()
         {
@@ -49,6 +60,9 @@ namespace MORRTest.TestHelper.Configuration
             Assert.ThrowsException<InvalidConfigurationException>(() => Config.Parse(rawConfig));
         }
 
+        /// <summary>
+        /// Tests whether the parsing of an expected valid configuration works fine.
+        /// </summary>
         [TestMethod]
         public void TestConfiguration_ValidConfiguration()
         {
@@ -66,33 +80,58 @@ namespace MORRTest.TestHelper.Configuration
             Assert.AreEqual(expectedConfig, Config);
         }
 
+        /// <summary>
+        /// Tests the Equals method to check if the same object is equal to itself.
+        /// </summary>
         [TestMethod]
         public void TestConfiguration_EqualsSameObject()
         {
             var expectedConfig = GenerateDefaultExpectedParsedConfig();
 
+            Debug.Assert(expectedConfig != null);
+
             Assert.AreEqual(expectedConfig, expectedConfig);
+            Assert.AreEqual(expectedConfig.GetHashCode(), expectedConfig.GetHashCode());
         }
 
+        /// <summary>
+        /// Test the Equals method to check if two configurations with the same values are equal.
+        /// </summary>
         [TestMethod]
         public void TestConfiguration_EqualsSameValues()
         {
-            Assert.AreEqual(GenerateDefaultExpectedParsedConfig(), GenerateDefaultExpectedParsedConfig());
+            var expectedConfig = GenerateDefaultExpectedParsedConfig();
+            var otherConfig = GenerateDefaultExpectedParsedConfig();
+
+            Debug.Assert(expectedConfig != null);
+            Debug.Assert(otherConfig != null);
+
+            Assert.AreEqual(expectedConfig, otherConfig);
         }
 
+        /// <summary>
+        /// Test the Equals method to check if two configurations with the different values are not equal.
+        /// </summary>
         [TestMethod]
         public void TestConfiguration_NotEqualsDifferentObject()
         {
-            Debug.Assert(Config != null);
-
             var notExpectedConfig = GenerateDefaultExpectedParsedConfig();
+
+            Debug.Assert(Config != null);
+            Debug.Assert(notExpectedConfig != null);
+
             Assert.AreNotEqual(notExpectedConfig, Config);
+            Assert.AreNotEqual(notExpectedConfig.GetHashCode(), Config.GetHashCode());
         }
 
+        /// <summary>
+        /// Test the Equals method to check if configuration is correctly not equal to null.
+        /// </summary>
         [TestMethod]
         public void TestConfiguration_NotEqualsNullObject()
         {
             var expectedConfig = GenerateDefaultExpectedParsedConfig();
+
             Assert.AreNotEqual(expectedConfig, null);
         }
     }
