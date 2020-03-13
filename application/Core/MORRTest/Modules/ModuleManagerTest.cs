@@ -1,12 +1,12 @@
-﻿using System;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using MORR.Core.Modules;
 using MORR.Shared.Modules;
 using MORRTest.TestHelper.Modules;
+using System;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
+using System.Diagnostics;
 
 namespace MORRTest.Modules
 {
@@ -60,7 +60,7 @@ namespace MORRTest.Modules
             /* GIVEN */
             config = new GlobalModuleConfiguration
             {
-                EnabledModules = new [] { typeof(TestModuleOne) }
+                EnabledModules = new[] { typeof(TestModuleOne) }
             };
 
             Compose();

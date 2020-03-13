@@ -1,8 +1,8 @@
-﻿using System;
-using System.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MORR.Core.Configuration;
 using MORR.Shared.Configuration;
+using System;
+using System.Diagnostics;
 
 namespace MORRTest.TestHelper.Configuration
 {
@@ -14,7 +14,7 @@ namespace MORRTest.TestHelper.Configuration
     /// allow proper validation of the correct properties of an parsed configuration.
     /// </summary>
     /// <typeparam name="T">The IConfiguration Type to be tested by this class</typeparam>
-    public abstract class ConfigurationTest<T> where T: IConfiguration, new()
+    public abstract class ConfigurationTest<T> where T : IConfiguration, new()
     {
         public T Config = new T();
 
@@ -76,7 +76,7 @@ namespace MORRTest.TestHelper.Configuration
 
             /* THEN */
             Console.WriteLine(rawConfig.RawValue);
-            
+
             Assert.AreEqual(expectedConfig, Config);
         }
 

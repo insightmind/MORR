@@ -1,5 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MORR.Core.Configuration;
+using MORR.Shared.Configuration;
+using MORR.Shared.Utility;
+using MORRTest.TestHelper.Configuration;
 using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
@@ -7,10 +10,6 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Abstractions.TestingHelpers;
 using System.Reflection;
-using Moq;
-using MORR.Shared.Utility;
-using MORR.Shared.Configuration;
-using MORRTest.TestHelper.Configuration;
 
 namespace MORRTest.Configuration
 {

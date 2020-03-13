@@ -1,7 +1,7 @@
-﻿using System;
-using System.Diagnostics;
-using Moq;
+﻿using Moq;
 using MORR.Shared.Modules;
+using System;
+using System.Diagnostics;
 
 namespace MORRTest.TestHelper.Modules
 {

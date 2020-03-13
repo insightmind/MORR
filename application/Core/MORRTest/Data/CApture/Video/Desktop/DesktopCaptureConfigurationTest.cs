@@ -1,14 +1,14 @@
-﻿using System.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MORR.Core.Configuration;
 using MORR.Core.Data.Capture.Video.Desktop;
 using MORR.Shared.Configuration;
 using MORRTest.TestHelper.Configuration;
+using System.Diagnostics;
 
 namespace MORRTest.Data.Capture.Video.Desktop
 {
     [TestClass]
-    public class DesktopCaptureConfigurationTest: ConfigurationTest<DesktopCaptureConfiguration>
+    public class DesktopCaptureConfigurationTest : ConfigurationTest<DesktopCaptureConfiguration>
     {
         protected override DesktopCaptureConfiguration GenerateDefaultExpectedParsedConfig()
         {

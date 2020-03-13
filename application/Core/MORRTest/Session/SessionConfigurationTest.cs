@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MORR.Core.Configuration;
 using MORR.Core.Session;
 using MORR.Shared.Configuration;
 using MORR.Shared.Utility;
@@ -7,7 +8,6 @@ using MORRTest.TestHelper.Decoder;
 using MORRTest.TestHelper.Encoder;
 using System;
 using System.Diagnostics;
-using MORR.Core.Configuration;
 
 namespace MORRTest.Session
 {
@@ -16,7 +16,7 @@ namespace MORRTest.Session
     {
         private readonly Type[] encoderTypes = new Type[1] { typeof(TestEncoder) };
         private readonly Type[] decoderTypes = new Type[1] { typeof(TestDecoder) };
-        
+
         // This is correct, however the actual json string contains 2 '\'.
         // It seems that the System.Text.JsonDecoder struggles with dealing C# language specified strings
         // which in my opinion seems quite ridiculous. Even tough we supply them with a raw string they

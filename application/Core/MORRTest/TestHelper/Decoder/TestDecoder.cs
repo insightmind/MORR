@@ -1,8 +1,8 @@
-﻿using System.Diagnostics;
-using System.Threading;
-using Moq;
+﻿using Moq;
 using MORR.Core.Data.Transcoding;
 using MORR.Shared.Utility;
+using System.Diagnostics;
+using System.Threading;
 
 namespace MORRTest.TestHelper.Decoder
 {
@@ -15,7 +15,7 @@ namespace MORRTest.TestHelper.Decoder
     ///
     /// Finally this results into a class which simply propagates the values to the mock object.
     /// </summary>
-    public class TestDecoder: IDecoder
+    public class TestDecoder : IDecoder
     {
         /// <summary>
         /// The Mock which can be used to verify calls using Moq

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MORRTest.Data.Capture.Video.Desktop
+﻿namespace MORRTest.Data.Capture.Video.Desktop
 {
     class DesktopCaptureTest
     {

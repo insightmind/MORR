@@ -1,11 +1,4 @@
-﻿using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.Diagnostics;
-using System.IO;
-using System.IO.Abstractions.TestingHelpers;
-using System.Reflection;
-using System.Threading;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using MORR.Core;
 using MORR.Core.Configuration;
@@ -17,6 +10,13 @@ using MORR.Shared.Utility;
 using MORRTest.TestHelper.Decoder;
 using MORRTest.TestHelper.Encoder;
 using SharedTest.TestHelpers.INativeHook;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
+using System.Diagnostics;
+using System.IO;
+using System.IO.Abstractions.TestingHelpers;
+using System.Reflection;
+using System.Threading;
 
 namespace MORRTest.Session
 {

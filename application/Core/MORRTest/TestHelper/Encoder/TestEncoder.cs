@@ -1,8 +1,8 @@
-﻿using System.Diagnostics;
-using System.Threading;
-using Moq;
+﻿using Moq;
 using MORR.Core.Data.Transcoding;
 using MORR.Shared.Utility;
+using System.Diagnostics;
+using System.Threading;
 
 namespace MORRTest.TestHelper.Encoder
 {

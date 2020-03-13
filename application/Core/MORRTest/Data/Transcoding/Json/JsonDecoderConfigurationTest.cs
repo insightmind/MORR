@@ -1,18 +1,19 @@
-﻿using System.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MORR.Core.Data.Transcoding.Json;
 using MORR.Shared.Configuration;
 using MORR.Shared.Utility;
 using MORRTest.TestHelper.Configuration;
+using System.Diagnostics;
 
 namespace MORRTest.Data.Transcoding.Json
 {
     [TestClass]
-    public class JsonDecoderConfigurationTest: ConfigurationTest<JsonDecoderConfiguration>
+    public class JsonDecoderConfigurationTest : ConfigurationTest<JsonDecoderConfiguration>
     {
         protected override JsonDecoderConfiguration GenerateDefaultExpectedParsedConfig()
         {
-            return new JsonDecoderConfiguration {
+            return new JsonDecoderConfiguration
+            {
                 RelativeFilePath = new FilePath("event_data.json", true)
             };
         }

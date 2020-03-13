@@ -46,7 +46,7 @@ namespace MORRTest.TestHelper.Configuration
             if (configuration != null && expectedConfiguration.RawValue.Equals(configuration.RawValue))
             {
                 TestResult.Complete();
-            } 
+            }
             else
             {
                 TestResult.Fail(new ArgumentException());

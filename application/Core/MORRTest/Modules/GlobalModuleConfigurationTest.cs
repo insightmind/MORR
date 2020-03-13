@@ -4,7 +4,6 @@ using MORR.Shared.Configuration;
 using MORRTest.TestHelper.Configuration;
 using MORRTest.TestHelper.Modules;
 using System;
-using System.Text;
 
 namespace MORRTest.Modules
 {

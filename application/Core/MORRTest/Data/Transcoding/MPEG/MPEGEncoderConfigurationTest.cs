@@ -1,11 +1,10 @@
-﻿using System;
-using System.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MORR.Core.Configuration;
 using MORR.Core.Data.Transcoding.Mpeg;
 using MORR.Shared.Configuration;
 using MORR.Shared.Utility;
 using MORRTest.TestHelper.Configuration;
+using System.Diagnostics;
 
 namespace MORRTest.Data.Transcoding.MPEG
 {
