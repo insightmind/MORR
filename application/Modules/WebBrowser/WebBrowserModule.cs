@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Runtime.CompilerServices;
 using MORR.Modules.WebBrowser.Producers;
 using MORR.Shared.Modules;
 using MORR.Shared.Utility;
 
+[assembly: InternalsVisibleTo("WebBrowserTest")]
 namespace MORR.Modules.WebBrowser
 {
     /// <summary>
@@ -83,6 +85,17 @@ namespace MORR.Modules.WebBrowser
             {
                 producers.ForEach(producer => producer.Close());
             }
+        }
+
+        //revert back to unitialized state, only needed for (unit-)testing
+        internal void Reset()
+        {
+            if (listener != null)
+            {
+                listener.StopListening();
+                listener = null;
+            }
+            producers = null;
         }
     }
 }

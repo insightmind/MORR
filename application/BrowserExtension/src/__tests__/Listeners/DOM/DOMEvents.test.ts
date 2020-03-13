@@ -4,6 +4,10 @@ import { EventType } from '../../../Shared/SharedDeclarations'
 const sample : any = {_issuingModule : 0, _windowID : 3, _tabID : 7,  _url : new URL("http://sample.com")};
 const sender : chrome.runtime.MessageSender = {tab : ({id : 7, windowId : 3} as chrome.tabs.Tab)} as chrome.runtime.MessageSender;
 
+/**
+ * Check constructors, getters, setters and deserializers of all DOMEvents.
+ */
+
 describe("TextInputEvent Tests", () => {
     const mySample = {...sample};
     mySample._text = "Selected Text";

@@ -17,6 +17,10 @@ namespace MORR.Modules.WebBrowser
     internal class WebExtensionListener : IWebBrowserEventObservable
     {
         private const string serializedTypeField = "type";
+
+        private const int
+            ERROR_OPERATION_ABORTED = 995; //errorcode thrown by the async function when listener is stopped
+
         private readonly HttpListener listener;
 
         //deliberately don't use IList, as RemoveAll function is used later
@@ -26,7 +30,6 @@ namespace MORR.Modules.WebBrowser
         //depends on the way the asynchronous BeginGetContext is handled internally
         private readonly ConcurrentQueue<HttpListenerResponse> startQueue;
         private readonly ConcurrentQueue<HttpListenerResponse> stopQueue;
-
         private bool recordingActive;
 
         /// <summary>
@@ -158,6 +161,8 @@ namespace MORR.Modules.WebBrowser
         /// </summary>
         private void Start()
         {
+            //start listening in case the listener is not yet doing so
+            StartListening();
             foreach (var response in startQueue)
             {
                 AnswerRequest(response, new WebBrowserResponse(ResponseStrings.STARTRESPONSE));
@@ -182,7 +187,22 @@ namespace MORR.Modules.WebBrowser
         //retrieve and parse another incoming request
         private void RetrieveRequest(IAsyncResult result)
         {
-            var context = listener.EndGetContext(result);
+            HttpListenerContext context;
+            try
+            {
+                context = listener.EndGetContext(result);
+            }
+            catch (HttpListenerException ex)
+            {
+                //if the following condition is correct, the listener has been stopped, which is handled by simply cancelling the operation.
+                if (ex.NativeErrorCode == ERROR_OPERATION_ABORTED)
+                {
+                    return;
+                }
+
+                throw ex;
+            }
+
             var request = context.Request;
 
             //get post data and decode it (will come in URL encoding)
@@ -229,7 +249,7 @@ namespace MORR.Modules.WebBrowser
                     case WebBrowserRequestType.CONFIG:
                         AnswerRequest(context.Response,
                                       new WebBrowserResponse(ResponseStrings.POSITIVERESPONSE,
-                                                             "undefined")); //TODO: retrieve and send config
+                                                             "undefined")); //only stub-implementation in case it should find usage later
                         break;
                     case WebBrowserRequestType.START:
                         if (recordingActive)
@@ -243,13 +263,23 @@ namespace MORR.Modules.WebBrowser
 
                         break;
                     case WebBrowserRequestType.SENDDATA:
-                        if (request.Data != null && DeserializeEventAndBroadcast(request))
+                        if (!recordingActive)
                         {
-                            AnswerRequest(context.Response, new WebBrowserResponse(ResponseStrings.POSITIVERESPONSE));
+                            //this code is only reached if the recording has been stopped in MORR,
+                            //but the webextension has not yet been informed.
+                            AnswerRequest(context.Response, new WebBrowserResponse(ResponseStrings.STOPRESPONSE));
                         }
                         else
                         {
-                            AnswerInvalid(context.Response);
+                            if (request.Data != null && DeserializeEventAndBroadcast(request))
+                            {
+                                AnswerRequest(context.Response,
+                                              new WebBrowserResponse(ResponseStrings.POSITIVERESPONSE));
+                            }
+                            else
+                            {
+                                AnswerInvalid(context.Response);
+                            }
                         }
 
                         break;

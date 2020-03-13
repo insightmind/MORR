@@ -30,6 +30,9 @@ beforeEach(() => {
     chrome.tabs.query.yields(tabs);
 });
 
+/**
+ * Confirm consturctor working and not invoking the callback.
+ */
 test('Constructor', () => {
     expect(listener).toBeInstanceOf(DOMListener);
     expect(mockCallback).toHaveBeenCalledTimes(0);
@@ -75,7 +78,7 @@ test('Inject script', () => {
 });
 
 /**
- * Test if the listener correctly treats incoming serialized events (sent from contentscript)
+ * The following tests check if the listener correctly treats incoming serialized events (sent from contentscript)
  */
 test('Receive serialized ButtonClickEvent', () => {
     listener.start();

@@ -20,11 +20,6 @@ test("TestSetup", () => {
     expect(document.location.href).toBe(sampleDocument.url);
 })
 
-//nothing to check here really, just for completeness' sake
-test("Constructor", () => {
-    expect(factory).toBeInstanceOf(DOMEventFactory);
-});
-
 //create a ButtonClickEvent (base scenario)
 test("Create ButtonClickEvent (success, type button)", done => {
     factory.createEvent(<Event>(<any>{type : DOMEventTypes.CLICK, target : sampleTarget}))
@@ -103,5 +98,46 @@ test("Create HoverEvent (success)", done => {
             fail("event is undefined or of unexpected type");
             done();
         }
+    });
+});
+
+//create a ButtonClickEvent (base scenario)
+test("Create ButtonClickEvent (no element title)", done => {
+    const basetarget = {tagName : "BUTTON", value : "sampleinput", type : "text",
+    getAttribute : function(attr : string) {return (attr == "href") ? "https://sample.com/redirect" : null;}};
+    const anotherTarget = {...basetarget, name : "element name"};
+    const anotherTarget2 = {...basetarget, id : "element id"};
+    factory.createEvent(<Event>(<any>{type : DOMEventTypes.CLICK, target : anotherTarget}))
+    .then((event? : BrowserEvent) => {
+        expect(event).not.toBeUndefined;
+        if(event) {
+            let sEvent = <ButtonClickEvent>event;
+            expect(sEvent.buttonTitle).toBe(anotherTarget.name);
+            done();
+        } else {
+            fail("event is undefined or of unexpected type");
+            done();
+        }
+    })
+    .catch((e : Error) => {
+        fail(e);
+        done();
+    });
+
+    factory.createEvent(<Event>(<any>{type : DOMEventTypes.CLICK, target : anotherTarget2}))
+    .then((event? : BrowserEvent) => {
+        expect(event).not.toBeUndefined;
+        if(event) {
+            let sEvent = <ButtonClickEvent>event;
+            expect(sEvent.buttonTitle).toBe(anotherTarget2.id);
+            done();
+        } else {
+            fail("event is undefined or of unexpected type");
+            done();
+        }
+    })
+    .catch((e : Error) => {
+        fail(e);
+        done();
     });
 });

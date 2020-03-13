@@ -8,6 +8,7 @@ using MORR.Core.Configuration;
 using MORR.Core.Data.Transcoding;
 using MORR.Core.Modules;
 using MORR.Core.Session.Exceptions;
+using MORR.Core.Session.Crypto;
 using MORR.Shared.Hook;
 using MORR.Shared.Utility;
 
@@ -16,6 +17,7 @@ namespace MORR.Core.Session
     public class SessionManager : ISessionManager
     {
         private const string dateFormat = "yyyy-MM-ddTHH-mm-ss";
+        private const string fileDivider = "--";
         private IEnumerable<IEncoder> encoders = new IEncoder[0];
         private IEnumerable<IDecoder> decoders = new IDecoder[0];
         private readonly IModuleManager moduleManager;
@@ -64,11 +66,14 @@ namespace MORR.Core.Session
 
         private DirectoryPath CreateNewRecordingDirectory()
         {
-            
-            var timeNow = DateTime.Now;
-            var sessionId = Guid.NewGuid();
-            var directory = fileSystem.Path.Combine(Configuration.RecordingDirectory.ToString(), timeNow.ToString(dateFormat) + "-" + sessionId);
+            var timeNow = DateTime.Now.ToString(dateFormat);
+            var dir = Configuration.RecordingDirectory.ToString();
+            var sessionId = Guid.NewGuid().ToString();
+            var username = CryptoHelper.GenerateHash(Environment.UserName);
+
+            var directory = fileSystem.Path.Combine(dir, timeNow + fileDivider + username + fileDivider + sessionId);
             fileSystem.Directory.CreateDirectory(directory);
+            
             return new DirectoryPath(directory);
         }
 
