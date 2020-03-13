@@ -23,22 +23,13 @@ namespace MORRTest.Modules
 
         protected override RawConfiguration GenerateDefaultExpectedRawConfig()
         {
-            var builder = new StringBuilder();
-            builder.Append("{\n \"EnabledModules\": [\n");
-            
-            for (var index = 0; index < testTypes.Length; index++)
-            {
-                builder.Append("\"" + testTypes[index].FullName + "\"");
-                
-                if (index + 1 != testTypes.Length)
-                {
-                    builder.Append(",\n");
-                }
-            }
+            const string config = @"{
+                ""EnabledModules"": [
+                    ""MORRTest.TestHelper.Modules.TestModule""
+                ]
+            }";
 
-            builder.Append("\n]\n}");
-
-            return new RawConfiguration(builder.ToString());
+            return new RawConfiguration(config);
         }
     }
 }
