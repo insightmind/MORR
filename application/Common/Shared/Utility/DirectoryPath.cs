@@ -60,7 +60,7 @@ namespace MORR.Shared.Utility
             return value;
         }
 
-        public override bool Equals(object? obj) => obj is DirectoryPath path && value == path.value;
+        public override bool Equals(object? obj) => obj is DirectoryPath path && value.Equals(path.value);
 
         public override int GetHashCode() => HashCode.Combine(value);
     }

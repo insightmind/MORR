@@ -14,7 +14,7 @@ namespace MORRTest.Session
     {
         private readonly Type[] encoderTypes = new Type[1] { typeof(TestEncoder) };
         private readonly Type[] decoderTypes = new Type[1] { typeof(TestDecoder) };
-        private readonly DirectoryPath path = new DirectoryPath(@"""%userprofile%\\Videos\\MORR""", true);
+        private readonly DirectoryPath path = new DirectoryPath(@"C:\", true);
 
         protected override SessionConfiguration GenerateDefaultExpectedParsedConfig()
         {
@@ -28,15 +28,15 @@ namespace MORRTest.Session
 
         protected override RawConfiguration GenerateDefaultExpectedRawConfig()
         {
-            var config = @"{
-    ""Encoders"": [
-      ""MORRTest.TestHelper.Encoder.TestEncoder""
-    ],
-    ""Decoders"": [
-      ""MORRTest.TestHelper.Decoder.TestDecoder""
-    ],
-    ""RecordingDirectory"": ""%userprofile%\\Videos\\MORR""
-  }";
+            const string config = @"{
+                ""Encoders"": [
+                    ""MORRTest.TestHelper.Encoder.TestEncoder""
+                ],
+                ""Decoders"": [
+                    ""MORRTest.TestHelper.Decoder.TestDecoder""
+                ],
+                ""RecordingDirectory"": ""C:\\""
+            }";
 
             return new RawConfiguration(config);
         }

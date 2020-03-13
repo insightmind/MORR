@@ -62,8 +62,7 @@ namespace MORRTest.TestHelper.Configuration
 
             /* THEN */
             Console.WriteLine(rawConfig.RawValue);
-            Console.WriteLine();
-            Console.WriteLine(Config);
+            
             Assert.AreEqual(expectedConfig, Config);
         }
 
