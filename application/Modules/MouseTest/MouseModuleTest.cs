@@ -8,7 +8,9 @@ using System.Windows.Input;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using MORR.Modules.Mouse;
+using MORR.Modules.Mouse.Events;
 using MORR.Modules.Mouse.Producers;
+using MORR.Shared.Events.Queue;
 using MORR.Shared.Hook;
 using SharedTest.TestHelpers.INativeHook;
 
@@ -156,7 +158,7 @@ namespace MouseTest
         }
 
         [TestMethod]
-        public async Task MouseClickProducerCallbackTest()
+        public void MouseClickProducerCallbackTest()
         {
             /* PRECONDITIONS */
             Debug.Assert(mouseModule != null);
@@ -171,20 +173,23 @@ namespace MouseTest
             {
                 hookNativeMethodsMock.AllowMessageTypeRegistry(messageType);
             }
+
             foreach (GlobalHook.MessageType messageType in mouseScrollListenedMessagesTypes)
             {
                 hookNativeMethodsMock.AllowMessageTypeRegistry(messageType);
             }
+
             hookNativeMethodsMock.AllowLibraryLoad();
 
-            var autoReset = new AutoResetEvent(false);
+            // !CHANGED! Renamed to improve readability
+            var callbackReceivedEvent = new AutoResetEvent(false);
 
             hookNativeMethodsMock.Mock
                  .Setup(hook => hook.SetHook(It.IsAny<GlobalHook.CppGetMessageCallback>(), It.IsAny<bool>()))?
                  .Callback((GlobalHook.CppGetMessageCallback cppCallback, bool isBlocking) =>
                  {
                      callback = cppCallback;
-                     autoReset.Set();
+                     callbackReceivedEvent.Set();
                  });
 
             /* WHEN */
@@ -193,8 +198,8 @@ namespace MouseTest
             mouseModule.IsActive = true;
 
             //wait for the hookNativeMethodsMock.Mock.Callback is called!
-            Assert.IsTrue(autoReset.WaitOne(maxWaitTime));
-            Assert.IsNotNull(callback);
+            Assert.IsTrue(callbackReceivedEvent.WaitOne(maxWaitTime), "Did not receive callback in time!");
+            Assert.IsNotNull(callback, "Callback received however unexpectedly null!");
 
             //we can manipulate call back here
 
@@ -202,21 +207,40 @@ namespace MouseTest
             int[] data = { 1, 1 };
             GlobalHook.HookMessage hookMessage = new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_RBUTTONDOWN, Hwnd = (IntPtr)1, Data = data };
 
-            callback(hookMessage);
+            // !CHANGED! Renamed to consumeEvent to improve readability
             //Running the task in another thread
-            var reset = new AutoResetEvent(false);
-            await Task.Run(() => findMatch(mouseClickEventProducer, reset));
-            Assert.IsTrue(autoReset.WaitOne(maxWaitTime));
+            var consumedEvent = new ManualResetEvent(false);
+
+            // !CHANGED! We need to run the task in an async way. Therefore we do not use the await keyword
+            // otherwise this blocks.
+            var task = new Task(() => findMatch(mouseClickEventProducer, consumedEvent, (@event) => @event.MouseAction.Equals(MouseAction.RightClick)));
+            task.Start();
+
+            // !CHANGED! We must call the callback after we start the consumer for the producer.
+            // otherwise the message is automatically dismissed.
+            callback(hookMessage);
+
+            // !CHANGED! This failed beacuse you waited on the reset event for the CPPCallback receival
+            Assert.IsTrue(consumedEvent.WaitOne(maxWaitTime), "Did not find a matching mouse event in time.");
         }
 
-        private async Task findMatch(MouseClickEventProducer mcp, AutoResetEvent reset)
+        /// <summary>
+        /// !CHANGED! I altered the method to allow any mouse producer.
+        /// It also uses a predicate to determine the event was received.
+        /// </summary>
+        /// <typeparam name="T">The type of event which will be captured.</typeparam>
+        /// <param name="producer">The producer which offers the events.</param>
+        /// <param name="reset">A reset event to identify if the predicate was met.</param>
+        /// <param name="predicate">A predicate which should return true if the expected event has been received.</param>
+        private async void findMatch<T>(DefaultEventQueue<T> producer, ManualResetEvent reset, Func<T, bool> predicate) where T : MouseEvent
         { 
-            await foreach (var @event in mcp.GetEvents())
+            await foreach (var @event in producer.GetEvents())
             {
-                //if (@event.MouseAction.Equals(MouseAction.RightClick)) {
+                if(predicate.Invoke(@event))
+                {
                     reset.Set();
                     break;
-                //} 
+                }
             }
         }
     }
