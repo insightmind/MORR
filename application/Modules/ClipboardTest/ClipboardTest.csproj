@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\SharedTest\SharedTest.csproj" />
     <ProjectReference Include="..\Clipboard\Clipboard.csproj" />
   </ItemGroup>
 
