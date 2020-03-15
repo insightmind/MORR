@@ -142,7 +142,7 @@ Bitte kontaktieren Sie einen Administrator.</value>
     <value>Aufnahme abbrechen</value>
   </data>
   <data name="Information_Dialog_Button_OK" xml:space="preserve">
-    <value>Akkzeptieren</value>
+    <value>Akzeptieren</value>
   </data>
   <data name="Information_Dialog_Content" xml:space="preserve">
     <value>Die MORR-Applikation zeichnet Bildschirm-, Tastatur-, Maus-, Zwischenablagen- und Browserdaten auf.
