@@ -24,7 +24,7 @@ namespace MORR.Core.UI
 
             HasLanguageCommandLineArgument = Environment.GetCommandLineArgs().Any(IsLanguageCommandLineArgument);
 
-            if (HasLanguageCommandLineArgument)
+            if (!HasLanguageCommandLineArgument)
             {
                 Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("de-DE");
                 Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("de-DE");
