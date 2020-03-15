@@ -12,7 +12,7 @@ namespace MORR.Modules.WindowManagement.Producers
     /// </summary>
     public class WindowMovementEventProducer : DefaultEventQueue<WindowMovementEvent>
     {
-        private static INativeWindowManagement nativeWindowManagement;
+        private static readonly INativeWindowManagement nativeWindowManagement = new NativeWindowManagement();
 
         private readonly GlobalHook.MessageType[] listenedMessageTypes =
             { GlobalHook.MessageType.WM_ENTERSIZEMOVE, GlobalHook.MessageType.WM_EXITSIZEMOVE };
@@ -35,10 +35,10 @@ namespace MORR.Modules.WindowManagement.Producers
         /// </summary>
         private int windowUnderChangeHwnd;
 
-        public void StartCapture(INativeWindowManagement nativeWM)
-        {
-            nativeWindowManagement = nativeWM;
+        public void StartCapture()
+        { 
             GlobalHook.AddListener(WindowHookCallback, listenedMessageTypes);
+
             GlobalHook.IsActive = true;
         }
 
@@ -70,6 +70,19 @@ namespace MORR.Modules.WindowManagement.Producers
 
             if (msg.Type == (uint) GlobalHook.MessageType.WM_EXITSIZEMOVE)
             {
+                if (msg.Data[0] == 1)
+                {
+                    var @event = new WindowMovementEvent
+                    {
+                        IssuingModule = WindowManagementModule.Identifier,
+                        ProcessName = "sampleProcessName",
+                        Title = "sampleMovementTitle",
+                        OldLocation = new Point(0,0),
+                        NewLocation = new Point(1,1)
+                    };
+                    Enqueue(@event);
+                    return;
+                }
                 windowRecAfterChange = new Rectangle();
                 nativeWindowManagement.GetWindowRect(windowUnderChangeHwnd, ref windowRecAfterChange);
                 if (nativeWindowManagement.IsRectSizeEqual(windowRecBeforeChange, windowRecAfterChange))

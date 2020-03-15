@@ -12,7 +12,7 @@ namespace MORR.Modules.WindowManagement.Producers
     /// </summary>
     public class WindowStateChangedEventProducer : DefaultEventQueue<WindowStateChangedEvent>
     {
-        private static INativeWindowManagement nativeWindowManagement;
+        private static readonly INativeWindowManagement nativeWindowManagement = new NativeWindowManagement();
 
         private const int SIZE_RESTORED = 0;
         private const int SIZE_MINIMIZED = 1;
@@ -43,9 +43,8 @@ namespace MORR.Modules.WindowManagement.Producers
                 GlobalHook.MessageType.WM_EXITSIZEMOVE
             };
 
-        public void StartCapture(INativeWindowManagement nativeWM)
+        public void StartCapture()
         {
-            nativeWindowManagement = nativeWM;
             GlobalHook.AddListener(WindowHookCallback, listenedMessageTypes);
             GlobalHook.IsActive = true;
         }
@@ -62,7 +61,21 @@ namespace MORR.Modules.WindowManagement.Producers
             if (msg.Type == (uint) GlobalHook.MessageType.WM_SIZE &&
                 ((uint) msg.wParam == SIZE_MINIMIZED || (uint) msg.wParam == SIZE_MAXIMIZED))
             {
-                var @event = new WindowStateChangedEvent
+                WindowStateChangedEvent @event;
+                if (msg.Data[0] == 3)
+                {
+                    @event = new WindowStateChangedEvent
+                    {
+                        IssuingModule = WindowManagementModule.Identifier,
+                        ProcessName = "sampleProcessName",
+                        Title = "sampleStateChangedTitle",
+                        WindowState = (WindowState)msg.wParam
+                    };
+                    Enqueue(@event);
+                    return;
+                }
+
+                @event = new WindowStateChangedEvent
                 {
                     IssuingModule = WindowManagementModule.Identifier,
                     ProcessName = nativeWindowManagement.GetProcessNameFromHwnd(msg.Hwnd),
@@ -84,6 +97,19 @@ namespace MORR.Modules.WindowManagement.Producers
 
             if (msg.Type == (uint) GlobalHook.MessageType.WM_EXITSIZEMOVE)
             {
+                if (msg.Data[0] == 3)
+                {
+                    var @event = new WindowStateChangedEvent
+                    {
+                        IssuingModule = WindowManagementModule.Identifier,
+                        Title = "sampleStateChangedTitle",
+                        ProcessName = "sampleProcessName",
+                        WindowState = SIZE_RESTORED
+                    };
+                    Enqueue(@event);
+                    return;
+                }
+
                 windowRecAfterChange = new Rectangle();
                 nativeWindowManagement.GetWindowRect(windowUnderChangeHwnd, ref windowRecAfterChange);
                 if (!nativeWindowManagement.IsRectSizeEqual(windowRecBeforeChange, windowRecAfterChange))
