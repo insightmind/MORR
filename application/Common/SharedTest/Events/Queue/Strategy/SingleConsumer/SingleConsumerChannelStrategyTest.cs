@@ -2,6 +2,8 @@
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MORR.Shared.Events.Queue.Strategy;
+using SharedTest.TestHelpers;
+using SharedTest.TestHelpers.Event;
 
 namespace SharedTest.Events.Queue.Strategy.SingleConsumer
 {

@@ -1,10 +1,12 @@
-﻿using MORR.Shared.Events.Queue.Strategy;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using MORR.Shared.Events.Queue.Strategy;
+using SharedTest.Events;
+using SharedTest.TestHelpers.Event;
 using SharedTest.TestHelpers.Result;
 
-namespace SharedTest.Events.Queue.Strategy
+namespace SharedTest.TestHelpers
 {
     /*
      * The TestProducer class provides a mock for a simple producer of TestEvents which allows several validation

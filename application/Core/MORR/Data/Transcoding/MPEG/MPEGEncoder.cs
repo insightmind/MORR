@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.IO;
+using System.IO.Abstractions;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Media.Core;
@@ -28,7 +29,16 @@ namespace MORR.Core.Data.Transcoding.Mpeg
         [Import]
         private IEncodableEventQueue<DirectXVideoSample> VideoQueue { get; set; }
 
+        private readonly IFileSystem fileSystem;
+
         public ManualResetEvent EncodeFinished { get; } = new ManualResetEvent(false);
+
+        public MpegEncoder() : this(new FileSystem()) { }
+
+        public MpegEncoder(IFileSystem fileSystem)
+        {
+            this.fileSystem = fileSystem;
+        }
 
         public void Encode(DirectoryPath recordingDirectoryPath)
         {
@@ -38,10 +48,10 @@ namespace MORR.Core.Data.Transcoding.Mpeg
             Task.Run(() => InitializeTranscode(recordingDirectoryPath));
         }
 
-        private FileStream GetFileStream(DirectoryPath recordingDirectoryPath)
+        private Stream GetFileStream(DirectoryPath recordingDirectoryPath)
         {
-            var fullPath = Path.Combine(recordingDirectoryPath.ToString(), Configuration.RelativeFilePath.ToString());
-            return File.OpenWrite(fullPath);
+            var fullPath = fileSystem.Path.Combine(recordingDirectoryPath.ToString(), Configuration.RelativeFilePath.ToString());
+            return fileSystem.File.OpenWrite(fullPath);
         }
 
         private async void InitializeTranscode(DirectoryPath recordingDirectoryPath)

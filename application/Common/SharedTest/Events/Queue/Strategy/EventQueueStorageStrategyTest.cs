@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MORR.Shared.Events.Queue.Strategy;
+using SharedTest.TestHelpers.Event;
 
 namespace SharedTest.Events.Queue.Strategy
 {

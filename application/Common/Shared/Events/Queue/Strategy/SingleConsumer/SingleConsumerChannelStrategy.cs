@@ -56,18 +56,33 @@ namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
 
         public void Open()
         {
-            if (!IsClosed) return;
-            FreeReading();
-            
-            eventChannel = CreateChannel();
+            subscriptionMutex.WaitOne(timeOut);
+
+            if (!IsClosed)
+            {
+                subscriptionMutex.ReleaseMutex();
+                return;
+            }
+
             IsClosed = false;
+            subscriptionMutex.ReleaseMutex();
+
+            FreeReading();
+            eventChannel = CreateChannel();
         }
 
         public void Close()
         {
-            if (IsClosed) return;
+            subscriptionMutex.WaitOne(timeOut);
+            if (IsClosed)
+            {
+                subscriptionMutex.ReleaseMutex();
+                return;
+            }
 
             IsClosed = true;
+            subscriptionMutex.ReleaseMutex();
+
             eventChannel.Writer.Complete();
             FreeReading();
         }

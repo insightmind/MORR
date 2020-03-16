@@ -1,11 +1,13 @@
-﻿using MORR.Shared.Events.Queue.Strategy;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using MORR.Shared.Events.Queue.Strategy;
+using SharedTest.Events;
+using SharedTest.TestHelpers.Event;
 using SharedTest.TestHelpers.Result;
 
-namespace SharedTest.Events.Queue.Strategy
+namespace SharedTest.TestHelpers
 {
     /*
      * The TestConsumer class provides mock for a simple consumer which allows several validation
