@@ -13,71 +13,54 @@ namespace MORR.Modules.Keyboard.Producers
     public class KeyboardInteractEventProducer : DefaultEventQueue<KeyboardInteractEvent>
     {
         private static INativeKeyboard nativeKeyboard;
-        private INativeKeyboard.LowLevelKeyboardProc? callback;
-        private IntPtr keyboardHookHandle;
-        
-        public void StartCapture(INativeKeyboard nativeKb)
+
+        private readonly GlobalHook.MessageType[] listenedMessagesTypes =
         {
-            nativeKeyboard = nativeKb;
-            callback = KeyboardHookCallback; // Store callback to prevent GC
-            if (!nativeKeyboard.TrySetKeyboardHook(callback, out keyboardHookHandle))
-            {
-                throw new Exception("Failed hook keyboard.");
-            }
+            GlobalHook.MessageType.WM_KEYDOWN,
+            GlobalHook.MessageType.WM_SYSKEYDOWN
+        };
+
+        public void StartCapture(INativeKeyboard nativeK)
+        {
+            nativeKeyboard = nativeK;
+            GlobalHook.AddListener(KeyboardHookCallback, listenedMessagesTypes);
+            GlobalHook.IsActive = true;
         }
 
         public void StopCapture()
         {
-            if (!nativeKeyboard.UnhookWindowsHookEx(keyboardHookHandle))
-            {
-                throw new Exception("Failed to unhook keyboard.");
-            }
-
-            Close();
+            GlobalHook.RemoveListener(KeyboardHookCallback, listenedMessagesTypes);
+            base.Close();
         }
 
-        private int KeyboardHookCallback(int nCode,
-                                         GlobalHook.MessageType wParam,
-                                         INativeKeyboard.KBDLLHOOKSTRUCT lParam)
-        {
-            if (nCode < 0)
+        private void KeyboardHookCallback(GlobalHook.HookMessage hookMessage) {
+            var virtualKeyCode = hookMessage.wParam;
+            var pressedKey = KeyInterop.KeyFromVirtualKey((int)virtualKeyCode);
+            var modifierKeys = GetModifierKeys();
+
+            byte[] keyState = new byte[256];
+            nativeKeyboard.GetKeyboardState(keyState);
+            System.Text.StringBuilder sbString = new System.Text.StringBuilder(256);
+
+            nativeKeyboard.ToUnicodeEx((uint)(virtualKeyCode),
+                0, keyState, sbString, sbString.Capacity, 0, IntPtr.Zero);
+
+            string keyString = sbString.ToString();
+            char key = '\0';
+            if (!String.IsNullOrEmpty(keyString)) key = sbString.ToString()[0];
+
+            var keyboardEvent = new KeyboardInteractEvent
             {
-                // Required as per documentation
-                // see https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/ms644985(v=vs.85)#return-value
-                return nativeKeyboard.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
-            }
-
-            if(wParam == GlobalHook.MessageType.WM_KEYDOWN || wParam == GlobalHook.MessageType.WM_SYSKEYDOWN)
-            {
-                var virtualKeyCode = lParam.VKCode;
-                var pressedKey = KeyInterop.KeyFromVirtualKey((int)virtualKeyCode);
-                var modifierKeys = GetModifierKeys();
-
-                byte[] keyState = new byte[256];
-                nativeKeyboard.GetKeyboardState(keyState);
-                System.Text.StringBuilder sbString = new System.Text.StringBuilder(256);
-
-                nativeKeyboard.ToUnicodeEx((uint)(lParam.VKCode),
-                    0, keyState, sbString, sbString.Capacity, 0, IntPtr.Zero);
-
-                string keyString = sbString.ToString();
-                char key = '\0';
-                if(!String.IsNullOrEmpty(keyString)) key = sbString.ToString()[0];
-
-                var keyboardEvent = new KeyboardInteractEvent
-                {
-                    MappedCharacter_Unicode = key,
-                    PressedKey_System_Windows_Input_Key = pressedKey,
-                    ModifierKeys_System_Windows_Input_ModifierKeys = modifierKeys,
-                    IssuingModule = KeyboardModule.Identifier,
-                    PressedKeyName = pressedKey.ToString(),
-                    ModifierKeysName = modifierKeys.ToString()
-                };
-                Enqueue(keyboardEvent);
-            }
-            return nativeKeyboard.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
+                MappedCharacter_Unicode = key,
+                PressedKey_System_Windows_Input_Key = pressedKey,
+                ModifierKeys_System_Windows_Input_ModifierKeys = modifierKeys,
+                IssuingModule = KeyboardModule.Identifier,
+                PressedKeyName = pressedKey.ToString(),
+                ModifierKeysName = modifierKeys.ToString()
+            };
+            Enqueue(keyboardEvent);
         }
-       
+
         private static ModifierKeys GetModifierKeys()
         {
             var modifierKeys = ModifierKeys.None;
