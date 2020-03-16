@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Windows;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MORR.Modules.WindowManagement.Events;
-using Point = System.Windows.Point;
-using System.Windows;
 using Size = System.Drawing.Size;
 
 namespace WindowManagementTest
@@ -12,8 +8,6 @@ namespace WindowManagementTest
     [TestClass]
     public class WindowEventTest
     {
-        public class WindowEventImp : WindowEvent { }
-
         [TestMethod]
         public void TestWindowEvent_Title()
         {
@@ -47,14 +41,15 @@ namespace WindowManagementTest
         {
             /* GIVEN */
             var @event = new WindowMovementEvent();
-            var oldLocation = new Point(1,1);
+            var oldLocation = new Point(1, 1);
 
             /* WHEN */
             @event.OldLocation = oldLocation;
 
             /* THEN */
-            Assert.AreEqual<Point>(oldLocation, @event.OldLocation);
+            Assert.AreEqual(oldLocation, @event.OldLocation);
         }
+
         [TestMethod]
         public void TestWindowMovementEvent_NewLocation()
         {
@@ -66,7 +61,7 @@ namespace WindowManagementTest
             @event.NewLocation = newLocation;
 
             /* THEN */
-            Assert.AreEqual<Point>(newLocation, @event.NewLocation);
+            Assert.AreEqual(newLocation, @event.NewLocation);
         }
 
         [TestMethod]
@@ -74,14 +69,15 @@ namespace WindowManagementTest
         {
             /* GIVEN */
             var @event = new WindowResizingEvent();
-            var oldSize = new Size(1,1);
+            var oldSize = new Size(1, 1);
 
             /* WHEN */
             @event.OldSize = oldSize;
 
             /* THEN */
-            Assert.AreEqual<Size>(oldSize, @event.OldSize);
+            Assert.AreEqual(oldSize, @event.OldSize);
         }
+
         [TestMethod]
         public void TestWindowResizingEvent_NewSize()
         {
@@ -93,7 +89,7 @@ namespace WindowManagementTest
             @event.NewSize = newSize;
 
             /* THEN */
-            Assert.AreEqual<Size>(newSize, @event.NewSize);
+            Assert.AreEqual(newSize, @event.NewSize);
         }
 
         [TestMethod]
@@ -107,8 +103,9 @@ namespace WindowManagementTest
             @event.WindowState = windowState;
 
             /* THEN */
-            Assert.AreEqual<WindowState>(windowState, @event.WindowState);
+            Assert.AreEqual(windowState, @event.WindowState);
         }
 
+        public class WindowEventImp : WindowEvent { }
     }
 }
