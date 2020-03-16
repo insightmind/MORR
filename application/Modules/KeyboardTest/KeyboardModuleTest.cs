@@ -171,6 +171,7 @@ namespace KeyboardTest
 
             /* THEN */
             Assert.IsTrue(consumedEvent.Wait(maxWaitTime), "Did not find all matching keyboard interact events in time.");
+            consumedEvent.Dispose();
         }
 
         [TestMethod]
@@ -243,6 +244,7 @@ namespace KeyboardTest
 
             /* THEN */
             Assert.IsTrue(consumedEvent.Wait(maxWaitTime), "Did not find all matching keyboard interact events in time.");
+            consumedEvent.Dispose();
         }
 
 
@@ -303,6 +305,7 @@ namespace KeyboardTest
 
             //wait for the hookNativeMethodsMock.Mock.Callback is called!
             Assert.IsTrue(callbackReceivedEvent.WaitOne(maxWaitTime), "Did not receive callback in time!");
+            callbackReceivedEvent.Dispose();
             Assert.IsNotNull(callback, "Callback received however unexpectedly null!");
             return callback;
         }
