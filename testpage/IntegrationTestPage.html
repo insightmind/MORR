@@ -21,13 +21,14 @@
         Each test consists of two items:<br>
         <b>Action</b> describes the action you (the tester) must perform in order to generate the relevant test data.<br>
         <b>Expected behavior</b> describes the event which should have resulted from your actions and thus be serialized into the recording file.<br>
-        The following tests are grouped be event type.
+        The following tests are grouped by event type.
     </p>
     <p>
         In additional to the data described in the <b>Expected behavior</b> of each respective test, each event is also expected to hold this data:<br>
         <i>CurrentURL</i>: "[TestRoot]IntegrationTestPage.html" unless specified otherwise <br>
         <i>TimeStamp</i>: The serialized time of the event's occurence, e.g. "2020-03-16T17:43:52.517Z"<br>
         <i>IssuingModule</i>: "e9240dc4-f33f-43db-a419-5b36d8279c88"<br>
+        <i>TabID</i>: a positive number
     </p>
 
     <h2>1. ButtonClickEvent</h2>
@@ -44,7 +45,7 @@
     <h3>Test 2</h3>
     <b>Covers testcase(s)</b>: TC560
     <p><b>Action:</b><br>
-        Click the following highlightet text.<br>
+        Click the following highlighted text.<br>
         <br>
         <b>Expected behavior:</b><br>A new ButtonClickEvent is created with following data:<br>
         <i>ButtonTitle</i>: "Click Me (Href)"<br>
@@ -56,7 +57,7 @@
     <h3>Test 1</h3>
     <b>Covers testcase(s)</b>: TC530
     <p><b>Action:</b><br>
-        Click the following highlightet text to open a new Tab. Close this new tab again to return to the current page.<br>
+        Click the following highlighted text to open a new Tab. Close this new tab again to return to the current page.<br>
         <br>
         <b>Expected behavior:</b><br>An new OpenTabEvent, NavigationEvent, two SwitchTabEvents, and a new CloseTabEvent are created. The CloseTabEvent contains following data:<br>
         <i>CurrentURL</i>: "[TestRoot]Subpages/CloseTabSubPage.html"<br>
@@ -67,7 +68,7 @@
     <h3>Test 1</h3>
     <b>Covers testcase(s)</b>: TC590
     <p><b>Action:</b><br>
-        Download the following image, e.g. by rightclicking the highlighted text and choosing "Save Link as".<br>
+        Download the following file, e.g. by rightclicking the highlighted "Download" text and choosing "Save Link as".<br>
         <br>
         <b>Expected behavior:</b><br>A new FileDownloadEvent is created with following data:<br>
         <i>FileURL</i>: "[TestRoot]Subpages/download.png"<br>
@@ -102,7 +103,7 @@
     <h3>Test 1</h3>
     <b>Covers testcase(s)</b>: TC510
     <p><b>Action:</b><br>
-        Click the following highlightet text to open a new Tab.<br>
+        Click the following highlighted text to open a new Tab.<br>
         <br>
         <b>Expected behavior:</b><br>A new OpenTabEvent is created with following data:<br>
         <i>CurrentURL</i>: "url:unknown"<br>
@@ -114,7 +115,7 @@
     <h3>Test 1</h3>
     <b>Covers testcase(s)</b>: TC520
     <p><b>Action:</b><br>
-        Click the following highlightet text to open a new Tab. Afterwards, switch to the previous Tab (containing this webpage).<br>
+        Click the following highlighted text to open a new Tab. Afterwards, switch to the previous Tab (containing this webpage).<br>
         <br>
         <b>Expected behavior:</b><br>Two SwitchTabEvents are created.<br>
         <b>Note:</b> <b>X</b> and <b>Y</b> are arbitrary but fixed positive numbers
@@ -149,14 +150,14 @@
     <h3>Test 1</h3>
     <b>Covers testcase(s)</b>: TC580
     <p><b>Action:</b><br>
-        Select any text from the following sentence by pressing and holding the left mouse button at the start of your selection and releasing the left mouse button at the end of your selection.<br>
+        Select any text from the following sentence (printed in blue) by pressing and holding the left mouse button at the start of your selection and releasing the left mouse button at the end of your selection.<br>
         Your selected text is subsequently called <b>W</b><br>
         <br>
         <b>Expected behavior:</b><br>A new TextSelectionEvent is created with following data:<br>
-        <i>SelectedText</i>: W = your selected text
+        <i>SelectedText</i>: <b>W</b> = your selected text
     </p>
-    Select from this sentence:<br>
-    <i>In almost every program, text can be selected using either the mouse or the keyboard.</i>
+
+    <p style="color:blue;">In almost every program, text can be selected using either the mouse or the keyboard.</p>
 
     <h3>Test 2</h3>
     <b>Covers testcase(s)</b>: TC580
@@ -168,10 +169,10 @@
         <br>
         <b>Expected behavior:</b><br>Two new TextSelectionEvents are created with following data:<br>
         First event:<br>
-        <i>SelectedText</i>: W = your selected text
+        <i>SelectedText</i>: <b>W</b> = your selected text<br>
         Second event:<br>
-        <i>SelectedText</i>: W + 2 character to the right
+        <i>SelectedText</i>: <b>W</b> + 2 characters to the right
     </p>
-    Select from this sentence:<br>
-    <i>In almost every program, text can be selected using either the mouse or the keyboard.</i>
+
+    <p style="color:blue;">In almost every program, text can be selected using either the mouse or the keyboard.</p>
 </body>
