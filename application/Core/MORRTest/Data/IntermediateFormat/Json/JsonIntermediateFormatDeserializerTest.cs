@@ -131,24 +131,36 @@ namespace MORRTest.Data.IntermediateFormat.Json
             container.ComposeExportedValue<IDecodableEventQueue<JsonIntermediateFormatSample>>(inputQueue);
             container.ComposeParts(deserializer);
 
-            var didCompleteEvent = new ManualResetEvent(false);
+            var @event = new TestEvent();
+            var sample = new JsonIntermediateFormatSample
+            {
+                Data = JsonSerializer.SerializeToUtf8Bytes(@event),
+                Timestamp = @event.Timestamp,
+                Type = @event.GetType()
+            };
 
-            deserializer.IsActive = true;
+            var outputReceivedEvent = new ManualResetEvent(false);
+            var didCloseEvent = new ManualResetEvent(false);
 
             /* WHEN */
-            ExpectOutput(outputQueue, (_) => true, () => didCompleteEvent.Set());
+            deserializer.IsActive = true;
+            Assert.IsTrue(deserializer.IsActive, "Deserializer did not activate correctly!");
+
+            ExpectOutput(outputQueue, (_) => outputReceivedEvent.Set(), () => didCloseEvent.Set());
+
+            inputQueue.Enqueue(sample);
+            Assert.IsTrue(outputReceivedEvent.WaitOne(maxWaitTime), "Did not receive serialized event in time!");
 
             inputQueue.Close();
-            Assert.IsTrue(inputQueue.IsClosed);
 
             /* THEN */
-            Assert.IsTrue(didCompleteEvent.WaitOne(maxWaitTime), "Did not complete in time!");
-            Assert.IsTrue(outputQueue.IsClosed);
+            Assert.IsTrue(inputQueue.IsClosed, "InputQueue failed to close!");
+            Assert.IsTrue(didCloseEvent.WaitOne(maxWaitTime), "Did not close output queue in time!");
         }
 
         private static void ExpectOutput<T>(EventQueue<T> queue, Func<T, bool> predicate, Action completeAction = null) where T : Event
         {
-            var task = new Task(async () =>
+            var thread = new Thread(async () =>
             {
                 await foreach (var @event in queue.GetEvents())
                 {
@@ -158,7 +170,7 @@ namespace MORRTest.Data.IntermediateFormat.Json
                 completeAction?.Invoke();
             });
 
-            task.RunSynchronously();
+            thread.Start();
         }
     }
 }

@@ -31,8 +31,8 @@ namespace SharedTest.TestHelpers.EventQueueStrategy
             strategy.Open();
             Assert.IsTrue(!strategy.IsClosed);
 
-            consumer.Consume(false, (@event, num) => num < expectedEventCount, result => result.EventSuccess(consumeEvent));
-            producer.Produce(false, num => num < maxEvents, result => result.EventSuccess(produceEvent));
+            consumer.Consume((@event, num) => num < expectedEventCount, result => result.EventSuccess(consumeEvent));
+            producer.Produce(num => num < maxEvents, result => result.EventSuccess(produceEvent));
 
             /* THEN */
             Assert.IsTrue(produceEvent.WaitOne(maxWaitTime), "Producer did not complete successfully");

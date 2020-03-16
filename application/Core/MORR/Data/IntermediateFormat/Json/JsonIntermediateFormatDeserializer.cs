@@ -44,6 +44,12 @@ namespace MORR.Core.Data.IntermediateFormat.Json
 
         private async void LinkSingleQueue(ISupportDeserializationEventQueue<Event> eventQueue)
         {
+            if (IntermediateFormatSampleQueue.IsClosed)
+            {
+                eventQueue.Close();
+                return;
+            }
+
             await foreach (var sample in IntermediateFormatSampleQueue.GetEvents())
             {
                 if (sample.Type == eventQueue?.EventType)
@@ -53,7 +59,7 @@ namespace MORR.Core.Data.IntermediateFormat.Json
                 }
             }
 
-            eventQueue?.Close();
+            eventQueue.Close();
         }
     }
 }

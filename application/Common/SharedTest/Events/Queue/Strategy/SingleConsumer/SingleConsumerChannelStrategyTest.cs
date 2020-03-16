@@ -23,14 +23,12 @@ namespace SharedTest.Events.Queue.Strategy.SingleConsumer
             /* GIVEN */
             var consumer = new TestConsumer(Strategy);
             consumer.Consume(
-                false,
                 (@event, index) => true,
                 result => result?.EventSuccess(allowedConsumerDidNotFailed));
 
             /* WHEN */
             var invalidConsumer = new TestConsumer(Strategy);
             invalidConsumer.Consume(
-                true,
                 (@event, num) => true,
                 result => result?.EventThrows<ChannelConsumingException>(invalidConsumerFailed));
 

@@ -89,7 +89,7 @@ namespace SharedTest.Utility
         public void TestUtility_GetTypeFromAnyAssembly_Invalid()
         {
             /* GIVEN */
-            var typeName = "NULL";
+            const string typeName = "NULL";
 
             /* WHEN */
             var type = MORR.Shared.Utility.Utility.GetTypeFromAnyAssembly(typeName);

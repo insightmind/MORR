@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
 using MORR.Shared.Events.Queue.Strategy;
-using SharedTest.Events;
 using SharedTest.TestHelpers.Event;
 using SharedTest.TestHelpers.Result;
 
@@ -16,7 +14,7 @@ namespace SharedTest.TestHelpers
     public class TestConsumer
     {
         private readonly IEventQueueStorageStrategy<TestEvent> strategy;
-        private Task task;
+        private Thread thread;
 
         /// <summary>
         /// Instantiates a new TestConsumer which should interact with the given strategy.
@@ -30,16 +28,15 @@ namespace SharedTest.TestHelpers
         /// <summary>
         /// Starts consuming from the strategy.
         /// </summary>
-        /// <param name="runsAsync">Defines whether the producing action should run asynchronously ('true') or synchronously ('false').</param>
         /// <param name="continueCondition">The condition action for defining a producing completion.</param>
         /// <param name="completionAction">The completion action is called on completion. It is also called if any exception occurred.</param>
-        public void Consume(bool runsAsync, Func<TestEvent, int, bool> continueCondition, Action<ITestResult> completionAction)
+        public void Consume(Func<TestEvent, int, bool> continueCondition, Action<ITestResult> completionAction)
         {
             Debug.Assert(continueCondition != null);
             Debug.Assert(completionAction != null);
             Debug.Assert(strategy != null);
 
-            task = new Task(async () =>
+            thread = new Thread(async () =>
             {
                 var count = 0;
                 var result = new TestResult();
@@ -66,36 +63,18 @@ namespace SharedTest.TestHelpers
                 completionAction(result);
             });
 
-            /*
-             * This defines the way the consumer is actually run. In minor cases
-             * you may want to run it synchronously on the current scheduler
-             * e.g. if you want to dequeue all events which were previously committed by a
-             * synchronous producer.
-             *
-             * Otherwise I encourage you to choose the default
-             * asynchronous running. However you may than need to listen to the completion action
-             * to gather test information.
-             */
-            if (runsAsync)
-            {
-                task.Start();
-            }
-            else
-            {
-                task.RunSynchronously();
-            }
+            thread.Start();
         }
 
         /// <summary>
         /// Runs the Consumer unconditionally as long as the queue does not cancel the consuming itself
         /// through closing the event channel.
         /// </summary>
-        /// <param name="runsAsync">Defines whether the producing action should run asynchronously ('true') or synchronously ('false').</param>
         /// <returns>A ManualResetEvent defining whether the consumer was cancelled using the event channel closing.</returns>
-        public ManualResetEvent ConsumeUnconditionally(bool runsAsync = true)
+        public ManualResetEvent ConsumeUnconditionally()
         {
             var resetEvent = new ManualResetEvent(false);
-            Consume(runsAsync, (@event, num) => true, result => result.EventSuccess(resetEvent));
+            Consume((@event, num) => true, result => result.EventSuccess(resetEvent));
             return resetEvent;
         }
     }

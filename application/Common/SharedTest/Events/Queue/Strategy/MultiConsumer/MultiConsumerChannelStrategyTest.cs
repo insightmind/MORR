@@ -27,7 +27,6 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
             {
                 var consumer = new TestConsumer(Strategy);
                 consumer.Consume(
-                    false,
                     (@event, index) => true,
                     result => result?.EventSuccess(allowedConsumerDidNotFailed));
             }
@@ -35,7 +34,6 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
             /* WHEN */
             var invalidConsumer = new TestConsumer(Strategy);
             invalidConsumer.Consume(
-                false,
                 (@event, num) => true,
                 result => result?.EventThrows<ChannelConsumingException>(invalidConsumerFailed));
 
@@ -67,7 +65,6 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
 
             /* GIVEN */
             validationConsumer.Consume(
-                false,
                 (@event, index) => shouldContinue,
                 result => result.EventThrows<ChannelConsumingException>(allowedConsumerDidFail));
 
@@ -81,7 +78,7 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
             Assert.IsFalse(allowedConsumerDidFail.WaitOne(maxWaitTime));
 
             var newConsumer = new TestConsumer(Strategy);
-            newConsumer.Consume(true,(@event, num) => true, result => result.EventThrows<ChannelConsumingException>(retryConsumerDidFail));
+            newConsumer.Consume((@event, num) => true, result => result.EventThrows<ChannelConsumingException>(retryConsumerDidFail));
 
             /* THEN */
             Assert.IsFalse(allowedConsumerDidFail.WaitOne(maxWaitTime), "An Error occurred while consuming using valid consumers.");
@@ -107,7 +104,6 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
             {
                 var consumer = new TestConsumer(Strategy);
                 consumer.Consume(
-                    false,
                     (@event, index) => index < maxEvents,
                     result =>
                     {
@@ -117,7 +113,7 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
 
             /* WHEN */
             var producer = new TestProducer(Strategy);
-            producer.Produce(false, num => num < maxEvents, result => result.EventSuccess(producerFinished));
+            producer.Produce(num => num < maxEvents, result => result.EventSuccess(producerFinished));
 
             /* THEN */
             Assert.IsTrue(producerFinished.WaitOne(maxWaitTime), "Producer was not able to queue all events!");

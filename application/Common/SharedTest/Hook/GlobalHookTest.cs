@@ -187,7 +187,6 @@ namespace SharedTest.Hook
             Debug.Assert(hookNativeMethods.Mock != null);
 
             /* GIVEN */
-            const int numOfEvent = 50;
             const GlobalHook.MessageType messageType = GlobalHook.MessageType.WM_USER;
 
             var autoReset = new AutoResetEvent(false);
@@ -238,7 +237,7 @@ namespace SharedTest.Hook
 
             /* THEN */
             Assert.IsFalse(GlobalHook.IsActive);
-            hookNativeMethods.Mock.Verify(mockedObject => mockedObject.FreeLibrary(hookNativeMethods.mockLibraryHandle), Times.AtLeastOnce);
+            hookNativeMethods.Mock.Verify(mockedObject => mockedObject.FreeLibrary(hookNativeMethods.MockLibraryHandle), Times.AtLeastOnce);
         }
     }
 }

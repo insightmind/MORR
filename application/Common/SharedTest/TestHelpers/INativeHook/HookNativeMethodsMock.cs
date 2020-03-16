@@ -9,7 +9,7 @@ namespace SharedTest.TestHelpers.INativeHook
     {
         public readonly Mock<IHookNativeMethods> Mock = new Mock<IHookNativeMethods>();
         public const string mockLibraryName = "MockLibraryName.someDLL";
-        public readonly IntPtr mockLibraryHandle = new IntPtr(0x1);
+        public readonly IntPtr MockLibraryHandle = new IntPtr(0x1);
 
         public void Initialize()
         {
@@ -26,7 +26,7 @@ namespace SharedTest.TestHelpers.INativeHook
         {
             Mock?
                 .Setup(mock => mock.LoadLibrary())?
-                .Returns(mockLibraryHandle); // We just return a non null pointer
+                .Returns(MockLibraryHandle); // We just return a non null pointer
         }
 
         public void DisallowLibraryLoad()

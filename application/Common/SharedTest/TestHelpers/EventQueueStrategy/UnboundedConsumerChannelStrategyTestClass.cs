@@ -27,8 +27,8 @@ namespace SharedTest.TestHelpers.EventQueueStrategy
             var consumeEvent = new ManualResetEvent(false);
 
             /* WHEN */
-            consumer.Consume(false, (@event, num) => num < maxEvents, result => result.EventSuccess(consumeEvent));
-            producer.Produce(false, num => num < maxEvents, result => result.EventSuccess(produceEvent));
+            consumer.Consume((@event, num) => num < maxEvents, result => result.EventSuccess(consumeEvent));
+            producer.Produce(num => num < maxEvents, result => result.EventSuccess(produceEvent));
 
             /* THEN */
             Assert.IsTrue(produceEvent.WaitOne(maxWaitTime), "Producer did not finish in time");

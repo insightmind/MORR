@@ -9,8 +9,6 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
     [TestClass]
     public class BoundedMultiConsumerChannelStrategyTest: MultiConsumerChannelStrategyTest<BoundedMultiConsumerChannelStrategy<TestEvent>>
     {
-       
-
         [TestInitialize]
         public void BeforeTest()
         {
