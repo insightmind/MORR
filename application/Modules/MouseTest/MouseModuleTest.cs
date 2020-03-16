@@ -14,6 +14,7 @@ using MORR.Shared.Events.Queue;
 using MORR.Shared.Hook;
 using SharedTest.TestHelpers.INativeHook;
 using System.Windows;
+using MORR.Modules.Mouse.Native;
 
 namespace MouseTest
 {
@@ -36,6 +37,7 @@ namespace MouseTest
         private MouseScrollEventProducer mouseScrollEventProducer;
         private MouseModule mouseModule;
         private MouseModuleConfiguration mouseModuleConfiguration;
+        private Mock<INativeMouse> nativeMouseMock;
         private HookNativeMethodsMock hookNativeMethodsMock;
 
         private readonly GlobalHook.MessageType[] mouseClickListenedMessagesTypes =
@@ -76,6 +78,9 @@ namespace MouseTest
             container.ComposeExportedValue(mouseScrollEventProducer);
             container.ComposeExportedValue(mouseModuleConfiguration);
             container.ComposeParts(mouseModule);
+
+            //initialize the native mouse mock
+            nativeMouseMock = new Mock<INativeMouse>();
 
             //initialzie the hookNativeMethodsMock
             hookNativeMethodsMock = new HookNativeMethodsMock();
@@ -202,7 +207,48 @@ namespace MouseTest
             }
 
             /* THEN */
-            Assert.IsTrue(consumedEvent.Wait(maxWaitTime), "Did not find all matching mouse events in time.");
+            Assert.IsTrue(consumedEvent.Wait(maxWaitTime), "Did not find all matching mouse click events in time.");
+        }
+
+        [TestMethod]
+        public void TestMouseScrollEventProducer_Callback()
+        {
+            /* PRECONDITIONS */
+            Debug.Assert(mouseModule != null);
+            Debug.Assert(mouseScrollEventProducer != null);
+            Debug.Assert(hookNativeMethodsMock != null);
+            Debug.Assert(hookNativeMethodsMock.Mock != null);
+
+            /* GIVEN */
+            GlobalHook.CppGetMessageCallback callback = GetCallback();
+            //setting up fake messages and corresponding expected Events
+            GlobalHook.HookMessage[] hookMessages = {
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_MOUSEWHEEL, Hwnd = (IntPtr)1, wParam = (IntPtr)0x00780000, Data = new int[] { 10, 100 }},
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_MOUSEWHEEL, Hwnd = (IntPtr)2, wParam = (IntPtr)0x00080000, Data = new int[] { 20, 200 }},
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_MOUSEWHEEL, Hwnd = (IntPtr)23, wParam = (IntPtr)0xfff80000, Data = new int[] { 54, 23 }},
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_MOUSEWHEEL, Hwnd = (IntPtr)43, wParam = (IntPtr)0xff880000, Data = new int[] { 33, 101 }}
+            };
+            MouseScrollEvent[] expectedEvents = {
+            new MouseScrollEvent { ScrollAmount = 120, HWnd = "1", MousePosition = new Point { X = 10, Y = 100 }},
+            new MouseScrollEvent { ScrollAmount = 8, HWnd = "2", MousePosition = new Point { X = 20, Y = 200 }},
+            new MouseScrollEvent { ScrollAmount = -8, HWnd = "23", MousePosition = new Point { X = 54, Y = 23 }},
+            new MouseScrollEvent { ScrollAmount = -120, HWnd = "43", MousePosition = new Point { X = 33, Y = 101 }}
+            };
+
+            /* WHEN */
+            //Running the task in another thread
+            var consumedEvent = new CountdownEvent(hookMessages.Length);
+            var task = new Task(() => findMatch(mouseScrollEventProducer, consumedEvent, expectedEvents, isMouseScrollEventFound));
+            task.Start();
+            // We must call the callback after we start the consumer for the producer.
+            // otherwise the message is automatically dismissed.
+            foreach (GlobalHook.HookMessage message in hookMessages)
+            {
+                callback(message);
+            }
+
+            /* THEN */
+            Assert.IsTrue(consumedEvent.Wait(maxWaitTime), "Did not find all matching mouse scroll events in time.");
         }
 
         /// <summary>
@@ -267,8 +313,8 @@ namespace MouseTest
         }
 
         /// <summary>
-        ///     Return true if an event is in the array of expected events.
-        ///     This method itslef defines the logic to determine if two events are equal.
+        ///     Return true if an mouse click event is in the array of expected events.
+        ///     This method itslef defines the logic to determine if two mouse click events are equal.
         /// </summary>
         /// <param name="event">an event that is expected to be in the array of expected events</param>
         /// <param name="expectedEvents">an array of expected events</param>
@@ -278,6 +324,22 @@ namespace MouseTest
             foreach (MouseClickEvent e in expectedEvents)
             {
                 if (@event.MouseAction.Equals(e.MouseAction) && @event.MousePosition.Equals(e.MousePosition) && @event.HWnd.Equals(e.HWnd)) return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        ///     Return true if an mouse scroll event is in the array of expected events.
+        ///     This method itslef defines the logic to determine if two mouse scroll events are equal.
+        /// </summary>
+        /// <param name="event">an event that is expected to be in the array of expected events</param>
+        /// <param name="expectedEvents">an array of expected events</param>
+        /// <returns>true if an event is indeed in the array of expected events.</returns>
+        private bool isMouseScrollEventFound(MouseScrollEvent @event, MouseScrollEvent[] expectedEvents)
+        {
+            foreach (MouseScrollEvent e in expectedEvents)
+            {
+                if (@event.ScrollAmount.Equals(e.ScrollAmount) && @event.MousePosition.Equals(e.MousePosition) && @event.HWnd.Equals(e.HWnd)) return true;
             }
             return false;
         }
