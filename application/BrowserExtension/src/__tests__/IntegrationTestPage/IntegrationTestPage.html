@@ -10,6 +10,20 @@
         You can find a description of the expected behavior in each section.<br>
         When you see <b>[TestRoot]</b> in the data description of an event, this refers to the root-path of the testpage, e.g. <i>file:///C:/Users/JohnDoe/Documents/IntegrationTestPage/</i>
     </p>
+    <p>
+        Please make sure to run these tests in an otherwise empty browser (no additional tabs, windows of the same browser).<br>
+        Also make sure that the Webextension is properly installed (the icon should turn red within 5 seconds when MORR starts recording).<br>
+        After starting a MORR recording, please wait for the Webextension icon to turn red before starting to perform the tests.
+    </p>
+
+    <h2>Info</h2>
+    <p>
+        Each test consists of two items:<br>
+        <b>Action</b> describes the action you (the tester) must perform in order to generate the relevant test data.<br>
+        <b>Expected behavior</b> describes the event which should have resulted from your actions and thus be serialized into the recording file.<br>
+        The following tests are grouped be event type.
+    </p>
+
     <h2>1. ButtonClickEvent</h2>
     <h3>Test 1</h3>
     <p><b>Action:</b><br>Click the following button<br>
@@ -35,7 +49,7 @@
     <p><b>Action:</b><br>
         Click the following highlightet text to open a new Tab. Close this new tab again to return to the current page.<br>
         <br>
-        <b>Expected behavior:</b><br>A new OpenTabEvent, two SwitchTabEvents, and a new CloseTabEvent are created. The CloseTabEvent contains following data:<br>
+        <b>Expected behavior:</b><br>An new OpenTabEvent, NavigationEvent, two SwitchTabEvents, and a new CloseTabEvent are created. The CloseTabEvent contains following data:<br>
         <i>CurrentURL</i>: "[TestRoot]Subpages/CloseTabSubPage.html"<br>
     </p>
     <a target="_blank" rel="noopener noreferrer" href="Subpages/CloseTabSubPage.html">Click Me to open a New Tab</a>
@@ -89,10 +103,17 @@
         Click the following highlightet text to open a new Tab. Afterwards, switch to the previous Tab (containing this webpage).<br>
         <br>
         <b>Expected behavior:</b><br>Two SwitchTabEvents are created.<br>
-        The first SwitchTabEvent has this data:
+        <b>Note:</b> <b>X</b> and <b>Y</b> are arbitrary but fixed positive numbers
+        <br><br>
+        The first SwitchTabEvent has this data<br>
         <i>CurrentURL</i>: "[TestRoot]IntegrationTestPage.html"<br>
-        The second SwitchTabEvent has this data:
+        <i>NewTabID</i>: <b>X</b><br>
+        <i>TabID</i>: <b>Y</b><br>
+        <br>
+        The second SwitchTabEvent has this data:<br>
         <i>CurrentURL</i>: "[TestRoot]SubPages/SwitchTabSubPage.html"<br>
+        <i>NewTabID</i>: <b>Y</b><br>
+        <i>TabID</i>: <b>X</b><br>
     </p>
 
     <a target="_blank" rel="noopener noreferrer" href="Subpages/SwitchTabSubPage.html">Click Me to open a New Tab</a>
