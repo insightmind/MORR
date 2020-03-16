@@ -5,7 +5,7 @@ namespace MORR.Modules.Mouse.Native
 {
     public interface INativeMouse
     {
-        bool GetCursorPos(out POINT lpPoint);
+        INativeMouse.POINT GetCursorPos();
 
         /// <summary>
         ///     The POINT is of two int(32 bits) for the usage in MSLLHOOKSTRUCT.

@@ -4,9 +4,11 @@ namespace MORR.Modules.Mouse.Native
 {
     internal class NativeMouse : INativeMouse
     {
-        bool INativeMouse.GetCursorPos(out INativeMouse.POINT lpPoint)
+        INativeMouse.POINT INativeMouse.GetCursorPos()
         {
-            return GetCursorPos(out lpPoint);
+            INativeMouse.POINT lpPoint;
+            GetCursorPos(out lpPoint);
+            return lpPoint;
         }
 
         [DllImport("user32.dll")]
