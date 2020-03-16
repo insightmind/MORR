@@ -121,6 +121,11 @@ namespace MORR.Core.Session
 
         public void Process(IEnumerable<DirectoryPath> recordings)
         {
+            if (isRecording)
+            {
+                throw new AlreadyRecordingException();
+            }
+
             if (!decoders.Any())
             {
                 throw new InvalidConfigurationException("No decoder specified for processing operation.");

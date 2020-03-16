@@ -17,13 +17,14 @@ namespace MORRTest.Configuration
     public class ConfigurationManagerTest
     {
         public IConfigurationManager configManager;
-        private readonly MockFileSystem fileSystem = new MockFileSystem();
+        private MockFileSystem fileSystem;
 
         private const string defaultPath = "C:\\temp\\config.morr";
 
         [TestInitialize]
         public void BeforeTest()
         {
+            fileSystem = new MockFileSystem();
             configManager = new ConfigurationManager(fileSystem);
         }
 
