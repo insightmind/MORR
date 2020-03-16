@@ -36,9 +36,10 @@ namespace MORR.Modules.WindowManagement.Producers
         /// <param name="msg">the hook message</param>
         private void WindowHookCallback(GlobalHook.HookMessage msg)
         {
+            const int dataParamTest = 1;
             if ((int) msg.wParam == WA_ACTIVE)
             {
-                if (msg.Data[0] == 1)
+                if (msg.Data[0] == dataParamTest)
                 {
                     var @event = new WindowFocusEvent
                     {
@@ -49,6 +50,7 @@ namespace MORR.Modules.WindowManagement.Producers
                     Enqueue(@event);
                     return;
                 }
+
                 var hwnd = nativeWindowManagement.GetForegroundWindow();
                 if (lastHwnd != hwnd)
                 {

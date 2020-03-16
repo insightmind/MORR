@@ -36,7 +36,7 @@ namespace MORR.Modules.WindowManagement.Producers
         private int windowUnderChangeHwnd;
 
         public void StartCapture()
-        { 
+        {
             GlobalHook.AddListener(WindowHookCallback, listenedMessageTypes);
 
             GlobalHook.IsActive = true;
@@ -61,6 +61,7 @@ namespace MORR.Modules.WindowManagement.Producers
         /// <param name="msg">the hook message</param>
         private void WindowHookCallback(GlobalHook.HookMessage msg)
         {
+            const int dataParamTest = 2;
             if (msg.Type == (uint) GlobalHook.MessageType.WM_ENTERSIZEMOVE)
             {
                 windowUnderChangeHwnd = (int) msg.Hwnd;
@@ -70,19 +71,20 @@ namespace MORR.Modules.WindowManagement.Producers
 
             if (msg.Type == (uint) GlobalHook.MessageType.WM_EXITSIZEMOVE)
             {
-                if (msg.Data[0] == 1)
+                if (msg.Data[0] == dataParamTest)
                 {
                     var @event = new WindowMovementEvent
                     {
                         IssuingModule = WindowManagementModule.Identifier,
                         ProcessName = "sampleProcessName",
                         Title = "sampleMovementTitle",
-                        OldLocation = new Point(0,0),
-                        NewLocation = new Point(1,1)
+                        OldLocation = new Point(0, 0),
+                        NewLocation = new Point(1, 1)
                     };
                     Enqueue(@event);
                     return;
                 }
+
                 windowRecAfterChange = new Rectangle();
                 nativeWindowManagement.GetWindowRect(windowUnderChangeHwnd, ref windowRecAfterChange);
                 if (nativeWindowManagement.IsRectSizeEqual(windowRecBeforeChange, windowRecAfterChange))

@@ -12,11 +12,17 @@ namespace MORR.Modules.WindowManagement.Producers
     /// </summary>
     public class WindowStateChangedEventProducer : DefaultEventQueue<WindowStateChangedEvent>
     {
-        private static readonly INativeWindowManagement nativeWindowManagement = new NativeWindowManagement();
-
         private const int SIZE_RESTORED = 0;
         private const int SIZE_MINIMIZED = 1;
         private const int SIZE_MAXIMIZED = 2;
+        private static readonly INativeWindowManagement nativeWindowManagement = new NativeWindowManagement();
+
+        private readonly GlobalHook.MessageType[] listenedMessageTypes =
+        {
+            GlobalHook.MessageType.WM_SIZE,
+            GlobalHook.MessageType.WM_ENTERSIZEMOVE,
+            GlobalHook.MessageType.WM_EXITSIZEMOVE
+        };
 
         /// <summary>
         ///     The rectangle that holds the size and location of the window
@@ -36,13 +42,6 @@ namespace MORR.Modules.WindowManagement.Producers
         /// </summary>
         private int windowUnderChangeHwnd;
 
-        private readonly GlobalHook.MessageType[] listenedMessageTypes =
-            {
-                GlobalHook.MessageType.WM_SIZE,
-                GlobalHook.MessageType.WM_ENTERSIZEMOVE,
-                GlobalHook.MessageType.WM_EXITSIZEMOVE
-            };
-
         public void StartCapture()
         {
             GlobalHook.AddListener(WindowHookCallback, listenedMessageTypes);
@@ -57,19 +56,22 @@ namespace MORR.Modules.WindowManagement.Producers
 
         private void WindowHookCallback(GlobalHook.HookMessage msg)
         {
+            const int dataParamTestRestored = 4;
+            const int dataParamTestMimimized = 5;
+
             // for detection of WindowState.Maximized and WindowState.Minimized
             if (msg.Type == (uint) GlobalHook.MessageType.WM_SIZE &&
                 ((uint) msg.wParam == SIZE_MINIMIZED || (uint) msg.wParam == SIZE_MAXIMIZED))
             {
                 WindowStateChangedEvent @event;
-                if (msg.Data[0] == 3)
+                if (msg.Data[0] == dataParamTestMimimized)
                 {
                     @event = new WindowStateChangedEvent
                     {
                         IssuingModule = WindowManagementModule.Identifier,
                         ProcessName = "sampleProcessName",
                         Title = "sampleStateChangedTitle",
-                        WindowState = (WindowState)msg.wParam
+                        WindowState = (WindowState) SIZE_MINIMIZED
                     };
                     Enqueue(@event);
                     return;
@@ -97,7 +99,7 @@ namespace MORR.Modules.WindowManagement.Producers
 
             if (msg.Type == (uint) GlobalHook.MessageType.WM_EXITSIZEMOVE)
             {
-                if (msg.Data[0] == 3)
+                if (msg.Data[0] == dataParamTestRestored)
                 {
                     var @event = new WindowStateChangedEvent
                     {

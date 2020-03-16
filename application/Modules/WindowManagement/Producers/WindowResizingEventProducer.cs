@@ -59,6 +59,7 @@ namespace MORR.Modules.WindowManagement.Producers
         /// <param name="msg">the hook message</param>
         private void WindowHookCallback(GlobalHook.HookMessage msg)
         {
+            const int dataParamTest = 3;
             if (msg.Type == (uint) GlobalHook.MessageType.WM_ENTERSIZEMOVE)
             {
                 windowUnderChangeHwnd = (int) msg.Hwnd;
@@ -68,19 +69,20 @@ namespace MORR.Modules.WindowManagement.Producers
 
             if (msg.Type == (uint) GlobalHook.MessageType.WM_EXITSIZEMOVE)
             {
-                if (msg.Data[0] == 2)
+                if (msg.Data[0] == dataParamTest)
                 {
                     var @event = new WindowResizingEvent
                     {
                         IssuingModule = WindowManagementModule.Identifier,
                         ProcessName = "sampleProcessName",
                         Title = "sampleResizingTitle",
-                        OldSize = new Size(0,0),
+                        OldSize = new Size(0, 0),
                         NewSize = new Size(1, 1)
                     };
                     Enqueue(@event);
                     return;
                 }
+
                 windowRecAfterChange = new Rectangle();
                 nativeWindowManagement.GetWindowRect(windowUnderChangeHwnd, ref windowRecAfterChange);
                 if (!nativeWindowManagement.IsRectSizeEqual(windowRecBeforeChange, windowRecAfterChange))
