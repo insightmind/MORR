@@ -54,6 +54,21 @@ namespace MORRTest.Session
             hookMock.AllowLibraryLoad();
         }
 
+        [TestCleanup]
+        public void AfterTest()
+        {
+            container.Dispose();
+            container = null;
+            testFilePath = null;
+            config = null;
+            encoder = null;
+            decoder = null;
+            moduleManagerMock = null;
+            configurationManagerMock = null;
+            fileSystemMock = null;
+            bootstrapperMock = null;
+        }
+
         /// <summary>
         /// Prepares the bootstrapper by setting up the mock so it
         /// loads the test imports correctly and composes the parts needed for the tests.

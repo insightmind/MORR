@@ -16,8 +16,9 @@ namespace MORRTest.Configuration
     [TestClass]
     public class ConfigurationManagerTest
     {
-        public IConfigurationManager configManager;
+        private IConfigurationManager configManager;
         private MockFileSystem fileSystem;
+        private CompositionContainer container;
 
         private const string defaultPath = "C:\\temp\\config.morr";
 
@@ -26,6 +27,15 @@ namespace MORRTest.Configuration
         {
             fileSystem = new MockFileSystem();
             configManager = new ConfigurationManager(fileSystem);
+            container = new CompositionContainer();
+        }
+
+        [TestCleanup]
+        public void AfterTest()
+        {
+            container.Dispose();
+            configManager = null;
+            fileSystem = null;
         }
 
         [TestMethod]
@@ -79,6 +89,7 @@ namespace MORRTest.Configuration
             /* PRECONDITION */
             Debug.Assert(configManager != null);
             Debug.Assert(fileSystem != null);
+            Debug.Assert(container != null);
 
             /* GIVEN */
             var configType = typeof(TestConfiguration).FullName;
@@ -86,7 +97,6 @@ namespace MORRTest.Configuration
             var fullConfig = "{\n\"" + configType + "\":" + testConfig + "\n}";
 
             var configurationMock = new TestConfiguration(new RawConfiguration(testConfig));
-            var container = new CompositionContainer();
             container.ComposeExportedValue<IConfiguration>(configurationMock);
             container.ComposeParts(configManager);
 
@@ -114,6 +124,7 @@ namespace MORRTest.Configuration
             /* PRECONDITION */
             Debug.Assert(configManager != null);
             Debug.Assert(fileSystem != null);
+            Debug.Assert(container != null);
 
             /* GIVEN */
             // We use the normal name here as this does not uniquely identify the type
@@ -122,7 +133,7 @@ namespace MORRTest.Configuration
             var fullConfig = "{\n\"" + configType + "\":" + testConfig + "\n}";
 
             var configurationMock = new TestConfiguration(new RawConfiguration(testConfig));
-            var container = new CompositionContainer();
+            
             container.ComposeExportedValue<IConfiguration>(configurationMock);
             container.ComposeParts(configManager);
 

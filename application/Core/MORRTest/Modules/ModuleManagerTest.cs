@@ -20,7 +20,7 @@ namespace MORRTest.Modules
         private TestModuleTwo module2;
         private ModuleManager manager;
         private GlobalModuleConfiguration config;
-
+        private CompositionContainer container;
 
         [TestInitialize]
         public void BeforeTest()
@@ -28,6 +28,16 @@ namespace MORRTest.Modules
             manager = new ModuleManager();
             module1 = new TestModuleOne();
             module2 = new TestModuleTwo();
+        }
+
+        [TestCleanup]
+        public void AfterTest()
+        {
+            container.Dispose();
+            manager = null;
+            module1 = null;
+            module2 = null;
+            container = null;
         }
 
         /// <summary>
@@ -175,7 +185,7 @@ namespace MORRTest.Modules
         /// </summary>
         private void Compose()
         {
-            var container = new CompositionContainer();
+            container = new CompositionContainer();
             container.ComposeExportedValue<IModule>(module1);
             container.ComposeExportedValue<IModule>(module2);
             container.ComposeExportedValue(config);
