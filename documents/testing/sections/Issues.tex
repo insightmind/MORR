@@ -14,3 +14,6 @@ The primary purpose of the testing phase is to identify and correct issues with 
 \section{Modules}
 \subsection{KeyboardModule}
 \bug{Certain keypresses, especially when the ALT key is held down, are not recorded as events.}{System keys (such as F10 or ALT-combinations) trigger a specific WM\_SYSKEYDOWN message instead of WM\_KEYDOWN.}{Handle WM\_SYSKEYDOWN messages in addition to WM\_KEYDOWN.}
+
+\subsection{WebBrowserModule}
+\bug{The WebBrowserModule will accept connections from the browser extension even when the WebBrowserModule is deactivated.}{The internal listener will get started in the initialization routine, disregarding the passed parameter.}{The interal listener will only be started if "isEnabled" is true.}
