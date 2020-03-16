@@ -115,6 +115,9 @@ namespace MouseTest
 
             /* WHEN */
             mouseModule.Initialize(true);
+            AllowMessageTypeRegistryForAll();
+            hookNativeMethodsMock.AllowLibraryLoad();
+            mouseModule.IsActive = true;
             mouseModule.IsActive = false;
 
             /* THEN */
