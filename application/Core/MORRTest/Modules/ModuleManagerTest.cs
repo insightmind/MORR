@@ -30,6 +30,9 @@ namespace MORRTest.Modules
             module2 = new TestModuleTwo();
         }
 
+        /// <summary>
+        /// Tests whether the ModuleManager works as expected if no module is enabled.
+        /// </summary>
         [TestMethod]
         public void TestModuleManager_NoEnabledModule()
         {
@@ -54,6 +57,9 @@ namespace MORRTest.Modules
             module2.Mock.Verify(mock => mock.Initialize(false));
         }
 
+        /// <summary>
+        /// Tests if the ModuleManager correctly initializes modules if not all loaded are active.
+        /// </summary>
         [TestMethod]
         public void TestModuleManager_SingleModuleEnabled()
         {
@@ -78,6 +84,9 @@ namespace MORRTest.Modules
             module2.Mock.Verify(mock => mock.Initialize(false));
         }
 
+        /// <summary>
+        /// Tests whether the ModuleManager can enable multiple modules.
+        /// </summary>
         [TestMethod]
         public void TestModuleManager_MultipleModulesEnabled()
         {
@@ -102,6 +111,10 @@ namespace MORRTest.Modules
             module2.Mock.Verify(mock => mock.Initialize(true));
         }
 
+        /// <summary>
+        /// Tests if the NotifyModulesOnSessionStart correctly notifies all enabled modules about
+        /// the start of an session.
+        /// </summary>
         [TestMethod]
         public void TestModuleManager_NotifyModulesOnSessionStart()
         {
@@ -127,6 +140,10 @@ namespace MORRTest.Modules
             module2.Mock.VerifySet(mock => mock.IsActive = true, Times.Once);
         }
 
+        /// <summary>
+        /// Tests if the NotifyModulesOnSessionStop correctly notifies all enabled modules about
+        /// the stop of the currently running session.
+        /// </summary>
         [TestMethod]
         public void TestModuleManager_NotifyModulesOnSessionStop()
         {
@@ -152,6 +169,10 @@ namespace MORRTest.Modules
             module2.Mock.VerifySet(mock => mock.IsActive = false, Times.Once);
         }
 
+        /// <summary>
+        /// Composes the ModuleManager using MEF and loads two instances
+        /// of the test modules.
+        /// </summary>
         private void Compose()
         {
             var container = new CompositionContainer();

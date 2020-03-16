@@ -7,6 +7,13 @@ using System;
 
 namespace MORRTest.Modules
 {
+    /// <summary>
+    /// This TestClass purpose is to test the parsing functionality of the
+    /// GlobalModuleConfiguration.
+    ///
+    /// We use the ConfigurationTest superclass to test basic functionality
+    /// shared between all configuration classes.
+    /// </summary>
     [TestClass]
     public class GlobalModuleConfigurationTest : ConfigurationTest<GlobalModuleConfiguration>
     {

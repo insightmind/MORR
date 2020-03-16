@@ -54,6 +54,10 @@ namespace MORRTest.Session
             hookMock.AllowLibraryLoad();
         }
 
+        /// <summary>
+        /// Prepares the bootstrapper by setting up the mock so it
+        /// loads the test imports correctly and composes the parts needed for the tests.
+        /// </summary>
         private void PrepareBootstrapper()
         {
             Debug.Assert(container != null);
@@ -63,6 +67,11 @@ namespace MORRTest.Session
                 .Callback<object>((composeObject) => container.ComposeParts(composeObject));
         }
 
+        /// <summary>
+        /// Configures a default config for the test which specifies the
+        /// encoder and decoders in use and defines the default recording directory.
+        /// </summary>
+        /// <param name="usingDecoder"></param>
         private void ConfigureDefaultConfig(bool usingDecoder = true)
         {
             Debug.Assert(config != null);
@@ -80,6 +89,11 @@ namespace MORRTest.Session
             config.RecordingDirectory = new DirectoryPath(validPath);
         }
 
+        /// <summary>
+        /// Initializes the SessionManager using all provided mocks and
+        /// test objects. It also makes sure all objects are correctly imported into
+        /// the session manager.
+        /// </summary>
         private void InitializeSessionManager()
         {
             Debug.Assert(encoder != null);

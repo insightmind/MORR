@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.IO;
+using System.IO.Abstractions;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -19,17 +20,26 @@ namespace MORR.Core.Data.Transcoding.Json
 
         private static Guid Identifier { get; } = new Guid("E943EACB-5AD1-49A7-92CE-C42E7AD8995B");
 
+        private readonly IFileSystem fileSystem;
+
         public ManualResetEvent DecodeFinished { get; } = new ManualResetEvent(false);
+
+        public JsonDecoder() : this(new FileSystem()) { }
+
+        public JsonDecoder(IFileSystem fileSystem)
+        {
+            this.fileSystem = fileSystem;
+        }
 
         public void Decode(DirectoryPath recordingDirectoryPath)
         {
             Task.Run(() => DecodeEvents(recordingDirectoryPath));
         }
 
-        private FileStream GetFileStream(DirectoryPath recordingDirectoryPath)
+        private Stream GetFileStream(DirectoryPath recordingDirectoryPath)
         {
-            var fullPath = Path.Combine(recordingDirectoryPath.ToString(), Configuration.RelativeFilePath.ToString());
-            return File.OpenRead(fullPath);
+            var fullPath = fileSystem.Path.Combine(recordingDirectoryPath.ToString(), Configuration.RelativeFilePath.ToString());
+            return fileSystem.File.OpenRead(fullPath);
         }
 
         private async void DecodeEvents(DirectoryPath recordingDirectoryPath)

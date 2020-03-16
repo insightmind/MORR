@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.Composition;
 using System.IO;
+using System.IO.Abstractions;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,7 +18,16 @@ namespace MORR.Core.Data.Transcoding.Json
         [Import]
         private JsonEncoderConfiguration Configuration { get; set; }
 
+        private readonly IFileSystem fileSystem;
+
         public ManualResetEvent EncodeFinished { get; } = new ManualResetEvent(false);
+
+        public JsonEncoder() : this(new FileSystem()) { }
+
+        public JsonEncoder(IFileSystem fileSystem)
+        {
+            this.fileSystem = fileSystem;
+        }
 
         public void Encode(DirectoryPath recordingDirectoryPath)
         {
@@ -47,10 +57,10 @@ namespace MORR.Core.Data.Transcoding.Json
             EncodeFinished.Set();
         }
 
-        private FileStream GetFileStream(DirectoryPath recordingDirectoryPath)
+        private Stream GetFileStream(DirectoryPath recordingDirectoryPath)
         {
-            var fullPath = Path.Combine(recordingDirectoryPath.ToString(), Configuration.RelativeFilePath.ToString());
-            return File.OpenWrite(fullPath);
+            var fullPath = fileSystem.Path.Combine(recordingDirectoryPath.ToString(), Configuration.RelativeFilePath.ToString());
+            return fileSystem.File.OpenWrite(fullPath);
         }
     }
 }
