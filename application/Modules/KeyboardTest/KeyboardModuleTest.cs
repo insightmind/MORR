@@ -130,7 +130,7 @@ namespace KeyboardTest
             Debug.Assert(hookNativeMethodsMock.Mock != null);
 
             /* GIVEN */
-            GlobalHook.CppGetMessageCallback callback = GetCallback();
+            GlobalHook.CppGetMessageCallback callback = GetCallback(false);
             //setting up fake messages and corresponding expected Events
             GlobalHook.HookMessage[] hookMessages = {
             new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_KEYDOWN, wParam = (IntPtr)0x41}, //A
@@ -161,6 +161,78 @@ namespace KeyboardTest
             //Running the task in another thread
             var consumedEvent = new CountdownEvent(hookMessages.Length);
             var task = new Task(() => findMatch(keyboardInteractEventProducer, consumedEvent, expectedEvents, isKeyboardInteractEventFound));
+            task.Start();
+            // We must call the callback after we start the consumer for the producer.
+            // otherwise the message is automatically dismissed.
+            foreach (GlobalHook.HookMessage message in hookMessages)
+            {
+                callback(message);
+            }
+
+            /* THEN */
+            Assert.IsTrue(consumedEvent.Wait(maxWaitTime), "Did not find all matching keyboard interact events in time.");
+        }
+
+        [TestMethod]
+        public void TestKeyboardInteractEventProducer_CallbackWithModifierKeys()
+        {
+            /* PRECONDITIONS */
+            Debug.Assert(keyboardModule != null);
+            Debug.Assert(keyboardInteractEventProducer != null);
+            Debug.Assert(hookNativeMethodsMock != null);
+            Debug.Assert(hookNativeMethodsMock.Mock != null);
+            Debug.Assert(nativeKeyboardMock != null);
+
+            /* GIVEN */
+            // Setting up the modifierkeys sequence which should work together with the fake messages to generate expected events
+            nativeKeyboardMock.SetupSequence(nM => nM.IsKeyPressed(INativeKeyboard.VirtualKeyCode.VK_MENU))
+               .Returns(true).Returns(false).Returns(false).Returns(false).Returns(false).Returns(true).Returns(true).Returns(false).Returns(true);
+           
+
+            nativeKeyboardMock.SetupSequence(nM => nM.IsKeyPressed(INativeKeyboard.VirtualKeyCode.VK_CONTROL))
+               .Returns(false).Returns(true).Returns(false).Returns(false).Returns(false).Returns(false).Returns(true).Returns(true).Returns(true);
+               
+
+            nativeKeyboardMock.SetupSequence(nM => nM.IsKeyPressed(INativeKeyboard.VirtualKeyCode.VK_SHIFT))
+               .Returns(false).Returns(false).Returns(true).Returns(false).Returns(false).Returns(true).Returns(false).Returns(true).Returns(true);
+
+            nativeKeyboardMock.SetupSequence(nM => nM.IsKeyPressed(INativeKeyboard.VirtualKeyCode.VK_LWIN))
+               .Returns(false).Returns(false).Returns(false).Returns(true).Returns(false).Returns(false).Returns(false).Returns(false).Returns(false);
+
+            nativeKeyboardMock.Setup(nM => nM.IsKeyPressed(INativeKeyboard.VirtualKeyCode.VK_RWIN))
+               .Returns(false);
+
+            //setting up fake messages and corresponding expected Events
+            GlobalHook.HookMessage[] hookMessages = {
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_KEYDOWN, wParam = (IntPtr)0x41}, //A with Alt down
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_KEYDOWN, wParam = (IntPtr)0x42}, //B with Control down
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_KEYDOWN, wParam = (IntPtr)0x43}, //C with Shift down
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_KEYDOWN, wParam = (IntPtr)0x44}, //D with Left Windows down
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_KEYDOWN, wParam = (IntPtr)0x46}, //F with None
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_KEYDOWN, wParam = (IntPtr)0x47}, //G with Alt + Shift down
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_KEYDOWN, wParam = (IntPtr)0x48}, //H with Alt + Control down
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_KEYDOWN, wParam = (IntPtr)0x49}, //I with Control + Shift down
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_KEYDOWN, wParam = (IntPtr)0x4A} //J with Control + Alt + Shift Windows down
+            };
+
+            KeyboardInteractEvent[] expectedEvents = {
+            new KeyboardInteractEvent { PressedKey_System_Windows_Input_Key = Key.A, ModifierKeys_System_Windows_Input_ModifierKeys = ModifierKeys.Alt},
+            new KeyboardInteractEvent { PressedKey_System_Windows_Input_Key = Key.B, ModifierKeys_System_Windows_Input_ModifierKeys = ModifierKeys.Control},
+            new KeyboardInteractEvent { PressedKey_System_Windows_Input_Key = Key.C, ModifierKeys_System_Windows_Input_ModifierKeys = ModifierKeys.Shift},
+            new KeyboardInteractEvent { PressedKey_System_Windows_Input_Key = Key.D, ModifierKeys_System_Windows_Input_ModifierKeys = ModifierKeys.Windows},
+            new KeyboardInteractEvent { PressedKey_System_Windows_Input_Key = Key.F, ModifierKeys_System_Windows_Input_ModifierKeys = ModifierKeys.None},
+            new KeyboardInteractEvent { PressedKey_System_Windows_Input_Key = Key.G, ModifierKeys_System_Windows_Input_ModifierKeys = ModifierKeys.Alt | ModifierKeys.Shift},
+            new KeyboardInteractEvent { PressedKey_System_Windows_Input_Key = Key.H, ModifierKeys_System_Windows_Input_ModifierKeys = ModifierKeys.Alt | ModifierKeys.Control},
+            new KeyboardInteractEvent { PressedKey_System_Windows_Input_Key = Key.I, ModifierKeys_System_Windows_Input_ModifierKeys = ModifierKeys.Shift | ModifierKeys.Control},
+            new KeyboardInteractEvent { PressedKey_System_Windows_Input_Key = Key.J, ModifierKeys_System_Windows_Input_ModifierKeys = ModifierKeys.Alt | ModifierKeys.Control | ModifierKeys.Shift}
+            };
+
+            GlobalHook.CppGetMessageCallback callback = GetCallback(true);
+
+            /* WHEN */
+            //Running the task in another thread
+            var consumedEvent = new CountdownEvent(hookMessages.Length);
+            var task = new Task(() => findMatch(keyboardInteractEventProducer, consumedEvent, expectedEvents, isKeyboardInteractEventWithModifierKeysFound));
             task.Start();
             // We must call the callback after we start the consumer for the producer.
             // otherwise the message is automatically dismissed.
@@ -207,8 +279,9 @@ namespace KeyboardTest
         /// <summary>
         ///     Performs a series of initialization and Setups to get the CppGetMessageCallback.
         /// </summary>
+        /// <param name="withNativeKeyboardMock">true if a nativeKeyboard mock is wanted, false if a nativeKeyboard is wanted</param>
         /// <returns>the callback that can be called with a message, which in turns calls a callback in the producers that is interested in this type of message</returns>
-        private GlobalHook.CppGetMessageCallback GetCallback()
+        private GlobalHook.CppGetMessageCallback GetCallback(bool withNativeKeyboardMock)
         {
             GlobalHook.CppGetMessageCallback callback = null;
             AllowMessageTypeRegistryForAll();
@@ -224,7 +297,9 @@ namespace KeyboardTest
                  });
             //here the SetHook() method is called!
             keyboardModule.Initialize(true);
-            keyboardModule.IsActive = true;
+
+            if (withNativeKeyboardMock) { keyboardInteractEventProducer.StartCapture(nativeKeyboardMock.Object); }
+            else { keyboardModule.IsActive = true; }
 
             //wait for the hookNativeMethodsMock.Mock.Callback is called!
             Assert.IsTrue(callbackReceivedEvent.WaitOne(maxWaitTime), "Did not receive callback in time!");
@@ -244,6 +319,23 @@ namespace KeyboardTest
             foreach (KeyboardInteractEvent e in expectedEvents)
             {
                 if (@event.PressedKey_System_Windows_Input_Key.Equals(e.PressedKey_System_Windows_Input_Key)) return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        ///     Return true if an keyboard Interact event is in the array of expected events.
+        ///     This method itslef defines the logic to determine if two keyboardInteract events are equal.
+        /// </summary>
+        /// <param name="event">an event that is expected to be in the array of expected events</param>
+        /// <param name="expectedEvents">an array of expected events</param>
+        /// <returns>true if an event is indeed in the array of expected events.</returns>
+        private bool isKeyboardInteractEventWithModifierKeysFound(KeyboardInteractEvent @event, KeyboardInteractEvent[] expectedEvents)
+        {
+            foreach (KeyboardInteractEvent e in expectedEvents)
+            {
+                if (@event.PressedKey_System_Windows_Input_Key.Equals(e.PressedKey_System_Windows_Input_Key) 
+                    && @event.ModifierKeys_System_Windows_Input_ModifierKeys.Equals(e.ModifierKeys_System_Windows_Input_ModifierKeys)) return true;
             }
             return false;
         }
