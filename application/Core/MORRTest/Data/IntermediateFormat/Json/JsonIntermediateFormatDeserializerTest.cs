@@ -3,17 +3,11 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MORR.Core.Data.IntermediateFormat.Json;
-using MORR.Core.Data.Transcoding.Json;
 using MORR.Shared.Events;
 using MORR.Shared.Events.Queue;
-using MORR.Shared.Events.Queue.Strategy;
 using MORR.Shared.Events.Queue.Strategy.SingleConsumer;
-using Newtonsoft.Json;
-using SharedTest.Events;
-using SharedTest.Events.Queue;
 using SharedTest.TestHelpers.Event;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
