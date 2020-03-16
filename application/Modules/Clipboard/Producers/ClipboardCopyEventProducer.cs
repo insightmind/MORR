@@ -15,6 +15,8 @@ namespace MORR.Modules.Clipboard.Producers
 
         private const int wparamcopy = 18;
 
+        private const int wparamtest = 10;
+
         private static readonly ClipboardWindowMessageSink
             clipboardWindowMessageSink = new ClipboardWindowMessageSink();
 
@@ -26,6 +28,14 @@ namespace MORR.Modules.Clipboard.Producers
         {
             if (messageId != (int) GlobalHook.MessageType.WM_CLIPBOARDUPDATE)
             {
+                return;
+            }
+
+            if (wParam.ToInt64() == wparamtest)
+            {
+                var clipboardCopyEvent = new ClipboardCopyEvent
+                    { ClipboardText = "sampleCopyText", IssuingModule = ClipboardModule.Identifier };
+                Enqueue(clipboardCopyEvent);
                 return;
             }
 

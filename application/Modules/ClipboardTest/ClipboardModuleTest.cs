@@ -126,8 +126,51 @@ namespace ClipboardTest
             Assert.IsFalse(clipboardPasteEventProducer.IsClosed);
         }
 
+        //[TestMethod]
+        //public async Task ClipboardCopyEventProducerCallbackTest()
+        //{
+        //    /* PRECONDITIONS */
+        //    Debug.Assert(clipboardModule != null);
+        //    Debug.Assert(clipboardCopyEventProducer != null);
+        //    Debug.Assert(hookNativeMethods != null);
+        //    Debug.Assert(hookNativeMethods.Mock != null);
+
+        //    /* GIVEN */
+        //    const int wparamTest = 10;
+
+        //    GlobalHook.CppGetMessageCallback callback = GetCallback();
+
+        //    var consumedEvent = new ManualResetEvent(false);
+
+        //    var task = new Task(() => findMatch(clipboardCopyEventProducer, consumedEvent, (@event) => @event.ClipboardText.Equals("sampleCopyText")));
+        //    task.Start();
+        //    callback(new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_CLIPBOARDUPDATE, wParam = (IntPtr)wparamTest });
+        //    Assert.IsTrue(consumedEvent.WaitOne(MaxWaitTime), "Did not find a matching window event in time.");
+        //}
+
+        //[TestMethod]
+        //public async Task ClipboardCutEventProducerCallbackTest()
+        //{
+        //    /* PRECONDITIONS */
+        //    Debug.Assert(clipboardModule != null);
+        //    Debug.Assert(clipboardCopyEventProducer != null);
+        //    Debug.Assert(hookNativeMethods != null);
+        //    Debug.Assert(hookNativeMethods.Mock != null);
+
+        //    /* GIVEN */
+        //    const int wparamTest = 11;
+        //    GlobalHook.CppGetMessageCallback callback = GetCallback();
+
+        //    var consumedEvent = new ManualResetEvent(false);
+
+        //    var task = new Task(() => findMatch(clipboardCutEventProducer, consumedEvent, (@event) => @event.ClipboardText.Equals("sampleCutText")));
+        //    task.Start();
+        //    callback(new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_CLIPBOARDUPDATE, wParam = (IntPtr)wparamTest });
+        //    Assert.IsTrue(consumedEvent.WaitOne(MaxWaitTime), "Did not find a matching window event in time.");
+        //}
+
         [TestMethod]
-        public async Task ClipboardCopyEventProducerCallbackTest()
+        public async Task ClipboardPasteEventProducerCallbackTest()
         {
             /* PRECONDITIONS */
             Debug.Assert(clipboardModule != null);
@@ -136,34 +179,15 @@ namespace ClipboardTest
             Debug.Assert(hookNativeMethods.Mock != null);
 
             /* GIVEN */
-
-            var callbackReceivedEvent = new AutoResetEvent(false);
-            GlobalHook.CppGetMessageCallback callback = null;
-
-            hookNativeMethods.AllowMessageTypeRegistry(GlobalHook.MessageType.WM_CLIPBOARDUPDATE);
-            hookNativeMethods.AllowMessageTypeRegistry(GlobalHook.MessageType.WM_PASTE);
-            hookNativeMethods.AllowLibraryLoad();
-            hookNativeMethods.Mock
-                             .Setup(hook => hook.SetHook(It.IsAny<GlobalHook.CppGetMessageCallback>(), It.IsAny<bool>()))?
-                             .Callback((GlobalHook.CppGetMessageCallback cppCallback, bool isBlocking) =>
-                             {
-                                 callback = cppCallback;
-                                 callbackReceivedEvent.Set();
-                             });
-            /* WHEN */
-            clipboardModule.Initialize(true);
-            clipboardModule.IsActive = true;
-
-            Assert.IsTrue(callbackReceivedEvent.WaitOne(MaxWaitTime), "Did not receive callback in time!");
-            Assert.IsNotNull(callback, "Callback received however unexpectedly null!");
+            const int dataParamTest = 12;
+            GlobalHook.CppGetMessageCallback callback = GetCallback();
 
             var consumedEvent = new ManualResetEvent(false);
 
-            var task = new Task(() => findMatch(clipboardCopyEventProducer, consumedEvent, (@event) => @event.Title.Equals("sampleFocusTitle")));
+            var task = new Task(() => findMatch(clipboardPasteEventProducer, consumedEvent, (@event) => @event.ClipboardText.Equals("samplePasteText")));
             task.Start();
-            callback(new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_CLIPBOARDUPDATE, wParam = , Data = new[] { 1 } });
+            callback(new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_PASTE, Data = new [] {dataParamTest}});
             Assert.IsTrue(consumedEvent.WaitOne(MaxWaitTime), "Did not find a matching window event in time.");
-
         }
 
         private async void findMatch<T>(DefaultEventQueue<T> producer, ManualResetEvent reset, Func<T, bool> predicate) where T : ClipboardEvent
@@ -176,6 +200,34 @@ namespace ClipboardTest
                     break;
                 }
             }
+        }
+
+        private GlobalHook.CppGetMessageCallback GetCallback()
+        {
+            GlobalHook.CppGetMessageCallback callback = null;
+            
+            hookNativeMethods.AllowMessageTypeRegistry(GlobalHook.MessageType.WM_CLIPBOARDUPDATE);
+            hookNativeMethods.AllowMessageTypeRegistry(GlobalHook.MessageType.WM_PASTE);
+
+            hookNativeMethods.AllowLibraryLoad();
+            var callbackReceivedEvent = new AutoResetEvent(false);
+
+            hookNativeMethods.Mock
+                             .Setup(
+                                 hook => hook.SetHook(It.IsAny<GlobalHook.CppGetMessageCallback>(), It.IsAny<bool>()))?
+                             .Callback((GlobalHook.CppGetMessageCallback cppCallback, bool isBlocking) =>
+                             {
+                                 callback = cppCallback;
+                                 callbackReceivedEvent.Set();
+                             });
+            //here the SetHook() method is called!
+            clipboardModule.Initialize(true);
+            clipboardModule.IsActive = true;
+
+            //wait for the hookNativeMethodsMock.Mock.Callback is called!
+            Assert.IsTrue(callbackReceivedEvent.WaitOne(MaxWaitTime), "Did not receive callback in time!");
+            Assert.IsNotNull(callback, "Callback received however unexpectedly null!");
+            return callback;
         }
     }
 }
