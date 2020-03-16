@@ -171,7 +171,6 @@ namespace KeyboardTest
 
             /* THEN */
             Assert.IsTrue(consumedEvent.Wait(maxWaitTime), "Did not find all matching keyboard interact events in time.");
-            consumedEvent.Dispose();
         }
 
         [TestMethod]
@@ -244,7 +243,6 @@ namespace KeyboardTest
 
             /* THEN */
             Assert.IsTrue(consumedEvent.Wait(maxWaitTime), "Did not find all matching keyboard interact events in time.");
-            consumedEvent.Dispose();
         }
 
 
