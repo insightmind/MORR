@@ -9,8 +9,8 @@ namespace MORR.Modules.Clipboard.Native
         /// <summary>
         ///     Handles a window message when clipboard is updated
         /// </summary>
-        /// <param name="IntPtr">The pointer to the current window</param>
-        /// <param name="messageId">The identifier of the message</param>
+        /// <param name="hwnd">The pointer to the current window</param>
+        /// <param name="uMsg">The identifier of the message</param>
         /// <param name="wParam">The WPARAM of the message</param>
         /// <param name="lParam">The LPARAM of the message</param>
         public delegate void ClipboardEventHandler(IntPtr hwnd, uint uMsg, IntPtr wParam, IntPtr lParam);
@@ -75,6 +75,11 @@ namespace MORR.Modules.Clipboard.Native
             }
 
             return NativeClipboard.DefWindowProc(hWnd, messageId, wParam, lParam);
+        }
+
+        public void ClipboardUpdateTestHelper(IntPtr hWnd, uint messageId, IntPtr wParam, IntPtr lParam)
+        {
+            OnClipboardUpdate(hWnd, messageId, wParam, lParam);
         }
 
         #region Dispose

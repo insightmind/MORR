@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using MORR.Modules.Clipboard;
 using MORR.Modules.Clipboard.Events;
+using MORR.Modules.Clipboard.Native;
 using MORR.Modules.Clipboard.Producers;
 using MORR.Shared.Events.Queue;
 using MORR.Shared.Hook;
@@ -126,48 +127,53 @@ namespace ClipboardTest
             Assert.IsFalse(clipboardPasteEventProducer.IsClosed);
         }
 
-        //[TestMethod]
-        //public async Task ClipboardCopyEventProducerCallbackTest()
-        //{
-        //    /* PRECONDITIONS */
-        //    Debug.Assert(clipboardModule != null);
-        //    Debug.Assert(clipboardCopyEventProducer != null);
-        //    Debug.Assert(hookNativeMethods != null);
-        //    Debug.Assert(hookNativeMethods.Mock != null);
+        [TestMethod]
+        public async Task ClipboardCopyEventProducerCallbackTest()
+        {
+            /* PRECONDITIONS */
+            Debug.Assert(clipboardModule != null);
+            Debug.Assert(clipboardCopyEventProducer != null);
+            Debug.Assert(hookNativeMethods != null);
+            Debug.Assert(ClipboardCopyEventProducer.clipboardWindowMessageSink != null);
 
-        //    /* GIVEN */
-        //    const int wparamTest = 10;
+            /* GIVEN */
+            const int wparamTest = 10;
 
-        //    GlobalHook.CppGetMessageCallback callback = GetCallback();
+            GetCallback();
 
-        //    var consumedEvent = new ManualResetEvent(false);
+            var clipboardWindowMessageSink = ClipboardCopyEventProducer.clipboardWindowMessageSink;
+            var consumedEvent = new ManualResetEvent(false);
 
-        //    var task = new Task(() => findMatch(clipboardCopyEventProducer, consumedEvent, (@event) => @event.ClipboardText.Equals("sampleCopyText")));
-        //    task.Start();
-        //    callback(new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_CLIPBOARDUPDATE, wParam = (IntPtr)wparamTest });
-        //    Assert.IsTrue(consumedEvent.WaitOne(MaxWaitTime), "Did not find a matching window event in time.");
-        //}
+            var task = new Task(() => findMatch(clipboardCopyEventProducer, consumedEvent, (@event) => @event.ClipboardText.Equals("sampleCopyText")));
+            task.Start();
+        
+            clipboardWindowMessageSink.ClipboardUpdateTestHelper(IntPtr.Zero, (int) GlobalHook.MessageType.WM_CLIPBOARDUPDATE, (IntPtr)wparamTest, IntPtr.Zero);
+            Assert.IsTrue(consumedEvent.WaitOne(MaxWaitTime), "Did not find a matching window event in time.");
+        }
 
-        //[TestMethod]
-        //public async Task ClipboardCutEventProducerCallbackTest()
-        //{
-        //    /* PRECONDITIONS */
-        //    Debug.Assert(clipboardModule != null);
-        //    Debug.Assert(clipboardCopyEventProducer != null);
-        //    Debug.Assert(hookNativeMethods != null);
-        //    Debug.Assert(hookNativeMethods.Mock != null);
+        [TestMethod]
+        public async Task ClipboardCutEventProducerCallbackTest()
+        {
+            /* PRECONDITIONS */
+            Debug.Assert(clipboardModule != null);
+            Debug.Assert(clipboardCopyEventProducer != null);
+            Debug.Assert(hookNativeMethods != null);
+            Debug.Assert(hookNativeMethods.Mock != null);
+            Debug.Assert(ClipboardCutEventProducer.clipboardWindowMessageSink != null);
 
-        //    /* GIVEN */
-        //    const int wparamTest = 11;
-        //    GlobalHook.CppGetMessageCallback callback = GetCallback();
+            /* GIVEN */
+            const int wparamTest = 11;
 
-        //    var consumedEvent = new ManualResetEvent(false);
+            GetCallback();
+            var clipboardWindowMessageSink = ClipboardCutEventProducer.clipboardWindowMessageSink;
 
-        //    var task = new Task(() => findMatch(clipboardCutEventProducer, consumedEvent, (@event) => @event.ClipboardText.Equals("sampleCutText")));
-        //    task.Start();
-        //    callback(new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_CLIPBOARDUPDATE, wParam = (IntPtr)wparamTest });
-        //    Assert.IsTrue(consumedEvent.WaitOne(MaxWaitTime), "Did not find a matching window event in time.");
-        //}
+            var consumedEvent = new ManualResetEvent(false);
+
+            var task = new Task(() => findMatch(clipboardCutEventProducer, consumedEvent, (@event) => @event.ClipboardText.Equals("sampleCutText")));
+            task.Start();
+            clipboardWindowMessageSink.ClipboardUpdateTestHelper(IntPtr.Zero, (int)GlobalHook.MessageType.WM_CLIPBOARDUPDATE, (IntPtr)wparamTest, IntPtr.Zero);
+            Assert.IsTrue(consumedEvent.WaitOne(MaxWaitTime), "Did not find a matching window event in time.");
+        }
 
         [TestMethod]
         public async Task ClipboardPasteEventProducerCallbackTest()

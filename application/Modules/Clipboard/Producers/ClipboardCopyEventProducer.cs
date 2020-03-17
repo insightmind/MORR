@@ -17,8 +17,7 @@ namespace MORR.Modules.Clipboard.Producers
 
         private const int wparamtest = 10;
 
-        private static readonly ClipboardWindowMessageSink
-            clipboardWindowMessageSink = new ClipboardWindowMessageSink();
+        public static readonly ClipboardWindowMessageSink clipboardWindowMessageSink = new ClipboardWindowMessageSink();
 
         private readonly INativeClipboard nativeClipboard = ClipboardWindowMessageSink.NativeClipboard;
 
