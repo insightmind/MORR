@@ -1,6 +1,0 @@
-﻿namespace MORRTest
-{
-    class BootstrapperTest
-    {
-    }
-}
