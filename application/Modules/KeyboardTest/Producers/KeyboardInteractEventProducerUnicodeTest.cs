@@ -81,6 +81,7 @@ namespace KeyboardTest
             new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_KEYDOWN, wParam = (IntPtr)0x12}, //alt
             new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_KEYDOWN, wParam = (IntPtr)0x11}, //control
             new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_KEYDOWN, wParam = (IntPtr)0x20} //space
+            
             };
             KeyboardInteractEvent[] expectedEvents = {
             new KeyboardInteractEvent {PressedKey_System_Windows_Input_Key = Key.A ,MappedCharacter_Unicode = 'a'},
@@ -91,14 +92,24 @@ namespace KeyboardTest
             new KeyboardInteractEvent {PressedKey_System_Windows_Input_Key = Key.OemQuestion ,MappedCharacter_Unicode = '/'},
             new KeyboardInteractEvent {PressedKey_System_Windows_Input_Key = Key.LeftAlt ,MappedCharacter_Unicode = '\u0000'},
             new KeyboardInteractEvent {PressedKey_System_Windows_Input_Key = Key.LeftCtrl ,MappedCharacter_Unicode = '\u0000'},
-            new KeyboardInteractEvent {PressedKey_System_Windows_Input_Key = Key.Space ,MappedCharacter_Unicode = ' '},
+            new KeyboardInteractEvent {PressedKey_System_Windows_Input_Key = Key.Space ,MappedCharacter_Unicode = ' '}
             };
 
             /* WHEN */
             //Running the task in another thread
             var consumedEvent = new CountdownEvent(hookMessages.Length);
-            var task = new Task(() => FindMatch(keyboardInteractEventProducer, consumedEvent, expectedEvents, IsKeyboardInteractEventFound));
-            task.Start();
+
+            //////////////////////////////////////////////Task Run version
+            //Task.Run(() => FindMatch(keyboardInteractEventProducer, consumedEvent, expectedEvents, IsKeyboardInteractEventFound));
+            //////////////////////////////////////////////Task start version
+            //var task = new Task(() => FindMatch(keyboardInteractEventProducer, consumedEvent, expectedEvents, IsKeyboardInteractEventFound));
+            //task.Start();
+            //////////////////////////////////////////////Thread start version
+            Thread findMatch = new Thread(() => FindMatch(keyboardInteractEventProducer, consumedEvent, expectedEvents, IsKeyboardInteractEventFound));
+            findMatch.Start();
+
+            //var task = new Task(() => FindMatch(keyboardInteractEventProducer, consumedEvent, expectedEvents, IsKeyboardInteractEventFound));
+            //task.Start();
             // We must call the callback after we start the consumer for the producer.
             // otherwise the message is automatically dismissed.
             foreach (GlobalHook.HookMessage message in hookMessages)

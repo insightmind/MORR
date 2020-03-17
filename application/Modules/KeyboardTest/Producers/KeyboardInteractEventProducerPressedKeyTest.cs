@@ -18,7 +18,7 @@ namespace KeyboardTest
     [TestClass]
     public class KeyboardInteractEventProducerPressedKeyTest
     {
-        protected const int maxWaitTime = 5000;
+        protected const int maxWaitTime = 50000;
 
         private CompositionContainer container;
         private KeyboardInteractEventProducer keyboardInteractEventProducer;
@@ -99,8 +99,16 @@ namespace KeyboardTest
             /* WHEN */
             //Running the task in another thread
             var consumedEvent = new CountdownEvent(hookMessages.Length);
-            var task = new Task(() => FindMatch(keyboardInteractEventProducer, consumedEvent, expectedEvents, IsKeyboardInteractEventFound));
-            task.Start();
+
+            //////////////////////////////////////////////Task Run version
+            //Task.Run(() => FindMatch(keyboardInteractEventProducer, consumedEvent, expectedEvents, IsKeyboardInteractEventFound));
+            //////////////////////////////////////////////Task start version
+            //var task = new Task(() => FindMatch(keyboardInteractEventProducer, consumedEvent, expectedEvents, IsKeyboardInteractEventFound));
+            //task.Start();
+            //////////////////////////////////////////////Thread start version
+            Thread findMatch = new Thread(() => FindMatch(keyboardInteractEventProducer, consumedEvent, expectedEvents, IsKeyboardInteractEventFound));
+            findMatch.Start();
+
             // We must call the callback after we start the consumer for the producer.
             // otherwise the message is automatically dismissed.
             foreach (GlobalHook.HookMessage message in hookMessages)
