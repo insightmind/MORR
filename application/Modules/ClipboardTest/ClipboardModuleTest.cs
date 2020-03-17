@@ -8,7 +8,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using MORR.Modules.Clipboard;
 using MORR.Modules.Clipboard.Events;
-using MORR.Modules.Clipboard.Native;
 using MORR.Modules.Clipboard.Producers;
 using MORR.Shared.Events.Queue;
 using MORR.Shared.Hook;
@@ -20,12 +19,12 @@ namespace ClipboardTest
     public class ClipboardModuleTest
     {
         protected const int MaxWaitTime = 500;
+        private ClipboardCopyEventProducer clipboardCopyEventProducer;
+        private ClipboardCutEventProducer clipboardCutEventProducer;
+        private ClipboardModule clipboardModule;
+        private ClipboardPasteEventProducer clipboardPasteEventProducer;
 
         private CompositionContainer container;
-        private ClipboardCopyEventProducer clipboardCopyEventProducer;
-        private ClipboardModule clipboardModule;
-        private ClipboardCutEventProducer clipboardCutEventProducer;
-        private ClipboardPasteEventProducer clipboardPasteEventProducer;
         private HookNativeMethodsMock hookNativeMethods;
 
         [TestInitialize]
@@ -87,6 +86,7 @@ namespace ClipboardTest
             /* THEN */
             Assert.IsFalse(clipboardModule.IsActive);
         }
+
         [TestMethod]
         public void TestWindowManagementModule_InitializedFalse_ChannelClosed()
         {
@@ -128,7 +128,7 @@ namespace ClipboardTest
         }
 
         [TestMethod]
-        public async Task ClipboardCopyEventProducerCallbackTest()
+        public void ClipboardCopyEventProducerCallbackTest()
         {
             /* PRECONDITIONS */
             Debug.Assert(clipboardModule != null);
@@ -144,15 +144,18 @@ namespace ClipboardTest
             var clipboardWindowMessageSink = ClipboardCopyEventProducer.clipboardWindowMessageSink;
             var consumedEvent = new ManualResetEvent(false);
 
-            var task = new Task(() => findMatch(clipboardCopyEventProducer, consumedEvent, (@event) => @event.ClipboardText.Equals("sampleCopyText")));
+            var task = new Task(() => findMatch(clipboardCopyEventProducer, consumedEvent,
+                                                @event => @event.ClipboardText.Equals("sampleCopyText")));
             task.Start();
-        
-            clipboardWindowMessageSink.ClipboardUpdateTestHelper(IntPtr.Zero, (int) GlobalHook.MessageType.WM_CLIPBOARDUPDATE, (IntPtr)wparamTest, IntPtr.Zero);
+
+            clipboardWindowMessageSink.ClipboardUpdateTestHelper(IntPtr.Zero,
+                                                                 (int) GlobalHook.MessageType.WM_CLIPBOARDUPDATE,
+                                                                 (IntPtr) wparamTest, IntPtr.Zero);
             Assert.IsTrue(consumedEvent.WaitOne(MaxWaitTime), "Did not find a matching window event in time.");
         }
 
         [TestMethod]
-        public async Task ClipboardCutEventProducerCallbackTest()
+        public void ClipboardCutEventProducerCallbackTest()
         {
             /* PRECONDITIONS */
             Debug.Assert(clipboardModule != null);
@@ -169,14 +172,17 @@ namespace ClipboardTest
 
             var consumedEvent = new ManualResetEvent(false);
 
-            var task = new Task(() => findMatch(clipboardCutEventProducer, consumedEvent, (@event) => @event.ClipboardText.Equals("sampleCutText")));
+            var task = new Task(() => findMatch(clipboardCutEventProducer, consumedEvent,
+                                                @event => @event.ClipboardText.Equals("sampleCutText")));
             task.Start();
-            clipboardWindowMessageSink.ClipboardUpdateTestHelper(IntPtr.Zero, (int)GlobalHook.MessageType.WM_CLIPBOARDUPDATE, (IntPtr)wparamTest, IntPtr.Zero);
+            clipboardWindowMessageSink.ClipboardUpdateTestHelper(IntPtr.Zero,
+                                                                 (int) GlobalHook.MessageType.WM_CLIPBOARDUPDATE,
+                                                                 (IntPtr) wparamTest, IntPtr.Zero);
             Assert.IsTrue(consumedEvent.WaitOne(MaxWaitTime), "Did not find a matching window event in time.");
         }
 
         [TestMethod]
-        public async Task ClipboardPasteEventProducerCallbackTest()
+        public void ClipboardPasteEventProducerCallbackTest()
         {
             /* PRECONDITIONS */
             Debug.Assert(clipboardModule != null);
@@ -186,17 +192,20 @@ namespace ClipboardTest
 
             /* GIVEN */
             const int dataParamTest = 12;
-            GlobalHook.CppGetMessageCallback callback = GetCallback();
+            var callback = GetCallback();
 
             var consumedEvent = new ManualResetEvent(false);
 
-            var task = new Task(() => findMatch(clipboardPasteEventProducer, consumedEvent, (@event) => @event.ClipboardText.Equals("samplePasteText")));
+            var task = new Task(() => findMatch(clipboardPasteEventProducer, consumedEvent,
+                                                @event => @event.ClipboardText.Equals("samplePasteText")));
             task.Start();
-            callback(new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_PASTE, Data = new [] {dataParamTest}});
+            callback(new GlobalHook.HookMessage
+                         { Type = (uint) GlobalHook.MessageType.WM_PASTE, Data = new[] { dataParamTest } });
             Assert.IsTrue(consumedEvent.WaitOne(MaxWaitTime), "Did not find a matching window event in time.");
         }
 
-        private async void findMatch<T>(DefaultEventQueue<T> producer, ManualResetEvent reset, Func<T, bool> predicate) where T : ClipboardEvent
+        private async void findMatch<T>(DefaultEventQueue<T> producer, ManualResetEvent reset, Func<T, bool> predicate)
+            where T : ClipboardEvent
         {
             await foreach (var @event in producer.GetEvents())
             {
@@ -211,7 +220,7 @@ namespace ClipboardTest
         private GlobalHook.CppGetMessageCallback GetCallback()
         {
             GlobalHook.CppGetMessageCallback callback = null;
-            
+
             hookNativeMethods.AllowMessageTypeRegistry(GlobalHook.MessageType.WM_CLIPBOARDUPDATE);
             hookNativeMethods.AllowMessageTypeRegistry(GlobalHook.MessageType.WM_PASTE);
 
@@ -232,6 +241,7 @@ namespace ClipboardTest
 
             //wait for the hookNativeMethodsMock.Mock.Callback is called!
             Assert.IsTrue(callbackReceivedEvent.WaitOne(MaxWaitTime), "Did not receive callback in time!");
+            callbackReceivedEvent.Dispose();
             Assert.IsNotNull(callback, "Callback received however unexpectedly null!");
             return callback;
         }

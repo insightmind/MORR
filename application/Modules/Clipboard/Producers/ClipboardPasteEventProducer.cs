@@ -44,7 +44,7 @@ namespace MORR.Modules.Clipboard.Producers
                 Enqueue(clipboardPasteEvent);
                 return;
             }
-            
+
             try
             {
                 text = nativeClipboard.GetClipboardText();

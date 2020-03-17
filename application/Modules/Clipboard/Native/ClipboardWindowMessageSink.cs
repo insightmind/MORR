@@ -4,8 +4,7 @@ using MORR.Shared.Hook;
 namespace MORR.Modules.Clipboard.Native
 {
     public class ClipboardWindowMessageSink
-    { 
-
+    {
         /// <summary>
         ///     Handles a window message when clipboard is updated
         /// </summary>
@@ -14,8 +13,6 @@ namespace MORR.Modules.Clipboard.Native
         /// <param name="wParam">The WPARAM of the message</param>
         /// <param name="lParam">The LPARAM of the message</param>
         public delegate void ClipboardEventHandler(IntPtr hwnd, uint uMsg, IntPtr wParam, IntPtr lParam);
-
-        public static INativeClipboard NativeClipboard { get; } = new NativeClipboard();
 
 
         private INativeClipboard.WindowProcedureHandler internalWindowMessageHandler;
@@ -56,6 +53,8 @@ namespace MORR.Modules.Clipboard.Native
 
             NativeClipboard.AddClipboardFormatListener(WindowHandle);
         }
+
+        public static INativeClipboard NativeClipboard { get; } = new NativeClipboard();
 
         /// <summary>
         ///     The underlying window handle

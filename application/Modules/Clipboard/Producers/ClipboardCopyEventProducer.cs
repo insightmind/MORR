@@ -53,7 +53,7 @@ namespace MORR.Modules.Clipboard.Producers
                 var clipboardCopyEvent = new ClipboardCopyEvent
                     { ClipboardText = text, IssuingModule = ClipboardModule.Identifier };
                 Enqueue(clipboardCopyEvent);
-            } 
+            }
         }
 
         #endregion

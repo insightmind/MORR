@@ -25,7 +25,7 @@ namespace MORR.Modules.Clipboard.Producers
 
         private void OnClipboardUpdate(IntPtr hWnd, uint messageId, IntPtr wParam, IntPtr lParam)
         {
-            if (messageId != (int)GlobalHook.MessageType.WM_CLIPBOARDUPDATE)
+            if (messageId != (int) GlobalHook.MessageType.WM_CLIPBOARDUPDATE)
             {
                 return;
             }

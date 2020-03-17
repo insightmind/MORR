@@ -152,7 +152,7 @@ namespace WindowManagementTest
         }
 
         [TestMethod]
-        public async Task WindowFocusEventProducerCallbackTest()
+        public void WindowFocusEventProducerCallbackTest()
         {
             /* PRECONDITIONS */
             Debug.Assert(windowManagementModule != null);
@@ -169,7 +169,7 @@ namespace WindowManagementTest
             var consumedEvent = new ManualResetEvent(false);
 
             var task = new Task(() => findMatch(windowFocusEventProducer, consumedEvent,
-                                                @event => @event.Title.Equals("sampleFocusTitle") 
+                                                @event => @event.Title.Equals("sampleFocusTitle")
                                                           && @event.ProcessName.Equals("sampleProcessName")));
             task.Start();
             callback(new GlobalHook.HookMessage
@@ -181,7 +181,7 @@ namespace WindowManagementTest
         }
 
         [TestMethod]
-        public async Task WindowMovementEventProducerCallbackTest()
+        public void WindowMovementEventProducerCallbackTest()
         {
             /* PRECONDITIONS */
             Debug.Assert(windowManagementModule != null);
@@ -196,7 +196,7 @@ namespace WindowManagementTest
             var consumedEvent = new ManualResetEvent(false);
 
             var task = new Task(() => findMatch(windowMovementEventProducer, consumedEvent, @event =>
-                                                    @event.Title.Equals("sampleMovementTitle") 
+                                                    @event.Title.Equals("sampleMovementTitle")
                                                     && @event.ProcessName.Equals("sampleProcessName")
                                                     && @event.OldLocation.Equals(new Point(0, 0))
                                                     && @event.NewLocation.Equals(new Point(1, 1))));
@@ -210,7 +210,7 @@ namespace WindowManagementTest
         }
 
         [TestMethod]
-        public async Task WindowResizingEventProducerCallbackTest()
+        public void WindowResizingEventProducerCallbackTest()
         {
             /* PRECONDITIONS */
             Debug.Assert(windowManagementModule != null);
@@ -225,7 +225,7 @@ namespace WindowManagementTest
             var consumedEvent = new ManualResetEvent(false);
 
             var task = new Task(() => findMatch(windowResizingEventProducer, consumedEvent, @event =>
-                                                    @event.Title.Equals("sampleResizingTitle") 
+                                                    @event.Title.Equals("sampleResizingTitle")
                                                     && @event.ProcessName.Equals("sampleProcessName")
                                                     && @event.OldSize.Equals(new Size(0, 0))
                                                     && @event.NewSize.Equals(new Size(1, 1))));
@@ -239,7 +239,7 @@ namespace WindowManagementTest
         }
 
         [TestMethod]
-        public async Task WindowStateChangedEventProducerCallbackTest_Restored()
+        public void WindowStateChangedEventProducerCallbackTest_Restored()
         {
             /* PRECONDITIONS */
             Debug.Assert(windowManagementModule != null);
@@ -267,7 +267,7 @@ namespace WindowManagementTest
         }
 
         [TestMethod]
-        public async Task WindowStateChangedEventProducerCallbackTest_Minimized()
+        public void WindowStateChangedEventProducerCallbackTest_Minimized()
         {
             /* PRECONDITIONS */
             Debug.Assert(windowManagementModule != null);
@@ -282,7 +282,7 @@ namespace WindowManagementTest
             var consumedEvent = new ManualResetEvent(false);
 
             var task = new Task(() => findMatch(windowStateChangedEventProducer, consumedEvent, @event =>
-                                                    @event.Title.Equals("sampleStateChangedTitle") 
+                                                    @event.Title.Equals("sampleStateChangedTitle")
                                                     && @event.ProcessName.Equals("sampleProcessName")
                                                     && @event.WindowState == WindowState.Minimized));
             task.Start();
@@ -333,6 +333,7 @@ namespace WindowManagementTest
 
             //wait for the hookNativeMethodsMock.Mock.Callback is called!
             Assert.IsTrue(callbackReceivedEvent.WaitOne(MaxWaitTime), "Did not receive callback in time!");
+            callbackReceivedEvent.Dispose();
             Assert.IsNotNull(callback, "Callback received however unexpectedly null!");
             return callback;
         }
