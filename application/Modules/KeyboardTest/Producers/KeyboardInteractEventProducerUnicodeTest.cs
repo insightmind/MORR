@@ -12,6 +12,7 @@ using MORR.Shared.Hook;
 using SharedTest.TestHelpers.INativeHook;
 using System.Windows.Input;
 using System.Threading.Tasks;
+using MORR.Modules.Keyboard.Native;
 
 namespace KeyboardTest
 {
@@ -24,6 +25,7 @@ namespace KeyboardTest
         private KeyboardInteractEventProducer keyboardInteractEventProducer;
         private KeyboardModule keyboardModule;
         private HookNativeMethodsMock hookNativeMethodsMock;
+        private Mock<INativeKeyboard> nativeKeyboardMock;
 
         private readonly GlobalHook.MessageType[] KeyboardInteractListenedMessagesTypes =
         {
@@ -43,6 +45,9 @@ namespace KeyboardTest
             container.ComposeExportedValue(keyboardInteractEventProducer);
             container.ComposeParts(keyboardModule);
 
+            //initialize the native keyboard mock
+            nativeKeyboardMock = new Mock<INativeKeyboard>();
+
             //initialzie the hookNativeMethodsMock
             hookNativeMethodsMock = new HookNativeMethodsMock();
             hookNativeMethodsMock.Initialize();
@@ -54,6 +59,7 @@ namespace KeyboardTest
             // null everything!
             keyboardModule = null;
             keyboardInteractEventProducer = null;
+            nativeKeyboardMock = null;
             container.Dispose();
             container = null;
             hookNativeMethodsMock = null;
@@ -67,6 +73,26 @@ namespace KeyboardTest
             Debug.Assert(keyboardInteractEventProducer != null);
             Debug.Assert(hookNativeMethodsMock != null);
             Debug.Assert(hookNativeMethodsMock.Mock != null);
+
+            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0x41)).Returns(Key.A);
+            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0x5A)).Returns(Key.Z);
+            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0x30)).Returns(Key.D0);
+            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0x39)).Returns(Key.D9);
+            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0xBD)).Returns(Key.OemMinus);
+            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0xBF)).Returns(Key.OemQuestion);
+            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0x12)).Returns(Key.LeftAlt);
+            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0x11)).Returns(Key.LeftShift);
+            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0x20)).Returns(Key.Space);
+
+            nativeKeyboardMock.Setup(nativeK => nativeK.ToUnicode(0x41)).Returns('a');
+            nativeKeyboardMock.Setup(nativeK => nativeK.ToUnicode(0x5A)).Returns('z');
+            nativeKeyboardMock.Setup(nativeK => nativeK.ToUnicode(0x30)).Returns('0');
+            nativeKeyboardMock.Setup(nativeK => nativeK.ToUnicode(0x39)).Returns('9');
+            nativeKeyboardMock.Setup(nativeK => nativeK.ToUnicode(0xBD)).Returns('-');
+            nativeKeyboardMock.Setup(nativeK => nativeK.ToUnicode(0xBF)).Returns('/');
+            nativeKeyboardMock.Setup(nativeK => nativeK.ToUnicode(0x12)).Returns('\u0000');
+            nativeKeyboardMock.Setup(nativeK => nativeK.ToUnicode(0x11)).Returns('\u0000');
+            nativeKeyboardMock.Setup(nativeK => nativeK.ToUnicode(0x20)).Returns(' ');
 
             /* GIVEN */
             GlobalHook.CppGetMessageCallback callback = GetCallback();
