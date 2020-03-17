@@ -75,6 +75,16 @@ namespace KeyboardTest
             Debug.Assert(nativeKeyboardMock != null);
 
             /* GIVEN */
+            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0x41)).Returns(Key.A);
+            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0x42)).Returns(Key.B);
+            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0x43)).Returns(Key.C);
+            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0x44)).Returns(Key.D);
+            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0x46)).Returns(Key.F);
+            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0x47)).Returns(Key.G);
+            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0x48)).Returns(Key.H);
+            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0x49)).Returns(Key.I);
+            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0x4A)).Returns(Key.J);
+
             // Setting up the modifierkeys sequence which should work together with the fake messages to generate expected events
             nativeKeyboardMock.SetupSequence(nM => nM.IsKeyPressed(INativeKeyboard.VirtualKeyCode.VK_MENU))
                .Returns(true).Returns(false).Returns(false).Returns(false).Returns(false).Returns(true).Returns(true).Returns(false).Returns(true);

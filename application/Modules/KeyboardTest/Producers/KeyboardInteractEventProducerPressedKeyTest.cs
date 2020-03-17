@@ -77,7 +77,16 @@ namespace KeyboardTest
             /* GIVEN */
             GlobalHook.CppGetMessageCallback callback = GetCallback();
             //setting up fake messages and corresponding expected Events
-            nativeKeyboardMock.Setup(nativeK => nativeK.)
+            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0x41)).Returns(Key.A);
+            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0x48)).Returns(Key.H);
+            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0x36)).Returns(Key.D6);
+            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0x30)).Returns(Key.D0);
+            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0xBB)).Returns(Key.OemPlus);
+            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0xBF)).Returns(Key.OemQuestion);
+            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0xA0)).Returns(Key.LeftShift);
+            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0x24)).Returns(Key.Home);
+            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0x25)).Returns(Key.Left);
+            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0x12)).Returns(Key.LeftAlt);
 
             GlobalHook.HookMessage[] hookMessages = {
             new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_KEYDOWN, wParam = (IntPtr)0x41}, //A
