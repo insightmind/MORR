@@ -22,6 +22,7 @@ namespace MORR.Core.Data.Transcoding.Json
 
         public ManualResetEvent EncodeFinished { get; } = new ManualResetEvent(false);
 
+        [ImportingConstructor]
         public JsonEncoder() : this(new FileSystem()) { }
 
         public JsonEncoder(IFileSystem fileSystem)

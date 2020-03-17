@@ -33,6 +33,7 @@ namespace MORR.Core.Data.Transcoding.Mpeg
 
         public ManualResetEvent EncodeFinished { get; } = new ManualResetEvent(false);
 
+        [ImportingConstructor]
         public MpegEncoder() : this(new FileSystem()) { }
 
         public MpegEncoder(IFileSystem fileSystem)
