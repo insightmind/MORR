@@ -130,8 +130,21 @@ namespace KeyboardTest
             //var task = new Task(() => FindMatch(keyboardInteractEventProducer, consumedEvent, expectedEvents, IsKeyboardInteractEventFound));
             //task.Start();
             //////////////////////////////////////////////Thread start version
-            Thread findMatch = new Thread(() => FindMatch(keyboardInteractEventProducer, consumedEvent, expectedEvents, IsKeyboardInteractEventFound));
-            findMatch.Start();
+            //Thread findMatch = new Thread(() => FindMatch(keyboardInteractEventProducer, consumedEvent, expectedEvents, IsKeyboardInteractEventFound));
+            //findMatch.Start();
+
+            var thread = new Thread(async () =>
+            {
+                await foreach (var @event in keyboardInteractEventProducer.GetEvents())
+                {
+                    if (!IsKeyboardInteractEventFound(@event, expectedEvents))
+                    {
+                        continue;
+                    }
+                    consumedEvent.Signal();
+                }
+            });
+            thread.Start();
 
 
             // We must call the callback after we start the consumer for the producer.

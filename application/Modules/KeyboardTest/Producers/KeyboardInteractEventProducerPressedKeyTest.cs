@@ -11,7 +11,6 @@ using MORR.Modules.Keyboard.Producers;
 using MORR.Shared.Hook;
 using SharedTest.TestHelpers.INativeHook;
 using System.Windows.Input;
-using System.Threading.Tasks;
 
 namespace KeyboardTest
 {
@@ -24,6 +23,7 @@ namespace KeyboardTest
         private KeyboardInteractEventProducer keyboardInteractEventProducer;
         private KeyboardModule keyboardModule;
         private HookNativeMethodsMock hookNativeMethodsMock;
+
 
         private readonly GlobalHook.MessageType[] KeyboardInteractListenedMessagesTypes =
         {
@@ -106,8 +106,21 @@ namespace KeyboardTest
             //var task = new Task(() => FindMatch(keyboardInteractEventProducer, consumedEvent, expectedEvents, IsKeyboardInteractEventFound));
             //task.Start();
             //////////////////////////////////////////////Thread start version
-            Thread findMatch = new Thread(() => FindMatch(keyboardInteractEventProducer, consumedEvent, expectedEvents, IsKeyboardInteractEventFound));
-            findMatch.Start();
+            //Thread findMatch = new Thread(() => FindMatch(keyboardInteractEventProducer, consumedEvent, expectedEvents, IsKeyboardInteractEventFound));
+            //findMatch.Start();
+
+            var thread = new Thread(async () =>
+            {
+                await foreach (var @event in keyboardInteractEventProducer.GetEvents())
+                {
+                    if (!IsKeyboardInteractEventFound(@event, expectedEvents))
+                    {
+                        continue;
+                    }
+                    consumedEvent.Signal();
+                }
+            });
+            thread.Start();
 
             // We must call the callback after we start the consumer for the producer.
             // otherwise the message is automatically dismissed.

@@ -105,8 +105,21 @@ namespace KeyboardTest
             //var task = new Task(() => FindMatch(keyboardInteractEventProducer, consumedEvent, expectedEvents, IsKeyboardInteractEventFound));
             //task.Start();
             //////////////////////////////////////////////Thread start version
-            Thread findMatch = new Thread(() => FindMatch(keyboardInteractEventProducer, consumedEvent, expectedEvents, IsKeyboardInteractEventFound));
-            findMatch.Start();
+            //Thread findMatch = new Thread(() => FindMatch(keyboardInteractEventProducer, consumedEvent, expectedEvents, IsKeyboardInteractEventFound));
+            //findMatch.Start();
+
+            var thread = new Thread(async () =>
+            {
+                await foreach (var @event in keyboardInteractEventProducer.GetEvents())
+                {
+                    if (!IsKeyboardInteractEventFound(@event, expectedEvents))
+                    {
+                        continue;
+                    }
+                    consumedEvent.Signal();
+                }
+            });
+            thread.Start();
 
             //var task = new Task(() => FindMatch(keyboardInteractEventProducer, consumedEvent, expectedEvents, IsKeyboardInteractEventFound));
             //task.Start();
