@@ -35,7 +35,7 @@ namespace MORR.Modules.Keyboard.Producers
 
         private void KeyboardHookCallback(GlobalHook.HookMessage hookMessage) {
             var virtualKeyCode = hookMessage.wParam;
-            var pressedKey = KeyInterop.KeyFromVirtualKey((int)virtualKeyCode);
+            var pressedKey = nativeKeyboard.KeyFromVirtualKey((int)virtualKeyCode);
             var modifierKeys = GetModifierKeys();
 
             byte[] keyState = new byte[256];

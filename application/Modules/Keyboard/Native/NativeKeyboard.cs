@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Input;
 using MORR.Shared.Hook;
 
 namespace MORR.Modules.Keyboard.Native
@@ -48,6 +49,11 @@ namespace MORR.Modules.Keyboard.Native
 
             handle = SetWindowsHookEx(INativeKeyboard.HookType.WH_KEYBOARD_LL, callback, moduleHandle, 0);
             return true;
+        }
+
+        Key INativeKeyboard.KeyFromVirtualKey(int virtualKeyCode) 
+        {
+            return KeyInterop.KeyFromVirtualKey(virtualKeyCode);
         }
 
         int INativeKeyboard.CallNextHookEx(IntPtr hhk,

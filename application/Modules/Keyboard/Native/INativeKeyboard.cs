@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Input;
 using MORR.Shared.Hook;
 
 namespace MORR.Modules.Keyboard.Native
@@ -23,6 +24,8 @@ namespace MORR.Modules.Keyboard.Native
             VK_LWIN = 0x5B,
             VK_RWIN = 0x5C
         }
+
+        Key KeyFromVirtualKey(Int32 virtualKeyCode);
 
         int CallNextHookEx(IntPtr hhk, int nCode, GlobalHook.MessageType wParam, [In] KBDLLHOOKSTRUCT lParam);
 

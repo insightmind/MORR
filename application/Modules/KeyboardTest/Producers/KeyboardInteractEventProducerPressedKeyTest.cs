@@ -11,6 +11,7 @@ using MORR.Modules.Keyboard.Producers;
 using MORR.Shared.Hook;
 using SharedTest.TestHelpers.INativeHook;
 using System.Windows.Input;
+using MORR.Modules.Keyboard.Native;
 
 namespace KeyboardTest
 {
@@ -23,7 +24,7 @@ namespace KeyboardTest
         private KeyboardInteractEventProducer keyboardInteractEventProducer;
         private KeyboardModule keyboardModule;
         private HookNativeMethodsMock hookNativeMethodsMock;
-
+        private Mock<INativeKeyboard> nativeKeyboardMock;
 
         private readonly GlobalHook.MessageType[] KeyboardInteractListenedMessagesTypes =
         {
@@ -43,6 +44,9 @@ namespace KeyboardTest
             container.ComposeExportedValue(keyboardInteractEventProducer);
             container.ComposeParts(keyboardModule);
 
+            //initialize the native keyboard mock
+            nativeKeyboardMock = new Mock<INativeKeyboard>();
+
             //initialzie the hookNativeMethodsMock
             hookNativeMethodsMock = new HookNativeMethodsMock();
             hookNativeMethodsMock.Initialize();
@@ -54,6 +58,7 @@ namespace KeyboardTest
             // null everything!
             keyboardModule = null;
             keyboardInteractEventProducer = null;
+            nativeKeyboardMock = null;
             container.Dispose();
             container = null;
             hookNativeMethodsMock = null;
@@ -67,10 +72,13 @@ namespace KeyboardTest
             Debug.Assert(keyboardInteractEventProducer != null);
             Debug.Assert(hookNativeMethodsMock != null);
             Debug.Assert(hookNativeMethodsMock.Mock != null);
+            Debug.Assert(nativeKeyboardMock != null);
 
             /* GIVEN */
             GlobalHook.CppGetMessageCallback callback = GetCallback();
             //setting up fake messages and corresponding expected Events
+            nativeKeyboardMock.Setup(nativeK => nativeK.)
+
             GlobalHook.HookMessage[] hookMessages = {
             new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_KEYDOWN, wParam = (IntPtr)0x41}, //A
             new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_SYSKEYDOWN, wParam = (IntPtr)0x48}, //H
