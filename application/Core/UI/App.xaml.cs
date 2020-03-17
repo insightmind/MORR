@@ -11,9 +11,9 @@ namespace MORR.Core.UI
     /// </summary>
     public partial class App : Application
     {
-        public static bool HasLanguageCommandLineArgument { get; private set; }
+        internal static bool HasLanguageCommandLineArgument { get; private set; }
 
-        public static bool IsLanguageCommandLineArgument(string argument)
+        internal static bool IsLanguageCommandLineArgument(string argument)
         {
             return string.CompareOrdinal(argument, "no-force-german-ui") == 0;
         }
