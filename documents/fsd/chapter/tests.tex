@@ -35,33 +35,7 @@
         \item 256 recordings have been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
         \item Each recording contains a different \gls{session} identifier (as specified in \specref{D20}).
     \end{itemize}}
-
-    \test{\fmt{FS40}{FS54}{FS70}{FS250}{FS90}{FS51}{FS340}{FS350}}{Event discarding}{The application is running. The configuration file is valid. The configuration specifies to discard events of type "mouse:click".}
-    {\begin{enumerate}
-        \item The \gls{user} starts a recording.
-        \item The \gls{user} creates an \gls{event} of type "mouse:left-click" by clicking the left mouse button.
-        \item The \gls{user} creates an \gls{event} of type "keyboard:press-key" by pressing the 'a' key.
-        \item The \gls{user} completes the recording process.
-    \end{enumerate}}
-    {\begin{itemize}
-        \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
-        \item The recording contains only the "keyboard:press-key" \gls{event} in accordance with \specref{D300}, \specref{D301}, \specref{D302} and \specref{D330}.
-    \end{itemize}}
-\newpage
-    \test{\fmt{FS40}{FS51}{FS54}{FS70}{FS90}{FS250}{FS340}{FS350}{FS411}{FS421}}{Event transforming}{The application is running. The configuration file is valid. The configuration specifies to active a \ref{transforming-module} that transforms \glspl{event} of type "mouse:left-click" and "keyboard:press-key" into an \glspl{event} of type "other:ctrl-leftclick".}
-    {\begin{enumerate}
-        \item The \gls{user} starts a recording.
-        \item The \gls{user} creates an \gls{event} of type "keyboard:press-key" by pressing the 'CTRL' key without releasing it.
-        \item The \gls{user} creates an \gls{event} of type "mouse:left-click" by clicking the left mouse button.
-        \item The \gls{user} creates an \gls{event} of type "keyboard:release-key" by releasing the 'CTRL' key.
-        \item The \gls{user} completes the recording process.
-    \end{enumerate}}
-    {\begin{itemize}
-        \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
-        \item The recording contains the first three events in accordance with \specref{D300}, \specref{D301}, \specref{D302}, \specref{D320} and \specref{D330}. It additionally contains a fourth \gls{event} of type "other:ctrl-leftclick" that was created by transforming the first two \glspl{event}.
-    \end{itemize}}
-
-    \test{\fmt{FS51}{FS54}{FS70}{FS90}{FS250}{FS340}{FS350}{FS411}{FS421}}{Configuring active modules}{The application is running. The configuration file is valid. The configuration specifies to load the mouse module and to not load the keyboard module.}
+    \test[40]{\fmt{FS51}{FS54}{FS70}{FS90}{FS250}{FS340}{FS350}{FS411}{FS421}}{Configuring active modules}{The application is running. The configuration file is valid. The configuration specifies to load the mouse module and to not load the keyboard module.}
     {\begin{enumerate}
         \item The \gls{user} starts a recording.
         \item The \gls{user} presses the left mouse button which yields an \gls{event} by the mouse module.
@@ -83,9 +57,7 @@
         \item The \gls{videostream} contained in the recording follows \specref{D40}, where the framerate is 60hz, the bitrate is 4096kpbs (or lower) and the resolution is 1920x1080 pixels.
     \end{itemize}}
 
-    \addtocounter{counterTC}{10} %% removed TC60
-
-    \test{\fmt{FS54}{FS70}{FS90}{FS250}{FS340}{FS350}}{Configuring file path}{The application is running. The configuration file is valid. The configuration specifies to store the recording at path "\%userprofile\%\textbackslash documents\textbackslash recordings".}
+    \test[70]{\fmt{FS54}{FS70}{FS90}{FS250}{FS340}{FS350}}{Configuring file path}{The application is running. The configuration file is valid. The configuration specifies to store the recording at path "\%userprofile\%\textbackslash documents\textbackslash recordings".}
     {\begin{enumerate}
         \item The \gls{user} starts a recording.
         \item The \gls{user} completes the recording process.
@@ -220,35 +192,13 @@
         \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
         \item The recording contains both the "mouse:left-click" and the "keyboard:press-key" events.
     \end{itemize}}
-\newpage
-    \test{\fmt{FS70}{FS90}{FS250}{FS260}}{Combinability of modules}{The application is running. The configuration file is valid. The configuration specifies that both the mouse module and the keyboard module should be activated. It also specifies another module, that merges a "mouse:left-click" and a "keyboard:press-key" \gls{event} into a "other:ctrl-click" event.}
-    {\begin{enumerate}
-        \item The \gls{user} starts a recording.
-        \item The \gls{user} presses and holds the "CTRL"-key.
-        \item The \gls{user} then clicks the left mouse button.
-        \item The \gls{user} completes the recording process.
-    \end{enumerate}}
-    {\begin{itemize}
-        \item A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
-        \item The recording contains a "other:ctrl-click" event.
-    \end{itemize}}
-
-    \addtocounter{counterTC}{10} %%removed TC250
 \end{tests}
 
 \newpage
 \section{User interface test cases}
 
 \begin{tests}
-    \test[300]{\fmt{FS330}}{Event-Data extraction}{One or more recordings have been created and stored at the path "\%userprofile\%\textbackslash documents\textbackslash recordings\textbackslash sample.mp4".}
-    {\begin{enumerate}
-        \item The \gls{scientist} starts the command-line tool with the path "\%userprofile\%\textbackslash documents\textbackslash recordings\textbackslash" of the recordings and another path "\%userprofile\%\textbackslash documents\textbackslash recordings\textbackslash extracted\textbackslash" to extract the data to.
-    \end{enumerate}}
-    {\begin{itemize}
-        \item The \gls{event} data contained in the recordings at path "\%userprofile\%\textbackslash documents\textbackslash recordings\textbackslash" is extracted in JSON-format to path "\%userprofile\%\textbackslash documents\textbackslash recordings\textbackslash extracted\textbackslash".
-    \end{itemize}}
-
-    \test{\fmt{FS340}}{Tray-Icon}{The application is not running. The configuration file is valid.}
+    \test[310]{\fmt{FS340}}{Tray-Icon}{The application is not running. The configuration file is valid.}
     {\begin{enumerate}
         \item The \gls{user} starts the application.
     \end{enumerate}}
@@ -306,15 +256,15 @@
 		\item The recording contains a resize-window \gls{event},  that contains the title of the "Windows Explorer" window, old and new size of the window along with the timestamp at which the \gls{user} resized the window, the identifier of the window-management module and the "window:resize" type of the event.
 	\end{itemize}}
 	
-	\test{\fmt{FS20}{FS30}{FS54}{FS70}{FS250}{FS404}}{Window maximize/minimize/restore event}{The application is running. The configuration file is valid.}
+	\test{\fmt{FS20}{FS30}{FS54}{FS70}{FS250}{FS404}}{Window maximize/minimize event}{The application is running. The configuration file is valid.}
 	{\begin{enumerate}
 		\item The \gls{user} starts a new \gls{session} recording.
-		\item The \gls{user} maximizes/minimizes/restores a "Windows Explorer" window.
+		\item The \gls{user} maximizes/minimizes a "Windows Explorer" window.
 		\item The \gls{user} completes the recording process.
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
-		\item The recording contains a maximize-window/minimize-window/restore-window \gls{event},  that contains the title of the "Windows Explorer" window, the new state of the window - "maximized"/"minimized"/"restored" along with the timestamp at which the \gls{user} maximized/minimized/restored the window, the identifier of the window-management module and the "window:maximize"/"window:minimize"/"window:restore" type of the event.
+		\item The recording contains a maximize-window/minimize-window \gls{event},  that contains the title of the "Windows Explorer" window, the new state of the window - "maximized"/"minimized" along with the timestamp at which the \gls{user} maximized/minimized the window, the identifier of the window-management module and the "window:maximize"/"window:minimize" type of the event.
 	\end{itemize}}
 \end{tests}
 
@@ -403,7 +353,7 @@
 	\test{\fmt{FS20}{FS30}{FS54}{FS70}{FS250}{FS432}}{Clipboard paste event}{The application is running. The configuration file is valid.}
 	{\begin{enumerate}
 		\item The \gls{user} starts a new \gls{session} recording.
-		\item The \gls{user} pastes text in the "Mozilla Firefox/Google Chrome" address bar.
+		\item The \gls{user} pastes text in the "Mozilla Firefox/Google Chrome" address bar. The used browser explicitly uses the WM_PASTE window message.
 		\item The \gls{user} completes the recording process.
 	\end{enumerate}}
 	{\begin{itemize}
