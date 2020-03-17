@@ -79,16 +79,19 @@ namespace MORR.Modules.Keyboard.Native
 
         IntPtr INativeKeyboard.GetKeyboardLayout(uint idThread) { return GetKeyboardLayout(idThread);}
 
-        int INativeKeyboard.ToUnicodeEx(uint wVirtKey, uint wScanCode, byte[]
-        lpKeyState, [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pwszBuff,
-        int cchBuff, uint wFlags, IntPtr dwhkl)
+        char INativeKeyboard.ToUnicode(uint wVirtKey) 
         {
-            return ToUnicodeEx(wVirtKey, wScanCode, lpKeyState, pwszBuff, cchBuff, wFlags, dwhkl
-                );
-        }
+            byte[] keyState = new byte[256];
+            GetKeyboardState(keyState);
+            StringBuilder sbString = new StringBuilder(256);
 
-        bool INativeKeyboard.GetKeyboardState(byte[] lpKeyState) {
-            return GetKeyboardState(lpKeyState);
+            ToUnicodeEx((uint)(wVirtKey),
+                0, keyState, sbString, sbString.Capacity, 0, IntPtr.Zero);
+
+            string keyString = sbString.ToString();
+            char key = '\0';
+            if (!String.IsNullOrEmpty(keyString)) key = sbString.ToString()[0];
+            return key;
         }
 
         private bool TryGetCurrentModuleHandle(out IntPtr handle)

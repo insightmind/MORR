@@ -39,11 +39,8 @@ namespace MORR.Modules.Keyboard.Native
 
         IntPtr GetKeyboardLayout(uint idThread);
 
-        int ToUnicodeEx(uint wVirtKey, uint wScanCode, byte[]
-   lpKeyState, [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pwszBuff,
-   int cchBuff, uint wFlags, IntPtr dwhkl);
 
-        bool GetKeyboardState(byte[] lpKeyState);
+        char ToUnicode(uint wVirtKey);
 
         public struct KBDLLHOOKSTRUCT
         {

@@ -37,17 +37,7 @@ namespace MORR.Modules.Keyboard.Producers
             var virtualKeyCode = hookMessage.wParam;
             var pressedKey = nativeKeyboard.KeyFromVirtualKey((int)virtualKeyCode);
             var modifierKeys = GetModifierKeys();
-
-            byte[] keyState = new byte[256];
-            nativeKeyboard.GetKeyboardState(keyState);
-            System.Text.StringBuilder sbString = new System.Text.StringBuilder(256);
-
-            nativeKeyboard.ToUnicodeEx((uint)(virtualKeyCode),
-                0, keyState, sbString, sbString.Capacity, 0, IntPtr.Zero);
-
-            string keyString = sbString.ToString();
-            char key = '\0';
-            if (!String.IsNullOrEmpty(keyString)) key = sbString.ToString()[0];
+            char key = nativeKeyboard.ToUnicode((uint)virtualKeyCode);
 
             var keyboardEvent = new KeyboardInteractEvent
             {
