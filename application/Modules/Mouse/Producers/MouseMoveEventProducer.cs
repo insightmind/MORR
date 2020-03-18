@@ -48,8 +48,6 @@ namespace MORR.Modules.Mouse.Producers
         {
             // get the current mouse position as Point
             var currentMousePosition = nativeMouse.GetCursorPos();
-            ///!!!nativeMouse.GetCursorPos(out var currentMousePosition);
-
             var currentMousePositionAsPoint = new Point(currentMousePosition.X, currentMousePosition.Y);
             var lastMousePositionAsPoint = new Point(lastMousePosition.X, lastMousePosition.Y);
             // compare the last and the current mouse position and compute their distance
@@ -75,7 +73,6 @@ namespace MORR.Modules.Mouse.Producers
         {
             nativeMouse = nativeM;
             lastMousePosition = nativeMouse.GetCursorPos();
-            ///!!!nativeMouse.GetCursorPos(out lastMousePosition);
             var samplingTimeIntervalInMilliseconds = (int) ((double) 1 / SamplingRateInHz * 1000);
             mousePositionRecordingTimer = new Timer(GetMousePosition, null, 0, samplingTimeIntervalInMilliseconds);
         }
