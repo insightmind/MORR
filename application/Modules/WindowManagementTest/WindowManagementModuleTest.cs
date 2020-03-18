@@ -3,14 +3,11 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using MORR.Modules.WindowManagement;
-using MORR.Modules.WindowManagement.Events;
 using MORR.Modules.WindowManagement.Producers;
-using MORR.Shared.Events.Queue;
 using MORR.Shared.Hook;
 using SharedTest.TestHelpers.INativeHook;
 using Size = System.Drawing.Size;
@@ -159,6 +156,7 @@ namespace WindowManagementTest
             Debug.Assert(windowFocusEventProducer != null);
             Debug.Assert(hookNativeMethods != null);
             Debug.Assert(hookNativeMethods.Mock != null);
+            Debug.Assert(windowEventListenedMessagesTypes != null);
 
             /* GIVEN */
             const int WA_ACTIVE = 1;
@@ -166,18 +164,39 @@ namespace WindowManagementTest
 
             var callback = GetCallback();
 
-            var consumedEvent = new ManualResetEvent(false);
+            using var consumedEvent = new CountdownEvent(1);
 
-            var task = new Task(() => findMatch(windowFocusEventProducer, consumedEvent,
-                                                @event => @event.Title.Equals("sampleFocusTitle")
-                                                          && @event.ProcessName.Equals("sampleProcessName")));
-            task.Start();
+            using var didStartConsumingEvent = new ManualResetEvent(false);
+
+            var thread = new Thread(async () =>
+            {
+                await foreach (var @event in Await(
+                    windowFocusEventProducer.GetEvents(), didStartConsumingEvent))
+                {
+                    if (!(@event.Title.Equals("sampleFocusTitle")
+                          && @event.ProcessName.Equals("sampleProcessName")))
+                    {
+                        continue;
+                    }
+
+                    consumedEvent.Signal();
+                }
+            });
+
+            thread.Start();
+
+            Assert.IsTrue(didStartConsumingEvent.WaitOne(MaxWaitTime));
             callback(new GlobalHook.HookMessage
             {
                 Type = (uint) windowEventListenedMessagesTypes[0], wParam = (IntPtr) WA_ACTIVE,
                 Data = new[] { dataParamTest }
             });
-            Assert.IsTrue(consumedEvent.WaitOne(MaxWaitTime), "Did not find a matching window event in time.");
+
+            /* THEN */
+            Assert.IsTrue(consumedEvent.Wait(MaxWaitTime), "Did not find all matching window focus event in time.");
+
+            windowManagementModule.IsActive = false;
+            windowManagementModule.Initialize(false);
         }
 
         [TestMethod]
@@ -188,25 +207,46 @@ namespace WindowManagementTest
             Debug.Assert(windowMovementEventProducer != null);
             Debug.Assert(hookNativeMethods != null);
             Debug.Assert(hookNativeMethods.Mock != null);
+            Debug.Assert(windowEventListenedMessagesTypes != null);
 
             /* GIVEN */
             const int dataParamTest = 2;
             var callback = GetCallback();
 
-            var consumedEvent = new ManualResetEvent(false);
+            using var consumedEvent = new CountdownEvent(1);
 
-            var task = new Task(() => findMatch(windowMovementEventProducer, consumedEvent, @event =>
-                                                    @event.Title.Equals("sampleMovementTitle")
-                                                    && @event.ProcessName.Equals("sampleProcessName")
-                                                    && @event.OldLocation.Equals(new Point(0, 0))
-                                                    && @event.NewLocation.Equals(new Point(1, 1))));
-            task.Start();
+            using var didStartConsumingEvent = new ManualResetEvent(false);
 
+            var thread = new Thread(async () =>
+            {
+                await foreach (var @event in Await(
+                    windowMovementEventProducer.GetEvents(), didStartConsumingEvent))
+                {
+                    if (!(@event.Title.Equals("sampleMovementTitle")
+                          && @event.ProcessName.Equals("sampleProcessName")
+                          && @event.OldLocation.Equals(new Point(0, 0))
+                          && @event.NewLocation.Equals(new Point(1, 1))))
+                    {
+                        continue;
+                    }
+
+                    consumedEvent.Signal();
+                }
+            });
+
+            thread.Start();
+
+            Assert.IsTrue(didStartConsumingEvent.WaitOne(MaxWaitTime));
             callback(new GlobalHook.HookMessage
                          { Type = (uint) windowEventListenedMessagesTypes[1], Hwnd = (IntPtr) 1 });
             callback(new GlobalHook.HookMessage
                          { Type = (uint) windowEventListenedMessagesTypes[2], Data = new[] { dataParamTest } });
-            Assert.IsTrue(consumedEvent.WaitOne(MaxWaitTime), "Did not find a matching window event in time.");
+
+            /* THEN */
+            Assert.IsTrue(consumedEvent.Wait(MaxWaitTime), "Did not find all matching window movement event in time.");
+
+            windowManagementModule.IsActive = false;
+            windowManagementModule.Initialize(false);
         }
 
         [TestMethod]
@@ -217,25 +257,46 @@ namespace WindowManagementTest
             Debug.Assert(windowResizingEventProducer != null);
             Debug.Assert(hookNativeMethods != null);
             Debug.Assert(hookNativeMethods.Mock != null);
+            Debug.Assert(windowEventListenedMessagesTypes != null);
 
             /* GIVEN */
             const int dataParamTest = 3;
             var callback = GetCallback();
 
-            var consumedEvent = new ManualResetEvent(false);
+            using var consumedEvent = new CountdownEvent(1);
 
-            var task = new Task(() => findMatch(windowResizingEventProducer, consumedEvent, @event =>
-                                                    @event.Title.Equals("sampleResizingTitle")
-                                                    && @event.ProcessName.Equals("sampleProcessName")
-                                                    && @event.OldSize.Equals(new Size(0, 0))
-                                                    && @event.NewSize.Equals(new Size(1, 1))));
-            task.Start();
+            using var didStartConsumingEvent = new ManualResetEvent(false);
 
+            var thread = new Thread(async () =>
+            {
+                await foreach (var @event in Await(
+                    windowResizingEventProducer.GetEvents(), didStartConsumingEvent))
+                {
+                    if (!(@event.Title.Equals("sampleResizingTitle")
+                          && @event.ProcessName.Equals("sampleProcessName")
+                          && @event.OldSize.Equals(new Size(0, 0))
+                          && @event.NewSize.Equals(new Size(1, 1))))
+                    {
+                        continue;
+                    }
+
+                    consumedEvent.Signal();
+                }
+            });
+
+            thread.Start();
+
+            Assert.IsTrue(didStartConsumingEvent.WaitOne(MaxWaitTime));
             callback(new GlobalHook.HookMessage
                          { Type = (uint) windowEventListenedMessagesTypes[1], Hwnd = (IntPtr) 1 });
             callback(new GlobalHook.HookMessage
                          { Type = (uint) windowEventListenedMessagesTypes[2], Data = new[] { dataParamTest } });
-            Assert.IsTrue(consumedEvent.WaitOne(MaxWaitTime), "Did not find a matching window event in time.");
+
+            /* THEN */
+            Assert.IsTrue(consumedEvent.Wait(MaxWaitTime), "Did not find all matching window resizing event in time.");
+
+            windowManagementModule.IsActive = false;
+            windowManagementModule.Initialize(false);
         }
 
         [TestMethod]
@@ -246,24 +307,46 @@ namespace WindowManagementTest
             Debug.Assert(windowStateChangedEventProducer != null);
             Debug.Assert(hookNativeMethods != null);
             Debug.Assert(hookNativeMethods.Mock != null);
+            Debug.Assert(windowEventListenedMessagesTypes != null);
 
             /* GIVEN */
             const int dataParamTest = 4;
             var callback = GetCallback();
 
-            var consumedEvent = new ManualResetEvent(false);
+            using var consumedEvent = new CountdownEvent(1);
 
-            var task = new Task(() => findMatch(windowStateChangedEventProducer, consumedEvent, @event =>
-                                                    @event.Title.Equals("sampleStateChangedTitle")
-                                                    && @event.ProcessName.Equals("sampleProcessName")
-                                                    && @event.WindowState == WindowState.Normal));
-            task.Start();
+            using var didStartConsumingEvent = new ManualResetEvent(false);
 
+            var thread = new Thread(async () =>
+            {
+                await foreach (var @event in Await(
+                    windowStateChangedEventProducer.GetEvents(), didStartConsumingEvent))
+                {
+                    if (!(@event.Title.Equals("sampleStateChangedTitle")
+                          && @event.ProcessName.Equals("sampleProcessName")
+                          && @event.WindowState == WindowState.Normal))
+                    {
+                        continue;
+                    }
+
+                    consumedEvent.Signal();
+                }
+            });
+
+            thread.Start();
+
+            Assert.IsTrue(didStartConsumingEvent.WaitOne(MaxWaitTime));
             callback(new GlobalHook.HookMessage
                          { Type = (uint) windowEventListenedMessagesTypes[1], Hwnd = (IntPtr) 1 });
             callback(new GlobalHook.HookMessage
                          { Type = (uint) windowEventListenedMessagesTypes[2], Data = new[] { dataParamTest } });
-            Assert.IsTrue(consumedEvent.WaitOne(MaxWaitTime), "Did not find a matching window event in time.");
+
+            /* THEN */
+            Assert.IsTrue(consumedEvent.Wait(MaxWaitTime),
+                          "Did not find all matching window state changed event in time.");
+
+            windowManagementModule.IsActive = false;
+            windowManagementModule.Initialize(false);
         }
 
         [TestMethod]
@@ -274,38 +357,98 @@ namespace WindowManagementTest
             Debug.Assert(windowStateChangedEventProducer != null);
             Debug.Assert(hookNativeMethods != null);
             Debug.Assert(hookNativeMethods.Mock != null);
+            Debug.Assert(windowEventListenedMessagesTypes != null);
 
             /* GIVEN */
             const int dataParamTest = 5;
             var callback = GetCallback();
 
-            var consumedEvent = new ManualResetEvent(false);
+            using var consumedEvent = new CountdownEvent(1);
 
-            var task = new Task(() => findMatch(windowStateChangedEventProducer, consumedEvent, @event =>
-                                                    @event.Title.Equals("sampleStateChangedTitle")
-                                                    && @event.ProcessName.Equals("sampleProcessName")
-                                                    && @event.WindowState == WindowState.Minimized));
-            task.Start();
+            using var didStartConsumingEvent = new ManualResetEvent(false);
 
+            var thread = new Thread(async () =>
+            {
+                await foreach (var @event in Await(
+                    windowStateChangedEventProducer.GetEvents(), didStartConsumingEvent))
+                {
+                    if (!(@event.Title.Equals("sampleStateChangedTitle")
+                          && @event.ProcessName.Equals("sampleProcessName")
+                          && @event.WindowState == WindowState.Minimized))
+                    {
+                        continue;
+                    }
+
+                    consumedEvent.Signal();
+                }
+            });
+
+            thread.Start();
+
+            Assert.IsTrue(didStartConsumingEvent.WaitOne(MaxWaitTime));
             callback(new GlobalHook.HookMessage
             {
                 Type = (uint) windowEventListenedMessagesTypes[3], Data = new[] { dataParamTest },
                 wParam = (IntPtr) WindowState.Minimized
             });
-            Assert.IsTrue(consumedEvent.WaitOne(MaxWaitTime), "Did not find a matching window event in time.");
+
+            /* THEN */
+            Assert.IsTrue(consumedEvent.Wait(MaxWaitTime),
+                          "Did not find all matching window state changed event in time.");
+
+            windowManagementModule.IsActive = false;
+            windowManagementModule.Initialize(false);
         }
 
-        private async void findMatch<T>(DefaultEventQueue<T> producer, ManualResetEvent reset, Func<T, bool> predicate)
-            where T : WindowEvent
+        [TestMethod]
+        public void WindowStateChangedEventProducerCallbackTest_Maximized()
         {
-            await foreach (var @event in producer.GetEvents())
+            /* PRECONDITIONS */
+            Debug.Assert(windowManagementModule != null);
+            Debug.Assert(windowStateChangedEventProducer != null);
+            Debug.Assert(hookNativeMethods != null);
+            Debug.Assert(hookNativeMethods.Mock != null);
+            Debug.Assert(windowEventListenedMessagesTypes != null);
+
+            /* GIVEN */
+            const int dataParamTest = 6;
+            var callback = GetCallback();
+
+            using var consumedEvent = new CountdownEvent(1);
+
+            using var didStartConsumingEvent = new ManualResetEvent(false);
+
+            var thread = new Thread(async () =>
             {
-                if (predicate.Invoke(@event))
+                await foreach (var @event in Await(
+                    windowStateChangedEventProducer.GetEvents(), didStartConsumingEvent))
                 {
-                    reset.Set();
-                    break;
+                    if (!(@event.Title.Equals("sampleStateChangedTitle")
+                          && @event.ProcessName.Equals("sampleProcessName")
+                          && @event.WindowState == WindowState.Maximized))
+                    {
+                        continue;
+                    }
+
+                    consumedEvent.Signal();
                 }
-            }
+            });
+
+            thread.Start();
+
+            Assert.IsTrue(didStartConsumingEvent.WaitOne(MaxWaitTime));
+            callback(new GlobalHook.HookMessage
+            {
+                Type = (uint) windowEventListenedMessagesTypes[3], Data = new[] { dataParamTest },
+                wParam = (IntPtr) WindowState.Maximized
+            });
+
+            /* THEN */
+            Assert.IsTrue(consumedEvent.Wait(MaxWaitTime),
+                          "Did not find all matching window state changed event in time.");
+
+            windowManagementModule.IsActive = false;
+            windowManagementModule.Initialize(false);
         }
 
         private GlobalHook.CppGetMessageCallback GetCallback()
@@ -336,6 +479,12 @@ namespace WindowManagementTest
             callbackReceivedEvent.Dispose();
             Assert.IsNotNull(callback, "Callback received however unexpectedly null!");
             return callback;
+        }
+
+        public static T Await<T>(T awaitedObject, ManualResetEvent expectation)
+        {
+            expectation.Set();
+            return awaitedObject;
         }
     }
 }

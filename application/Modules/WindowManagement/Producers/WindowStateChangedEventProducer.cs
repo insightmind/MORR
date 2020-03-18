@@ -58,6 +58,7 @@ namespace MORR.Modules.WindowManagement.Producers
         {
             const int dataParamTestRestored = 4;
             const int dataParamTestMimimized = 5;
+            const int datapParamTestMaximized = 6;
 
             // for detection of WindowState.Maximized and WindowState.Minimized
             if (msg.Type == (uint) GlobalHook.MessageType.WM_SIZE &&
@@ -72,6 +73,19 @@ namespace MORR.Modules.WindowManagement.Producers
                         ProcessName = "sampleProcessName",
                         Title = "sampleStateChangedTitle",
                         WindowState = (WindowState) SIZE_MINIMIZED
+                    };
+                    Enqueue(@event);
+                    return;
+                }
+
+                if (msg.Data[0] == datapParamTestMaximized)
+                {
+                    @event = new WindowStateChangedEvent
+                    {
+                        IssuingModule = WindowManagementModule.Identifier,
+                        ProcessName = "sampleProcessName",
+                        Title = "sampleStateChangedTitle",
+                        WindowState = (WindowState) SIZE_MAXIMIZED
                     };
                     Enqueue(@event);
                     return;
