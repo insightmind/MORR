@@ -110,8 +110,7 @@ namespace MouseTest.Producers
             Debug.Assert(hookNativeMethodsMock.Mock != null);
 
             /* GIVEN */
-            //get the callback
-            GlobalHook.CppGetMessageCallback callback = GetCallback();
+            mouseModule.Initialize(true);
 
             //setting up fake nativeMouseMock behaviors, messages and corresponding expected Events
             nativeMouseMock.SetupSequence(nM => nM.GetCursorPos())
@@ -145,14 +144,12 @@ namespace MouseTest.Producers
                 }
             });
             thread.Start();
+
             // true if the consumer is attached!
             Assert.IsTrue(didStartConsumingEvent.WaitOne(maxWaitTime));
 
             // We must call the callback after the consumer is attached!
             // otherwise the message is automatically dismissed.
-            // open up the strategy channel
-            mouseModule.Initialize(true);
-
             /// this is where the GetMousePosition() "callback" in the producer will be called! with Timer
             mouseMoveEventProducer.StartCapture(nativeMouseMock.Object);
 
@@ -162,7 +159,6 @@ namespace MouseTest.Producers
 
             //total shut down and resources release
             mouseMoveEventProducer.StopCapture();
-            mouseModule.IsActive = false;
             mouseModule.Initialize(false);
         }
 
@@ -194,34 +190,6 @@ namespace MouseTest.Producers
             {
                 hookNativeMethodsMock.AllowMessageTypeRegistry(messageType);
             }
-        }
-
-        /// <summary>
-        ///     Performs a series of initialization and Setups to get the CppGetMessageCallback.
-        /// </summary>
-        /// <returns>the callback that can be called with a message, which in turns calls a callback in the producers that is interested in this type of message</returns>
-        private GlobalHook.CppGetMessageCallback GetCallback()
-        {
-            GlobalHook.CppGetMessageCallback callback = null;
-            AllowMessageTypeRegistryForAll();
-            hookNativeMethodsMock.AllowLibraryLoad();
-            using var callbackReceivedEvent = new AutoResetEvent(false);
-
-            hookNativeMethodsMock.Mock
-                 .Setup(hook => hook.SetHook(It.IsAny<GlobalHook.CppGetMessageCallback>(), It.IsAny<bool>()))?
-                 .Callback((GlobalHook.CppGetMessageCallback cppCallback, bool isBlocking) =>
-                 {
-                     callback = cppCallback;
-                     callbackReceivedEvent.Set();
-                 });
-            //here the SetHook() method is called!
-            mouseModule.Initialize(true);
-            mouseModule.IsActive = true;
-
-            //wait for the hookNativeMethodsMock.Mock.Callback is called!
-            Assert.IsTrue(callbackReceivedEvent.WaitOne(maxWaitTime), "Did not receive callback in time!");
-            Assert.IsNotNull(callback, "Callback received however unexpectedly null!");
-            return callback;
         }
 
         /// <summary>
