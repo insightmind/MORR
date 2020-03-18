@@ -139,19 +139,39 @@ namespace ClipboardTest
             /* GIVEN */
             const int wparamTest = 10;
 
+            var clipboardWindowMessageSink = ClipboardCopyEventProducer.clipboardWindowMessageSink;
+
             GetCallback();
 
-            var clipboardWindowMessageSink = ClipboardCopyEventProducer.clipboardWindowMessageSink;
-            var consumedEvent = new ManualResetEvent(false);
+            using var consumedEvent = new CountdownEvent(1);
 
-            using var task = new Task(() => findMatch(clipboardCopyEventProducer, consumedEvent,
-                                                      @event => @event.ClipboardText.Equals("sampleCopyText")));
-            task.Start();
+            using var didStartConsumingEvent = new ManualResetEvent(false);
+
+            var thread = new Thread(async () =>
+            {
+                await foreach (var @event in Await(
+                    clipboardCopyEventProducer.GetEvents(), didStartConsumingEvent))
+                {
+                    if (!@event.ClipboardText.Equals("sampleCopyText"))
+                    {
+                        continue;
+                    }
+
+                    consumedEvent.Signal();
+                }
+            });
+
+            thread.Start();
+
+            Assert.IsTrue(didStartConsumingEvent.WaitOne(MaxWaitTime));
 
             clipboardWindowMessageSink.ClipboardUpdateTestHelper(IntPtr.Zero,
                                                                  (int) GlobalHook.MessageType.WM_CLIPBOARDUPDATE,
                                                                  (IntPtr) wparamTest, IntPtr.Zero);
-            Assert.IsTrue(consumedEvent.WaitOne(MaxWaitTime), "Did not find a matching clipboard copy event in time.");
+            /* THEN */
+            Assert.IsTrue(consumedEvent.Wait(MaxWaitTime), "Did not find all matching clipboard copy event in time.");
+            clipboardModule.IsActive = false;
+            clipboardModule.Initialize(false);
         }
 
         [TestMethod]
@@ -167,18 +187,39 @@ namespace ClipboardTest
             /* GIVEN */
             const int wparamTest = 11;
 
-            GetCallback();
             var clipboardWindowMessageSink = ClipboardCutEventProducer.clipboardWindowMessageSink;
 
-            using var consumedEvent = new ManualResetEvent(false);
+            GetCallback();
 
-            var task = new Task(() => findMatch(clipboardCutEventProducer, consumedEvent,
-                                                @event => @event.ClipboardText.Equals("sampleCutText")));
-            task.Start();
+            using var consumedEvent = new CountdownEvent(1);
+
+            using var didStartConsumingEvent = new ManualResetEvent(false);
+
+            var thread = new Thread(async () =>
+            {
+                await foreach (var @event in Await(
+                    clipboardCutEventProducer.GetEvents(), didStartConsumingEvent))
+                {
+                    if (!@event.ClipboardText.Equals("sampleCutText"))
+                    {
+                        continue;
+                    }
+
+                    consumedEvent.Signal();
+                }
+            });
+
+            thread.Start();
+
+            Assert.IsTrue(didStartConsumingEvent.WaitOne(MaxWaitTime));
+
             clipboardWindowMessageSink.ClipboardUpdateTestHelper(IntPtr.Zero,
-                                                                 (int) GlobalHook.MessageType.WM_CLIPBOARDUPDATE,
-                                                                 (IntPtr) wparamTest, IntPtr.Zero);
-            Assert.IsTrue(consumedEvent.WaitOne(MaxWaitTime), "Did not find a matching clipboard cut event in time.");
+                                                                 (int)GlobalHook.MessageType.WM_CLIPBOARDUPDATE,
+                                                                 (IntPtr)wparamTest, IntPtr.Zero);
+            /* THEN */
+            Assert.IsTrue(consumedEvent.Wait(MaxWaitTime), "Did not find all matching clipboard cut event in time.");
+            clipboardModule.IsActive = false;
+            clipboardModule.Initialize(false);
         }
 
         [TestMethod]
