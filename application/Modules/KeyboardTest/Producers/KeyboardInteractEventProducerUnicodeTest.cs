@@ -11,7 +11,6 @@ using MORR.Modules.Keyboard.Producers;
 using MORR.Shared.Hook;
 using SharedTest.TestHelpers.INativeHook;
 using System.Windows.Input;
-using System.Threading.Tasks;
 using MORR.Modules.Keyboard.Native;
 using System.Collections.Generic;
 
@@ -75,6 +74,7 @@ namespace KeyboardTest
             Debug.Assert(hookNativeMethodsMock != null);
             Debug.Assert(hookNativeMethodsMock.Mock != null);
 
+            //setting up fake nativeKeyboardMock behaviors, messages and corresponding expected Events
             nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0x41)).Returns(Key.A);
             nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0x5A)).Returns(Key.Z);
             nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0x30)).Returns(Key.D0);
