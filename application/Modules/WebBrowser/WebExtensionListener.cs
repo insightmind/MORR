@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using MORR.Shared.Utility;
@@ -21,7 +23,7 @@ namespace MORR.Modules.WebBrowser
         private const int
             ERROR_OPERATION_ABORTED = 995; //errorcode thrown by the async function when listener is stopped
 
-        private readonly HttpListener listener;
+        private const int ERROR_ALREADY_EXISTS = 183;
 
         //deliberately don't use IList, as RemoveAll function is used later
         private readonly Dictionary<EventLabel, List<IWebBrowserEventObserver>> observers;
@@ -30,6 +32,10 @@ namespace MORR.Modules.WebBrowser
         //depends on the way the asynchronous BeginGetContext is handled internally
         private readonly ConcurrentQueue<HttpListenerResponse> startQueue;
         private readonly ConcurrentQueue<HttpListenerResponse> stopQueue;
+
+        private HttpListener? listener;
+
+        private readonly Uri listenerPrefix;
         private bool recordingActive;
 
         /// <summary>
@@ -47,10 +53,7 @@ namespace MORR.Modules.WebBrowser
         /// <exception cref="UriFormatException">If the urlSuffix is invalid.</exception>
         public WebExtensionListener(string urlSuffix)
         {
-            listener = new HttpListener();
-            //this might throw the HttpListenerException
-            listener.Prefixes.Add(new Uri(URLPREFIX + urlSuffix)
-                                      .ToString()); //the short conversion to Uri is just to check URL validity
+            listenerPrefix = new Uri(URLPREFIX + urlSuffix);
             startQueue = new ConcurrentQueue<HttpListenerResponse>();
             stopQueue = new ConcurrentQueue<HttpListenerResponse>();
             observers = new Dictionary<EventLabel, List<IWebBrowserEventObserver>>();
@@ -67,10 +70,34 @@ namespace MORR.Modules.WebBrowser
         /// </summary>
         public void StartListening()
         {
-            if (!listener.IsListening)
+            if (listener == null || !listener.IsListening)
             {
-                listener.Start();
-                listener.BeginGetContext(RetrieveRequest, null);
+                if (listener == null)
+                {
+                    listener = new HttpListener();
+                    listener.Prefixes.Add(listenerPrefix.ToString());
+                }
+
+                try
+                {
+                    listener.Start();
+                    listener.BeginGetContext(RetrieveRequest, null);
+                }
+                catch (HttpListenerException ex)
+                {
+                    if (ex.ErrorCode == ERROR_ALREADY_EXISTS)
+                    {
+                        StopForeignInstance();
+                        listener = new HttpListener();
+                        listener.Prefixes.Add(listenerPrefix.ToString());
+                        listener.Start();
+                        listener.BeginGetContext(RetrieveRequest, null);
+                    }
+                    else
+                    {
+                        throw ex;
+                    }
+                }
             }
         }
 
@@ -79,9 +106,16 @@ namespace MORR.Modules.WebBrowser
         /// </summary>
         public void StopListening()
         {
+            StopListening(null);
+        }
+
+        //Stop listening, but respond to context just before stopping
+        private void StopListening(HttpListenerContext? context)
+        {
+            if (listener == null)
+                return;
             if (listener.IsListening)
             {
-                listener.Stop();
                 //inform all the connected applications about the listener having stopped
                 foreach (var response in startQueue)
                 {
@@ -92,6 +126,16 @@ namespace MORR.Modules.WebBrowser
                 {
                     AnswerRequest(response, new WebBrowserResponse("Quit"));
                 }
+
+                if (context != null)
+                {
+                    AnswerRequest(context.Response, new WebBrowserResponse(ResponseStrings.POSITIVERESPONSE));
+                }
+
+                listener.Stop();
+                startQueue.Clear();
+                stopQueue.Clear();
+                listener = null;
             }
         }
 
@@ -134,7 +178,8 @@ namespace MORR.Modules.WebBrowser
             CONFIG,
             START,
             SENDDATA,
-            WAITSTOP
+            WAITSTOP,
+            STOPLISTENING
         }
 
         #endregion
@@ -144,10 +189,11 @@ namespace MORR.Modules.WebBrowser
         //the possible responses to send
         private sealed class ResponseStrings
         {
-            public static readonly string POSITIVERESPONSE = "Ok";
-            public static readonly string NEGATIVERESPONSE = "Invalid Request";
-            public static readonly string STARTRESPONSE = "Start";
-            public static readonly string STOPRESPONSE = "Stop";
+            public const string POSITIVERESPONSE = "Ok";
+            public const string NEGATIVERESPONSE = "Invalid Request";
+            public const string STARTRESPONSE = "Start";
+            public const string STOPRESPONSE = "Stop";
+            public const string REQUESTDENIED = "Denied";
         }
 
         private static readonly string URLPREFIX = "http://localhost:";
@@ -161,8 +207,6 @@ namespace MORR.Modules.WebBrowser
         /// </summary>
         private void Start()
         {
-            //start listening in case the listener is not yet doing so
-            StartListening();
             foreach (var response in startQueue)
             {
                 AnswerRequest(response, new WebBrowserResponse(ResponseStrings.STARTRESPONSE));
@@ -187,10 +231,13 @@ namespace MORR.Modules.WebBrowser
         //retrieve and parse another incoming request
         private void RetrieveRequest(IAsyncResult result)
         {
-            HttpListenerContext context;
+            HttpListenerContext? context = null;
             try
             {
-                context = listener.EndGetContext(result);
+                if (listener != null)
+                {
+                    context = listener.EndGetContext(result);
+                }
             }
             catch (HttpListenerException ex)
             {
@@ -201,6 +248,11 @@ namespace MORR.Modules.WebBrowser
                 }
 
                 throw ex;
+            }
+
+            if (context == null)
+            {
+                return;
             }
 
             var request = context.Request;
@@ -294,6 +346,19 @@ namespace MORR.Modules.WebBrowser
                         }
 
                         break;
+                    case WebBrowserRequestType.STOPLISTENING:
+                        if (!recordingActive)
+                        {
+                            //stop listening to allow other instance to record on the specified port
+                            StopListening(context);
+                        }
+                        else
+                        {
+                            //do not terminate if a recording is currently active
+                            AnswerRequest(context.Response, new WebBrowserResponse(ResponseStrings.REQUESTDENIED));
+                        }
+
+                        break;
                     default:
                         //theoretically unreachable, as Enum.TryParse should have failed in this case
                         AnswerInvalid(context.Response);
@@ -319,7 +384,7 @@ namespace MORR.Modules.WebBrowser
             output.Close();
         }
 
-        //decode an URL-encoded string to UTF8 (i think)
+        //decode an URL-encoded string to UTF8
         private static string DecodeUrlString(string url)
         {
             string newUrl;
@@ -347,6 +412,57 @@ namespace MORR.Modules.WebBrowser
 
             NotifyAll(parsed, label);
             return true;
+        }
+
+        //send stoplistening-request to the specified address, attempting to shut down another instance of webextension listener.
+        private void StopForeignInstance()
+        {
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = listenerPrefix;
+                client.DefaultRequestHeaders
+                      .Accept
+                      .Add(new MediaTypeWithQualityHeaderValue("application/json")); //ACCEPT header
+                var response = SendHTTPMessage(new { Request = "STOPLISTENING" }, client);
+                if (!response.TryGetProperty("application", out var applicationId) ||
+                    !applicationId.ValueEquals("MORR"))
+                {
+                    throw new InvalidDataException("HTTP response did not contain a valid 'application' identifier.");
+                }
+
+                if (!response.TryGetProperty("response", out var answer))
+                {
+                    throw new InvalidDataException("HTTP response did not contain a 'response' field.");
+                }
+
+                if (answer.ValueEquals(ResponseStrings.POSITIVERESPONSE)) { }
+                else if (answer.ValueEquals(ResponseStrings.REQUESTDENIED))
+                {
+                    throw new InvalidOperationException(
+                        "Another instance of MORR is actively recording on this system.");
+                }
+                else
+                {
+                    throw new InvalidDataException("Received unexpected answer: " + answer);
+                }
+            }
+        }
+
+        private JsonElement SendHTTPMessage(object data, HttpClient client)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, "relativeAddress");
+            request.Content = new StringContent(JsonSerializer.Serialize(data),
+                                                Encoding.UTF8,
+                                                "application/json"); //CONTENT-TYPE header
+
+            var response = client.PostAsync(listenerPrefix, request.Content).Result;
+            var result = response.Content.ReadAsStringAsync().Result;
+            return GetJsonFromString(result);
+        }
+
+        private static JsonElement GetJsonFromString(string data)
+        {
+            return JsonDocument.Parse(data).RootElement;
         }
 
         #endregion
