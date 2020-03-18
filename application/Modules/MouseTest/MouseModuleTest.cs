@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
@@ -7,51 +6,82 @@ using Moq;
 using MORR.Modules.Mouse;
 using MORR.Modules.Mouse.Producers;
 using MORR.Shared.Hook;
+using SharedTest.TestHelpers.INativeHook;
+using MORR.Modules.Mouse.Native;
 
 namespace MouseTest
 {
     [TestClass]
     public class MouseModuleTest
     {
+        protected const int maxWaitTime = 5000;
+
+        private class TestMouseModuleConfiguration : MouseModuleConfiguration
+        {
+            public TestMouseModuleConfiguration()
+            {
+                SamplingRateInHz = 10;
+                Threshold = 50;
+            }
+        }
         private CompositionContainer container;
-        private Mock<MouseClickEventProducer> mouseClickEventProducer;
+        private MouseClickEventProducer mouseClickEventProducer;
+        private MouseMoveEventProducer mouseMoveEventProducer;
+        private MouseScrollEventProducer mouseScrollEventProducer;
         private MouseModule mouseModule;
         private MouseModuleConfiguration mouseModuleConfiguration;
-        private Mock<MouseMoveEventProducer> mouseMoveEventProducer;
-        private Mock<MouseScrollEventProducer> mouseScrollEventProducer;
+        private Mock<INativeMouse> nativeMouseMock;
+        private HookNativeMethodsMock hookNativeMethodsMock;
 
-        private Mock<IHookNativeMethods> nativeHook;
+        private readonly GlobalHook.MessageType[] mouseClickListenedMessagesTypes =
+        {
+            GlobalHook.MessageType.WM_RBUTTONDOWN,
+            GlobalHook.MessageType.WM_LBUTTONDOWN,
+            GlobalHook.MessageType.WM_MBUTTONDOWN,
+            GlobalHook.MessageType.WM_RBUTTONDBLCLK,
+            GlobalHook.MessageType.WM_LBUTTONDBLCLK,
+            GlobalHook.MessageType.WM_MBUTTONDBLCLK,
+            GlobalHook.MessageType.WM_NCRBUTTONDOWN,
+            GlobalHook.MessageType.WM_NCLBUTTONDOWN,
+            GlobalHook.MessageType.WM_NCMBUTTONDOWN,
+            GlobalHook.MessageType.WM_NCRBUTTONDBLCLK,
+            GlobalHook.MessageType.WM_NCLBUTTONDBLCLK,
+            GlobalHook.MessageType.WM_NCMBUTTONDBLCLK
+        };
+
+        private readonly GlobalHook.MessageType[] mouseScrollListenedMessagesTypes =
+        {
+            GlobalHook.MessageType.WM_MOUSEWHEEL
+        };
 
         [TestInitialize]
         public void BeforeTest()
         {
+            //initialize module, producers and configuration
             mouseModule = new MouseModule();
-            mouseClickEventProducer = new Mock<MouseClickEventProducer>();
-            mouseMoveEventProducer = new Mock<MouseMoveEventProducer>();
-            mouseScrollEventProducer = new Mock<MouseScrollEventProducer>();
+            mouseClickEventProducer = new MouseClickEventProducer();
+            mouseMoveEventProducer = new MouseMoveEventProducer();
+            mouseScrollEventProducer = new MouseScrollEventProducer();
             mouseModuleConfiguration = new TestMouseModuleConfiguration();
-            nativeHook = new Mock<IHookNativeMethods>();
 
+            // initialize the container and fulfill the MEF inports exports
             container = new CompositionContainer();
-            container.ComposeExportedValue(mouseClickEventProducer.Object);
-            container.ComposeExportedValue(mouseMoveEventProducer.Object);
-            container.ComposeExportedValue(mouseScrollEventProducer.Object);
+            container.ComposeExportedValue(mouseClickEventProducer);
+            container.ComposeExportedValue(mouseMoveEventProducer);
+            container.ComposeExportedValue(mouseScrollEventProducer);
             container.ComposeExportedValue(mouseModuleConfiguration);
             container.ComposeParts(mouseModule);
 
-            nativeHook
-                .Setup(hook => hook.Capture(It.IsAny<uint>()))?
-                .Returns(true);
+            //initialize the native mouse mock
+            nativeMouseMock = new Mock<INativeMouse>();
 
-            nativeHook
-                .Setup(mock => mock.LoadLibrary())?
-                .Returns(new IntPtr(0x1)); // We just return a non null pointer
-
-            GlobalHook.Initialize(nativeHook.Object);
+            //initialzie the hookNativeMethodsMock
+            hookNativeMethodsMock = new HookNativeMethodsMock();
+            hookNativeMethodsMock.Initialize();
         }
 
         [TestMethod]
-        public void TestMouseModule_Activate()
+        public void TestMouseModule_ActivateTrue()
         {
             // Preconditions
             Debug.Assert(mouseModule != null);
@@ -60,6 +90,8 @@ namespace MouseTest
 
             /* WHEN */
             mouseModule.Initialize(true);
+            AllowMessageTypeRegistryForAll();
+            hookNativeMethodsMock.AllowLibraryLoad();
             mouseModule.IsActive = true;
 
             /* THEN */
@@ -67,7 +99,7 @@ namespace MouseTest
         }
 
         [TestMethod]
-        public void TestMouseModule_Deactivate()
+        public void TestMouseModule_ActivateFalse()
         {
             // Preconditions
             Debug.Assert(mouseModule != null);
@@ -75,18 +107,61 @@ namespace MouseTest
             /* GIVEN */
 
             /* WHEN */
+            mouseModule.Initialize(true);
+            AllowMessageTypeRegistryForAll();
+            hookNativeMethodsMock.AllowLibraryLoad();
+            mouseModule.IsActive = true;
             mouseModule.IsActive = false;
 
             /* THEN */
             Assert.IsFalse(mouseModule.IsActive);
         }
 
-        private class TestMouseModuleConfiguration : MouseModuleConfiguration
+        [TestMethod]
+        public void TestMouseModule_InitializeFalse()
         {
-            public TestMouseModuleConfiguration()
+            // Preconditions
+            Debug.Assert(mouseModule != null);
+
+            /* GIVEN */
+
+            /* WHEN */
+            mouseModule.Initialize(false);
+            /* THEN */
+            Assert.IsTrue(mouseClickEventProducer.IsClosed);
+            Assert.IsTrue(mouseMoveEventProducer.IsClosed);
+            Assert.IsTrue(mouseScrollEventProducer.IsClosed);
+        }
+
+        [TestMethod]
+        public void TestMouseModuleInitializeTrue()
+        {
+            // Preconditions
+            Debug.Assert(mouseModule != null);
+
+            /* GIVEN */
+
+            /* WHEN */
+            mouseModule.Initialize(true);
+
+            /* THEN */
+            Assert.IsFalse(mouseClickEventProducer.IsClosed);
+            Assert.IsFalse(mouseMoveEventProducer.IsClosed);
+            Assert.IsFalse(mouseScrollEventProducer.IsClosed);
+        }
+
+        /// <summary>
+        ///     Call AllowMessageTypeRegistry() methods on all messages related to the mouse producers.
+        /// </summary>
+        private void AllowMessageTypeRegistryForAll()
+        {
+            foreach (GlobalHook.MessageType messageType in mouseClickListenedMessagesTypes)
             {
-                SamplingRateInHz = 10;
-                Threshold = 50;
+                hookNativeMethodsMock.AllowMessageTypeRegistry(messageType);
+            }
+            foreach (GlobalHook.MessageType messageType in mouseScrollListenedMessagesTypes)
+            {
+                hookNativeMethodsMock.AllowMessageTypeRegistry(messageType);
             }
         }
     }
