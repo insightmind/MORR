@@ -53,7 +53,7 @@ namespace MORR.Core.Data.IntermediateFormat.Json
                 }
             }
 
-            eventQueue?.Close();
+            eventQueue.Close();
         }
     }
 }

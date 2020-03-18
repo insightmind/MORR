@@ -2,12 +2,14 @@
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MORR.Shared.Events.Queue.Strategy;
+using SharedTest.TestHelpers;
+using SharedTest.TestHelpers.Event;
 
 namespace SharedTest.Events.Queue.Strategy.MultiConsumer
 {
     public abstract class MultiConsumerChannelStrategyTest<T>: EventQueueStorageStrategyTest<T> where T : IEventQueueStorageStrategy<TestEvent>
     {
-        private const int maxWaitTime = 1000;
+        private const int maxWaitTime = 5000;
         protected const int defaultMaxConsumer = 5;
         protected const int defaultMaxEvents = 10;
 
@@ -17,15 +19,14 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
             /* PRECONDITION */
             Debug.Assert(Strategy != null);
 
-            var allowedConsumerDidNotFailed = new ManualResetEvent(true);
-            var invalidConsumerFailed = new ManualResetEvent(false);
+            using var allowedConsumerDidNotFailed = new ManualResetEvent(true);
+            using var invalidConsumerFailed = new ManualResetEvent(false);
 
             /* GIVEN */
             for (var index = 0; index < defaultMaxConsumer; index++)
             {
                 var consumer = new TestConsumer(Strategy);
                 consumer.Consume(
-                    false,
                     (@event, index) => true,
                     result => result?.EventSuccess(allowedConsumerDidNotFailed));
             }
@@ -33,10 +34,8 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
             /* WHEN */
             var invalidConsumer = new TestConsumer(Strategy);
             invalidConsumer.Consume(
-                true,
                 (@event, num) => true,
                 result => result?.EventThrows<ChannelConsumingException>(invalidConsumerFailed));
-
 
             /* THEN */
             Assert.IsTrue(allowedConsumerDidNotFailed.WaitOne(maxWaitTime), "An Error occurred while consuming using valid consumers.");
@@ -50,8 +49,8 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
             Debug.Assert(Strategy != null);
             Debug.Assert(Strategy.IsClosed);
 
-            var allowedConsumerDidFail = new ManualResetEvent(false);
-            var retryConsumerDidFail = new ManualResetEvent(false);
+            using var allowedConsumerDidFail = new ManualResetEvent(false);
+            using var retryConsumerDidFail = new ManualResetEvent(false);
             var validationConsumer = new TestConsumer(Strategy);
             var shouldContinue = true;
 
@@ -60,12 +59,11 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
             for (var index = 0; index < defaultMaxConsumer - 1; index++)
             {
                 var consumer = new TestConsumer(Strategy);
-                _ = consumer.ConsumeUnconditionally();
+                consumer.ConsumeUnconditionally(maxWaitTime, result => { });
             }
 
             /* GIVEN */
             validationConsumer.Consume(
-                false,
                 (@event, index) => shouldContinue,
                 result => result.EventThrows<ChannelConsumingException>(allowedConsumerDidFail));
 
@@ -76,14 +74,14 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
             shouldContinue = false;
 
             // We wait until the current consumer exits. After that we can try to retry consuming which should not cause an error.
-            Assert.IsFalse(allowedConsumerDidFail.WaitOne(maxWaitTime));
+            Assert.IsFalse(allowedConsumerDidFail.WaitOne(500));
 
             var newConsumer = new TestConsumer(Strategy);
-            newConsumer.Consume(true,(@event, num) => true, result => result.EventThrows<ChannelConsumingException>(retryConsumerDidFail));
+            newConsumer.Consume((@event, num) => true, result => result.EventThrows<ChannelConsumingException>(retryConsumerDidFail));
 
             /* THEN */
-            Assert.IsFalse(allowedConsumerDidFail.WaitOne(maxWaitTime), "An Error occurred while consuming using valid consumers.");
-            Assert.IsFalse(retryConsumerDidFail.WaitOne(maxWaitTime), "The retry consumer did unexpectedly fail with an exception.");
+            Assert.IsFalse(allowedConsumerDidFail.WaitOne(500), "An Error occurred while consuming using valid consumers.");
+            Assert.IsFalse(retryConsumerDidFail.WaitOne(500), "The retry consumer did unexpectedly fail with an exception.");
         }
 
         [TestMethod]
@@ -95,8 +93,9 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
             Debug.Assert(Strategy != null);
             Debug.Assert(Strategy.IsClosed);
 
-            var consumersReceivedEventsIndividually = new CountdownEvent(defaultMaxConsumer);
-            var producerFinished = new ManualResetEvent(false);
+            using var consumersReceivedEventsIndividually = new CountdownEvent(defaultMaxConsumer);
+            using var producerFinished = new ManualResetEvent(false);
+            var maxEvents = defaultMaxEvents / 2;
 
             /* GIVEN */
             Strategy.Open();
@@ -104,8 +103,7 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
             {
                 var consumer = new TestConsumer(Strategy);
                 consumer.Consume(
-                    false,
-                    (@event, index) => index < defaultMaxEvents,
+                    (@event, index) => index < maxEvents,
                     result =>
                     {
                         if (result != null && result.IsSuccess()) consumersReceivedEventsIndividually.Signal();
@@ -114,7 +112,7 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
 
             /* WHEN */
             var producer = new TestProducer(Strategy);
-            producer.Produce(false, num => num < defaultMaxEvents, result => result.EventSuccess(producerFinished));
+            producer.Produce(num => num < maxEvents, result => result.EventSuccess(producerFinished));
 
             /* THEN */
             Assert.IsTrue(producerFinished.WaitOne(maxWaitTime), "Producer was not able to queue all events!");

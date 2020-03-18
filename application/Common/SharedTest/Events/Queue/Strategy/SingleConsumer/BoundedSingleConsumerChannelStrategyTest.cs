@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MORR.Shared.Events.Queue.Strategy.SingleConsumer;
+using SharedTest.TestHelpers.Event;
 using SharedTest.TestHelpers.EventQueueStrategy;
 
 namespace SharedTest.Events.Queue.Strategy.SingleConsumer

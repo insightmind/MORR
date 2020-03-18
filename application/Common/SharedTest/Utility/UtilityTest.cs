@@ -1,5 +1,4 @@
 ﻿using System.Threading;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace SharedTest.Utility
@@ -72,13 +71,12 @@ namespace SharedTest.Utility
             Assert.AreEqual(newValue, prevValue);
         }
 
-        [Ignore] // A bug is preventing this test to complete successfully.
         [TestMethod]
         public void TestUtility_GetTypeFromAnyAssembly_Valid()
         {
             /* GIVEN */
-            var expectedType = typeof(MORR.Shared.Utility.Utility);
-            var typeName = nameof(expectedType);
+            var expectedType = GetType();
+            var typeName = expectedType.AssemblyQualifiedName;
 
             /* WHEN */
             var type = MORR.Shared.Utility.Utility.GetTypeFromAnyAssembly(typeName);
@@ -91,7 +89,7 @@ namespace SharedTest.Utility
         public void TestUtility_GetTypeFromAnyAssembly_Invalid()
         {
             /* GIVEN */
-            var typeName = "NULL";
+            const string typeName = "NULL";
 
             /* WHEN */
             var type = MORR.Shared.Utility.Utility.GetTypeFromAnyAssembly(typeName);

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using MORR.Core.Configuration;
 using MORR.Core.Data.Transcoding;
@@ -21,17 +22,21 @@ namespace MORR.Core.Session
         private IEnumerable<IDecoder> decoders = new IDecoder[0];
         private readonly IModuleManager moduleManager;
         private readonly IConfigurationManager configurationManager;
-        private bool isRecording;
+        private readonly IFileSystem fileSystem;
 
-        public SessionManager(FilePath configurationPath) : this(configurationPath, new Bootstrapper(), new ConfigurationManager(), new ModuleManager()) { }
+        public bool isRecording { get; private set; }
+
+        public SessionManager(FilePath configurationPath) : this(configurationPath, new Bootstrapper(), new ConfigurationManager(), new ModuleManager(), new FileSystem()) { }
 
         public SessionManager(FilePath configurationPath,
                               IBootstrapper bootstrapper,
                               IConfigurationManager configurationManager,
-                              IModuleManager moduleManager)
+                              IModuleManager moduleManager,
+                              IFileSystem fileSystem)
         {
             this.moduleManager = moduleManager;
             this.configurationManager = configurationManager;
+            this.fileSystem = fileSystem;
 
             GlobalHook.Initialize();
 
@@ -66,8 +71,9 @@ namespace MORR.Core.Session
             var sessionId = Guid.NewGuid().ToString();
             var username = CryptoHelper.GenerateHash(Environment.UserName);
 
-            var directory = Path.Combine(dir, timeNow + fileDivider + username + fileDivider + sessionId);
-            Directory.CreateDirectory(directory);
+            var directory = fileSystem.Path.Combine(dir, timeNow + fileDivider + username + fileDivider + sessionId);
+            fileSystem.Directory.CreateDirectory(directory);
+            
             return new DirectoryPath(directory);
         }
 
@@ -115,6 +121,11 @@ namespace MORR.Core.Session
 
         public void Process(IEnumerable<DirectoryPath> recordings)
         {
+            if (isRecording)
+            {
+                throw new AlreadyRecordingException();
+            }
+
             if (!decoders.Any())
             {
                 throw new InvalidConfigurationException("No decoder specified for processing operation.");

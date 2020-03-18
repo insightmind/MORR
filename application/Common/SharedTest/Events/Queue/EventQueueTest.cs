@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using MORR.Shared.Events.Queue;
 using MORR.Shared.Events.Queue.Strategy;
+using SharedTest.TestHelpers.Event;
 
 namespace SharedTest.Events.Queue
 {
@@ -112,7 +113,7 @@ namespace SharedTest.Events.Queue
             Debug.Assert(queue != null);
 
             /* GIVEN */
-            var autoResetEvent = new AutoResetEvent(false);
+            using var autoResetEvent = new AutoResetEvent(false);
             var outputEvent = Enumerable.Repeat(new TestEvent(), 50).ToArray();
             var num = 0;
 

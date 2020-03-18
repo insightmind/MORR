@@ -12,11 +12,12 @@ namespace MORR.Core.Session.Crypto
         /// <returns>The hashed version of the rawData string.</returns>
         public static string GenerateHash(string rawData)
         {
-            using SHA256 hash = SHA256.Create();
-            byte[] hashedBytes = hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
+            using var hash = SHA256.Create();
+            var hashedBytes = hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
 
             const string convertFormat = "x2";
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
+
             for (var index = 0; index < hashedBytes.Length; index++)
             {
                 builder.Append(hashedBytes[index].ToString(convertFormat));
