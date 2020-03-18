@@ -9,7 +9,7 @@ namespace SharedTest.Events.Queue.Strategy.SingleConsumer
 {
     public abstract class SingleConsumerChannelStrategyTest<T> : EventQueueStorageStrategyTest<T> where T: IEventQueueStorageStrategy<TestEvent>
     {
-        private const int maxWaitTime = 1000;
+        private const int maxWaitTime = 5000;
 
         [TestMethod]
         public void TestBoundedSingleConsumer_IsOccupied()

@@ -341,7 +341,6 @@ namespace MORRTest.Session
             var someDirectory = new DirectoryPath(directoryPath, true);
             var directories = new[] { someDirectory };
 
-
             Assert.IsFalse(sessionManager.isRecording);
             sessionManager.StartRecording();
             Assert.IsTrue(sessionManager.isRecording);

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MORR.Shared.Events.Queue.Strategy;
 using SharedTest.TestHelpers.Event;
 using SharedTest.TestHelpers.Result;
 using SharedTest.TestHelpers.Utility;
+using TestResult = SharedTest.TestHelpers.Result.TestResult;
 
 namespace SharedTest.TestHelpers
 {
@@ -60,6 +62,7 @@ namespace SharedTest.TestHelpers
                 }
                 catch (ChannelConsumingException exception)
                 {
+                    awaitsThreadEvent.Set();
                     result.Fail(exception);
                 }
 
@@ -67,7 +70,7 @@ namespace SharedTest.TestHelpers
             });
 
             thread.Start();
-            awaitsThreadEvent.WaitOne(maxWaitTime);
+            Assert.IsTrue(awaitsThreadEvent.WaitOne(maxWaitTime), "Thread did not start in time!");
         }
 
         /// <summary>

@@ -9,7 +9,7 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
 {
     public abstract class MultiConsumerChannelStrategyTest<T>: EventQueueStorageStrategyTest<T> where T : IEventQueueStorageStrategy<TestEvent>
     {
-        private const int maxWaitTime = 1000;
+        private const int maxWaitTime = 5000;
         protected const int defaultMaxConsumer = 5;
         protected const int defaultMaxEvents = 10;
 
@@ -36,7 +36,6 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
             invalidConsumer.Consume(
                 (@event, num) => true,
                 result => result?.EventThrows<ChannelConsumingException>(invalidConsumerFailed));
-
 
             /* THEN */
             Assert.IsTrue(allowedConsumerDidNotFailed.WaitOne(maxWaitTime), "An Error occurred while consuming using valid consumers.");
@@ -75,14 +74,14 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
             shouldContinue = false;
 
             // We wait until the current consumer exits. After that we can try to retry consuming which should not cause an error.
-            Assert.IsFalse(allowedConsumerDidFail.WaitOne(maxWaitTime));
+            Assert.IsFalse(allowedConsumerDidFail.WaitOne(500));
 
             var newConsumer = new TestConsumer(Strategy);
             newConsumer.Consume((@event, num) => true, result => result.EventThrows<ChannelConsumingException>(retryConsumerDidFail));
 
             /* THEN */
-            Assert.IsFalse(allowedConsumerDidFail.WaitOne(maxWaitTime), "An Error occurred while consuming using valid consumers.");
-            Assert.IsFalse(retryConsumerDidFail.WaitOne(maxWaitTime), "The retry consumer did unexpectedly fail with an exception.");
+            Assert.IsFalse(allowedConsumerDidFail.WaitOne(500), "An Error occurred while consuming using valid consumers.");
+            Assert.IsFalse(retryConsumerDidFail.WaitOne(500), "The retry consumer did unexpectedly fail with an exception.");
         }
 
         [TestMethod]

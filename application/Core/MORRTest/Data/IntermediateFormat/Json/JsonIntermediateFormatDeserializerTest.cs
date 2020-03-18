@@ -9,7 +9,8 @@ using MORR.Shared.Events;
 using MORR.Shared.Events.Queue;
 using MORR.Shared.Events.Queue.Strategy.SingleConsumer;
 using SharedTest.TestHelpers.Event;
-using JsonSerializer = System.Text.Json.JsonSerializer;
+using System.Text.Json;
+using SharedTest.TestHelpers.Utility;
 
 namespace MORRTest.Data.IntermediateFormat.Json
 {
@@ -81,7 +82,7 @@ namespace MORRTest.Data.IntermediateFormat.Json
 
             const int identifier = 404;
             var @event = new TestEvent(identifier);
-            var outputReceivedEvent = new ManualResetEvent(false);
+            using var outputReceivedEvent = new ManualResetEvent(false);
             var sample = new JsonIntermediateFormatSample
             {
                 Data = JsonSerializer.SerializeToUtf8Bytes(@event),
@@ -133,8 +134,8 @@ namespace MORRTest.Data.IntermediateFormat.Json
                 Type = @event.GetType()
             };
 
-            var outputReceivedEvent = new ManualResetEvent(false);
-            var didCloseEvent = new ManualResetEvent(false);
+            using var outputReceivedEvent = new ManualResetEvent(false);
+            using var didCloseEvent = new ManualResetEvent(false);
 
             /* WHEN */
             deserializer.IsActive = true;
@@ -154,9 +155,10 @@ namespace MORRTest.Data.IntermediateFormat.Json
 
         private static void ExpectOutput<T>(EventQueue<T> queue, Func<T, bool> predicate, Action completeAction = null) where T : Event
         {
+            using var awaitThreadStartEvent = new ManualResetEvent(false);
             var thread = new Thread(async () =>
             {
-                await foreach (var @event in queue.GetEvents())
+                await foreach (var @event in Awaitable.Await(queue.GetEvents(), awaitThreadStartEvent))
                 {
                     if (predicate.Invoke(@event)) break;
                 }
@@ -165,6 +167,7 @@ namespace MORRTest.Data.IntermediateFormat.Json
             });
 
             thread.Start();
+            Assert.IsTrue(awaitThreadStartEvent.WaitOne(maxWaitTime), "Thread did not start in time!");
         }
     }
 }
