@@ -112,8 +112,8 @@ namespace SharedTest.Hook
             const int numOfNotEvent = 20;
             const GlobalHook.MessageType messageType = GlobalHook.MessageType.WM_USER;
 
-            var resetCounter = new CountdownEvent(numOfEvent);
-            var autoReset = new AutoResetEvent(false);
+            using var resetCounter = new CountdownEvent(numOfEvent);
+            using var autoReset = new AutoResetEvent(false);
 
             GlobalHook.CppGetMessageCallback callback = null;
             
@@ -189,7 +189,7 @@ namespace SharedTest.Hook
             /* GIVEN */
             const GlobalHook.MessageType messageType = GlobalHook.MessageType.WM_USER;
 
-            var autoReset = new AutoResetEvent(false);
+            using var autoReset = new AutoResetEvent(false);
 
             GlobalHook.CppGetMessageCallback callback = null;
 

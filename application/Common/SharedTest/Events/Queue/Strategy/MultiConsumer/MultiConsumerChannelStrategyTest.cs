@@ -19,8 +19,8 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
             /* PRECONDITION */
             Debug.Assert(Strategy != null);
 
-            var allowedConsumerDidNotFailed = new ManualResetEvent(true);
-            var invalidConsumerFailed = new ManualResetEvent(false);
+            using var allowedConsumerDidNotFailed = new ManualResetEvent(true);
+            using var invalidConsumerFailed = new ManualResetEvent(false);
 
             /* GIVEN */
             for (var index = 0; index < defaultMaxConsumer; index++)
@@ -50,8 +50,8 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
             Debug.Assert(Strategy != null);
             Debug.Assert(Strategy.IsClosed);
 
-            var allowedConsumerDidFail = new ManualResetEvent(false);
-            var retryConsumerDidFail = new ManualResetEvent(false);
+            using var allowedConsumerDidFail = new ManualResetEvent(false);
+            using var retryConsumerDidFail = new ManualResetEvent(false);
             var validationConsumer = new TestConsumer(Strategy);
             var shouldContinue = true;
 
@@ -94,8 +94,8 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
             Debug.Assert(Strategy != null);
             Debug.Assert(Strategy.IsClosed);
 
-            var consumersReceivedEventsIndividually = new CountdownEvent(defaultMaxConsumer);
-            var producerFinished = new ManualResetEvent(false);
+            using var consumersReceivedEventsIndividually = new CountdownEvent(defaultMaxConsumer);
+            using var producerFinished = new ManualResetEvent(false);
             var maxEvents = defaultMaxEvents / 2;
 
             /* GIVEN */

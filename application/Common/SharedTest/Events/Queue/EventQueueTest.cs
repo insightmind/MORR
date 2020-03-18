@@ -113,7 +113,7 @@ namespace SharedTest.Events.Queue
             Debug.Assert(queue != null);
 
             /* GIVEN */
-            var autoResetEvent = new AutoResetEvent(false);
+            using var autoResetEvent = new AutoResetEvent(false);
             var outputEvent = Enumerable.Repeat(new TestEvent(), 50).ToArray();
             var num = 0;
 

@@ -17,8 +17,8 @@ namespace SharedTest.Events.Queue.Strategy.SingleConsumer
             /* PRECONDITION */
             Debug.Assert(Strategy != null);
 
-            var allowedConsumerDidNotFailed = new ManualResetEvent(true);
-            var invalidConsumerFailed = new ManualResetEvent(false);
+            using var allowedConsumerDidNotFailed = new ManualResetEvent(true);
+            using var invalidConsumerFailed = new ManualResetEvent(false);
 
             /* GIVEN */
             var consumer = new TestConsumer(Strategy);

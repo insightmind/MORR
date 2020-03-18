@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace SharedTest.TestHelpers.AsyncEnumerable
+namespace SharedTest.TestHelpers.Utility
 {
     public static class Awaitable
     {

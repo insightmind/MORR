@@ -10,7 +10,7 @@ using MORR.Shared.Events;
 using MORR.Shared.Events.Queue;
 using SharedTest.TestHelpers.Event;
 using System.Text.Json;
-using SharedTest.TestHelpers.AsyncEnumerable;
+using SharedTest.TestHelpers.Utility;
 
 namespace MORRTest.Data.IntermediateFormat.Json
 {

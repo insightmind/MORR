@@ -4,6 +4,7 @@ using System.Threading;
 using MORR.Shared.Events.Queue.Strategy;
 using SharedTest.TestHelpers.Event;
 using SharedTest.TestHelpers.Result;
+using SharedTest.TestHelpers.Utility;
 
 namespace SharedTest.TestHelpers
 {
@@ -46,8 +47,7 @@ namespace SharedTest.TestHelpers
                 try
                 {
                     var tokenSource = new CancellationTokenSource();
-                    awaitsThreadEvent.Set();
-                    await foreach (var @event in strategy.GetEvents(tokenSource.Token))
+                    await foreach (var @event in Awaitable.Await(strategy.GetEvents(tokenSource.Token), awaitsThreadEvent))
                     {
                         count++;
                         if (continueCondition.Invoke(@event, count)) continue;

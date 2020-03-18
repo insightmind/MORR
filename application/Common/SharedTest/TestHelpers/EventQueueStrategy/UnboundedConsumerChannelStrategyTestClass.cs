@@ -23,8 +23,8 @@ namespace SharedTest.TestHelpers.EventQueueStrategy
             strategy.Open();
             var producer = new TestProducer(strategy);
             var consumer = new TestConsumer(strategy);
-            var produceEvent = new ManualResetEvent(false);
-            var consumeEvent = new ManualResetEvent(false);
+            using var produceEvent = new ManualResetEvent(false);
+            using var consumeEvent = new ManualResetEvent(false);
 
             /* WHEN */
             consumer.Consume((@event, num) => num < maxEvents, result => result.EventSuccess(consumeEvent));
