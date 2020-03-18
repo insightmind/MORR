@@ -61,6 +61,34 @@ namespace MORR.Core.UI.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Keep recording.
+        /// </summary>
+        public static string Confirmation_Dialog_Button_Cancel {
+            get {
+                return ResourceManager.GetString("Confirmation_Dialog_Button_Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete anyway.
+        /// </summary>
+        public static string Confirmation_Dialog_Button_OK {
+            get {
+                return ResourceManager.GetString("Confirmation_Dialog_Button_OK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deleting a recording cannot be undone.
+        ///Do you wish to delete the recording?.
+        /// </summary>
+        public static string Confirmation_Dialog_Content {
+            get {
+                return ResourceManager.GetString("Confirmation_Dialog_Content", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The configuration could not be loaded correctly.
         ///Please check the configuration file or contact an administrator..
         /// </summary>
@@ -119,7 +147,7 @@ namespace MORR.Core.UI.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Discard.
+        ///   Looks up a localized string similar to Delete recording.
         /// </summary>
         public static string Save_Dialog_Button_Cancel {
             get {
@@ -128,7 +156,7 @@ namespace MORR.Core.UI.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Save.
+        ///   Looks up a localized string similar to Save recording.
         /// </summary>
         public static string Save_Dialog_Button_OK {
             get {

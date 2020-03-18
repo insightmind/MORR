@@ -109,6 +109,12 @@ namespace MORR.Core.UI.ViewModels
                 return;
             }
 
+            if (!ShowDialogWithResult<ConfirmationDialog>())
+            {
+                // If recording shouldn't actually be deleted, no further action is required
+                return;
+            }
+
             var recordingDirectory = sessionManager.CurrentRecordingDirectory?.ToString();
 
             if (recordingDirectory == null)
