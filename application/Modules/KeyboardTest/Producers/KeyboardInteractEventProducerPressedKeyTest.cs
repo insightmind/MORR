@@ -155,7 +155,7 @@ namespace KeyboardTest
             Assert.IsTrue(consumedEvent.Wait(maxWaitTime), "Did not find all matching keyboard interact events in time.");
 
             //total shut down and resources release
-            keyboardModule.IsActive = false;
+            keyboardInteractEventProducer.StopCapture();
             keyboardModule.Initialize(false);
         }
 
@@ -206,7 +206,7 @@ namespace KeyboardTest
                  });
             //here the SetHook() method is called!
             keyboardModule.Initialize(true);
-            keyboardModule.IsActive = true;
+            keyboardInteractEventProducer.StartCapture(nativeKeyboardMock.Object);
 
             //wait for the hookNativeMethodsMock.Mock.Callback is called!
             Assert.IsTrue(callbackReceivedEvent.WaitOne(maxWaitTime), "Did not receive callback in time!");

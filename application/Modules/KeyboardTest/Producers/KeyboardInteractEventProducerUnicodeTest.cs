@@ -66,7 +66,7 @@ namespace KeyboardTest
         }
 
         [TestMethod]
-        public void TestKeyboardInteractEventProducer_UnicdoeTest()
+        public void TestKeyboardInteractEventProducer_UnicodeTest()
         {
             /* PRECONDITIONS */
             Debug.Assert(keyboardModule != null);
@@ -82,7 +82,7 @@ namespace KeyboardTest
             nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0xBD)).Returns(Key.OemMinus);
             nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0xBF)).Returns(Key.OemQuestion);
             nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0x12)).Returns(Key.LeftAlt);
-            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0x11)).Returns(Key.LeftShift);
+            nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0xA2)).Returns(Key.LeftCtrl);
             nativeKeyboardMock.Setup(nativeK => nativeK.KeyFromVirtualKey(0x20)).Returns(Key.Space);
 
             nativeKeyboardMock.Setup(nativeK => nativeK.ToUnicode(0x41)).Returns('a');
@@ -92,7 +92,7 @@ namespace KeyboardTest
             nativeKeyboardMock.Setup(nativeK => nativeK.ToUnicode(0xBD)).Returns('-');
             nativeKeyboardMock.Setup(nativeK => nativeK.ToUnicode(0xBF)).Returns('/');
             nativeKeyboardMock.Setup(nativeK => nativeK.ToUnicode(0x12)).Returns('\u0000');
-            nativeKeyboardMock.Setup(nativeK => nativeK.ToUnicode(0x11)).Returns('\u0000');
+            nativeKeyboardMock.Setup(nativeK => nativeK.ToUnicode(0xA2)).Returns('\u0000');
             nativeKeyboardMock.Setup(nativeK => nativeK.ToUnicode(0x20)).Returns(' ');
 
             /* GIVEN */
@@ -106,7 +106,7 @@ namespace KeyboardTest
             new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_SYSKEYDOWN, wParam = (IntPtr)0xBD},//-
             new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_KEYDOWN, wParam = (IntPtr)0xBF}, // '/'
             new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_KEYDOWN, wParam = (IntPtr)0x12}, //alt
-            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_KEYDOWN, wParam = (IntPtr)0x11}, //control
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_KEYDOWN, wParam = (IntPtr)0xA2}, //control
             new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_KEYDOWN, wParam = (IntPtr)0x20} //space
             
             };
@@ -160,7 +160,7 @@ namespace KeyboardTest
             Assert.IsTrue(consumedEvent.Wait(maxWaitTime), "Did not find all matching keyboard interact events in time.");
 
             //total shut down and resources release
-            keyboardModule.IsActive = false;
+            keyboardInteractEventProducer.StopCapture();
             keyboardModule.Initialize(false);
         }
 
@@ -211,7 +211,7 @@ namespace KeyboardTest
                  });
             //here the SetHook() method is called!
             keyboardModule.Initialize(true);
-            keyboardModule.IsActive = true;
+            keyboardInteractEventProducer.StartCapture(nativeKeyboardMock.Object);
 
             //wait for the hookNativeMethodsMock.Mock.Callback is called!
             Assert.IsTrue(callbackReceivedEvent.WaitOne(maxWaitTime), "Did not receive callback in time!");
