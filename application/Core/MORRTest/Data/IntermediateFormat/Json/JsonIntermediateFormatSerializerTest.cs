@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.Composition;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
 using System.Threading;
@@ -8,6 +10,7 @@ using MORR.Shared.Events;
 using MORR.Shared.Events.Queue;
 using SharedTest.TestHelpers.Event;
 using System.Text.Json;
+using SharedTest.TestHelpers.AsyncEnumerable;
 
 namespace MORRTest.Data.IntermediateFormat.Json
 {
@@ -89,35 +92,6 @@ namespace MORRTest.Data.IntermediateFormat.Json
         }
 
         /// <summary>
-        /// Tests if the initialization correctly opens the transforming module.
-        /// </summary>
-        [TestMethod]
-        public void TestJsonIntermediateFormatSerializer_ClosesOnInputClose()
-        {
-            /* PRECONDITION */
-            Debug.Assert(serializer != null);
-            Debug.Assert(inputQueue != null);
-            Debug.Assert(container != null);
-            Debug.Assert(serializer.IsClosed);
-            Debug.Assert(!inputQueue.IsClosed);
-
-            /* GIVEN */
-            container.ComposeExportedValue<IReadOnlyEventQueue<Event>>(inputQueue);
-            container.ComposeParts(serializer);
-
-            /* WHEN */
-            serializer.Initialize(true);
-            serializer.IsActive = true;
-            Assert.IsFalse(serializer.IsClosed, "Serializer unexpectedly still closed!");
-
-            inputQueue.Close();
-            Assert.IsTrue(inputQueue.IsClosed);
-
-            SpinWait.SpinUntil(() => serializer.IsClosed);
-            Assert.IsTrue(serializer.IsClosed, "Serializer did not close in time!");
-        }
-
-        /// <summary>
         /// Test if queueing an event into an input queue results into a
         /// correct serialized output event in the serializer.
         /// </summary>
@@ -139,7 +113,8 @@ namespace MORRTest.Data.IntermediateFormat.Json
 
             const int identifier = 404;
             var @testEvent = new TestEvent(identifier);
-            var didConsumeEvent = new ManualResetEvent(false);
+            using var didConsumeEvent = new ManualResetEvent(false);
+            using var didStartConsumingEvent = new ManualResetEvent(false);
 
             /* WHEN */
             serializer.IsActive = true;
@@ -147,7 +122,7 @@ namespace MORRTest.Data.IntermediateFormat.Json
 
             var thread = new Thread(async () =>
             {
-                await foreach (var @event in serializer.GetEvents())
+                await foreach (var @event in Awaitable.Await(serializer.GetEvents(), didStartConsumingEvent))
                 {
                     var deserialized = JsonSerializer.Deserialize(@event.Data, @event.Type);
 
@@ -158,11 +133,12 @@ namespace MORRTest.Data.IntermediateFormat.Json
                 }
             });
 
-            thread.Start();
+            thread.Start(); 
+            Assert.IsTrue(didStartConsumingEvent.WaitOne(maxWaitTime));
             inputQueue.Enqueue(@testEvent);
 
-            /* THEN */
-            Assert.IsFalse(serializer.IsClosed, "Serializer unexpectedly still closed!");
+            /* THEN */ 
+            Assert.IsFalse(serializer.IsClosed, "Serializer unexpectedly still closed!"); 
             Assert.IsTrue(didConsumeEvent.WaitOne(maxWaitTime), "Did not receive serialized event in time!");
         }
     }

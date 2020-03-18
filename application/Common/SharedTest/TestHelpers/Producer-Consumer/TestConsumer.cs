@@ -30,11 +30,13 @@ namespace SharedTest.TestHelpers
         /// </summary>
         /// <param name="continueCondition">The condition action for defining a producing completion.</param>
         /// <param name="completionAction">The completion action is called on completion. It is also called if any exception occurred.</param>
-        public void Consume(Func<TestEvent, int, bool> continueCondition, Action<ITestResult> completionAction)
+        public void Consume(Func<TestEvent, int, bool> continueCondition, Action<ITestResult> completionAction, int maxWaitTime = 500)
         {
             Debug.Assert(continueCondition != null);
             Debug.Assert(completionAction != null);
             Debug.Assert(strategy != null);
+
+            using var awaitsThreadEvent = new ManualResetEvent(false);
 
             thread = new Thread(async () =>
             {
@@ -44,6 +46,7 @@ namespace SharedTest.TestHelpers
                 try
                 {
                     var tokenSource = new CancellationTokenSource();
+                    awaitsThreadEvent.Set();
                     await foreach (var @event in strategy.GetEvents(tokenSource.Token))
                     {
                         count++;
@@ -64,6 +67,7 @@ namespace SharedTest.TestHelpers
             });
 
             thread.Start();
+            awaitsThreadEvent.WaitOne(maxWaitTime);
         }
 
         /// <summary>
@@ -71,11 +75,9 @@ namespace SharedTest.TestHelpers
         /// through closing the event channel.
         /// </summary>
         /// <returns>A ManualResetEvent defining whether the consumer was cancelled using the event channel closing.</returns>
-        public ManualResetEvent ConsumeUnconditionally()
+        public void ConsumeUnconditionally(int maxWaitTime, Action<ITestResult> completionAction)
         {
-            var resetEvent = new ManualResetEvent(false);
-            Consume((@event, num) => true, result => result.EventSuccess(resetEvent));
-            return resetEvent;
+            Consume((@event, num) => true, completionAction, maxWaitTime);
         }
     }
 }

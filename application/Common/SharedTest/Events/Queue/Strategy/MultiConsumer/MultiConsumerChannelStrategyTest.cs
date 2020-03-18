@@ -60,7 +60,7 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
             for (var index = 0; index < defaultMaxConsumer - 1; index++)
             {
                 var consumer = new TestConsumer(Strategy);
-                _ = consumer.ConsumeUnconditionally();
+                consumer.ConsumeUnconditionally(maxWaitTime, result => { });
             }
 
             /* GIVEN */
