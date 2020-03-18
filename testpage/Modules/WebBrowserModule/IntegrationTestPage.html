@@ -11,13 +11,22 @@
         You can find a description of the expected behavior in each section.<br>
         When you see <b>[TestRoot]</b> in the data description of an event, this refers to the root-path of the testpage, e.g. <i>file:///C:/Users/JohnDoe/Documents/testpage/Modules/WebBrowserModule/</i>
     </p>
+    <h3>Configuration:</h3>
+    <p>
+        <ul>
+            <li><b>EnabledModules</b> must contain <b>"MORR.Modules.WebBrowser.WebBrowserModule"</b></li>
+            <li>The configuration must contain a valid <b>"MORR.Modules.WebBrowser.WebBrowserModuleConfiguration"</b></li>
+        </ul>
+        For reference, see the example configuration shipped with MORR.
+    </p>
+    <h3>Additional setup info</h3>
     <p>
         Please make sure to run these tests in an otherwise empty browser (no additional tabs, windows of the same browser).<br>
         Also make sure that the Webextension is properly installed (the icon should turn red within 5 seconds when MORR starts recording).<br>
         After starting a MORR recording, please wait for the Webextension icon to turn red before starting to perform the tests.
     </p>
 
-    <h2>Info</h2>
+    <h3>Test description</h3>
     <p>
         Each test consists of two items:<br>
         <b>Action</b> describes the action you (the tester) must perform in order to generate the relevant test data.<br>
