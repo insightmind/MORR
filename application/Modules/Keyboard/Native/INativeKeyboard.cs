@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Input;
 using MORR.Shared.Hook;
 
 namespace MORR.Modules.Keyboard.Native
@@ -24,6 +25,8 @@ namespace MORR.Modules.Keyboard.Native
             VK_RWIN = 0x5C
         }
 
+        Key KeyFromVirtualKey(Int32 virtualKeyCode);
+
         int CallNextHookEx(IntPtr hhk, int nCode, GlobalHook.MessageType wParam, [In] KBDLLHOOKSTRUCT lParam);
 
         bool UnhookWindowsHookEx(IntPtr hhk);
@@ -36,11 +39,8 @@ namespace MORR.Modules.Keyboard.Native
 
         IntPtr GetKeyboardLayout(uint idThread);
 
-        int ToUnicodeEx(uint wVirtKey, uint wScanCode, byte[]
-   lpKeyState, [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pwszBuff,
-   int cchBuff, uint wFlags, IntPtr dwhkl);
 
-        bool GetKeyboardState(byte[] lpKeyState);
+        char ToUnicode(uint wVirtKey);
 
         public struct KBDLLHOOKSTRUCT
         {
