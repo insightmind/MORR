@@ -73,10 +73,11 @@ namespace MORR.Modules.WindowManagement
 
         private void StartCapture()
         {
-            WindowFocusEventProducer?.StartCapture();
-            WindowMovementEventProducer?.StartCapture();
-            WindowResizingEventProducer?.StartCapture();
-            WindowStateChangedEventProducer?.StartCapture();
+            INativeWindowManagement nativeWindowManagement = new NativeWindowManagement();
+            WindowFocusEventProducer?.StartCapture(nativeWindowManagement);
+            WindowMovementEventProducer?.StartCapture(nativeWindowManagement);
+            WindowResizingEventProducer?.StartCapture(nativeWindowManagement);
+            WindowStateChangedEventProducer?.StartCapture(nativeWindowManagement);
         }
 
         private void StopCapture()
