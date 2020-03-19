@@ -29,49 +29,19 @@ The buttons and the yellow border in scenario 1 to 4 are specified in \ref{sec:s
     \item The application discards the recorded data and the yellow border disappears at the same time.
 \end{enumerate}
 
-\subsection{Scenario 3: The minimal recording duration is not reached}
-Notice: This scenario covers features declared optional.
-\begin{enumerate}
-    \item The application displays a button  at the bottom right corner of the screen.
-    \item \Gls{user} clicks the button to start recording.
-    \item The application starts to record and displays a yellow border on screen during the whole recording time to indicate that the \gls{session} is being recorded.
-    \item \Gls{user} is immediately interrupted by an Email after the start of recording and decides to stop recording and read the Email first.
-    \item \Gls{user} clicks the same button to stop recording.
-    \item The application displays a dialog indicating that the minimal recording duration \see[OC10] is not reached and thus the recorded data will be automatically discarded.
-    \item \Gls{user} clicks "confirm" button on the dialog and closes it.
-    \item The application discards the recorded data and the yellow border disappears at the same time.
-    \end{enumerate}
-    
-\subsection{Scenario 4: The maximal recording duration is reached}
-Notice: This scenario covers features declared optional.
-\begin{enumerate}
-    \item The application displays a button at the bottom right corner of the screen.
-    \item \Gls{user} clicks the button to start recording.
-    \item The application starts to record and displays a yellow border on screen during the whole recording time to indicate that the \gls{session} is being recorded.
-    \item \Gls{user} researches in different databases during recording but leaves their \gls{device} without terminating the recording.
-    \item The application displays a dialog, warning that the maximal recording duration of the \gls{session} \see[OC10] is almost reached.
-    \item The maximal recording duration of the \gls{session} \see[OC10] is reached. The application displays a dialog to ask the \gls{user}, if the recording data should be saved or not.
-    \item \Gls{user} is back and clicks "save" to save the recorded data.
-    \item The application saves the recorded data and the yellow frame disappears at the same time.
-\end{enumerate}
+\setcounter{subsection}{3} %%removed section 9.1.3
+\setcounter{subsection}{4} %%removed section 9.1.4
 
-\section{Scientist related scenarios}
-\subsection{Scenario 5: Scientist extracts data}
-\begin{enumerate}
-    \item \Gls{scientist} starts the command line tool (see \ref{sec:sm_extraction}) provided by the application.
-    \item \Gls{scientist} types in commands including the path of the data and an output directory to extract the data from that path to the output directory.
-    \item \Gls{scientist} can now use the extracted data in the output directory.
-\end{enumerate}
-
+\setcounter{section}{2} %% removed section 9.2
 
 \section{Administrator related scenarios}
 \subsection{Scenario 6: Administrator changes configuration}
 \begin{enumerate}
     \item The \gls{admin} opens the configuration file provided by the application.
-    \item The \gls{admin} changes the maximal recording duration \see[OC10] by editing the configuration file and saving it.
+    \item The \gls{admin} changes the enabled modules by editing the configuration file and saving it.
     \item The \gls{admin} distributes the changed configuration file to a \gls{user}.
     \item The \gls{user}'s application receives the changed configuration file .
-    \item The maximal recording duration \see[OC10] of the application is changed according to the received configuration file.
+    \item The enabled modules of the application is changed according to the received configuration file.
 \end{enumerate}
 
 \section{Use cases}
