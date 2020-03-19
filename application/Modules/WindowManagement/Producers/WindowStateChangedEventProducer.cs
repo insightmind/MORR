@@ -65,7 +65,7 @@ namespace MORR.Modules.WindowManagement.Producers
                 {
                     IssuingModule = WindowManagementModule.Identifier,
                     ProcessName = nativeWindowManagement.GetProcessNameFromHwnd(msg.Hwnd),
-                    Title = nativeWindowManagement.GetProcessNameFromHwnd(msg.Hwnd),
+                    Title = nativeWindowManagement.GetWindowTitleFromHwnd(msg.Hwnd),
                     // SIZE_MINIMIZED matches to the WindowState.Minimized in number
                     // SIZE_MAXIMIZED matches to the WindowState.Maximized in number
                     WindowState = (WindowState) msg.wParam

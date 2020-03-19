@@ -89,7 +89,7 @@ namespace WindowManagementTest
                 {
                     Type = (uint) GlobalHook.MessageType.WM_SIZE,
                     wParam = (IntPtr) WindowState.Maximized,
-                    Hwnd = (IntPtr)1
+                    Hwnd = (IntPtr) 1
                 },
                 new GlobalHook.HookMessage
                 {
@@ -198,7 +198,7 @@ namespace WindowManagementTest
         }
 
         private static bool IsWindowStateChangedEventFound(WindowStateChangedEvent @event,
-                                                    WindowStateChangedEvent[] expectedEvents)
+                                                           WindowStateChangedEvent[] expectedEvents)
         {
             foreach (var e in expectedEvents)
             {
