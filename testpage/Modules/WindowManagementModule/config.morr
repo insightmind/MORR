@@ -3,7 +3,7 @@
     "EnabledModules": [
       "MORR.Core.Data.IntermediateFormat.Json.JsonIntermediateFormatSerializer",
       "MORR.Core.Data.IntermediateFormat.Json.JsonIntermediateFormatDeserializer",
-      "MORR.Modules.Mouse.MouseModule"
+	  "MORR.Modules.WindowManagement.WindowManagementModule"
     ]
   },
   "MORR.Core.Session.SessionConfiguration": {
@@ -14,10 +14,6 @@
       "MORR.Core.Data.Transcoding.Json.JsonDecoder"
     ],
     "RecordingDirectory": "%userprofile%\\Videos\\MORR"
-  },
-  "MORR.Modules.Mouse.MouseModuleConfiguration": {
-    "SamplingRateInHz": 2,
-    "Threshold": 200
   },
   "MORR.Core.Data.Transcoding.Json.JsonEncoderConfiguration": {
     "RelativeFilePath": "event_data.json"
