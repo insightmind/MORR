@@ -31,8 +31,11 @@
     </p>
     <p>
         In additional to the data described in the <b>Expected behavior</b> of each respective test, each event is also expected to hold this data:<br>
-        <i>TimeStamp</i>: The serialized time of the event's occurence, e.g. "2020-03-16T17:43:52.517Z"<br>
-        <i>IssuingModule</i>: "fab5bc0d-8b33-4dfd-9fa3-c58e0f1435b5"<br>
+        <ul>
+            <li><i>TimeStamp</i>: The serialized time of the event's occurence, e.g. "2020-03-16T17:43:52.517Z"<br></li>
+            <li><i>IssuingModule</i>: "fab5bc0d-8b33-4dfd-9fa3-c58e0f1435b5"<br></li>
+        </ul>
+        If additional fields are stored but not mentioned, their data is not relevant to the test.
     </p>
 
     <h2>1. WindowFocusEvent</h2>
@@ -44,7 +47,6 @@
 
         First event:
         <ul>
-            <li><i>Title</i>: ""</li>
             <li><i>ProcessName</i>: "explorer"</li>
         </ul><br>
         Second event (depending on browser):
@@ -62,7 +64,6 @@
         <br>
         <b>Expected behavior:</b><br>A new WindowMovementEvent is created with following data:<br><br>
         <ul>
-            <li><i>Title</i>: <i>irrelevant</i></li>
             <li><i>ProcessName</i>: "explorer"</li>
             <li><i>OldLocation</i>
                 <ul>
@@ -84,8 +85,50 @@
     <h2>3. WindowResizingEvent</h2>
     <h3>Test 1</h3>
     <b>Covers testcase(s)</b>: TC420
+    <p><b>Action:</b><br>Create a Windows-Explorer window by pressing WINKEY+E and move it to the top left of your screen.<br>
+        Now, grab the bottom right corner of the window with the left mousebutton and extend the window to the bottom right of your screen (release the mousebutton afterwards).<br>
+        <br>
+        <b>Expected behavior:</b><br>A new WindowResizingEvent is created with following data:<br><br>
+        <ul>
+            <li><i>ProcessName</i>: "explorer"</li>
+            <li><i>OldSize</i>
+                <ul>
+                    <li><i>IsEmpty</i>: <b>false</b></li>
+                    <li><i>Width</i>: <b>X1</b></li>
+                    <li><i>Height</i>: <b>Y1</b></li>
+                </ul>
+            </li>
+            <li><i>NewSize</i>
+                <ul>
+                    <li><i>IsEmpty</i>: <b>false</b></li>
+                    <li><i>Width</i>: <b>X2</b></li>
+                    <li><i>Height</i>: <b>Y2</b></li>
+                </ul>
+            </li>
+        </ul>
+        Where <b>X1, X2, Y1, Y2</b> are integer numbers and <b>(X2, Y2)</b> roughly being your monitor's resolution.
+    </p>
+
 
     <h2>4. WindowStateChangedEvent (minimize/maximize)</h2>
     <h3>Test 1</h3>
     <b>Covers testcase(s)</b>: TC430
+    <p><b>Action:</b><br>Create a Windows-Explorer window by pressing WINKEY+E. Minimize this newly created window (e.g. by clicking the minimize button in its top right corner).<br>
+        <br>
+        <b>Expected behavior:</b><br>A new WindowStateChangedEvent is created with following data:<br><br>
+        <ul>
+            <li><i>WindowState</i>: 1</li>
+            <li><i>ProcessName</i>: "explorer"</li>
+        </ul><br>
+    </p>
+    <h3>Test 2</h3>
+    <b>Covers testcase(s)</b>: TC430
+    <p><b>Action:</b><br>Create a Windows-Explorer window by pressing WINKEY+E. Maximize this newly created window (e.g. by clicking the maximize button in its top right corner).<br>
+        <br>
+        <b>Expected behavior:</b><br>A new WindowStateChangedEvent is created with following data:<br><br>
+        <ul>
+            <li><i>WindowState</i>: 2</li>
+            <li><i>ProcessName</i>: "explorer"</li>
+        </ul><br>
+    </p>
 </body>
