@@ -17,7 +17,7 @@ namespace WindowManagementTest
     [TestClass]
     public class WindowStateChangedEventProducerTest
     {
-        protected const int MaxWaitTime = 500;
+        protected const int MaxWaitTime = 3000;
 
         private CompositionContainer container;
         private HookNativeMethodsMock hookNativeMethods;
@@ -80,18 +80,21 @@ namespace WindowManagementTest
 
             nativeWindowManagement.GetProcessName();
             nativeWindowManagement.GetTitle();
+            nativeWindowManagement.IsRectSizeNotEqual();
+            nativeWindowManagement.GetWindowRect();
 
             GlobalHook.HookMessage[] hookMessages =
             {
                 new GlobalHook.HookMessage
                 {
                     Type = (uint) GlobalHook.MessageType.WM_SIZE,
-                    wParam = (IntPtr) WindowState.Maximized
+                    wParam = (IntPtr) WindowState.Maximized,
+                    Hwnd = (IntPtr)1
                 },
                 new GlobalHook.HookMessage
                 {
                     Type = (uint) GlobalHook.MessageType.WM_SIZE,
-                    wParam = (IntPtr) WindowState.Minimized
+                    wParam = (IntPtr) WindowState.Minimized, Hwnd = (IntPtr) 1
                 },
                 new GlobalHook.HookMessage
                     { Type = (uint) GlobalHook.MessageType.WM_ENTERSIZEMOVE, Hwnd = (IntPtr) 1 },
@@ -133,7 +136,7 @@ namespace WindowManagementTest
                 await foreach (var @event in Await(
                     windowStateChangedEventProducer.GetEvents(), didStartConsumingEvent))
                 {
-                    if (!isWindowStateChangedEventFound(@event, expectedEvents))
+                    if (!IsWindowStateChangedEventFound(@event, expectedEvents))
                     {
                         continue;
                     }
@@ -184,7 +187,6 @@ namespace WindowManagementTest
 
             //wait for the hookNativeMethodsMock.Mock.Callback is called!
             Assert.IsTrue(callbackReceivedEvent.WaitOne(MaxWaitTime), "Did not receive callback in time!");
-            callbackReceivedEvent.Dispose();
             Assert.IsNotNull(callback, "Callback received however unexpectedly null!");
             return callback;
         }
@@ -195,7 +197,7 @@ namespace WindowManagementTest
             return awaitedObject;
         }
 
-        private bool isWindowStateChangedEventFound(WindowStateChangedEvent @event,
+        private static bool IsWindowStateChangedEventFound(WindowStateChangedEvent @event,
                                                     WindowStateChangedEvent[] expectedEvents)
         {
             foreach (var e in expectedEvents)

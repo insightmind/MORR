@@ -36,7 +36,7 @@ namespace WindowManagementTest
 
         public void GetWindowRect()
         {
-            Mock.SetupSequence(nativeWin => nativeWin.GetWindowRect(1, ref rect)).Returns(0).Returns(2);
+            Mock.SetupSequence(nativeWin => nativeWin.GetWindowRect(1, ref rect)).Returns(0).Returns(2).Returns(0);
         }
 
         public void IsRectSizeEqual()
