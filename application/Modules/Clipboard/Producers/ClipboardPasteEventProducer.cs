@@ -32,18 +32,6 @@ namespace MORR.Modules.Clipboard.Producers
         private void GlobalHookCallBack(GlobalHook.HookMessage message)
         {
             string text;
-            ClipboardPasteEvent clipboardPasteEvent;
-            const int dataParamTest = 12;
-
-            if (message.Data[0] == dataParamTest)
-            {
-                clipboardPasteEvent = new ClipboardPasteEvent
-                    { ClipboardText = "samplePasteText", IssuingModule = ClipboardModule.Identifier };
-
-                //enqueue the new event.
-                Enqueue(clipboardPasteEvent);
-                return;
-            }
 
             try
             {
@@ -55,7 +43,7 @@ namespace MORR.Modules.Clipboard.Producers
             }
 
             //create the corresponding new Event
-            clipboardPasteEvent = new ClipboardPasteEvent
+            var clipboardPasteEvent = new ClipboardPasteEvent
                 { ClipboardText = text, IssuingModule = ClipboardModule.Identifier };
 
             //enqueue the new event.

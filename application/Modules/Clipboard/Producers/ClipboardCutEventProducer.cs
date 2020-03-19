@@ -11,15 +11,11 @@ namespace MORR.Modules.Clipboard.Producers
     /// </summary>
     public class ClipboardCutEventProducer : DefaultEventQueue<ClipboardCutEvent>
     {
-        private const int wparamnull = 0;
-
         private const int wparamcut = 14;
-
-        private const int wparamtest = 11;
 
         public static readonly ClipboardWindowMessageSink clipboardWindowMessageSink = new ClipboardWindowMessageSink();
 
-        private readonly INativeClipboard nativeClipboard = ClipboardWindowMessageSink.NativeClipboard;
+        private static INativeClipboard nativeClipboard;
 
         #region Private methods
 
@@ -27,14 +23,6 @@ namespace MORR.Modules.Clipboard.Producers
         {
             if (messageId != (int) GlobalHook.MessageType.WM_CLIPBOARDUPDATE)
             {
-                return;
-            }
-
-            if (wParam.ToInt64() == wparamtest)
-            {
-                var clipboardCutEvent = new ClipboardCutEvent
-                    { ClipboardText = "sampleCutText", IssuingModule = ClipboardModule.Identifier };
-                Enqueue(clipboardCutEvent);
                 return;
             }
 
@@ -49,12 +37,32 @@ namespace MORR.Modules.Clipboard.Producers
                 return;
             }
 
-            if (wParam.ToInt64() == wparamnull || wParam.ToInt64() == wparamcut)
+            if (wParam.ToInt64() == wparamcut)
             {
                 var clipboardCutEvent = new ClipboardCutEvent
                     { ClipboardText = text, IssuingModule = ClipboardModule.Identifier };
                 Enqueue(clipboardCutEvent);
             }
+        }
+
+        private void GlobalHookCallBack(GlobalHook.HookMessage message)
+        {
+            string text;
+            try
+            {
+                text = nativeClipboard.GetClipboardText();
+            }
+            catch (Exception)
+            {
+                return;
+            }
+
+            //create the corresponding new Event
+            var clipboardCutEvent = new ClipboardCutEvent
+                { ClipboardText = text, IssuingModule = ClipboardModule.Identifier };
+
+            //enqueue the new event.
+            Enqueue(clipboardCutEvent);
         }
 
         #endregion
@@ -64,14 +72,19 @@ namespace MORR.Modules.Clipboard.Producers
         /// <summary>
         ///     Sets the hook for the clipboard cut event.
         /// </summary>
-        public void StartCapture()
+        public void StartCapture(INativeClipboard nativeCL)
         {
             if (clipboardWindowMessageSink == null)
             {
                 return;
             }
 
+            nativeClipboard = nativeCL;
+
             clipboardWindowMessageSink.ClipboardUpdated += OnClipboardUpdate;
+
+            GlobalHook.IsActive = true;
+            GlobalHook.AddListener(GlobalHookCallBack, GlobalHook.MessageType.WM_CUT);
         }
 
         /// <summary>
