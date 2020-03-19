@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Drawing;
+using Point = System.Windows.Point;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Drawing;
 
 namespace MORR.Modules.WindowManagement.Native
 {
@@ -34,6 +35,10 @@ namespace MORR.Modules.WindowManagement.Native
             return process.ProcessName;
         }
 
+        public Point GetPoint(int x, int y)
+        {
+            return new Point(x,y);
+        }
         public bool IsRectSizeEqual(Rectangle rectA, Rectangle rectB)
         {
             return GetWindowWidth(rectA) == GetWindowWidth(rectB) && GetWindowHeight(rectA) == GetWindowHeight(rectB);

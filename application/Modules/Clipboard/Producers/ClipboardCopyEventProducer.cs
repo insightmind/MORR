@@ -13,10 +13,9 @@ namespace MORR.Modules.Clipboard.Producers
     {
         private const int wparamcut = 14;
 
-        private static readonly ClipboardWindowMessageSink
-            clipboardWindowMessageSink = new ClipboardWindowMessageSink();
+        private static IClipboardWindowMessageSink clipboardWindowMessageSink;
 
-        private readonly INativeClipboard nativeClipboard = ClipboardWindowMessageSink.NativeClipboard;
+        private static INativeClipboard nativeClipboard;
 
         #region Private methods
 
@@ -52,8 +51,11 @@ namespace MORR.Modules.Clipboard.Producers
         /// <summary>
         ///     Sets the hook for the clipboard copy event.
         /// </summary>
-        public void StartCapture()
+        public void StartCapture(IClipboardWindowMessageSink WindowMessageSink, INativeClipboard nativeClip)
         {
+            clipboardWindowMessageSink = WindowMessageSink;
+            nativeClipboard = nativeClip;
+
             if (clipboardWindowMessageSink == null)
             {
                 return;

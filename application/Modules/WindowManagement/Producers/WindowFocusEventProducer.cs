@@ -15,9 +15,9 @@ namespace MORR.Modules.WindowManagement.Producers
         private static INativeWindowManagement nativeWindowManagement;
         private IntPtr lastHwnd = IntPtr.Zero;
 
-        public void StartCapture(INativeWindowManagement nativeWM)
+        public void StartCapture(INativeWindowManagement nativeWinManagement)
         {
-            nativeWindowManagement = nativeWM;
+            nativeWindowManagement = nativeWinManagement;
             GlobalHook.AddListener(WindowHookCallback, GlobalHook.MessageType.WM_ACTIVATE);
             GlobalHook.IsActive = true;
         }

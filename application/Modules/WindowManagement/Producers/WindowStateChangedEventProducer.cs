@@ -12,11 +12,17 @@ namespace MORR.Modules.WindowManagement.Producers
     /// </summary>
     public class WindowStateChangedEventProducer : DefaultEventQueue<WindowStateChangedEvent>
     {
-        private static INativeWindowManagement nativeWindowManagement;
-
         private const int SIZE_RESTORED = 0;
         private const int SIZE_MINIMIZED = 1;
         private const int SIZE_MAXIMIZED = 2;
+        private static INativeWindowManagement nativeWindowManagement;
+
+        private readonly GlobalHook.MessageType[] listenedMessageTypes =
+        {
+            GlobalHook.MessageType.WM_SIZE,
+            GlobalHook.MessageType.WM_ENTERSIZEMOVE,
+            GlobalHook.MessageType.WM_EXITSIZEMOVE
+        };
 
         /// <summary>
         ///     The rectangle that holds the size and location of the window
@@ -36,16 +42,9 @@ namespace MORR.Modules.WindowManagement.Producers
         /// </summary>
         private int windowUnderChangeHwnd;
 
-        private readonly GlobalHook.MessageType[] listenedMessageTypes =
-            {
-                GlobalHook.MessageType.WM_SIZE,
-                GlobalHook.MessageType.WM_ENTERSIZEMOVE,
-                GlobalHook.MessageType.WM_EXITSIZEMOVE
-            };
-
-        public void StartCapture(INativeWindowManagement nativeWM)
+        public void StartCapture(INativeWindowManagement nativeWinManagement)
         {
-            nativeWindowManagement = nativeWM;
+            nativeWindowManagement = nativeWinManagement;
             GlobalHook.AddListener(WindowHookCallback, listenedMessageTypes);
             GlobalHook.IsActive = true;
         }
@@ -66,7 +65,7 @@ namespace MORR.Modules.WindowManagement.Producers
                 {
                     IssuingModule = WindowManagementModule.Identifier,
                     ProcessName = nativeWindowManagement.GetProcessNameFromHwnd(msg.Hwnd),
-                    Title = nativeWindowManagement.GetProcessNameFromHwnd(msg.Hwnd),
+                    Title = nativeWindowManagement.GetWindowTitleFromHwnd(msg.Hwnd),
                     // SIZE_MINIMIZED matches to the WindowState.Minimized in number
                     // SIZE_MAXIMIZED matches to the WindowState.Maximized in number
                     WindowState = (WindowState) msg.wParam

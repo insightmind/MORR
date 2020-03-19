@@ -2,6 +2,7 @@
 using System.ComponentModel.Composition;
 using MORR.Modules.WindowManagement.Native;
 using MORR.Modules.WindowManagement.Producers;
+using MORR.Shared.Hook;
 using MORR.Shared.Modules;
 using MORR.Shared.Utility;
 
@@ -72,11 +73,11 @@ namespace MORR.Modules.WindowManagement
 
         private void StartCapture()
         {
-            INativeWindowManagement nativeWM = new NativeWindowManagement();
-            WindowFocusEventProducer?.StartCapture(nativeWM);
-            WindowMovementEventProducer?.StartCapture(nativeWM);
-            WindowResizingEventProducer?.StartCapture(nativeWM);
-            WindowStateChangedEventProducer?.StartCapture(nativeWM);
+            INativeWindowManagement nativeWindowManagement = new NativeWindowManagement();
+            WindowFocusEventProducer?.StartCapture(nativeWindowManagement);
+            WindowMovementEventProducer?.StartCapture(nativeWindowManagement);
+            WindowResizingEventProducer?.StartCapture(nativeWindowManagement);
+            WindowStateChangedEventProducer?.StartCapture(nativeWindowManagement);
         }
 
         private void StopCapture()

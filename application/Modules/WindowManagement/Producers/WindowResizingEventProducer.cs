@@ -34,9 +34,9 @@ namespace MORR.Modules.WindowManagement.Producers
         /// </summary>
         private int windowUnderChangeHwnd;
 
-        public void StartCapture(INativeWindowManagement nativeWM)
+        public void StartCapture(INativeWindowManagement nativeWinManagement)
         {
-            nativeWindowManagement = nativeWM;
+            nativeWindowManagement = nativeWinManagement;
             GlobalHook.AddListener(WindowHookCallback, listenedMessageTypes);
             GlobalHook.IsActive = true;
         }

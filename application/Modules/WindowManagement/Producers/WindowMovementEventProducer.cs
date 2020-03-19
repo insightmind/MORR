@@ -35,10 +35,11 @@ namespace MORR.Modules.WindowManagement.Producers
         /// </summary>
         private int windowUnderChangeHwnd;
 
-        public void StartCapture(INativeWindowManagement nativeWM)
+        public void StartCapture(INativeWindowManagement nativeWinManagement)
         {
-            nativeWindowManagement = nativeWM;
+            nativeWindowManagement = nativeWinManagement;
             GlobalHook.AddListener(WindowHookCallback, listenedMessageTypes);
+
             GlobalHook.IsActive = true;
         }
 
@@ -74,8 +75,8 @@ namespace MORR.Modules.WindowManagement.Producers
                 nativeWindowManagement.GetWindowRect(windowUnderChangeHwnd, ref windowRecAfterChange);
                 if (nativeWindowManagement.IsRectSizeEqual(windowRecBeforeChange, windowRecAfterChange))
                 {
-                    var oldLocation = new Point { X = windowRecBeforeChange.X, Y = windowRecBeforeChange.Y };
-                    var newLocation = new Point { X = windowRecAfterChange.X, Y = windowRecAfterChange.Y };
+                    var oldLocation = nativeWindowManagement.GetPoint(windowRecBeforeChange.X, windowRecBeforeChange.Y);
+                    var newLocation = nativeWindowManagement.GetPoint(windowRecAfterChange.X, windowRecAfterChange.Y);
                     var @event = new WindowMovementEvent
                     {
                         IssuingModule = WindowManagementModule.Identifier,

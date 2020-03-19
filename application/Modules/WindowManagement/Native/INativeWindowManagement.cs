@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Point = System.Windows.Point;
 using System.Drawing;
 using System.Text;
 
@@ -16,6 +17,8 @@ namespace MORR.Modules.WindowManagement.Native
         int GetWindowWidth(Rectangle rect);
 
         int GetWindowHeight(Rectangle rect);
+
+        Point GetPoint(int x, int y);
 
         IntPtr GetForegroundWindow();
 

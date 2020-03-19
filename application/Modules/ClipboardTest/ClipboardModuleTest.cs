@@ -1,81 +1,125 @@
-using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using MORR.Modules.Clipboard;
 using MORR.Modules.Clipboard.Producers;
 using MORR.Shared.Hook;
+using SharedTest.TestHelpers.INativeHook;
 
 namespace ClipboardTest
 {
     [TestClass]
     public class ClipboardModuleTest
     {
-        private Mock<ClipboardCopyEventProducer> clipboardCopyEventProducer;
-        private Mock<ClipboardCutEventProducer> clipboardCutEventProducer;
+        private ClipboardCopyEventProducer clipboardCopyEventProducer;
+        private ClipboardCutEventProducer clipboardCutEventProducer;
         private ClipboardModule clipboardModule;
-        private Mock<ClipboardPasteEventProducer> clipboardPasteEventProducer;
-        private CompositionContainer container;
+        private ClipboardPasteEventProducer clipboardPasteEventProducer;
 
-        private Mock<IHookNativeMethods> nativeHook;
+        private CompositionContainer container;
+        private HookNativeMethodsMock hookNativeMethods;
 
         [TestInitialize]
         public void BeforeTest()
         {
             clipboardModule = new ClipboardModule();
-            clipboardCopyEventProducer = new Mock<ClipboardCopyEventProducer>();
-            clipboardCutEventProducer = new Mock<ClipboardCutEventProducer>();
-            clipboardPasteEventProducer = new Mock<ClipboardPasteEventProducer>();
-            nativeHook = new Mock<IHookNativeMethods>();
+            clipboardCopyEventProducer = new ClipboardCopyEventProducer();
+            clipboardCutEventProducer = new ClipboardCutEventProducer();
+            clipboardPasteEventProducer = new ClipboardPasteEventProducer();
 
             container = new CompositionContainer();
-            container.ComposeExportedValue(clipboardCopyEventProducer.Object);
-            container.ComposeExportedValue(clipboardCutEventProducer.Object);
-            container.ComposeExportedValue(clipboardPasteEventProducer.Object);
+            container.ComposeExportedValue(clipboardCopyEventProducer);
+            container.ComposeExportedValue(clipboardCutEventProducer);
+            container.ComposeExportedValue(clipboardPasteEventProducer);
             container.ComposeParts(clipboardModule);
 
-            nativeHook
-                .Setup(hook => hook.Capture(It.IsAny<uint>()))?
-                .Returns(true);
-
-            nativeHook
-                .Setup(mock => mock.LoadLibrary())?
-                .Returns(new IntPtr(0x1)); // We just return a non null pointer
-
-            GlobalHook.Initialize(nativeHook.Object);
+            hookNativeMethods = new HookNativeMethodsMock();
+            hookNativeMethods.Initialize();
         }
 
         [TestMethod]
         public void TestClipboardModule_Activate()
         {
-            // Preconditions
+            /* PRECONDITIONS */
             Debug.Assert(clipboardModule != null);
+            Debug.Assert(clipboardCopyEventProducer != null);
+            Debug.Assert(clipboardCutEventProducer != null);
+            Debug.Assert(clipboardPasteEventProducer != null);
+            Debug.Assert(hookNativeMethods != null);
 
             /* GIVEN */
 
             /* WHEN */
+            clipboardModule.Initialize(true);
+            hookNativeMethods.AllowMessageTypeRegistry(GlobalHook.MessageType.WM_CLIPBOARDUPDATE);
+            hookNativeMethods.AllowMessageTypeRegistry(GlobalHook.MessageType.WM_PASTE);
+            hookNativeMethods.AllowMessageTypeRegistry(GlobalHook.MessageType.WM_CUT);
+            hookNativeMethods.AllowLibraryLoad();
             clipboardModule.IsActive = true;
 
             /* THEN */
             Assert.IsTrue(clipboardModule.IsActive);
+            clipboardModule.IsActive = false;
         }
 
         [TestMethod]
-        public void TesClipboardModule_Deactivate()
+        public void TestWindowManagementModule_Deactivate()
         {
-            // Preconditions
+            /* PRECONDITIONS */
             Debug.Assert(clipboardModule != null);
+            Debug.Assert(clipboardCopyEventProducer != null);
+            Debug.Assert(clipboardCutEventProducer != null);
+            Debug.Assert(clipboardPasteEventProducer != null);
 
             /* GIVEN */
 
             /* WHEN */
+            clipboardModule.Initialize(true);
             clipboardModule.IsActive = false;
 
             /* THEN */
             Assert.IsFalse(clipboardModule.IsActive);
+        }
+
+        [TestMethod]
+        public void TestWindowManagementModule_InitializedFalse_ChannelClosed()
+        {
+            /* PRECONDITIONS */
+            Debug.Assert(clipboardModule != null);
+            Debug.Assert(clipboardCopyEventProducer != null);
+            Debug.Assert(clipboardCutEventProducer != null);
+            Debug.Assert(clipboardPasteEventProducer != null);
+
+            /* GIVEN */
+
+            /* WHEN */
+            clipboardModule.Initialize(false);
+
+            /* THEN */
+            Assert.IsTrue(clipboardCopyEventProducer.IsClosed);
+            Assert.IsTrue(clipboardCutEventProducer.IsClosed);
+            Assert.IsTrue(clipboardPasteEventProducer.IsClosed);
+        }
+
+        [TestMethod]
+        public void TestWindowManagementModule_InitializedTrue_ChannelOpened()
+        {
+            /* PRECONDITIONS */
+            Debug.Assert(clipboardModule != null);
+            Debug.Assert(clipboardCopyEventProducer != null);
+            Debug.Assert(clipboardCutEventProducer != null);
+            Debug.Assert(clipboardPasteEventProducer != null);
+
+            /* GIVEN */
+
+            /* WHEN */
+            clipboardModule.Initialize(true);
+
+            /* THEN */
+            Assert.IsFalse(clipboardCopyEventProducer.IsClosed);
+            Assert.IsFalse(clipboardCutEventProducer.IsClosed);
+            Assert.IsFalse(clipboardPasteEventProducer.IsClosed);
         }
     }
 }

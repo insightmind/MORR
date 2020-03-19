@@ -3,21 +3,8 @@ using MORR.Shared.Hook;
 
 namespace MORR.Modules.Clipboard.Native
 {
-    public class ClipboardWindowMessageSink
-    { 
-
-        /// <summary>
-        ///     Handles a window message when clipboard is updated
-        /// </summary>
-        /// <param name="IntPtr">The pointer to the current window</param>
-        /// <param name="messageId">The identifier of the message</param>
-        /// <param name="wParam">The WPARAM of the message</param>
-        /// <param name="lParam">The LPARAM of the message</param>
-        public delegate void ClipboardEventHandler(IntPtr hwnd, uint uMsg, IntPtr wParam, IntPtr lParam);
-
-        public static INativeClipboard NativeClipboard { get; } = new NativeClipboard();
-
-
+    public class ClipboardWindowMessageSink : IClipboardWindowMessageSink
+    {
         private INativeClipboard.WindowProcedureHandler internalWindowMessageHandler;
 
         public ClipboardWindowMessageSink()
@@ -57,6 +44,9 @@ namespace MORR.Modules.Clipboard.Native
             NativeClipboard.AddClipboardFormatListener(WindowHandle);
         }
 
+
+        public static INativeClipboard NativeClipboard { get; } = new NativeClipboard();
+
         /// <summary>
         ///     The underlying window handle
         /// </summary>
@@ -65,7 +55,12 @@ namespace MORR.Modules.Clipboard.Native
         /// <summary>
         ///     Event invoked when clipboard is updated
         /// </summary>
-        public event ClipboardEventHandler? ClipboardUpdated;
+        public event IClipboardWindowMessageSink.ClipboardEventHandler? ClipboardUpdated;
+
+        IntPtr IClipboardWindowMessageSink.OnClipboardUpdate(IntPtr hWnd, uint messageId, IntPtr wParam, IntPtr lParam)
+        {
+            return OnClipboardUpdate(hWnd, messageId, wParam, lParam);
+        }
 
         private IntPtr OnClipboardUpdate(IntPtr hWnd, uint messageId, IntPtr wParam, IntPtr lParam)
         {

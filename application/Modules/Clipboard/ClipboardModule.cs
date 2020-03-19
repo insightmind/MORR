@@ -68,9 +68,11 @@ namespace MORR.Modules.Clipboard
 
         private void StartCapture()
         {
-            ClipboardCutEventProducer?.StartCapture();
-            ClipboardPasteEventProducer?.StartCapture();
-            ClipboardCopyEventProducer?.StartCapture();
+            IClipboardWindowMessageSink clipboardWindowMessageSink = new ClipboardWindowMessageSink();
+            INativeClipboard nativeCb = new NativeClipboard();
+            ClipboardCutEventProducer?.StartCapture(clipboardWindowMessageSink, nativeCb);
+            ClipboardPasteEventProducer?.StartCapture(nativeCb);
+            ClipboardCopyEventProducer?.StartCapture(clipboardWindowMessageSink, nativeCb);
         }
 
         private void StopCapture()
