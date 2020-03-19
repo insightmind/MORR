@@ -1,3 +1,22 @@
-\chapter{Methodology}
+\chapter{Testing methodology}
 
-The MORR application is quite heavily dependent on various OS-provided APIs that are difficult or impossible to reliably control and mock for testing purposes. As a consequence, various approaches had to be employed to make testing possible. Despite these efforts, test coverage may still vary depending on the component under test. This chapter describes our testing methodology and details some of the edge cases that are not covered in the same way as the rest of the application.
+The MORR application is quite heavily dependent on various OS-provided APIs that are difficult or impossible to reliably control and mock for testing purposes. As a consequence, various approaches had to be employed to make testing possible. Despite these efforts, test coverage may still vary depending on the component under test. This chapter describes our testing methodology as well as the tools we utilized and details some of the edge cases that are not covered in the same way as the rest of the application.
+
+\section{Tools and libraries}
+
+Our unit tests make use of Microsoft's official offerings \href{https://github.com/microsoft/testfx}{MSTest V2} and \href{https://github.com/microsoft/vstest}{VSTest} as well as the popular mocking library \href{https://github.com/moq/moq4}{moq}. We additionally utilize the \href{https://github.com/System-IO-Abstractions/System.IO.Abstractions}{System.IO.Abstractions} library for mocking the file system. The tests are then run using either the integrated Test Explorer in Visual Studio or using the Test Runner from Jetbrain's Resharper.
+
+\section{Test structure}
+
+Tests tend to follow a three-tiered pattern: Each test starts with a set of assumptions ("Given"). The test then performs some actions ("When") and checks some assertions ("Then").
+We strived to achieve a coverage of 70\% where possible.
+Tests are also designed in such a way that the resources they use enable them to be run in parallel, which is a standard feature of most test runners and lead to multiple issues due to race conditions leading to non-deterministic test results.
+
+\section{Components with low coverage}
+
+The UI is heavily centered around the tray menu, which does not lend itself well to automated testing. Furthermore, due to its simplicity (the UI mostly consists of a context menu and multiple two-button dialogs) automated testing would likely yield few useful results.
+Subsequently, there are no automated tests for the UI at the current time and code coverage is low.
+
+The video capturing component of the Core is inherently difficult to test, as results cannot easily be verified. Furthermore, when running the tests in a CI scenario, video capture may not be supported at all. As such, there are currently no automated tests for any components related to video capture and code coverage of the Core is slightly lower than expected.
+
+All components abstracting away OS-provided functionality (commonly referred to as "NativeMethods") cannot reliably be tested, as they would require sending data to the OS, which is either prohibitivly expensive, unreliable or not possible at all (especially in a CI scenario). As a consequence, all "NativeMethods" components are mocked during testing and not tested automatically, leading to lower coverage.
