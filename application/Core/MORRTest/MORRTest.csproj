@@ -14,9 +14,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="9.0.4" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\SharedTest\SharedTest.csproj" />
     <ProjectReference Include="..\MORR\MORR.csproj" />
   </ItemGroup>
 

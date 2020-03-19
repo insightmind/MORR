@@ -304,6 +304,35 @@ namespace WebBrowserTest
             await result;
         }
 
+        [TestMethod]
+        public async Task StopListeningSuccess()
+        {
+            // Preconditions
+            webBrowserModule.Initialize(true);
+
+            /* THEN */
+            var result = await SendHTTPMessage(new { Request = "STOPLISTENING" });
+
+            /* THEN */
+            Assert.AreEqual(StringConstants.okString, result.GetProperty("response").GetString());
+            Assert.AreEqual(StringConstants.appIdentifier, result.GetProperty("application").GetString());
+        }
+
+        [TestMethod]
+        public async Task StopListeningDenied()
+        {
+            // Preconditions
+            webBrowserModule.Initialize(true);
+            webBrowserModule.IsActive = true;
+            /* THEN */
+            var result = await SendHTTPMessage(new { Request = "STOPLISTENING" });
+
+            /* THEN */
+            Assert.AreEqual(StringConstants.requestDenied, result.GetProperty("response").GetString());
+            Assert.AreEqual(StringConstants.appIdentifier, result.GetProperty("application").GetString());
+            Assert.IsTrue((webBrowserModule.IsActive));
+        }
+
         private async Task ChangeModuleActiveState(bool active)
         {
             await Task.Run(() =>
@@ -348,6 +377,7 @@ namespace WebBrowserTest
             public const string startString = "Start";
             public const string stopString = "Stop";
             public const string invalidString = "Invalid Request";
+            public const string requestDenied = "Denied";
         }
 
         private class TestWebBrowserModuleConfiguration : WebBrowserModuleConfiguration

@@ -14,10 +14,15 @@ namespace MORR.Core.Modules
         /// <summary>
         ///     The types of all <see cref="IModule" /> instances that should be enabled.
         /// </summary>
-        public IEnumerable<Type> EnabledModules { get; private set; }
+        public IEnumerable<Type> EnabledModules { get; set; }
 
         public void Parse(RawConfiguration configuration)
         {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException();
+            }
+
             var element = JsonDocument.Parse(configuration.RawValue).RootElement;
 
             if (!element.TryGetProperty(nameof(EnabledModules), out var enabledModulesElement))
@@ -40,6 +45,24 @@ namespace MORR.Core.Modules
             }
 
             EnabledModules = enabledModules;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            try
+            {
+                return (obj is GlobalModuleConfiguration configuration) 
+                    && EnabledModules.SequenceEqual(configuration.EnabledModules);
+            }
+            catch (ArgumentNullException _)
+            {
+                return false;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(EnabledModules);
         }
     }
 }

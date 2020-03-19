@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MORR.Shared.Events.Queue.Strategy;
 using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
+using SharedTest.TestHelpers.Event;
 using SharedTest.TestHelpers.EventQueueStrategy;
 
 namespace SharedTest.Events.Queue.Strategy.MultiConsumer
@@ -8,8 +9,6 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
     [TestClass]
     public class BoundedMultiConsumerChannelStrategyTest: MultiConsumerChannelStrategyTest<BoundedMultiConsumerChannelStrategy<TestEvent>>
     {
-       
-
         [TestInitialize]
         public void BeforeTest()
         {

@@ -11,9 +11,7 @@ namespace MORR.Modules.Clipboard.Producers
     /// </summary>
     public class ClipboardCopyEventProducer : DefaultEventQueue<ClipboardCopyEvent>
     {
-        private const int wparamnull = 0;
-
-        private const int wparamcopy = 18;
+        private const int wparamcut = 14;
 
         private const int wparamtest = 10;
 
@@ -48,7 +46,7 @@ namespace MORR.Modules.Clipboard.Producers
                 return;
             }
 
-            if (wParam.ToInt64() == wparamnull || wParam.ToInt64() == wparamcopy)
+            if (wParam.ToInt64() != wparamcut)
             {
                 var clipboardCopyEvent = new ClipboardCopyEvent
                     { ClipboardText = text, IssuingModule = ClipboardModule.Identifier };

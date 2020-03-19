@@ -1,6 +1,5 @@
 using System.Windows;
 using MORR.Modules.Mouse.Events;
-using MORR.Modules.Mouse.Native;
 using MORR.Shared.Events.Queue;
 using MORR.Shared.Hook;
 

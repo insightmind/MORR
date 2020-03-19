@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MORR.Shared.Events.Queue.Strategy;
 using SharedTest.Events;
 using SharedTest.Events.Queue.Strategy;
+using SharedTest.TestHelpers.Event;
 
 namespace SharedTest.TestHelpers.EventQueueStrategy
 {
@@ -22,16 +23,16 @@ namespace SharedTest.TestHelpers.EventQueueStrategy
             strategy.Open();
             var producer = new TestProducer(strategy);
             var consumer = new TestConsumer(strategy);
-            var produceEvent = new ManualResetEvent(false);
-            var consumeEvent = new ManualResetEvent(false);
+            using var produceEvent = new ManualResetEvent(false);
+            using var consumeEvent = new ManualResetEvent(false);
 
             /* WHEN */
-            consumer.Consume(true, (@event, num) => num < maxEvents, result => result.EventSuccess(consumeEvent));
-            producer.Produce(true, num => num < maxEvents, result => result.EventSuccess(produceEvent));
+            consumer.Consume((@event, num) => num < maxEvents, result => result.EventSuccess(consumeEvent));
+            producer.Produce(num => num < maxEvents, result => result.EventSuccess(produceEvent));
 
             /* THEN */
-            Assert.IsTrue(produceEvent.WaitOne(maxWaitTime));
-            Assert.IsTrue(consumeEvent.WaitOne(maxWaitTime));
+            Assert.IsTrue(produceEvent.WaitOne(maxWaitTime), "Producer did not finish in time");
+            Assert.IsTrue(consumeEvent.WaitOne(maxWaitTime), "Consumer did not receive events in time");
         }
     }
 }

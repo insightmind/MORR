@@ -1,11 +1,14 @@
-﻿using MORR.Shared.Events.Queue.Strategy;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MORR.Shared.Events.Queue.Strategy;
+using SharedTest.TestHelpers.Event;
 using SharedTest.TestHelpers.Result;
+using SharedTest.TestHelpers.Utility;
+using TestResult = SharedTest.TestHelpers.Result.TestResult;
 
-namespace SharedTest.Events.Queue.Strategy
+namespace SharedTest.TestHelpers
 {
     /*
      * The TestConsumer class provides mock for a simple consumer which allows several validation
@@ -14,7 +17,7 @@ namespace SharedTest.Events.Queue.Strategy
     public class TestConsumer
     {
         private readonly IEventQueueStorageStrategy<TestEvent> strategy;
-        private Task task;
+        private Thread thread;
 
         /// <summary>
         /// Instantiates a new TestConsumer which should interact with the given strategy.
@@ -28,16 +31,17 @@ namespace SharedTest.Events.Queue.Strategy
         /// <summary>
         /// Starts consuming from the strategy.
         /// </summary>
-        /// <param name="runsAsync">Defines whether the producing action should run asynchronously ('true') or synchronously ('false').</param>
         /// <param name="continueCondition">The condition action for defining a producing completion.</param>
         /// <param name="completionAction">The completion action is called on completion. It is also called if any exception occurred.</param>
-        public void Consume(bool runsAsync, Func<TestEvent, int, bool> continueCondition, Action<ITestResult> completionAction)
+        public void Consume(Func<TestEvent, int, bool> continueCondition, Action<ITestResult> completionAction, int maxWaitTime = 500)
         {
             Debug.Assert(continueCondition != null);
             Debug.Assert(completionAction != null);
-            Debug.Assert(strategy != null); 
-            
-            task = new Task(async () =>
+            Debug.Assert(strategy != null);
+
+            using var awaitsThreadEvent = new ManualResetEvent(false);
+
+            thread = new Thread(async () =>
             {
                 var count = 0;
                 var result = new TestResult();
@@ -45,7 +49,7 @@ namespace SharedTest.Events.Queue.Strategy
                 try
                 {
                     var tokenSource = new CancellationTokenSource();
-                    await foreach (var @event in strategy.GetEvents(tokenSource.Token))
+                    await foreach (var @event in Awaitable.Await(strategy.GetEvents(tokenSource.Token), awaitsThreadEvent))
                     {
                         count++;
                         if (continueCondition.Invoke(@event, count)) continue;
@@ -58,43 +62,25 @@ namespace SharedTest.Events.Queue.Strategy
                 }
                 catch (ChannelConsumingException exception)
                 {
+                    awaitsThreadEvent.Set();
                     result.Fail(exception);
                 }
 
                 completionAction(result);
             });
 
-            /*
-             * This defines the way the consumer is actually run. In minor cases
-             * you may want to run it synchronously on the current scheduler
-             * e.g. if you want to dequeue all events which were previously committed by a
-             * synchronous producer.
-             *
-             * Otherwise I encourage you to choose the default
-             * asynchronous running. However you may than need to listen to the completion action
-             * to gather test information.
-             */
-            if (runsAsync)
-            {
-                task.Start();
-            }
-            else
-            {
-                task.RunSynchronously();
-            }
+            thread.Start();
+            Assert.IsTrue(awaitsThreadEvent.WaitOne(maxWaitTime), "Thread did not start in time!");
         }
 
         /// <summary>
         /// Runs the Consumer unconditionally as long as the queue does not cancel the consuming itself
         /// through closing the event channel.
         /// </summary>
-        /// <param name="runsAsync">Defines whether the producing action should run asynchronously ('true') or synchronously ('false').</param>
         /// <returns>A ManualResetEvent defining whether the consumer was cancelled using the event channel closing.</returns>
-        public ManualResetEvent ConsumeUnconditionally(bool runsAsync = true)
+        public void ConsumeUnconditionally(int maxWaitTime, Action<ITestResult> completionAction)
         {
-            var resetEvent = new ManualResetEvent(false);
-            Consume(runsAsync, (@event, num) => true, result => result.EventSuccess(resetEvent));
-            return resetEvent;
+            Consume((@event, num) => true, completionAction, maxWaitTime);
         }
     }
 }

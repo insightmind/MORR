@@ -40,7 +40,7 @@ LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
         unsigned int bufferSlot = InterlockedIncrement(shared_globalBufferIterator) % BUFFERSIZE; //atomic increment. overflows should not matter as we modulo it anyways.
         unsigned int type = msg->message;
         shared_globalTimeStamps[bufferSlot] = msg->time;
-        if ((type >= WM_MOUSEMOVE && type <= WM_MOUSEWHEEL) || (type >= WM_NCMOUSEMOVE && type <= WM_NCMBUTTONDBLCLK) || type == WM_KEYDOWN) {
+        if ((type >= WM_MOUSEMOVE && type <= WM_MOUSEWHEEL) || (type >= WM_NCMOUSEMOVE && type <= WM_NCMBUTTONDBLCLK) || (type == WM_KEYDOWN || type == WM_SYSKEYDOWN)) {
             shared_globalMessageBuffer[bufferSlot].Set(msg->message, msg->hwnd, msg->wParam);
             shared_globalMessageBuffer[bufferSlot].data[0] = msg->pt.x;
             shared_globalMessageBuffer[bufferSlot].data[1] = msg->pt.y;
@@ -123,7 +123,7 @@ forwardEvent:
     For event type values, see https://wiki.winehq.org/List_Of_Windows_Messages
 */
 bool IsCaptured(UINT type) {
-    return (type == WM_KEYDOWN
+    return ((type == WM_KEYDOWN || type == WM_SYSKEYDOWN)
         || (type >= WM_MOUSEMOVE && type <= WM_MOUSEWHEEL)
         || (type >= WM_CREATE && type <= WM_ENABLE)
         || (type >= WM_CUT && type <= WM_CLEAR)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text.Json;
 using MORR.Core.Configuration;
 using MORR.Shared.Configuration;
@@ -13,22 +14,26 @@ namespace MORR.Core.Session
         /// <summary>
         ///     The types of the encoders to use.
         /// </summary>
-        public IEnumerable<Type> Encoders { get; private set; }
+        public IEnumerable<Type> Encoders { get; set; }
 
         /// <summary>
         ///     The types of the decoders to use.
         /// </summary>
-        public IEnumerable<Type>? Decoders { get; private set; }
+        public IEnumerable<Type>? Decoders { get; set; }
 
         /// <summary>
         ///     The directory in which to store new recordings.
         /// </summary>
-        public DirectoryPath RecordingDirectory { get; private set; }
+        public DirectoryPath RecordingDirectory { get; set; }
 
         public void Parse(RawConfiguration configuration)
         {
-            var element = JsonDocument.Parse(configuration.RawValue).RootElement;
+            if (configuration == null)
+            {
+                throw new ArgumentNullException();
+            }
 
+            var element = JsonDocument.Parse(configuration.RawValue).RootElement;
             var encoders = new List<Type>();
 
             if (!element.TryGetProperty(nameof(Encoders), out var encodersElement))
@@ -71,15 +76,42 @@ namespace MORR.Core.Session
                 throw new InvalidConfigurationException("Failed to parse directory path.");
             }
 
-            var directoryPath = directoryElement.GetString();
-            directoryPath = Environment.ExpandEnvironmentVariables(directoryPath);
-            RecordingDirectory = new DirectoryPath(directoryPath);
+            try
+            {
+                var directoryPath = directoryElement.GetString();
+                directoryPath = Environment.ExpandEnvironmentVariables(directoryPath);
+                RecordingDirectory = new DirectoryPath(directoryPath);
+            }
+            catch (ArgumentException innerException)
+            {
+                throw new InvalidConfigurationException("Failed to evaluate directory path.", innerException);
+            }
         }
 
         private static bool TryGetType(JsonElement element, [NotNullWhen(true)] out Type? value)
         {
             value = Utility.GetTypeFromAnyAssembly(element.ToString());
             return value != null;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            try
+            {
+                return (obj is SessionConfiguration configuration)
+                    && Encoders.SequenceEqual(configuration.Encoders)
+                    && Decoders.SequenceEqual(configuration.Decoders)
+                    && RecordingDirectory.Equals(configuration.RecordingDirectory);
+            }
+            catch (ArgumentNullException)
+            {
+                return false;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Encoders, Decoders, RecordingDirectory);
         }
     }
 }

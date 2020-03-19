@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -28,7 +29,7 @@ namespace MORR.Core.UI.ViewModels
         {
             try
             {
-                var configurationPath = GetConfigurationPathFromCommandLine();
+                var configurationPath = GetConfigurationPath();
                 sessionManager = new SessionManager(configurationPath);
             }
             catch (Exception)
@@ -108,6 +109,12 @@ namespace MORR.Core.UI.ViewModels
                 return;
             }
 
+            if (!ShowDialogWithResult<ConfirmationDialog>())
+            {
+                // If recording shouldn't actually be deleted, no further action is required
+                return;
+            }
+
             var recordingDirectory = sessionManager.CurrentRecordingDirectory?.ToString();
 
             if (recordingDirectory == null)
@@ -120,18 +127,48 @@ namespace MORR.Core.UI.ViewModels
 
         #region Utility
 
-        private static FilePath GetConfigurationPathFromCommandLine()
+        private static FilePath GetConfigurationPath()
         {
-            var commandLineArguments = Environment.GetCommandLineArgs();
+            if (TryGetConfigurationPathFromCommandLine(out var path))
+            {
+                return path;
+            }
 
-            if (commandLineArguments.Length < 2)
+            var defaultConfigurationBasePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+            if (defaultConfigurationBasePath == null)
             {
                 ExitWithError(Properties.Resources.Error_No_Configuration_Specified);
             }
 
+            var defaultConfigurationPath = Path.Combine(defaultConfigurationBasePath, "config.morr");
+
+            return new FilePath(Path.GetFullPath(defaultConfigurationPath));
+        }
+
+        private static bool TryGetConfigurationPathFromCommandLine([NotNullWhen(true)] out FilePath? path)
+        {
+            var commandLineArguments = Environment.GetCommandLineArgs();
+
+            if (commandLineArguments.Length < 2 || (App.HasLanguageCommandLineArgument && commandLineArguments.Length < 3))
+            {
+                // If no command line argument has been specified or only one has been specified
+                // and that argument is used to set the language, then the configuration path must be set to the default value
+                path = null;
+                return false;
+            }
+
             // The first argument is the current assembly, the second argument is the first actual command line argument
             var configurationPathArgument = commandLineArguments.ElementAt(1);
-            return new FilePath(Path.GetFullPath(configurationPathArgument));
+
+            if (App.IsLanguageCommandLineArgument(configurationPathArgument))
+            {
+                // If the first specified argument is used to set the language, then the path must be the second argument
+                configurationPathArgument = commandLineArguments.ElementAt(2);
+            }
+
+            path = new FilePath(Path.GetFullPath(configurationPathArgument));
+            return true;
         }
 
         [DoesNotReturn]

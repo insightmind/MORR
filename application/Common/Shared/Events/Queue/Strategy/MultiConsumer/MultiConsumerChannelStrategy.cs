@@ -68,19 +68,35 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
 
         public void Open()
         {
-            if (!IsClosed) return;
+            subscriptionMutex.WaitOne(timeOut);
+
+            if (!IsClosed)
+            {
+                subscriptionMutex.ReleaseMutex();
+                return;
+            }
 
             offeringChannels.Clear();
             receivingChannel = CreateReceivingChannel();
             _ = DistributeEventsAsync();
             IsClosed = false;
+
+            subscriptionMutex.ReleaseMutex();
         }
 
         public void Close()
         {
-            if (IsClosed) return;
+            subscriptionMutex.WaitOne(timeOut);
+
+            if (IsClosed)
+            {
+                subscriptionMutex.ReleaseMutex();
+                return;
+            }
 
             IsClosed = true;
+            subscriptionMutex.ReleaseMutex();
+
             receivingChannel?.Writer?.Complete();
 
             foreach (var channel in offeringChannels)
