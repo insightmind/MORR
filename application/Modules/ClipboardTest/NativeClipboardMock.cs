@@ -11,6 +11,5 @@ namespace ClipboardTest
         {
             Mock.Setup(nativeCl => nativeCl.GetClipboardText()).Returns("ClipboardText");
         }
-
     }
 }
