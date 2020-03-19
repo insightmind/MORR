@@ -15,7 +15,7 @@ namespace MORR.Modules.Clipboard.Producers
 
         private const int wparamtest = 10;
 
-        public static readonly ClipboardWindowMessageSink clipboardWindowMessageSink = new ClipboardWindowMessageSink();
+        private static  ClipboardWindowMessageSink clipboardWindowMessageSink;
 
         private readonly INativeClipboard nativeClipboard = ClipboardWindowMessageSink.NativeClipboard;
 
@@ -25,14 +25,6 @@ namespace MORR.Modules.Clipboard.Producers
         {
             if (messageId != (int) GlobalHook.MessageType.WM_CLIPBOARDUPDATE)
             {
-                return;
-            }
-
-            if (wParam.ToInt64() == wparamtest)
-            {
-                var clipboardCopyEvent = new ClipboardCopyEvent
-                    { ClipboardText = "sampleCopyText", IssuingModule = ClipboardModule.Identifier };
-                Enqueue(clipboardCopyEvent);
                 return;
             }
 
@@ -63,6 +55,7 @@ namespace MORR.Modules.Clipboard.Producers
         /// </summary>
         public void StartCapture()
         {
+            clipboardWindowMessageSink = new ClipboardWindowMessageSink();
             if (clipboardWindowMessageSink == null)
             {
                 return;
