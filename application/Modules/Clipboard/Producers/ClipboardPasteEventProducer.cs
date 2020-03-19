@@ -11,11 +11,10 @@ namespace MORR.Modules.Clipboard.Producers
     /// </summary>
     public class ClipboardPasteEventProducer : DefaultEventQueue<ClipboardPasteEvent>
     {
-        private static INativeClipboard nativeClipboard;
+        private static readonly INativeClipboard nativeClipboard = new NativeClipboard();
 
-        public void StartCapture(INativeClipboard nativeCb)
+        public void StartCapture()
         {
-            nativeClipboard = nativeCb;
             GlobalHook.IsActive = true;
             GlobalHook.AddListener(GlobalHookCallBack, GlobalHook.MessageType.WM_PASTE);
         }
