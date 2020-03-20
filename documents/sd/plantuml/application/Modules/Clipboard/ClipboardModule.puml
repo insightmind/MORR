@@ -13,7 +13,7 @@ interface IModule {
 }
 
 IModule <|-- ClipboardModule
-ClipboardModule --> "  ClipboardCutEventProducer" ClipboardCutEventProducer
-ClipboardModule --> "ClipboardCopyEventProducer" ClipboardCopyEventProducer
-ClipboardModule --> "   ClipboardPasteEventProducer" ClipboardPasteEventProducer
+ClipboardModule ..> ClipboardCopyEventProducer : "uses"
+ClipboardModule ..> ClipboardCutEventProducer : "uses"
+ClipboardModule ..> ClipboardPasteEventProducer : "uses"
 @enduml

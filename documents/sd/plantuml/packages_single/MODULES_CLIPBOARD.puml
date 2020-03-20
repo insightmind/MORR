@@ -9,7 +9,7 @@ hide empty fields
 package "CLIPBOARD" #BFBFBF {
     class ClipboardModule 
     
-    package "EVENTS" {
+    package "EVENTS" <<rectangle>> {
         abstract class ClipboardEvent {
             + Text : string <<get>> <<set>>
         }
@@ -18,7 +18,7 @@ package "CLIPBOARD" #BFBFBF {
         class ClipboardPasteEvent
     }
 
-    package "PRODUCERS" {
+    package "PRODUCERS" <<rectangle>>{
         class ClipboardPasteEventProducer
         class ClipboardCutEventProducer
         class ClipboardCopyEventProducer
@@ -31,5 +31,8 @@ Event <|-- ClipboardEvent
 ClipboardEvent <|-- ClipboardCopyEvent
 ClipboardEvent <|-- ClipboardCutEvent
 ClipboardEvent <|-- ClipboardPasteEvent
+ClipboardModule ..> ClipboardCopyEventProducer : "uses"
+ClipboardModule ..> ClipboardCutEventProducer : "uses"
+ClipboardModule ..> ClipboardPasteEventProducer : "uses"
 !endsub
 @enduml

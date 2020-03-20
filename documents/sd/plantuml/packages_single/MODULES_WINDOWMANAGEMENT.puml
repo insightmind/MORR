@@ -47,5 +47,9 @@ WindowEvent <|-- WindowFocusEvent
 WindowEvent <|-- WindowMovementEvent
 WindowEvent <|-- WindowResizingEvent
 WindowEvent <|-- WindowStateChangedEvent
+WindowManagementModule ..> WindowFocusEventProducer : "uses"
+WindowManagementModule ..> WindowMovementEventProducer : "uses"
+WindowManagementModule..> WindowResizingEventProducer : "uses"
+WindowManagementModule ..> WindowStateChangedEventProducer : "uses"
 !endsub
 @enduml

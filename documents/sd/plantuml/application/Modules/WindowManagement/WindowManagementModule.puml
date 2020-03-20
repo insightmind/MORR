@@ -13,8 +13,8 @@ interface IModule {
 }
 
 IModule <|-- WindowManagementModule
-WindowManagementModule --> "WindowFocusEventProducer" WindowFocusEventProducer
-WindowManagementModule ---> "WindowMovementEventProducer" WindowMovementEventProducer
-WindowManagementModule --> "       WindowResizingEventProducer" WindowResizingEventProducer
-WindowManagementModule ---> "WindowStateChangedEventProducer" WindowStateChangedEventProducer
+WindowManagementModule ..> WindowFocusEventProducer : "uses"
+WindowManagementModule ...> WindowMovementEventProducer : "uses"
+WindowManagementModule..> WindowResizingEventProducer : "uses"
+WindowManagementModule ...> WindowStateChangedEventProducer : "uses"
 @enduml

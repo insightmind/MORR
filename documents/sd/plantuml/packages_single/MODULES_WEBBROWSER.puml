@@ -85,5 +85,15 @@ WebBrowserEvent <|-- OpenTabEvent
 WebBrowserEvent <|---- SwitchTabEvent
 WebBrowserEvent <|-- TextInputEvent
 WebBrowserEvent <|---- TextSelectionEvent
+WebBrowserModule ..> WebBrowserModuleConfiguration : "uses"
+WebBrowserModule ..> ButtonClickEventProducer : "uses"
+WebBrowserModule ..> CloseTabEventProducer : "uses"
+WebBrowserModule ..> FileDownloadEventProducer : "uses"
+WebBrowserModule ..> HoverEventProducer : "uses"
+WebBrowserModule ..> NavigationEventProducer : "uses"
+WebBrowserModule ..> OpenTabEventProducer : "uses"
+WebBrowserModule ..> SwitchTabEventProducer : "uses"
+WebBrowserModule ..> TextInputEventProducer : "uses"
+WebBrowserModule ..> TextSelectionEventProducer : "uses"
 !endsub
 @enduml

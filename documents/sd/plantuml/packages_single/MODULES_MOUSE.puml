@@ -47,5 +47,9 @@ IConfiguration <|.. MouseModuleConfiguration
 MouseEvent <|- MouseClickEvent
 MouseEvent <|-- MouseScrollEvent
 MouseEvent <|-- MouseMoveEvent
+MouseModule ..> MouseMoveEventProducer : "uses"
+MouseModule ..> MouseClickEventProducer : "uses"
+MouseModule ..> MouseScrollEventProducer : "uses"
+MouseModule ..> MouseModuleConfiguration : "uses"
 !endsub
 @enduml

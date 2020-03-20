@@ -10,9 +10,11 @@ interface IModule {
     + IsActive : bool <<get>> <<set>>
     + Initialize() : void
 }
+
 !endsub
 IModule <|-- MouseModule
-MouseModule --> "  MouseScrollEventProducer" MouseScrollEventProducer
-MouseModule --> " MouseMoveEventProducer " MouseMoveEventProducer
-MouseModule --> "   MouseClickEventProducer" MouseClickEventProducer
+MouseModule ..> MouseMoveEventProducer : "uses"
+MouseModule ..> MouseClickEventProducer : "uses"
+MouseModule ..> MouseScrollEventProducer : "uses"
+MouseModule ..> MouseModuleConfiguration : "uses"
 @enduml

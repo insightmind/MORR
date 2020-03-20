@@ -12,5 +12,5 @@ interface IModule {
 }
 
 IModule <|-- KeyboardModule
-KeyboardModule --> "  KeyboardInteractEventProducer" KeyboardInteractEventProducer
+KeyboardModule ..> KeyboardInteractEventProducer : "uses"
 @enduml

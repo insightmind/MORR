@@ -13,13 +13,14 @@ interface IModule {
 }
 
 IModule <|-- WebBrowserModule
-WebBrowserModule --> "ButtonClickEventProducer" ButtonClickEventProducer
-WebBrowserModule =-> "CloseTabEventProducer" CloseTabEventProducer
-WebBrowserModule ---> "FileDownloadEventProducer" FileDownloadEventProducer
-WebBrowserModule ---> "HoverEventProducer" HoverEventProducer
-WebBrowserModule --> "NavigationEventProducer" NavigationEventProducer
-WebBrowserModule ---> "OpenTabEventProducer" OpenTabEventProducer
-WebBrowserModule ---> "SwitchTabEventProducer" SwitchTabEventProducer
-WebBrowserModule --> "TextInputEventProducer" TextInputEventProducer
-WebBrowserModule ---> "  TextSelectionEventProducer" TextSelectionEventProducer
+WebBrowserModule ..> WebBrowserModuleConfiguration : "uses"
+WebBrowserModule ...> ButtonClickEventProducer : "uses"
+WebBrowserModule ..> CloseTabEventProducer : "uses"
+WebBrowserModule ...> FileDownloadEventProducer : "uses"
+WebBrowserModule ..> HoverEventProducer : "uses"
+WebBrowserModule ...> NavigationEventProducer : "uses"
+WebBrowserModule .> OpenTabEventProducer : "uses"
+WebBrowserModule ...> SwitchTabEventProducer : "uses"
+WebBrowserModule ..> TextInputEventProducer : "uses"
+WebBrowserModule .> TextSelectionEventProducer : "uses"
 @enduml
