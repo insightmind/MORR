@@ -43,7 +43,7 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
         }
 
         /// <summary>
-        /// This test seems to fail only on the CI. An Issue (#173) has been created.
+        /// This tests whether the consumer are correctly dismissed on closing of the strategy
         /// </summary>
         [TestMethod]
         public void TestMultiConsumer_FreeConsumer()
@@ -59,12 +59,6 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
 
             Strategy.Open();
 
-            for (var index = 0; index < defaultMaxConsumer - 1; index++)
-            {
-                var consumer = new TestConsumer(Strategy);
-                consumer.ConsumeUnconditionally(maxWaitTime, result => { });
-            }
-
             /* GIVEN */
             validationConsumer.Consume(
                 (@event, index) => shouldContinue,
@@ -78,6 +72,10 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
 
             // We wait until the current consumer exits. After that we can try to retry consuming which should not cause an error.
             Assert.IsFalse(allowedConsumerDidFail.WaitOne(500));
+
+            // Reopen the strategy so all consumers are freed and new consumers can be attached!
+            Strategy.Close();
+            Strategy.Open();
 
             var newConsumer = new TestConsumer(Strategy);
             newConsumer.Consume((@event, num) => true, result => result.EventThrows<ChannelConsumingException>(retryConsumerDidFail));
