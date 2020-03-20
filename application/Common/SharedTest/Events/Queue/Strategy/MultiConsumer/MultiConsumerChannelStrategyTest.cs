@@ -45,7 +45,6 @@ namespace SharedTest.Events.Queue.Strategy.MultiConsumer
         /// <summary>
         /// This test seems to fail only on the CI. An Issue (#173) has been created.
         /// </summary>
-        [Ignore]
         [TestMethod]
         public void TestMultiConsumer_FreeConsumer()
         {
