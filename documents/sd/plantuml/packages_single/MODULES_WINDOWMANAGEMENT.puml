@@ -7,34 +7,39 @@ left to right direction
 hide empty fields
 !startsub default
 package "WINDOWMANAGEMENT" #BFBFBF {
-    class WindowManagementModule {
+    class WindowManagementModule 
 
+    package "EVENTS" {
+        abstract class WindowEvent {
+            + Title : string <<get>> <<set>>
+            + ProcessName : string <<get>> <<set>>
+        }
+        
+        class WindowFocusEvent
+
+        class WindowMovementEvent {
+            + OldLocation: System.Windows.Point 
+            + NewLocation: System.Windows.Point
+        }
+
+        class WindowResizingEvent {
+            + OldSize: System.Drawing.Size
+            + NewSize: System.Drawing.Size
+        }
+
+        class WindowStateChangedEvent {
+            + State: System.Windows.WindowState
+        }
     }
-
-    abstract class WindowEvent {
-        + Title : string <<get>> <<set>>
-        + ProcessName : string <<get>> <<set>>
-    }
-    
-    class WindowFocusEvent {
-
-    }
-
-    class WindowMovementEvent {
-        + OldLocation: Vector2
-        + NewLocation: Vector2
-    }
-
-    class WindowResizingEvent {
-        + OldSize: Size
-        + NewSize: Size
-    }
-
-    class WindowStateChangedEvent {
-        + State: WindowState
+    package "PRODUCERS" {
+        class WindowFocusEventProducer
+        class WindowMovementEventProducer
+        class WindowResizingEventProducer
+        class WindowStateChangedEventProducer
     }
 }
-
+abstract class Event
+interface IModule
 ' WindowManagement
 Event <|-- WindowEvent
 IModule <|.. WindowManagementModule

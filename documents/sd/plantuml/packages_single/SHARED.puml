@@ -20,14 +20,14 @@ package SHARED #E6E6E6 {
             !includesub ../application/Common/Shared/Modules/IModule.puml!default
         }
 
-        together {
+        package Events <<Rectangle>> {
             !includesub ../application/Common/Shared/Events/Event.puml!default
 
             package Queue <<Rectangle>> #BFBFBF {
 
                 !includesub ../application/Common/Shared/Events/Queue/IDecodeableEventQueue.puml!default
 
-                !includesub ../application/Common/Shared/Events/Queue/IEncodeableEventQueue.puml!default
+                !includesub ../application/Common/Shared/Events/Queue/IEncodableEventQueue.puml!default
 
                 !includesub ../application/Common/Shared/Events/Queue/IReadOnlyEventQueue.puml!default
 
@@ -40,7 +40,6 @@ package SHARED #E6E6E6 {
                 !includesub ../application/Common/Shared/Events/Queue/ReadOnlyEventQueue.puml!default
 
                 !includesub ../application/Common/Shared/Events/Queue/SupportDeserializationEventQueue.puml!default
-                !includesub ../application/Common/Shared/Events/Queue/Aliases.puml!default
 
                 package StorageStrategy <<Rectangle>> #E6E6E6 {
                     !includesub ../application/Common/Shared/Events/Queue/Strategy/ChannelConsumingException.puml!default
@@ -82,7 +81,7 @@ package SHARED #E6E6E6 {
 
                 ' EventQueue
                 "IDecodeableEventQueue<T: Event>" <|.. "DecodeableEventQueue<T: Event>"
-                "IEncodeableEventQueue<T: Event>" <|.. "EncodeableEventQueue<T: Event>"
+                "IEncodableEventQueue<T: Event>" <|.. "EncodeableEventQueue<T: Event>"
                 "IReadOnlyEventQueue<T: Event>" <|.. "ReadOnlyEventQueue<T: Event>"
                 "ISupportDeserializationEventQueue<T: Event>" <|.. "SupportDeserializationEventQueue<T: Event>"
                 "ReadOnlyEventQueue<T: Event>" <|-- "SupportDeserializationEventQueue<T: Event>"
@@ -92,24 +91,21 @@ package SHARED #E6E6E6 {
                 "ReadOnlyEventQueue<T: Event>" <|-- "NonDeserializableEventQueue<T: Event>"
             }
         }
+        package Hook <<Rectangle>> {
+            !includesub ../application/Common/Shared/Hook/GlobalHook.puml!default
 
+            together {
+                !includesub ../application/Common/Shared/Hook/Exceptions/HookLibraryException.puml!default
+            }
+
+            GlobalHook ..> HookLibraryException : "throws"
+        }
         package Utility <<Rectangle>> #BFBFBF {
             !includesub ../application/Common/Shared/Utility/DirectoryPath.puml!default
 
             !includesub ../application/Common/Shared/Utility/FilePath.puml!default
 
-            !includesub ../application/Common/Shared/Utility/GlobalHook.puml!default
-
-            !includesub ../application/Common/Shared/Utility/NativeMethods.puml!default
-
             !includesub ../application/Common/Shared/Utility/Utility.puml!default
-
-            together {
-                !includesub ../application/Common/Shared/Utility/Exceptions/HookLibraryException.puml!default
-            }
-
-            GlobalHook ..> HookLibraryException : "throws"
-            GlobalHook ..> NativeMethods : "uses"
         }
     }
 !endsub

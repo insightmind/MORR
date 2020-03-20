@@ -32,6 +32,10 @@ package "CORE" #E6E6E6 {
 
         !includesub ../application/Core/MORR/Session/SessionConfiguration.puml!default
 
+        package Crypto {
+            !includesub ../application/Core/MORR/Session/Crypto/CryptoHelper.puml!default
+        }
+
         package Exceptions as SessionExceptions {
             !includesub ../application/Core/MORR/Session/Exceptions/RecordingException.puml!default
 

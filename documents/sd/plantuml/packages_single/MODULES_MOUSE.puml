@@ -7,45 +7,45 @@ left to right direction
 hide empty fields
 !startsub default
 package "MOUSE" #BFBFBF {
-    class MouseModule {
+    class MouseModule 
+    class MouseModuleConfiguration
 
+    package "EVENTS" {
+        abstract class MouseEvent {
+            + MousePosition : System.Windows.Point <<get>> <<set>>
+        }
+
+        class MouseMoveEvent {
+            + MousePosition : System.Windows.Point <<get>> <<set>>
+        }
+
+        class MouseClickEvent {
+            + HWnd : string <<get>> <<set>>
+            + MouseAction : System.Windows.Input.MouseAction <<get>> <<set>>
+        }
+        
+        class MouseScrollEvent {
+            + ScrollAmount : short <<get>> <<set>>
+            + HWnd : string <<get>> <<set>>
+        }
     }
 
-    
-    abstract class MouseEvent {
-    }
-
-    class MouseMoveEvent {
-        + Movement: Vector2
-    }
-
-    enum MouseButton {
-        LEFT,
-        CENTER,
-        RIGHT
-    }
-
-    enum MouseButtonState {
-
-    }
-    
-    class MouseClickEvent {
-        + HWnd: IntPtr
-    }
-    
-    class MouseScrollEvent {
-        + HWnd: IntPtr
-        + ScrollAmount : short <<get>> <<set>>
+    package "PRODUCERS" {
+        class MouseClickEventProducer
+        class MouseMoveEventProducer
+        class MouseScrollEventProducer
     }
 }
 
 ' Mouse
+interface IConfiguration
+interface IModule
+abstract class Event
 Event <|-- MouseEvent
 IModule <|.. MouseModule
-MouseEvent <|-- MouseClickEvent
+IConfiguration <|.. MouseModuleConfiguration
+MouseEvent <|- MouseClickEvent
 MouseEvent <|-- MouseScrollEvent
 MouseEvent <|-- MouseMoveEvent
-MouseClickEvent --> "Button" MouseButton
-MouseClickEvent --> "State" MouseButtonState
 !endsub
 @enduml
