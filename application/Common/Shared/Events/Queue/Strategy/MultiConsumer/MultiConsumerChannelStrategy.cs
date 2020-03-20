@@ -98,11 +98,11 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
             IsClosed = true;
             subscriptionMutex.ReleaseMutex();
 
-            receivingChannel?.Writer?.Complete();
+            receivingChannel?.Writer.TryComplete();
 
             foreach (var channel in offeringChannels)
             {
-                channel?.Writer?.Complete();
+                channel?.Writer.TryComplete();
             }
         }
 

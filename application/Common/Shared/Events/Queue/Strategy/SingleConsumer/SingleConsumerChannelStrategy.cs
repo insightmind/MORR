@@ -84,7 +84,7 @@ namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
             IsClosed = true;
             subscriptionMutex.ReleaseMutex();
 
-            eventChannel?.Writer.Complete();
+            eventChannel?.Writer.TryComplete();
             FreeReading();
         }
 
