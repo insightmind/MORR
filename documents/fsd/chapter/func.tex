@@ -98,7 +98,7 @@ System modules are \glspl{module} which communicate with the operating system. T
     \fsubspec{Focusing a window}{\Gls{user}}{\sessionactive}{The \gls{user} focuses a window. The module creates a focus-window \gls{event} (as defined in \specref{D311}) and sends it to the data-managing component.}{The data-managing component received a filled-in focus-window \gls{event}.}
     \fsubspec{Moving a window}{\Gls{user}}{\sessionactive}{The \gls{user} moves a window. The module creates a move-window \gls{event} (as defined in \specref{D312}) and sends it to the data-managing component.}{The data-managing component received a filled-in move-window \gls{event}.}
     \fsubspec{Resizing a window}{\Gls{user}}{\sessionactive}{The \gls{user} modifies the size of a window. The module creates a resize-window \gls{event} (as defined in \specref{D313}) and sends it to the data-managing component.}{The data-managing component received a filled-in resize-window \gls{event}.}
-    \fsubspec{Minimizing/Maximizing/Restoring a window}{\Gls{user}}{\sessionactive}{The \gls{user} minimizes, maximizes or restores a window. The module creates a minimize-window/maximize-window/restore-window \gls{event} (as defined in \specref{D314}) and sends it to the data-managing component.}{The data-managing component received a filled-in minimize-window/maximize-window/restore-window \gls{event}.}
+    \fsubspec{Minimizing/Maximizing a window}{\Gls{user}}{\sessionactive}{The \gls{user} minimizes or maximizes a window. The module creates a minimize-window/maximize-window \gls{event} (as defined in \specref{D314}) and sends it to the data-managing component.}{The data-managing component received a filled-in minimize-window/maximize-window \gls{event}.}
     \end{itemize}
 \end{itemize}
 
@@ -107,7 +107,7 @@ System modules are \glspl{module} which communicate with the operating system. T
 \begin{itemize}
     \fspec{Mouse interaction events}{\Gls{user}}{\sessionactive}{When the \gls{user} performs one of the following mouse inputs, a specialized mouse \gls{event} gets created by this \gls{module} and sent to the data-managing component.}{The data-managing component received a filled-in mouse \gls{event}.}
     \begin{itemize}
-    \fsubspec{Mouse Click}{\Gls{user}}{\sessionactive}{The \gls{user} presses/releases the left/right/middle mouse button. The module creates a press/release left/right/middle mouse-button \gls{event} (as defined in \specref{D320}) and sends it to the data-managing component.}{The data-managing component received a filled-in press/release left/right/middle mouse-button \gls{event}.}
+    \fsubspec{Mouse Click}{\Gls{user}}{\sessionactive}{The \gls{user} presses the left/right/middle mouse button. The module creates a press left/right/middle mouse-button \gls{event} (as defined in \specref{D320}) and sends it to the data-managing component.}{The data-managing component received a filled-in press left/right/middle mouse-button \gls{event}.}
     \fsubspec{Scroll Wheel}{\Gls{user}}{\sessionactive}{The \gls{user} scrolls the mouse-wheel. The module creates a scroll mouse-wheel \gls{event} (as defined in \specref{D321}) and sends it to the data-managing component.}{The data-managing component received a filled-in scroll mouse-wheel \gls{event}.}
     \fsubspec{Mouse Movement}{\Gls{user}}{\sessionactive}{The \gls{user} moves the mouse. The module creates a mouse-movement \gls{event} (as defined in \specref{D322}) and sends it to the data-managing component.}{The data-managing component received a filled-in mouse-movement \gls{event}.}
     \end{itemize}
@@ -118,7 +118,7 @@ System modules are \glspl{module} which communicate with the operating system. T
 \begin{itemize}
     \fspec{Keyboard interaction events}{\Gls{user}}{\sessionactive}{When the \gls{user} performs one of the following keyboard inputs, a specialized keyboard \gls{event} gets created by this \gls{module} and sent to the data-managing component.}{The data-managing component received a filled-in keyboard \gls{event}.}
     \begin{itemize}
-    \fsubspec{Releasing/Pressing a key}{\Gls{user}}{\sessionactive}{The \gls{user} presses/releases a key. The module creates a press/release keyboard-key \gls{event} (as defined in \specref{D330}) and sends it to the data-managing component.}{The data-managing component received a filled-in press/release keyboard-key \gls{event}.}
+    \fsubspec{Pressing a key}{\Gls{user}}{\sessionactive}{The \gls{user} presses a key. The module creates a press keyboard-key \gls{event} (as defined in \specref{D330}) and sends it to the data-managing component.}{The data-managing component received a filled-in press keyboard-key \gls{event}.}
     \end{itemize}
 \end{itemize}
 
