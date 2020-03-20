@@ -17,6 +17,6 @@
         /// <summary>
         ///     The handle of the window in which the mouse scroll occurred in String.
         /// </summary>
-        public string HWnd { get; set; }
+        public string HWnd { get; set; } = "";
     }
 }
