@@ -3,7 +3,6 @@ using MORR.Modules.WindowManagement.Events;
 using MORR.Modules.WindowManagement.Native;
 using MORR.Shared.Events.Queue;
 using MORR.Shared.Hook;
-using Point = System.Windows.Point;
 
 namespace MORR.Modules.WindowManagement.Producers
 {
@@ -12,7 +11,7 @@ namespace MORR.Modules.WindowManagement.Producers
     /// </summary>
     public class WindowMovementEventProducer : DefaultEventQueue<WindowMovementEvent>
     {
-        private static INativeWindowManagement nativeWindowManagement;
+        private static INativeWindowManagement? nativeWindowManagement;
 
         private readonly GlobalHook.MessageType[] listenedMessageTypes =
             { GlobalHook.MessageType.WM_ENTERSIZEMOVE, GlobalHook.MessageType.WM_EXITSIZEMOVE };
@@ -66,14 +65,14 @@ namespace MORR.Modules.WindowManagement.Producers
             {
                 windowUnderChangeHwnd = (int) msg.Hwnd;
                 windowRecBeforeChange = new Rectangle();
-                nativeWindowManagement.GetWindowRect(windowUnderChangeHwnd, ref windowRecBeforeChange);
+                nativeWindowManagement?.GetWindowRect(windowUnderChangeHwnd, ref windowRecBeforeChange);
             }
 
             if (msg.Type == (uint) GlobalHook.MessageType.WM_EXITSIZEMOVE)
             {
                 windowRecAfterChange = new Rectangle();
-                nativeWindowManagement.GetWindowRect(windowUnderChangeHwnd, ref windowRecAfterChange);
-                if (nativeWindowManagement.IsRectSizeEqual(windowRecBeforeChange, windowRecAfterChange))
+                nativeWindowManagement?.GetWindowRect(windowUnderChangeHwnd, ref windowRecAfterChange);
+                if (nativeWindowManagement?.IsRectSizeEqual(windowRecBeforeChange, windowRecAfterChange) ?? false)
                 {
                     var oldLocation = nativeWindowManagement.GetPoint(windowRecBeforeChange.X, windowRecBeforeChange.Y);
                     var newLocation = nativeWindowManagement.GetPoint(windowRecAfterChange.X, windowRecAfterChange.Y);
