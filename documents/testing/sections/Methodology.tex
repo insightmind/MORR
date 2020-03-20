@@ -11,11 +11,11 @@ Our unit tests make use of Microsoft's official offerings \href{https://github.c
 Tests tend to follow a three-tiered pattern: Each test starts with a set of assumptions ("Given"). The test then performs some actions ("When") and checks some assertions ("Then").
 Some tests also feature a precondition ("Precondition") section, in which the preconditions for a test are checked. It is important to mention that these preconditions are checked via the System.Debugger supported method Debug.Assert as those preconditions are necessary to allow the correct interpretation of a test result.
 We strived to achieve a coverage of 70\% where possible.
-Tests are also designed in such a way that the resources they use enable them to be run in parallel, which is a standard feature of most test runners and lead to multiple issues due to race conditions leading to non-deterministic test results.
+Tests are also designed in such a way that the resources they use enable them to be run in parallel, which is a standard feature of most test runners and caused multiple issues due to race conditions leading to non-deterministic test results.
 
 \section{Components with low coverage}
 
-The UI is heavily centered around the tray menu, which does not lend itself well to automated testing. Furthermore, due to its simplicity (the UI mostly consists of a context menu and multiple two-button dialogs) automated testing would likely yield few useful results. Lastly, the C\# language and WPF framework lack the ability of snapshot testing frameworks which may had enabled us to test some UI centered parts.
+The UI is heavily centered around the tray menu, which does not lend itself well to automated testing. Furthermore, due to its simplicity (the UI mostly consists of a context menu and multiple two-button dialogs) automated testing would likely yield few useful results. Lastly, the C\# language and WPF framework lack the ability of snapshot testing frameworks which may would have enabled us to test some UI centered parts.
 Subsequently, there are no automated tests for the UI at the current time and code coverage is low.
 
 The video capturing component of the Core is inherently difficult to test, as results cannot easily be verified. Furthermore, when running the tests in a CI scenario, video capture may not be supported at all. As such, there are currently no automated tests for any components related to video capture and code coverage of the Core is slightly lower than expected.
