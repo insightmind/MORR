@@ -11,7 +11,7 @@ namespace MORR.Modules.Clipboard.Producers
     /// </summary>
     public class ClipboardPasteEventProducer : DefaultEventQueue<ClipboardPasteEvent>
     {
-        private static INativeClipboard nativeClipboard;
+        private static INativeClipboard? nativeClipboard;
 
         public void StartCapture(INativeClipboard nativeCl)
         {
@@ -35,6 +35,11 @@ namespace MORR.Modules.Clipboard.Producers
 
             try
             {
+                if (nativeClipboard == null)
+                {
+                    return;
+                }
+
                 text = nativeClipboard.GetClipboardText();
             }
             catch (Exception)

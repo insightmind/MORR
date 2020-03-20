@@ -23,11 +23,13 @@ namespace MORR.Core.Data.Transcoding.Mpeg
         private Tuple<uint, uint>? inferredResolution;
         private DirectXVideoSample? nextSample;
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         [Import]
         private MpegEncoderConfiguration Configuration { get; set; }
 
         [Import]
         private IEncodableEventQueue<DirectXVideoSample> VideoQueue { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
         private readonly IFileSystem fileSystem;
 
@@ -36,10 +38,12 @@ namespace MORR.Core.Data.Transcoding.Mpeg
         [ImportingConstructor]
         public MpegEncoder() : this(new FileSystem()) { }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public MpegEncoder(IFileSystem fileSystem)
         {
             this.fileSystem = fileSystem;
         }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
         public void Encode(DirectoryPath recordingDirectoryPath)
         {
@@ -51,7 +55,7 @@ namespace MORR.Core.Data.Transcoding.Mpeg
 
         private Stream GetFileStream(DirectoryPath recordingDirectoryPath)
         {
-            var fullPath = fileSystem.Path.Combine(recordingDirectoryPath.ToString(), Configuration.RelativeFilePath.ToString());
+            var fullPath = fileSystem.Path.Combine(recordingDirectoryPath.ToString(), Configuration.RelativeFilePath?.ToString());
             return fileSystem.File.OpenWrite(fullPath);
         }
 
@@ -88,7 +92,7 @@ namespace MORR.Core.Data.Transcoding.Mpeg
 
         private async Task ConsumeVideoSamples()
         {
-            await foreach (var videoSample in VideoQueue?.GetEvents())
+            await foreach (var videoSample in VideoQueue.GetEvents())
             {
                 if (inferredResolution == null)
                 {

@@ -11,8 +11,9 @@ namespace MORR.Core.Modules
     /// </summary>
     public class ModuleManager : IModuleManager
     {
-        private IEnumerable<IModule> enabledModules;
+        private IEnumerable<IModule> enabledModules = new IModule[0];
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         /// <summary>
         ///     All <see cref="IModule" /> instances available through MEF.
         /// </summary>
@@ -24,6 +25,7 @@ namespace MORR.Core.Modules
         /// </summary>
         [Import]
         private GlobalModuleConfiguration ModuleConfiguration { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
         public void InitializeModules()
         {

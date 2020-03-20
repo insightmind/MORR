@@ -31,7 +31,7 @@ namespace MORR.Core.Data.Transcoding.Mpeg
         /// <summary>
         ///     The path to the file to store the data in relative to the recording directory.
         /// </summary>
-        public FilePath? RelativeFilePath { get; set; }
+        public FilePath RelativeFilePath { get; set; } = new FilePath("", true);
 
         public void Parse(RawConfiguration configuration)
         {
@@ -81,6 +81,11 @@ namespace MORR.Core.Data.Transcoding.Mpeg
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
             return obj.GetType() == GetType() && Equals((MpegEncoderConfiguration) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Width, Height, KiloBitsPerSecond, FramesPerSecond, RelativeFilePath);
         }
     }
 }

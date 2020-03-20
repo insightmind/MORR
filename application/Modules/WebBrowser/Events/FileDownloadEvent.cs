@@ -14,12 +14,12 @@ namespace MORR.Modules.WebBrowser.Events
         /// <summary>
         ///     The URL of the file that was downloaded
         /// </summary>
-        public Uri FileURL { get; set; }
+        public Uri? FileURL { get; private set; }
 
         /// <summary>
         ///     MIME type of the file that was downloaded
         /// </summary>
-        public string MIMEType { get; set; }
+        public string MIMEType { get; private set; } = "";
 
         protected override void DeserializeSpecificAttributes(JsonElement parsed)
         {

@@ -14,17 +14,17 @@ namespace MORR.Core.Session
         /// <summary>
         ///     The types of the encoders to use.
         /// </summary>
-        public IEnumerable<Type> Encoders { get; set; }
+        public IEnumerable<Type> Encoders { get; set; } = new Type[0];
 
         /// <summary>
         ///     The types of the decoders to use.
         /// </summary>
-        public IEnumerable<Type>? Decoders { get; set; }
+        public IEnumerable<Type>? Decoders { get; set; } = new Type[0];
 
         /// <summary>
         ///     The directory in which to store new recordings.
         /// </summary>
-        public DirectoryPath RecordingDirectory { get; set; }
+        public DirectoryPath RecordingDirectory { get; set; } = new DirectoryPath("", true);
 
         public void Parse(RawConfiguration configuration)
         {

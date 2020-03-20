@@ -121,12 +121,13 @@ namespace MORR.Core.Data.Capture.Video.Desktop
             public void Dispose()
             {
                 multithread?.Leave();
-                multithread = null;
+                multithread = null!;
             }
         }
 
         #region Fields
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         private Texture2D blankTexture;
         private ManualResetEvent canCleanupNonPersistentResourcesEvent;
         private ManualResetEvent closedEvent;
@@ -138,10 +139,11 @@ namespace MORR.Core.Data.Capture.Video.Desktop
         private ManualResetEvent frameEvent;
         private Direct3D11CaptureFramePool framePool;
 
-        private GraphicsCaptureItem item;
+        private GraphicsCaptureItem item ;
         private Multithread multithread;
         private GraphicsCaptureSession session;
         private Device sharpDXDevice;
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
         #endregion
 
@@ -186,7 +188,9 @@ namespace MORR.Core.Data.Capture.Video.Desktop
             this.item.Closed += OnClosed;
         }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public VideoSampleProducer() : base(16) { }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
         private void InitializeBlankTexture()
         {
@@ -240,29 +244,29 @@ namespace MORR.Core.Data.Capture.Video.Desktop
                 framePool.Dispose();
             }
 
-            framePool = null;
+            framePool = null!;
 
             session?.Dispose();
-            session = null;
+            session = null!;
 
             if (item != null)
             {
                 item.Closed -= OnClosed;
             }
 
-            item = null;
+            item = null!;
             blankTexture?.Dispose();
-            blankTexture = null;
+            blankTexture = null!;
             currentFrame?.Dispose();
-            currentFrame = null;
+            currentFrame = null!;
         }
 
         private void CleanupPersistentResources()
         {
             device?.Dispose();
-            device = null;
+            device = null!;
             sharpDXDevice?.Dispose();
-            sharpDXDevice = null;
+            sharpDXDevice = null!;
         }
 
         public void Dispose()

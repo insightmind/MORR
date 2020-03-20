@@ -25,9 +25,16 @@ namespace MORR.Shared.Utility
             {
                 this.value = value;
             }
-            else if (!TryGetDirectoryPath(value, out this.value))
+            else
             {
-                throw new ArgumentException($"The specified value \"{value}\" is not a valid directory path.");
+                var result = TryGetDirectoryPath(value);
+
+                if (result == null)
+                {
+                    throw new ArgumentException($"The specified value \"{value}\" is not a valid file path.");
+                }
+
+                this.value = result;
             }
         }
 
@@ -37,18 +44,15 @@ namespace MORR.Shared.Utility
         /// <param name="path">The path to verify.</param>
         /// <param name="result">The local path if the provided <paramref name="path" /> is valid.</param>
         /// <returns><see langword="true" /> if the provided <paramref name="path" /> is valid, <see langword="false" /> otherwise.</returns>
-        private bool TryGetDirectoryPath(string path, [NotNullWhen(true)] out string? result)
+        private static string? TryGetDirectoryPath(string path)
         {
-            result = null;
-
             if (!Uri.TryCreate(path, UriKind.Absolute, out var parsedUri) || !parsedUri.IsFile ||
                 !string.IsNullOrEmpty(Path.GetExtension(path)))
             {
-                return false;
+                return null;
             }
 
-            result = parsedUri.LocalPath;
-            return true;
+            return parsedUri.LocalPath;
         }
 
         /// <summary>

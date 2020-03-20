@@ -16,12 +16,12 @@ namespace MORR.Modules.WebBrowser.Events
         /// <summary>
         ///     The identifier of the tab where the web browser event occured in
         /// </summary>
-        public int TabID { get; set; }
+        public int TabID { get; private set; }
 
         /// <summary>
         ///     The URL of the website where the web browser event occured in
         /// </summary>
-        public Uri CurrentURL { get; set; }
+        public Uri? CurrentURL { get; private set; }
 
         /// <summary>
         ///     Deserialize a browser event from a string.
@@ -52,7 +52,7 @@ namespace MORR.Modules.WebBrowser.Events
         ///     Deserialize the attributes shared by all browser event types.
         /// </summary>
         /// <param name="parsed"></param>
-        protected void DeserializeCommonAttributes(JsonElement parsed)
+        private void DeserializeCommonAttributes(JsonElement parsed)
         {
             TabID = parsed.GetProperty(serializedTabIdField).GetInt32();
             CurrentURL = new Uri(parsed.GetProperty(serializedUrlField).ToString());

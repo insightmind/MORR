@@ -10,6 +10,6 @@ namespace MORR.Modules.Clipboard.Events
         /// <summary>
         ///     The text in the clipboard
         /// </summary>
-        public string ClipboardText { get; set; }
+        public string ClipboardText { get; set; } = "";
     }
 }

@@ -38,7 +38,7 @@ namespace MORR.Shared.Hook
 
         private static bool isActive;
         private static IntPtr hookLibrary;
-        private static IHookNativeMethods nativeHook;
+        private static IHookNativeMethods nativeHook = new HookNativeMethods();
 
         //map message types to lists of interested listeners
         private static readonly Dictionary<MessageType, List<RetrieveMessageCallBack>> listeners = new Dictionary<MessageType, List<RetrieveMessageCallBack>>();

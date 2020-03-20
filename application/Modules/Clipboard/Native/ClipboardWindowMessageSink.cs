@@ -5,7 +5,7 @@ namespace MORR.Modules.Clipboard.Native
 {
     public class ClipboardWindowMessageSink : IClipboardWindowMessageSink
     {
-        private INativeClipboard.WindowProcedureHandler internalWindowMessageHandler;
+        private INativeClipboard.WindowProcedureHandler? internalWindowMessageHandler;
 
         public ClipboardWindowMessageSink()
         {
@@ -44,8 +44,7 @@ namespace MORR.Modules.Clipboard.Native
             NativeClipboard.AddClipboardFormatListener(WindowHandle);
         }
 
-
-        public static INativeClipboard NativeClipboard { get; } = new NativeClipboard();
+        private static INativeClipboard NativeClipboard { get; } = new NativeClipboard();
 
         /// <summary>
         ///     The underlying window handle

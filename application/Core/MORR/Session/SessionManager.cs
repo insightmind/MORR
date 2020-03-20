@@ -18,16 +18,17 @@ namespace MORR.Core.Session
     {
         private const string dateFormat = "yyyy-MM-ddTHH-mm-ss";
         private const string fileDivider = "--";
-        private IEnumerable<IEncoder> encoders = new IEncoder[0];
-        private IEnumerable<IDecoder> decoders = new IDecoder[0];
+        private readonly IEnumerable<IEncoder> encoders;
+        private readonly IEnumerable<IDecoder> decoders;
         private readonly IModuleManager moduleManager;
         private readonly IConfigurationManager configurationManager;
         private readonly IFileSystem fileSystem;
 
-        public bool isRecording { get; private set; }
+        public bool IsRecording { get; private set; }
 
         public SessionManager(FilePath configurationPath) : this(configurationPath, new Bootstrapper(), new ConfigurationManager(), new ModuleManager(), new FileSystem()) { }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public SessionManager(FilePath configurationPath,
                               IBootstrapper bootstrapper,
                               IConfigurationManager configurationManager,
@@ -58,6 +59,7 @@ namespace MORR.Core.Session
 
         [Import]
         private SessionConfiguration Configuration { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
         public DirectoryPath? CurrentRecordingDirectory { get; private set; }
 
@@ -79,14 +81,14 @@ namespace MORR.Core.Session
 
         public void StartRecording()
         {
-            if (isRecording)
+            if (IsRecording)
             {
                 throw new AlreadyRecordingException();
             }
 
             moduleManager.InitializeModules();
 
-            isRecording = true;
+            IsRecording = true;
 
             CurrentRecordingDirectory = CreateNewRecordingDirectory();
 
@@ -100,12 +102,12 @@ namespace MORR.Core.Session
 
         public void StopRecording()
         {
-            if (!isRecording)
+            if (!IsRecording)
             {
                 throw new NotRecordingException();
             }
 
-            isRecording = false;
+            IsRecording = false;
 
             moduleManager.NotifyModulesOnSessionStop();
 
@@ -121,7 +123,7 @@ namespace MORR.Core.Session
 
         public void Process(IEnumerable<DirectoryPath> recordings)
         {
-            if (isRecording)
+            if (IsRecording)
             {
                 throw new AlreadyRecordingException();
             }

@@ -14,7 +14,7 @@ namespace MORR.Core.Modules
         /// <summary>
         ///     The types of all <see cref="IModule" /> instances that should be enabled.
         /// </summary>
-        public IEnumerable<Type> EnabledModules { get; set; }
+        public IEnumerable<Type> EnabledModules { get; set; } = new Type[0];
 
         public void Parse(RawConfiguration configuration)
         {
@@ -54,7 +54,7 @@ namespace MORR.Core.Modules
                 return (obj is GlobalModuleConfiguration configuration) 
                     && EnabledModules.SequenceEqual(configuration.EnabledModules);
             }
-            catch (ArgumentNullException _)
+            catch (ArgumentNullException)
             {
                 return false;
             }

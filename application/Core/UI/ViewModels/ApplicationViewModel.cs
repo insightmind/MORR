@@ -17,7 +17,7 @@ namespace MORR.Core.UI.ViewModels
 {
     public class ApplicationViewModel : DependencyObject
     {
-        private SessionManager sessionManager;
+        private SessionManager? sessionManager;
 
         public ApplicationViewModel()
         {
@@ -38,18 +38,22 @@ namespace MORR.Core.UI.ViewModels
             }
         }
 
+#pragma warning disable CS8763 // A method marked [DoesNotReturn] should not return.
+        [DoesNotReturn]
         private static void Exit()
         {
             Application.Current?.Shutdown();
         }
+#pragma warning restore CS8763 // A method marked [DoesNotReturn] should not return.
 
         private void OnOpenRecordingsDirectory(object _)
         {
-            var recordingsFolder = sessionManager.RecordingsFolder;
+            var recordingsFolder = sessionManager?.RecordingsFolder;
 
             if (recordingsFolder == null)
             {
                 ExitWithError(Properties.Resources.Error_No_Recordings_Directory);
+                return; // This will never be reached
             }
 
             Process.Start("explorer.exe", recordingsFolder.ToString());
@@ -88,7 +92,7 @@ namespace MORR.Core.UI.ViewModels
 
             try
             {
-                sessionManager.StartRecording();
+                sessionManager?.StartRecording();
             }
             catch (Exception)
             {
@@ -101,7 +105,7 @@ namespace MORR.Core.UI.ViewModels
         private void StopRecording()
         {
             IsRecording = false;
-            sessionManager.StopRecording();
+            sessionManager?.StopRecording();
 
             if (ShowDialogWithResult<SaveDialog>())
             {
@@ -115,7 +119,7 @@ namespace MORR.Core.UI.ViewModels
                 return;
             }
 
-            var recordingDirectory = sessionManager.CurrentRecordingDirectory?.ToString();
+            var recordingDirectory = sessionManager?.CurrentRecordingDirectory?.ToString();
 
             if (recordingDirectory == null)
             {
@@ -212,11 +216,11 @@ namespace MORR.Core.UI.ViewModels
 
         #region Commands
 
-        private ICommand exitCommand;
+        private ICommand? exitCommand;
 
-        private ICommand openRecordingsDirectoryCommand;
+        private ICommand? openRecordingsDirectoryCommand;
 
-        private ICommand toggleRecordingCommand;
+        private ICommand? toggleRecordingCommand;
 
         public ICommand OpenRecordingsDirectoryCommand =>
             openRecordingsDirectoryCommand ??= new RelayCommand(OnOpenRecordingsDirectory);

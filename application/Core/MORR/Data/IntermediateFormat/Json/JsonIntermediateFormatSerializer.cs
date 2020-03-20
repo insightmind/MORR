@@ -17,8 +17,10 @@ namespace MORR.Core.Data.IntermediateFormat.Json
         private bool isActive;
         private CountdownEvent resetCounter = new CountdownEvent(0);
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         [ImportMany]
         private IEnumerable<IReadOnlyEventQueue<Event>> EventQueues { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
         public void Initialize(bool isEnabled)
         {

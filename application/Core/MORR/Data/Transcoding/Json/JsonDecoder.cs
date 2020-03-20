@@ -15,8 +15,10 @@ namespace MORR.Core.Data.Transcoding.Json
 {
     public class JsonDecoder : DefaultDecodableEventQueue<JsonIntermediateFormatSample>, IDecoder
     {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         [Import]
         private JsonDecoderConfiguration Configuration { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
         private static Guid Identifier { get; } = new Guid("E943EACB-5AD1-49A7-92CE-C42E7AD8995B");
 
@@ -41,10 +43,12 @@ namespace MORR.Core.Data.Transcoding.Json
         [ImportingConstructor]
         public JsonDecoder() : this(new FileSystem()) { }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public JsonDecoder(IFileSystem fileSystem)
         {
             this.fileSystem = fileSystem;
         }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
         public void Decode(DirectoryPath recordingDirectoryPath)
         {
@@ -54,7 +58,7 @@ namespace MORR.Core.Data.Transcoding.Json
 
         private Stream GetFileStream(DirectoryPath recordingDirectoryPath)
         {
-            var fullPath = fileSystem.Path.Combine(recordingDirectoryPath.ToString(), Configuration.RelativeFilePath.ToString());
+            var fullPath = fileSystem.Path.Combine(recordingDirectoryPath.ToString(), Configuration.RelativeFilePath?.ToString());
             return fileSystem.File.OpenRead(fullPath);
         }
 

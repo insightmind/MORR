@@ -22,7 +22,7 @@ namespace MORR.Core.UI.Utility
 
         private readonly uint taskbarWindowMessageId;
 
-        private NativeMethods.WindowProcedureHandler internalWindowMessageHandler;
+        private NativeMethods.WindowProcedureHandler? internalWindowMessageHandler;
 
         public WindowMessageSink()
         {
@@ -112,7 +112,7 @@ namespace MORR.Core.UI.Utility
             isDisposed = true;
 
             NativeMethods.DestroyWindow(WindowHandle);
-            internalWindowMessageHandler = null;
+            internalWindowMessageHandler = null!;
         }
 
         #endregion

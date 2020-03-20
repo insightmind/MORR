@@ -10,11 +10,11 @@ namespace MORR.Modules.WindowManagement.Events
         /// <summary>
         ///     The title of the interacted window
         /// </summary>
-        public string Title { get; set; }
+        public string Title { get; set; } = "";
 
         /// <summary>
         ///     The name of the process associated with the window
         /// </summary>
-        public string ProcessName { get; set; }
+        public string ProcessName { get; set; } = "";
     }
 }
