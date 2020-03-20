@@ -13,7 +13,7 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
     public abstract class MultiConsumerChannelStrategy<TEvent> : IEventQueueStorageStrategy<TEvent> where TEvent : Event
     {
         private uint? maxChannelConsumers;
-        private Channel<TEvent> receivingChannel;
+        private Channel<TEvent, TEvent>? receivingChannel;
         private readonly List<Channel<TEvent>> offeringChannels = new List<Channel<TEvent>>();
         private readonly Mutex subscriptionMutex = new Mutex();
         private const int timeOut = 500;
@@ -63,6 +63,7 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
         /// <param name="event">The event to enqueue</param>
         public async void Enqueue(TEvent @event)
         {
+            if (receivingChannel == null || IsClosed) return;
             await EnqueueAsync(receivingChannel, @event);
         }
 
@@ -97,22 +98,32 @@ namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
             IsClosed = true;
             subscriptionMutex.ReleaseMutex();
 
-            receivingChannel?.Writer?.Complete();
+            receivingChannel?.Writer.TryComplete();
 
             foreach (var channel in offeringChannels)
             {
-                channel?.Writer?.Complete();
+                channel?.Writer.TryComplete();
             }
         }
 
-        private ValueTask EnqueueAsync(Channel<TEvent> channel, TEvent @event)
+        private static ValueTask<bool> EnqueueAsync(Channel<TEvent, TEvent> channel, TEvent @event)
         {
-            async Task AsyncSlowPath(TEvent @event) => await channel.Writer.WriteAsync(@event);
-            return channel.Writer.TryWrite(@event) ? default : new ValueTask(AsyncSlowPath(@event));
+            async Task<bool> AsyncSlowPath(TEvent item)
+            {
+                while (await channel.Writer.WaitToWriteAsync())
+                {
+                    if (channel.Writer.TryWrite(item)) return true;
+                }
+                return false; // Channel was completed during the wait
+            }
+
+            return channel.Writer.TryWrite(@event) ? new ValueTask<bool>(true) : new ValueTask<bool>(AsyncSlowPath(@event));
         }
 
         private async Task DistributeEventsAsync()
         {
+            if (receivingChannel == null) return;
+
             await foreach (var @event in receivingChannel.Reader.ReadAllAsync())
             {
                 foreach (var channel in offeringChannels)
