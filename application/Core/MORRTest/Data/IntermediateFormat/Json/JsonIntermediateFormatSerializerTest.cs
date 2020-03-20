@@ -17,7 +17,39 @@ namespace MORRTest.Data.IntermediateFormat.Json
     [TestClass]
     public class JsonIntermediateFormatSerializerTest
     {
-        public class NonDeserializableEventQueueImp : NonDeserializableEventQueue<TestEvent> { }
+        public class DefaultNonDeserializableEventQueueImp : NonDeserializableEventQueue<TestEvent> { }
+
+        /// <summary>
+        /// However as we cannot override the GetEvents method on an existing implementation because the method is not
+        /// marked as virtual.
+        /// Therefore we have another test class which we use to make sure the encoder attaches correctly.
+        /// </summary>
+        public class NonDeserializableEventQueueImp : IReadOnlyEventQueue<TestEvent>
+        {
+            private readonly DefaultNonDeserializableEventQueueImp innerQueue = new DefaultNonDeserializableEventQueueImp();
+
+            public readonly ManualResetEvent ConsumerAttachedEvent;
+
+            public bool IsClosed => innerQueue.IsClosed;
+
+            public void Open() => innerQueue.Open();
+
+            public void Close() => innerQueue.Close();
+
+            public void Enqueue(TestEvent @event) => innerQueue.Enqueue(@event);
+
+            public IAsyncEnumerable<TestEvent> GetEvents() => Awaitable.Await(innerQueue.GetEvents(), ConsumerAttachedEvent);
+
+            public NonDeserializableEventQueueImp()
+            {
+                ConsumerAttachedEvent = new ManualResetEvent(false);
+            }
+
+            ~NonDeserializableEventQueueImp()
+            {
+                ConsumerAttachedEvent.Dispose();
+            }
+        }
 
         private JsonIntermediateFormatSerializer serializer;
         private NonDeserializableEventQueueImp inputQueue;
@@ -135,6 +167,7 @@ namespace MORRTest.Data.IntermediateFormat.Json
 
             thread.Start(); 
             Assert.IsTrue(didStartConsumingEvent.WaitOne(maxWaitTime));
+            Assert.IsTrue(inputQueue.ConsumerAttachedEvent.WaitOne(maxWaitTime), "Serializer did not attach in time to input queue!");
             inputQueue.Enqueue(@testEvent);
 
             /* THEN */ 
