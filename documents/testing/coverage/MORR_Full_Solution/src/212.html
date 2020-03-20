@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\WebBrowser\Events\TextSelectionEvent.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Text.Json;
+
+namespace MORR.Modules.WebBrowser.Events
+{
+    /// &lt;summary&gt;
+    ///     A text selection user interaction
+    /// &lt;/summary&gt;
+    public class TextSelectionEvent : WebBrowserEvent
+    {
+        private const string serializedTextField = &quot;textSelection&quot;;
+
+        /// &lt;summary&gt;
+        ///     The text that was selected on the website
+        /// &lt;/summary&gt;
+        public string SelectedText { get; set; }
+
+        protected override void DeserializeSpecificAttributes(JsonElement parsed)
+        {
+            SelectedText = parsed.GetProperty(serializedTextField).GetString();
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,38,15,42,1],[15,43,15,47,1],[18,9,18,10,1],[19,13,19,80,1],[20,9,20,10,1]]);
+    </script>
+  </body>
+</html>

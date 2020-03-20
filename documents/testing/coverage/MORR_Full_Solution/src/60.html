@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\WindowManagement\Native\NativeWindowManagement.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Diagnostics;
+using Point = System.Windows.Point;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Drawing;
+
+namespace MORR.Modules.WindowManagement.Native
+{
+    internal class NativeWindowManagement : INativeWindowManagement
+    {
+        /// &lt;summary&gt;
+        ///     Get the title of a window from it&#39;s Hwnd
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;hwnd&quot;&gt; Hwnd of the window&lt;/param&gt;
+        /// &lt;returns&gt;the title of the window in string&lt;/returns&gt;
+        public string GetWindowTitleFromHwnd(IntPtr hwnd)
+        {
+            var textLength = GetWindowTextLength(hwnd);
+            var windowTextStringBuilder = new StringBuilder(textLength + 1);
+            GetWindowText(hwnd, windowTextStringBuilder, windowTextStringBuilder.Capacity);
+            return windowTextStringBuilder.ToString();
+        }
+
+        /// &lt;summary&gt;
+        ///     Get the The name of the process associated with a window
+        ///     from the window&#39;s Hwnd
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;hwnd&quot;&gt;Hwnd of the window&lt;/param&gt;
+        /// &lt;returns&gt;the name of the process associated with the window&lt;/returns&gt;
+        public string GetProcessNameFromHwnd(IntPtr hwnd)
+        {
+            GetWindowThreadProcessId(hwnd, out var pid);
+            var process = Process.GetProcessById((int) pid);
+            return process.ProcessName;
+        }
+
+        public Point GetPoint(int x, int y)
+        {
+            return new Point(x,y);
+        }
+        public bool IsRectSizeEqual(Rectangle rectA, Rectangle rectB)
+        {
+            return GetWindowWidth(rectA) == GetWindowWidth(rectB) &amp;&amp; GetWindowHeight(rectA) == GetWindowHeight(rectB);
+        }
+
+        public int GetWindowWidth(Rectangle rect)
+        {
+            return rect.Width - rect.X;
+        }
+
+        public int GetWindowHeight(Rectangle rect)
+        {
+            return rect.Height - rect.Y;
+        }
+
+        IntPtr INativeWindowManagement.GetForegroundWindow()
+        {
+            return GetForegroundWindow();
+        }
+
+        long INativeWindowManagement.GetWindowRect(int hWnd, ref Rectangle lpRect)
+        {
+            return GetWindowRect(hWnd, ref lpRect);
+        }
+
+        #region DllImports
+
+        [DllImport(&quot;user32.dll&quot;, CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+
+        [DllImport(&quot;user32.dll&quot;, SetLastError = true)]
+        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+        [DllImport(&quot;user32.dll&quot;, SetLastError = true, CharSet = CharSet.Auto)]
+        private static extern int GetWindowTextLength(IntPtr hWnd);
+
+        [DllImport(&quot;user32.dll&quot;)]
+        private static extern IntPtr GetForegroundWindow();
+
+        [DllImport(&quot;user32.dll&quot;)]
+        private static extern long GetWindowRect(int hWnd, ref Rectangle lpRect);
+
+        #endregion
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[18,9,18,10,0],[19,13,19,56,0],[20,13,20,77,0],[21,13,21,92,0],[22,13,22,55,0],[23,9,23,10,0],[32,9,32,10,0],[33,13,33,57,0],[34,13,34,61,0],[35,13,35,40,0],[36,9,36,10,0],[39,9,39,10,0],[40,13,40,35,0],[41,9,41,10,0],[43,9,43,10,0],[44,13,44,119,0],[45,9,45,10,0],[48,9,48,10,0],[49,13,49,40,0],[50,9,50,10,0],[53,9,53,10,0],[54,13,54,41,0],[55,9,55,10,0],[58,9,58,10,0],[59,13,59,42,0],[60,9,60,10,0],[63,9,63,10,0],[64,13,64,52,0],[65,9,65,10,0]]);
+    </script>
+  </body>
+</html>

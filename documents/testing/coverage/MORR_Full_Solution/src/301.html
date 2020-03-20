@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\MORR\Session\SessionManager.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.IO;
+using System.IO.Abstractions;
+using System.Linq;
+using MORR.Core.Configuration;
+using MORR.Core.Data.Transcoding;
+using MORR.Core.Modules;
+using MORR.Core.Session.Exceptions;
+using MORR.Core.Session.Crypto;
+using MORR.Shared.Hook;
+using MORR.Shared.Utility;
+
+namespace MORR.Core.Session
+{
+    public class SessionManager : ISessionManager
+    {
+        private const string dateFormat = &quot;yyyy-MM-ddTHH-mm-ss&quot;;
+        private const string fileDivider = &quot;--&quot;;
+        private readonly IEnumerable&lt;IEncoder&gt; encoders;
+        private readonly IEnumerable&lt;IDecoder&gt; decoders;
+        private readonly IModuleManager moduleManager;
+        private readonly IConfigurationManager configurationManager;
+        private readonly IFileSystem fileSystem;
+
+        public bool IsRecording { get; private set; }
+
+        public SessionManager(FilePath configurationPath) : this(configurationPath, new Bootstrapper(), new ConfigurationManager(), new ModuleManager(), new FileSystem()) { }
+
+        public SessionManager(FilePath configurationPath,
+                              IBootstrapper bootstrapper,
+                              IConfigurationManager configurationManager,
+                              IModuleManager moduleManager,
+                              IFileSystem fileSystem)
+        {
+            this.moduleManager = moduleManager;
+            this.configurationManager = configurationManager;
+            this.fileSystem = fileSystem;
+
+            GlobalHook.Initialize();
+
+            bootstrapper.ComposeImports(this);
+            bootstrapper.ComposeImports(configurationManager);
+            bootstrapper.ComposeImports(moduleManager);
+
+            configurationManager.LoadConfiguration(configurationPath);
+
+            encoders = Encoders.Where(x =&gt; Configuration.Encoders.Contains(x.GetType()));
+            decoders = Decoders.Where(x =&gt; Configuration.Decoders?.Contains(x.GetType()) ?? false);
+        }
+
+        [ImportMany]
+        private IEnumerable&lt;IEncoder&gt; Encoders { get; set; } = null!;
+
+        [ImportMany]
+        private IEnumerable&lt;IDecoder&gt; Decoders { get; set; } = null!;
+
+        [Import]
+        private SessionConfiguration Configuration { get; set; } = null!;
+
+        public DirectoryPath? CurrentRecordingDirectory { get; private set; }
+
+        // Nullable to prevent issues with calling this before the configuration has been parsed
+        public DirectoryPath? RecordingsFolder =&gt; Configuration?.RecordingDirectory;
+
+        private DirectoryPath CreateNewRecordingDirectory()
+        {
+            var timeNow = DateTime.Now.ToString(dateFormat);
+            var dir = Configuration.RecordingDirectory.ToString();
+            var sessionId = Guid.NewGuid().ToString();
+            var username = CryptoHelper.GenerateHash(Environment.UserName);
+
+            var directory = fileSystem.Path.Combine(dir, timeNow + fileDivider + username + fileDivider + sessionId);
+            fileSystem.Directory.CreateDirectory(directory);
+            
+            return new DirectoryPath(directory);
+        }
+
+        public void StartRecording()
+        {
+            if (IsRecording)
+            {
+                throw new AlreadyRecordingException();
+            }
+
+            moduleManager.InitializeModules();
+
+            IsRecording = true;
+
+            CurrentRecordingDirectory = CreateNewRecordingDirectory();
+
+            moduleManager.NotifyModulesOnSessionStart();
+
+            foreach (var encoder in encoders)
+            {
+                encoder.Encode(CurrentRecordingDirectory);
+            }
+        }
+
+        public void StopRecording()
+        {
+            if (!IsRecording)
+            {
+                throw new NotRecordingException();
+            }
+
+            IsRecording = false;
+
+            moduleManager.NotifyModulesOnSessionStop();
+
+            foreach (var encoder in encoders)
+            {
+                // IEncoder.EncodeFinished will not be reset before IEncoder.Encode gets called again
+                // We may therefore wait on this event sequentially without risk of blocking indefinitely
+                encoder.EncodeFinished.WaitOne();
+            }
+
+            GlobalHook.IsActive = false;
+        }
+
+        public void Process(IEnumerable&lt;DirectoryPath&gt; recordings)
+        {
+            if (IsRecording)
+            {
+                throw new AlreadyRecordingException();
+            }
+
+            if (!decoders.Any())
+            {
+                throw new InvalidConfigurationException(&quot;No decoder specified for processing operation.&quot;);
+            }
+
+            moduleManager.InitializeModules();
+            moduleManager.NotifyModulesOnSessionStart();
+
+            foreach (var recording in recordings)
+            {
+                CurrentRecordingDirectory = CreateNewRecordingDirectory();
+
+                foreach (var decoder in decoders)
+                {
+                    decoder.Decode(recording);
+                }
+
+                foreach (var encoder in encoders)
+                {
+                    encoder.Encode(CurrentRecordingDirectory);
+                }
+
+                foreach (var decoder in decoders)
+                {
+                    decoder.DecodeFinished.WaitOne();
+                }
+
+                foreach (var encoder in encoders)
+                {
+                    encoder.EncodeFinished.WaitOne();
+                }
+            }
+
+            moduleManager.NotifyModulesOnSessionStop();
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[27,35,27,39,1],[27,40,27,52,1],[29,61,29,171,0],[29,172,29,173,0],[29,174,29,175,0],[31,9,35,54,1],[36,9,36,10,1],[37,13,37,48,1],[38,13,38,62,1],[39,13,39,42,1],[41,13,41,37,1],[43,13,43,47,1],[44,13,44,63,1],[45,13,45,56,1],[47,13,47,71,1],[49,13,49,44,1],[49,44,49,88,1],[49,88,49,90,1],[49,13,49,90,1],[50,13,50,44,1],[50,44,50,98,1],[50,98,50,100,1],[50,13,50,100,1],[51,9,51,10,1],[54,50,54,54,1],[54,55,54,59,1],[54,64,54,69,1],[57,50,57,54,1],[57,55,57,59,1],[57,64,57,69,1],[60,54,60,58,1],[60,59,60,63,1],[60,68,60,73,1],[62,59,62,63,1],[62,64,62,76,1],[65,51,65,84,1],[68,9,68,10,1],[69,13,69,61,1],[70,13,70,67,1],[71,13,71,55,1],[72,13,72,76,1],[74,13,74,118,1],[75,13,75,61,1],[77,13,77,49,1],[78,9,78,10,1],[81,9,81,10,1],[82,13,82,29,1],[83,13,83,14,1],[84,17,84,55,1],[87,13,87,47,1],[89,13,89,32,1],[91,13,91,71,1],[93,13,93,57,1],[95,13,95,20,1],[95,22,95,33,1],[95,34,95,36,1],[95,37,95,45,1],[96,13,96,14,1],[97,17,97,59,1],[98,13,98,14,1],[99,9,99,10,1],[102,9,102,10,1],[103,13,103,30,1],[104,13,104,14,1],[105,17,105,51,1],[108,13,108,33,1],[110,13,110,56,1],[112,13,112,20,1],[112,22,112,33,1],[112,34,112,36,1],[112,37,112,45,1],[113,13,113,14,1],[116,17,116,50,1],[117,13,117,14,1],[119,13,119,41,1],[120,9,120,10,1],[123,9,123,10,1],[124,13,124,29,1],[125,13,125,14,1],[126,17,126,55,1],[129,13,129,33,1],[130,13,130,14,1],[131,17,131,107,1],[134,13,134,47,1],[135,13,135,57,1],[137,13,137,20,1],[137,22,137,35,1],[137,36,137,38,1],[137,39,137,49,1],[138,13,138,14,1],[139,17,139,75,1],[141,17,141,24,1],[141,26,141,37,1],[141,38,141,40,1],[141,41,141,49,1],[142,17,142,18,1],[143,21,143,47,1],[144,17,144,18,1],[146,17,146,24,1],[146,26,146,37,1],[146,38,146,40,1],[146,41,146,49,1],[147,17,147,18,1],[148,21,148,63,1],[149,17,149,18,1],[151,17,151,24,1],[151,26,151,37,1],[151,38,151,40,1],[151,41,151,49,1],[152,17,152,18,1],[153,21,153,54,1],[154,17,154,18,1],[156,17,156,24,1],[156,26,156,37,1],[156,38,156,40,1],[156,41,156,49,1],[157,17,157,18,1],[158,21,158,54,1],[159,17,159,18,1],[160,13,160,14,1],[162,13,162,56,1],[163,9,163,10,1]]);
+    </script>
+  </body>
+</html>

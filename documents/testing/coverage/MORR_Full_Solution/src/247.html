@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Common\Shared\Events\Queue\Strategy\MultiConsumer\MultiConsumerChannelStrategy.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Channels;
+using System.Threading.Tasks;
+
+namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
+{
+    /// &lt;summary&gt;
+    /// A MultiConsumerChannelStrategies is a Distributive-FIFO Queue which allows multiple producers and multiple consumers.
+    /// However every event is propagated to each consumer once.
+    /// &lt;/summary&gt;
+    /// &lt;typeparam name=&quot;TEvent&quot;&gt;The type of event which is queued by the channel&lt;/typeparam&gt;
+    public abstract class MultiConsumerChannelStrategy&lt;TEvent&gt; : IEventQueueStorageStrategy&lt;TEvent&gt; where TEvent : Event
+    {
+        private uint? maxChannelConsumers;
+        private Channel&lt;TEvent, TEvent&gt;? receivingChannel;
+        private readonly List&lt;Channel&lt;TEvent&gt;&gt; offeringChannels = new List&lt;Channel&lt;TEvent&gt;&gt;();
+        private readonly Mutex subscriptionMutex = new Mutex();
+        private const int timeOut = 500;
+
+        protected void StartReceiving(uint? maxChannelConsumers)
+        {
+            if (maxChannelConsumers == 1)
+            {
+                throw new ChannelConsumingException(&quot;ERROR: You are using MultiConsumerChannel with a max consumer of 1. &quot; +
+                                                    &quot;Please change to a SingleConsumerChannel for maximum performance!&quot;);
+            }
+            else if (maxChannelConsumers == 0)
+            {
+                throw new ChannelConsumingException(&quot;ERROR: You are using a channel strategy that disallows consuming. This is invalid!&quot;);
+            }
+
+            this.maxChannelConsumers = maxChannelConsumers;
+        }
+
+        public bool IsClosed { get; private set; } = true;
+
+        /// &lt;summary&gt;
+        ///     Asynchronously gets all events as concrete type &lt;typeparamref name=&quot;T&quot; /&gt;.
+        /// &lt;/summary&gt;
+        /// &lt;returns&gt;A stream of &lt;typeparamref name=&quot;T&quot; /&gt;&lt;/returns&gt;
+        public IAsyncEnumerable&lt;TEvent&gt; GetEvents(CancellationToken token = default)
+        {
+            subscriptionMutex.WaitOne(timeOut);
+
+            if ((maxChannelConsumers != null) &amp;&amp; (offeringChannels.Count &gt;= maxChannelConsumers))
+            {
+                subscriptionMutex.ReleaseMutex();
+                throw new ChannelConsumingException($&quot;Maximum number ({maxChannelConsumers}) of consumers reached!&quot;);
+            }
+
+            var channel = CreateOfferingChannel();
+            offeringChannels?.Add(channel);
+            token.Register(FreeChannel, channel);
+
+            subscriptionMutex.ReleaseMutex();
+            return channel.Reader.ReadAllAsync(token);
+        }
+
+        /// &lt;summary&gt;
+        ///     Asynchronously enqueues a new event.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;event&quot;&gt;The event to enqueue&lt;/param&gt;
+        public async void Enqueue(TEvent @event)
+        {
+            if (receivingChannel == null || IsClosed) return;
+            await EnqueueAsync(receivingChannel, @event);
+        }
+
+        public void Open()
+        {
+            subscriptionMutex.WaitOne(timeOut);
+
+            if (!IsClosed)
+            {
+                subscriptionMutex.ReleaseMutex();
+                return;
+            }
+
+            offeringChannels.Clear();
+            receivingChannel = CreateReceivingChannel();
+            _ = DistributeEventsAsync();
+            IsClosed = false;
+
+            subscriptionMutex.ReleaseMutex();
+        }
+
+        public void Close()
+        {
+            subscriptionMutex.WaitOne(timeOut);
+
+            if (IsClosed)
+            {
+                subscriptionMutex.ReleaseMutex();
+                return;
+            }
+
+            IsClosed = true;
+            subscriptionMutex.ReleaseMutex();
+
+            receivingChannel?.Writer.TryComplete();
+
+            foreach (var channel in offeringChannels)
+            {
+                channel?.Writer.TryComplete();
+            }
+        }
+
+        private static ValueTask&lt;bool&gt; EnqueueAsync(Channel&lt;TEvent, TEvent&gt; channel, TEvent @event)
+        {
+            async Task&lt;bool&gt; AsyncSlowPath(TEvent item)
+            {
+                while (await channel.Writer.WaitToWriteAsync())
+                {
+                    if (channel.Writer.TryWrite(item)) return true;
+                }
+                return false; // Channel was completed during the wait
+            }
+
+            return channel.Writer.TryWrite(@event) ? new ValueTask&lt;bool&gt;(true) : new ValueTask&lt;bool&gt;(AsyncSlowPath(@event));
+        }
+
+        private async Task DistributeEventsAsync()
+        {
+            if (receivingChannel == null) return;
+
+            await foreach (var @event in receivingChannel.Reader.ReadAllAsync())
+            {
+                foreach (var channel in offeringChannels)
+                {
+                    _ = EnqueueAsync(channel, @event);
+                }
+            }
+        }
+
+        public void FreeChannel(object? channelObject)
+        {
+            if (!(channelObject is Channel&lt;TEvent&gt; channel)) return;
+
+            subscriptionMutex.WaitOne(timeOut);
+            offeringChannels?.Remove(channel);
+            subscriptionMutex.ReleaseMutex();
+        }
+
+        protected abstract Channel&lt;TEvent&gt; CreateOfferingChannel();
+        protected abstract Channel&lt;TEvent&gt; CreateReceivingChannel();
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[17,9,17,95,1],[18,9,18,64,1],[22,9,22,10,1],[23,13,23,42,1],[24,13,24,14,1],[25,17,26,122,1],[28,18,28,47,1],[29,13,29,14,1],[30,17,30,139,1],[33,13,33,60,1],[34,9,34,10,1],[36,32,36,36,1],[36,37,36,49,1],[36,54,36,58,1],[43,9,43,10,1],[44,13,44,48,1],[46,13,46,98,1],[47,13,47,14,1],[48,17,48,50,1],[49,17,49,118,1],[52,13,52,51,1],[53,13,53,44,1],[54,13,54,50,1],[56,13,56,46,1],[57,13,57,55,1],[58,9,58,10,1],[65,9,65,10,1],[66,13,66,54,1],[66,55,66,62,1],[67,13,67,58,1],[68,9,68,10,1],[71,9,71,10,1],[72,13,72,48,1],[74,13,74,27,1],[75,13,75,14,1],[76,17,76,50,1],[77,17,77,24,1],[80,13,80,38,1],[81,13,81,57,1],[82,13,82,41,1],[83,13,83,30,1],[85,13,85,46,1],[86,9,86,10,1],[89,9,89,10,1],[90,13,90,48,1],[92,13,92,26,1],[93,13,93,14,1],[94,17,94,50,1],[95,17,95,24,1],[98,13,98,29,1],[99,13,99,46,1],[101,13,101,52,1],[103,13,103,20,1],[103,22,103,33,1],[103,34,103,36,1],[103,37,103,53,1],[104,13,104,14,1],[105,17,105,47,1],[106,13,106,14,1],[107,9,107,10,1],[110,9,110,10,1],[112,13,112,14,0],[113,17,113,64,0],[114,17,114,18,0],[115,21,115,55,0],[115,56,115,68,0],[116,17,116,18,0],[117,17,117,30,0],[118,13,118,14,0],[120,13,120,125,1],[121,9,121,10,1],[124,9,124,10,1],[125,13,125,42,1],[125,43,125,50,0],[127,13,127,26,1],[127,28,127,38,1],[127,39,127,41,1],[127,42,127,80,1],[128,13,128,14,1],[129,17,129,24,1],[129,26,129,37,1],[129,38,129,40,1],[129,41,129,57,1],[130,17,130,18,1],[131,21,131,55,1],[132,17,132,18,1],[133,13,133,14,1],[134,9,134,10,1],[137,9,137,10,1],[138,13,138,61,1],[138,62,138,69,0],[140,13,140,48,1],[141,13,141,47,1],[142,13,142,46,1],[143,9,143,10,1]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\WebBrowser\Events\ButtonClickEvent.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Text.Json;
+
+namespace MORR.Modules.WebBrowser.Events
+{
+    /// &lt;summary&gt;
+    ///     A button click user interaction
+    /// &lt;/summary&gt;
+    public class ButtonClickEvent : WebBrowserEvent
+    {
+        private const string serializedButtonField = &quot;buttonTitle&quot;;
+        private const string serializedHrefField = &quot;buttonHref&quot;;
+
+        /// &lt;summary&gt;
+        ///     The title of the button item that was clicked on the website
+        /// &lt;/summary&gt;
+        public string Button { get; set; }
+
+        /// &lt;summary&gt;
+        ///     The URL of the website that the button is linked to
+        /// &lt;/summary&gt;
+        public string? Href { get; set; }
+
+        protected override void DeserializeSpecificAttributes(JsonElement parsed)
+        {
+            Button = parsed.GetProperty(serializedButtonField).GetString();
+            if (parsed.TryGetProperty(serializedHrefField, out var hrefElement))
+            {
+                Href = hrefElement.GetString();
+            }
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[16,32,16,36,1],[16,37,16,41,1],[21,31,21,35,1],[21,36,21,40,1],[24,9,24,10,1],[25,13,25,76,1],[26,13,26,81,1],[27,13,27,14,1],[28,17,28,48,1],[29,13,29,14,1],[30,9,30,10,1]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\WebBrowser\Events\HoverEvent.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Text.Json;
+
+namespace MORR.Modules.WebBrowser.Events
+{
+    /// &lt;summary&gt;
+    ///     A hover user interaction
+    /// &lt;/summary&gt;
+    public class HoverEvent : WebBrowserEvent
+    {
+        private const string serializedHoveredElementField = &quot;target&quot;;
+
+        /// &lt;summary&gt;
+        ///     The element on the website that has been hovered
+        /// &lt;/summary&gt;
+        public string HoveredElement { get; set; }
+
+        protected override void DeserializeSpecificAttributes(JsonElement parsed)
+        {
+            HoveredElement = parsed.GetProperty(serializedHoveredElementField).GetString();
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,40,15,44,1],[15,45,15,49,1],[18,9,18,10,1],[19,13,19,92,1],[20,9,20,10,1]]);
+    </script>
+  </body>
+</html>

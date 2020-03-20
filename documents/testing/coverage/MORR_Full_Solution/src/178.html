@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\MORRTest\TestHelper\Configuration\TestConfiguration.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using MORR.Shared.Configuration;
+using SharedTest.TestHelpers.Result;
+using System;
+using System.Diagnostics;
+using System.Text.Json;
+
+namespace MORRTest.TestHelper.Configuration
+{
+    /// &lt;summary&gt;
+    /// TestConfiguration is a class which implements the IConfiguration.
+    /// It can therefore be used to be discovered and injected for the ConfigurationManager.
+    ///
+    /// This class then uses the provided expectedConfiguration to check whether it was at least called
+    /// and the configuration provided via the Parse method does equal the expected one.
+    /// &lt;/summary&gt;
+    public class TestConfiguration : IConfiguration
+    {
+        /// &lt;summary&gt;
+        /// This result contains the asynchronous state of the configuration parse validation.
+        ///
+        /// It will be completed if Parse() has been called at least once.
+        /// It is successful if the configuration met the expected one, otherwise it fails with an ArgumentException.
+        /// &lt;/summary&gt;
+        public TestResult TestResult = new TestResult();
+
+        private readonly RawConfiguration expectedConfiguration;
+
+        /// &lt;summary&gt;
+        /// Creates a new TestConfiguration which validates the configuration meets the expectedConfiguration.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;expectedConfiguration&quot;&gt;The expected configuration used for validating the Parse method.&lt;/param&gt;
+        public TestConfiguration(RawConfiguration expectedConfiguration)
+        {
+            this.expectedConfiguration = expectedConfiguration;
+        }
+
+        /// &lt;summary&gt;
+        ///     Parses the configuration from the provided value
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;configuration&quot;&gt;The configuration &lt;see cref=&quot;JsonElement&quot; /&gt; to parse from&lt;/param&gt;
+        public void Parse(RawConfiguration configuration)
+        {
+            Debug.Assert(expectedConfiguration != null);
+            Debug.Assert(TestResult != null);
+
+            if (configuration != null &amp;&amp; expectedConfiguration.RawValue.Equals(configuration.RawValue))
+            {
+                TestResult.Complete();
+            }
+            else
+            {
+                TestResult.Fail(new ArgumentException());
+            }
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[24,9,24,57,1],[32,9,32,73,1],[33,9,33,10,1],[34,13,34,64,1],[35,9,35,10,1],[42,9,42,10,1],[43,13,43,57,1],[44,13,44,46,1],[46,13,46,104,1],[47,13,47,14,1],[48,17,48,39,1],[49,13,49,14,1],[51,13,51,14,0],[52,17,52,58,0],[53,13,53,14,0],[54,9,54,10,1]]);
+    </script>
+  </body>
+</html>

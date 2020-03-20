@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\CLI\Commands\Record\RecordCommand.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using MORR.Core.CLI.Output;
+using MORR.Core.Session;
+using MORR.Shared.Utility;
+using System;
+using System.Diagnostics;
+using System.IO;
+using MORR.Core.CLI.Interactive;
+using MORR.Core.CLI.Utility;
+using MORR.Shared.Hook;
+
+namespace MORR.Core.CLI.Commands.Record
+{
+    public class RecordCommand : ICommand&lt;RecordOptions&gt;
+    {
+        #region Constants
+        
+        private const string loadedFileMessage = &quot;Load configuration file.&quot;;
+        private const string sessionManagerMessage = &quot;Load session manager with configuration file.&quot;;
+        private const string startRecordingMessage = &quot;Start recording session:&quot;;
+        private const string stopRecordingMessage = &quot;Recording session stopped!&quot;;
+        
+        #endregion
+
+        #region Dependencies
+
+        private readonly ISessionManager sessionManager;
+        private readonly IConsoleFormatter consoleFormatter;
+        private readonly IInteractiveCommandLine commandLine;
+        private readonly IMessageLoop messageLoop;
+
+        #endregion
+
+        #region LifeCycle
+
+        public RecordCommand(ISessionManager sessionManager) : this(sessionManager, new ConsoleFormatter()) { }
+
+        public RecordCommand(ISessionManager sessionManager, IConsoleFormatter console) :
+            this(sessionManager, console, new InteractiveCommandLine(console), new MessageLoop()) { }
+
+        public RecordCommand(
+            ISessionManager sessionManager, 
+            IConsoleFormatter consoleFormatter,
+            IInteractiveCommandLine commandLine,
+            IMessageLoop messageLoop)
+        {
+            this.sessionManager = sessionManager;
+            this.consoleFormatter = consoleFormatter;
+            this.commandLine = commandLine;
+            this.messageLoop = messageLoop;
+        }
+
+        #endregion
+
+        #region Execution
+        public int Execute(RecordOptions options)
+        {
+            Debug.Assert(consoleFormatter != null, nameof(consoleFormatter) + &quot; != null&quot;);
+            Debug.Assert(sessionManager != null, nameof(sessionManager) + &quot; != null&quot;);
+            Debug.Assert(commandLine != null, nameof(commandLine) + &quot; != null&quot;);
+            Debug.Assert(messageLoop != null, nameof(messageLoop) + &quot; != null&quot;);
+
+            if (options == null) return -1;
+
+            try
+            {
+                consoleFormatter.IsVerbose = options.IsVerbose;
+
+                // Load Configuration File
+                consoleFormatter.PrintDebug(loadedFileMessage);
+                var configPath = new FilePath(Path.GetFullPath(options.ConfigPath));
+
+                // Load Session Manager
+                consoleFormatter.PrintDebug(sessionManagerMessage);
+
+                // Start Recording
+                consoleFormatter.PrintDebug(startRecordingMessage);
+                sessionManager.StartRecording();
+
+                // If the user cancels via the command line we need to stop the message loop.
+                commandLine.Launch(messageLoop.Stop);
+
+                // Run message loop required for Windows hooks
+                messageLoop.Start();
+
+                // To prevent the generated video file from becoming corrupted, recording needs to be stopped manually
+                sessionManager.StopRecording();
+                Console.WriteLine(stopRecordingMessage);
+                GlobalHook.FreeLibrary();
+                return 0;
+            }
+            catch (Exception exception) // I know this is not a recommend way to deal with exception, however this method receives a arbitrary amount of exception types.
+            {
+                consoleFormatter.PrintError(exception);
+                return -1;
+            }
+        }
+
+        #endregion
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[35,64,35,108,0],[35,109,35,110,0],[35,111,35,112,0],[38,13,38,98,0],[38,99,38,100,0],[38,101,38,102,0],[40,9,44,38,1],[45,9,45,10,1],[46,13,46,50,1],[47,13,47,54,1],[48,13,48,44,1],[49,13,49,44,1],[50,9,50,10,1],[56,9,56,10,1],[57,13,57,91,1],[58,13,58,87,1],[59,13,59,81,1],[60,13,60,81,1],[62,13,62,33,1],[62,34,62,44,1],[65,13,65,14,1],[66,17,66,64,1],[69,17,69,64,1],[70,17,70,85,1],[73,17,73,68,1],[76,17,76,68,1],[77,17,77,49,1],[80,17,80,54,1],[83,17,83,37,1],[86,17,86,48,1],[87,17,87,57,1],[88,17,88,42,1],[89,17,89,26,1],[91,13,91,40,1],[92,13,92,14,1],[93,17,93,56,1],[94,17,94,27,1],[96,9,96,10,1]]);
+    </script>
+  </body>
+</html>

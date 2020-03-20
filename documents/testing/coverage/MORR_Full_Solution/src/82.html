@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Common\Shared\Events\Queue\Strategy\SingleConsumer\BoundedSingleConsumerStrategy.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Threading.Channels;
+
+namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
+{
+    /// &lt;summary&gt;
+    /// A BoundedSingleConsumerChannelStrategy is a Distributive-FIFO Queue which allows multiple producers and a single consumer.
+    /// This queue is performance optimized for a single consumer and should be preferred in this case.
+    /// Please make sure only a single consumer will request. Otherwise an exception is thrown.
+    ///
+    /// This queue is bounded by a buffer capacity. If capacity is reached it will dismiss the oldest event and queue the new event.
+    ///
+    /// &lt;/summary&gt;
+    /// &lt;typeparam name=&quot;TEvent&quot;&gt;The type of event which is queued by the channel&lt;/typeparam&gt;
+    public class BoundedSingleConsumerChannelStrategy&lt;TEvent&gt; : SingleConsumerChannelStrategy&lt;TEvent&gt; where TEvent : Event
+    {
+        private readonly BoundedChannelOptions options;
+
+        /// &lt;summary&gt;
+        /// Creates a new BoundedSingleConsumerChannelStrategy with a given capacity.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;bufferCapacity&quot;&gt;Capacity of the queue.&lt;/param&gt;
+        public BoundedSingleConsumerChannelStrategy(int bufferCapacity)
+        {
+            options = new BoundedChannelOptions(bufferCapacity)
+            {
+                AllowSynchronousContinuations = false,
+                FullMode = BoundedChannelFullMode.DropOldest,
+                SingleWriter = true,
+                SingleReader = true
+            };
+        }
+
+        protected override Channel&lt;TEvent&gt; CreateChannel()
+        {
+            return Channel.CreateBounded&lt;TEvent&gt;(options);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[22,9,22,72,1],[23,9,23,10,1],[24,13,30,15,1],[31,9,31,10,1],[34,9,34,10,1],[35,13,35,59,1],[36,9,36,10,1]]);
+    </script>
+  </body>
+</html>

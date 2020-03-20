@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\Clipboard\Native\ClipboardWindowMessageSink.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using MORR.Shared.Hook;
+
+namespace MORR.Modules.Clipboard.Native
+{
+    public class ClipboardWindowMessageSink : IClipboardWindowMessageSink
+    {
+        private INativeClipboard.WindowProcedureHandler internalWindowMessageHandler;
+
+        public ClipboardWindowMessageSink()
+        {
+            var className = $&quot;sink@{Guid.NewGuid()}&quot;;
+
+            internalWindowMessageHandler = OnClipboardUpdate;
+
+            INativeClipboard.WindowClass windowClass;
+
+            windowClass.style = 0;
+            windowClass.lpfnWndProc = internalWindowMessageHandler;
+            windowClass.cbClsExtra = 0;
+            windowClass.cbWndExtra = 0;
+            windowClass.hInstance = IntPtr.Zero;
+            windowClass.hIcon = IntPtr.Zero;
+            windowClass.hCursor = IntPtr.Zero;
+            windowClass.hbrBackground = IntPtr.Zero;
+            windowClass.lpszMenuName = &quot;&quot;;
+            windowClass.lpszClassName = className;
+
+
+            NativeClipboard.RegisterClass(ref windowClass);
+
+            // Creates window to register clipboard update messages
+            WindowHandle = NativeClipboard.CreateWindowEx(0,
+                                                          className,
+                                                          &quot;&quot;,
+                                                          0,
+                                                          0, 0,
+                                                          1, 1,
+                                                          IntPtr.Zero,
+                                                          IntPtr.Zero,
+                                                          IntPtr.Zero,
+                                                          IntPtr.Zero);
+
+            NativeClipboard.AddClipboardFormatListener(WindowHandle);
+        }
+
+
+        public static INativeClipboard NativeClipboard { get; } = new NativeClipboard();
+
+        /// &lt;summary&gt;
+        ///     The underlying window handle
+        /// &lt;/summary&gt;
+        private IntPtr WindowHandle { get; }
+
+        /// &lt;summary&gt;
+        ///     Event invoked when clipboard is updated
+        /// &lt;/summary&gt;
+        public event IClipboardWindowMessageSink.ClipboardEventHandler? ClipboardUpdated;
+
+        IntPtr IClipboardWindowMessageSink.OnClipboardUpdate(IntPtr hWnd, uint messageId, IntPtr wParam, IntPtr lParam)
+        {
+            return OnClipboardUpdate(hWnd, messageId, wParam, lParam);
+        }
+
+        private IntPtr OnClipboardUpdate(IntPtr hWnd, uint messageId, IntPtr wParam, IntPtr lParam)
+        {
+            if (messageId == (int) GlobalHook.MessageType.WM_CLIPBOARDUPDATE)
+            {
+                ClipboardUpdated?.Invoke(hWnd, messageId, wParam, lParam);
+            }
+
+            return NativeClipboard.DefWindowProc(hWnd, messageId, wParam, lParam);
+        }
+
+        #region Dispose
+
+        private bool isDisposed;
+
+        /// &lt;summary&gt;
+        ///     Frees all unmanaged resources
+        /// &lt;/summary&gt;
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        ~ClipboardWindowMessageSink()
+        {
+            Dispose(false);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (isDisposed || !disposing)
+            {
+                return;
+            }
+
+            isDisposed = true;
+            NativeClipboard.RemoveClipboardFormatListener(WindowHandle);
+            NativeClipboard.DestroyWindow(WindowHandle);
+            internalWindowMessageHandler = null;
+        }
+
+        #endregion
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[10,9,10,44,1],[11,9,11,10,1],[12,13,12,54,1],[14,13,14,62,1],[18,13,18,35,1],[19,13,19,68,1],[20,13,20,40,1],[21,13,21,40,1],[22,13,22,49,1],[23,13,23,45,1],[24,13,24,47,1],[25,13,25,53,1],[26,13,26,43,1],[27,13,27,51,1],[30,13,30,60,1],[33,13,42,72,1],[44,13,44,70,1],[45,9,45,10,1],[48,58,48,62,1],[48,67,48,88,1],[53,39,53,43,1],[61,9,61,10,0],[62,13,62,71,0],[63,9,63,10,0],[66,9,66,10,1],[67,13,67,78,1],[68,13,68,14,0],[69,17,69,75,0],[70,13,70,14,0],[72,13,72,83,1],[73,9,73,10,1],[83,9,83,10,1],[84,13,84,27,1],[85,9,85,10,1],[88,9,88,10,0],[88,9,88,10,0],[89,13,89,28,0],[90,9,90,10,0],[90,9,90,10,0],[93,9,93,10,1],[94,13,94,42,1],[95,13,95,14,1],[96,17,96,24,1],[99,13,99,31,1],[100,13,100,73,1],[101,13,101,57,1],[102,13,102,49,1],[103,9,103,10,1]]);
+    </script>
+  </body>
+</html>

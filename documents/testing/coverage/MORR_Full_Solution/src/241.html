@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\KeyboardTest\KeyboardModuleTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
+using System.Diagnostics;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MORR.Modules.Keyboard;
+using MORR.Modules.Keyboard.Producers;
+using MORR.Shared.Hook;
+using SharedTest.TestHelpers.INativeHook;
+
+namespace KeyboardTest
+{
+    [TestClass]
+    public class KeyboardModuleTest
+    {
+        protected const int maxWaitTime = 5000;
+
+        private CompositionContainer container;
+        private KeyboardInteractEventProducer keyboardInteractEventProducer;
+        private KeyboardModule keyboardModule;
+        private HookNativeMethodsMock hookNativeMethodsMock;
+
+        private readonly GlobalHook.MessageType[] KeyboardInteractListenedMessagesTypes =
+        {
+            GlobalHook.MessageType.WM_KEYDOWN,
+            GlobalHook.MessageType.WM_SYSKEYDOWN
+        };
+
+        [TestInitialize]
+        public void BeforeTest()
+        {
+            //initialize module, producers and configuration
+            keyboardModule = new KeyboardModule();
+            keyboardInteractEventProducer = new KeyboardInteractEventProducer();
+
+            // initialize the container and fulfill the MEF inports exports
+            container = new CompositionContainer();
+            container.ComposeExportedValue(keyboardInteractEventProducer);
+            container.ComposeParts(keyboardModule);
+
+            //initialzie the hookNativeMethodsMock
+            hookNativeMethodsMock = new HookNativeMethodsMock();
+            hookNativeMethodsMock.Initialize();
+        }
+
+        [TestCleanup]
+        public void AfterTest()
+        {
+            // null everything!
+            keyboardModule = null;
+            keyboardInteractEventProducer = null;
+            container.Dispose();
+            container = null;
+            hookNativeMethodsMock = null;
+        }
+
+        [TestMethod]
+        public void TestKeyboardModule_ActivateTrue()
+        {
+            // Preconditions
+            Debug.Assert(keyboardModule != null);
+
+            /* GIVEN */
+
+            /* WHEN */
+            keyboardModule.Initialize(true);
+            AllowMessageTypeRegistryForAll();
+            hookNativeMethodsMock.AllowLibraryLoad();
+            keyboardModule.IsActive = true;
+
+            /* THEN */
+            Assert.IsTrue(keyboardModule.IsActive);
+        }
+
+        [TestMethod]
+        public void TestKeyboardModule_ActivateFalse()
+        {
+            // Preconditions
+            Debug.Assert(keyboardModule != null);
+
+            /* GIVEN */
+
+            /* WHEN */
+            keyboardModule.Initialize(true);
+            AllowMessageTypeRegistryForAll();
+            hookNativeMethodsMock.AllowLibraryLoad();
+            keyboardModule.IsActive = true;
+            keyboardModule.IsActive = false;
+
+            /* THEN */
+            Assert.IsFalse(keyboardModule.IsActive);
+        }
+
+        [TestMethod]
+        public void TestKeyboardModule_InitializeFalse()
+        {
+            // Preconditions
+            Debug.Assert(keyboardModule != null);
+
+            /* GIVEN */
+
+            /* WHEN */
+            keyboardModule.Initialize(false);
+            /* THEN */
+            Assert.IsTrue(keyboardInteractEventProducer.IsClosed);
+        }
+
+        [TestMethod]
+        public void TestKeyboardModuleInitializeTrue()
+        {
+            // Preconditions
+            Debug.Assert(keyboardModule != null);
+
+            /* GIVEN */
+
+            /* WHEN */
+            keyboardModule.Initialize(true);
+
+            /* THEN */
+            Assert.IsFalse(keyboardInteractEventProducer.IsClosed);
+        }
+
+        /// &lt;summary&gt;
+        ///     Call AllowMessageTypeRegistry() methods on all messages related to keyboard producers.
+        /// &lt;/summary&gt;
+        private void AllowMessageTypeRegistryForAll()
+        {
+            foreach (GlobalHook.MessageType messageType in KeyboardInteractListenedMessagesTypes)
+            {
+                hookNativeMethodsMock.AllowMessageTypeRegistry(messageType);
+            }
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[22,9,26,11,1],[30,9,30,10,1],[32,13,32,51,1],[33,13,33,81,1],[36,13,36,52,1],[37,13,37,75,1],[38,13,38,52,1],[41,13,41,65,1],[42,13,42,48,1],[43,9,43,10,1],[47,9,47,10,1],[49,13,49,35,1],[50,13,50,50,1],[51,13,51,33,1],[52,13,52,30,1],[53,13,53,42,1],[54,9,54,10,1],[58,9,58,10,1],[60,13,60,50,1],[65,13,65,45,1],[66,13,66,46,1],[67,13,67,54,1],[68,13,68,44,1],[71,13,71,52,1],[72,9,72,10,1],[76,9,76,10,1],[78,13,78,50,1],[83,13,83,45,1],[84,13,84,46,1],[85,13,85,54,1],[86,13,86,44,1],[87,13,87,45,1],[90,13,90,53,1],[91,9,91,10,1],[95,9,95,10,1],[97,13,97,50,1],[102,13,102,46,1],[104,13,104,67,1],[105,9,105,10,1],[109,9,109,10,1],[111,13,111,50,1],[116,13,116,45,1],[119,13,119,68,1],[120,9,120,10,1],[126,9,126,10,1],[127,13,127,20,1],[127,22,127,56,1],[127,57,127,59,1],[127,60,127,97,1],[128,13,128,14,1],[129,17,129,77,1],[130,13,130,14,1],[131,9,131,10,1]]);
+    </script>
+  </body>
+</html>

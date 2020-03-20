@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Common\Shared\Utility\Utility.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Linq;
+using System.Runtime.Loader;
+
+namespace MORR.Shared.Utility
+{
+    public static class Utility
+    {
+        /// &lt;summary&gt;
+        ///     Sets a boolean property and dispatches based on its value.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;variable&quot;&gt;The property to set.&lt;/param&gt;
+        /// &lt;param name=&quot;value&quot;&gt;The value to set the property to.&lt;/param&gt;
+        /// &lt;param name=&quot;onTrue&quot;&gt;
+        ///     The action to execute if &lt;paramref name=&quot;variable&quot; /&gt; was not set to &lt;see langword=&quot;true&quot; /&gt;
+        ///     before calling this method, but &lt;paramref name=&quot;value&quot; /&gt; is &lt;see langword=&quot;true&quot; /&gt;.
+        /// &lt;/param&gt;
+        /// &lt;param name=&quot;onFalse&quot;&gt;
+        ///     The action to execute if &lt;paramref name=&quot;variable&quot; /&gt; was not set to &lt;see langword=&quot;false&quot; /&gt;
+        ///     before calling this method, but &lt;paramref name=&quot;value&quot; /&gt; is &lt;see langword=&quot;false&quot; /&gt;.
+        /// &lt;/param&gt;
+        public static void SetAndDispatch(ref bool variable, bool value, Action onTrue, Action onFalse)
+        {
+            if (variable == value)
+            {
+                return;
+            }
+
+            variable = value;
+
+            if (variable)
+            {
+                onTrue();
+            }
+            else
+            {
+                onFalse();
+            }
+        }
+
+        /// &lt;summary&gt;
+        ///     Attempts to load the type with the specified name from any currently loaded assembly.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;type&quot;&gt;The name of the type to load.&lt;/param&gt;
+        /// &lt;returns&gt;The &lt;see cref=&quot;Type&quot; /&gt; with the corresponding name or &lt;see cref=&quot;null&quot; /&gt; on failure.&lt;/returns&gt;
+        public static Type? GetTypeFromAnyAssembly(string type)
+        {
+            return Type.GetType(type) ?? AssemblyLoadContext.All
+                                                            .SelectMany(x =&gt; x.Assemblies)
+                                                            .Select(x =&gt; x.GetType(type))
+                                                            .FirstOrDefault(loadedType =&gt; loadedType != null);
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[23,9,23,10,1],[24,13,24,35,1],[25,13,25,14,1],[26,17,26,24,1],[29,13,29,30,1],[31,13,31,26,1],[32,13,32,14,1],[33,17,33,26,1],[34,13,34,14,1],[36,13,36,14,1],[37,17,37,27,1],[38,13,38,14,1],[39,9,39,10,1],[47,9,47,10,1],[48,13,49,78,1],[49,78,49,90,1],[49,90,50,74,1],[50,74,50,89,1],[50,89,51,91,1],[51,91,51,109,1],[51,109,51,111,1],[48,13,51,111,1],[52,9,52,10,1]]);
+    </script>
+  </body>
+</html>

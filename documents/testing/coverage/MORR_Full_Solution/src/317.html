@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\UI\ViewModels\ApplicationViewModel.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Interop;
+using MORR.Core.Data.Capture.Video.Desktop.Utility;
+using MORR.Core.Session;
+using MORR.Core.UI.Dialogs;
+using MORR.Core.UI.Utility;
+using MORR.Shared.Utility;
+
+namespace MORR.Core.UI.ViewModels
+{
+    public class ApplicationViewModel : DependencyObject
+    {
+        private SessionManager sessionManager = null!;
+
+        public ApplicationViewModel()
+        {
+            DesktopCaptureNativeMethods.WindowRequestedHandler = CreateWindowForPicker;
+            Initialize();
+        }
+
+        private void Initialize()
+        {
+            try
+            {
+                var configurationPath = GetConfigurationPath();
+                sessionManager = new SessionManager(configurationPath);
+            }
+            catch (Exception)
+            {
+                ExitWithError(Properties.Resources.Error_Configuration_Invalid);
+            }
+        }
+
+        private static void Exit()
+        {
+            Application.Current?.Shutdown();
+        }
+
+        private void OnOpenRecordingsDirectory(object _)
+        {
+            var recordingsFolder = sessionManager.RecordingsFolder;
+
+            if (recordingsFolder == null)
+            {
+                ExitWithError(Properties.Resources.Error_No_Recordings_Directory);
+            }
+
+            Process.Start(&quot;explorer.exe&quot;, recordingsFolder.ToString());
+        }
+
+        private void OnExitApplication(object _)
+        {
+            if (IsRecording)
+            {
+                StopRecording();
+            }
+
+            Exit();
+        }
+
+        private void OnToggleRecording(object _)
+        {
+            if (!IsRecording)
+            {
+                StartRecording();
+            }
+            else
+            {
+                StopRecording();
+            }
+        }
+
+        private void StartRecording()
+        {
+            if (!ShowDialogWithResult&lt;InformationDialog&gt;())
+            {
+                return;
+            }
+
+            IsRecording = true;
+
+            try
+            {
+                sessionManager.StartRecording();
+            }
+            catch (Exception)
+            {
+                // We cannot recover from an error here, as the modules might be in an invalid state
+                // We have to exit immediately as otherwise threads might throw new exceptions
+                Environment.Exit(-1); // Exit with non-zero value to indicate error
+            }
+        }
+
+        private void StopRecording()
+        {
+            IsRecording = false;
+            sessionManager.StopRecording();
+
+            if (ShowDialogWithResult&lt;SaveDialog&gt;())
+            {
+                // Recordings are automatically saved - no further action required
+                return;
+            }
+
+            if (!ShowDialogWithResult&lt;ConfirmationDialog&gt;())
+            {
+                // If recording shouldn&#39;t actually be deleted, no further action is required
+                return;
+            }
+
+            var recordingDirectory = sessionManager.CurrentRecordingDirectory?.ToString();
+
+            if (recordingDirectory == null)
+            {
+                return;
+            }
+
+            Directory.Delete(recordingDirectory, true);
+        }
+
+        #region Utility
+
+        private static FilePath GetConfigurationPath()
+        {
+            if (TryGetConfigurationPathFromCommandLine(out var path))
+            {
+                return path;
+            }
+
+            var defaultConfigurationBasePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+            if (defaultConfigurationBasePath == null)
+            {
+                ExitWithError(Properties.Resources.Error_No_Configuration_Specified);
+            }
+
+            var defaultConfigurationPath = Path.Combine(defaultConfigurationBasePath, &quot;config.morr&quot;);
+
+            return new FilePath(Path.GetFullPath(defaultConfigurationPath));
+        }
+
+        private static bool TryGetConfigurationPathFromCommandLine([NotNullWhen(true)] out FilePath? path)
+        {
+            var commandLineArguments = Environment.GetCommandLineArgs();
+
+            if (commandLineArguments.Length &lt; 2 || (App.HasLanguageCommandLineArgument &amp;&amp; commandLineArguments.Length &lt; 3))
+            {
+                // If no command line argument has been specified or only one has been specified
+                // and that argument is used to set the language, then the configuration path must be set to the default value
+                path = null;
+                return false;
+            }
+
+            // The first argument is the current assembly, the second argument is the first actual command line argument
+            var configurationPathArgument = commandLineArguments.ElementAt(1);
+
+            if (App.IsLanguageCommandLineArgument(configurationPathArgument))
+            {
+                // If the first specified argument is used to set the language, then the path must be the second argument
+                configurationPathArgument = commandLineArguments.ElementAt(2);
+            }
+
+            path = new FilePath(Path.GetFullPath(configurationPathArgument));
+            return true;
+        }
+
+        [DoesNotReturn]
+        private static void ExitWithError(string errorMessage)
+        {
+            new ErrorDialog(errorMessage).ShowDialog();
+            Exit();
+        }
+
+        private static bool ShowDialogWithResult&lt;T&gt;() where T : Window, new()
+        {
+            var dialogResult = new T().ShowDialog();
+            return dialogResult ?? false;
+        }
+
+        private static DesktopCaptureNativeMethods.WindowHandleWrapper CreateWindowForPicker()
+        {
+            var window = new Window
+            {
+                WindowStyle = WindowStyle.None,
+                Top = 0.0d,
+                Left = 0.0d,
+                Width = 0.0d,
+                Height = 0.0d,
+                ShowInTaskbar = false
+            };
+
+            window.Show();
+
+            void CleanupCallback()
+            {
+                window.Close();
+            }
+
+            var windowInteropHelper = new WindowInteropHelper(window);
+            return new DesktopCaptureNativeMethods.WindowHandleWrapper(windowInteropHelper.EnsureHandle(),
+                                                                       CleanupCallback);
+        }
+
+        #endregion
+
+        #region Commands
+
+        private ICommand exitCommand = null!;
+
+        private ICommand openRecordingsDirectoryCommand = null!;
+
+        private ICommand toggleRecordingCommand = null!;
+
+        public ICommand OpenRecordingsDirectoryCommand =&gt;
+            openRecordingsDirectoryCommand ??= new RelayCommand(OnOpenRecordingsDirectory);
+
+        public ICommand ExitCommand =&gt; exitCommand ??= new RelayCommand(OnExitApplication);
+
+        public ICommand ToggleRecordingCommand =&gt; toggleRecordingCommand ??= new RelayCommand(OnToggleRecording);
+
+        #endregion
+
+        #region Dependency properties
+
+        public bool IsRecording
+        {
+            get =&gt; (bool) GetValue(IsRecordingProperty);
+            set =&gt; SetValue(IsRecordingProperty, value);
+        }
+
+        public static readonly DependencyProperty IsRecordingProperty =
+            DependencyProperty.Register(nameof(IsRecording), typeof(bool), typeof(ApplicationViewModel),
+                                        new PropertyMetadata(false));
+
+        #endregion
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[20,9,20,55,0],[22,9,22,38,0],[23,9,23,10,0],[24,13,24,88,0],[25,13,25,26,0],[26,9,26,10,0],[29,9,29,10,0],[31,13,31,14,0],[32,17,32,64,0],[33,17,33,72,0],[34,13,34,14,0],[35,13,35,30,0],[36,13,36,14,0],[37,17,37,81,0],[38,13,38,14,0],[39,9,39,10,0],[42,9,42,10,0],[43,13,43,45,0],[44,9,44,10,0],[47,9,47,10,0],[48,13,48,68,0],[50,13,50,42,0],[51,13,51,14,0],[52,17,52,83,0],[53,13,53,14,0],[55,13,55,72,0],[56,9,56,10,0],[59,9,59,10,0],[60,13,60,29,0],[61,13,61,14,0],[62,17,62,33,0],[63,13,63,14,0],[65,13,65,20,0],[66,9,66,10,0],[69,9,69,10,0],[70,13,70,30,0],[71,13,71,14,0],[72,17,72,34,0],[73,13,73,14,0],[75,13,75,14,0],[76,17,76,33,0],[77,13,77,14,0],[78,9,78,10,0],[81,9,81,10,0],[82,13,82,60,0],[83,13,83,14,0],[84,17,84,24,0],[87,13,87,32,0],[90,13,90,14,0],[91,17,91,49,0],[92,13,92,14,0],[93,13,93,30,0],[94,13,94,14,0],[97,17,97,38,0],[98,13,98,14,0],[99,9,99,10,0],[102,9,102,10,0],[103,13,103,33,0],[104,13,104,44,0],[106,13,106,52,0],[107,13,107,14,0],[109,17,109,24,0],[112,13,112,61,0],[113,13,113,14,0],[115,17,115,24,0],[118,13,118,91,0],[120,13,120,44,0],[121,13,121,14,0],[122,17,122,24,0],[125,13,125,56,0],[126,9,126,10,0],[131,9,131,10,0],[132,13,132,70,0],[133,13,133,14,0],[134,17,134,29,0],[137,13,137,112,0],[139,13,139,54,0],[140,13,140,14,0],[141,17,141,86,0],[142,13,142,14,0],[144,13,144,102,0],[146,13,146,77,0],[147,9,147,10,0],[150,9,150,10,0],[151,13,151,73,0],[153,13,153,124,0],[154,13,154,14,0],[157,17,157,29,0],[158,17,158,30,0],[162,13,162,79,0],[164,13,164,78,0],[165,13,165,14,0],[167,17,167,79,0],[168,13,168,14,0],[170,13,170,78,0],[171,13,171,25,0],[172,9,172,10,0],[176,9,176,10,0],[177,13,177,56,0],[178,13,178,20,0],[179,9,179,10,0],[182,9,182,10,0],[183,13,183,53,0],[184,13,184,42,0],[185,9,185,10,0],[188,9,188,10,0],[189,13,197,15,0],[199,13,199,27,0],[202,13,202,14,0],[203,17,203,32,0],[204,13,204,14,0],[206,13,206,71,0],[207,13,208,89,0],[209,9,209,10,0],[215,9,215,46,0],[217,9,217,65,0],[219,9,219,57,0],[222,13,222,91,0],[224,40,224,91,0],[226,51,226,113,0],[234,20,234,56,0],[235,20,235,56,0],[238,9,240,70,0]]);
+    </script>
+  </body>
+</html>

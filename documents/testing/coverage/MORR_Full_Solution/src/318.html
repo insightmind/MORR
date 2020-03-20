@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\UI\Utility\WindowMessageSink.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+
+namespace MORR.Core.UI.Utility
+{
+    /// &lt;summary&gt;
+    /// Creates a window procedure to receive window and taskbar messages
+    /// &lt;/summary&gt;
+    internal class WindowMessageSink : IDisposable
+    {
+        /// &lt;summary&gt;
+        /// Handles the taskbar created event
+        /// &lt;/summary&gt;
+        public delegate void TaskbarCreatedEventHandler();
+
+        /// &lt;summary&gt;
+        /// Handles a window message
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;messageId&quot;&gt;The identifier of the message&lt;/param&gt;
+        /// &lt;param name=&quot;wParam&quot;&gt;The WPARAM of the message&lt;/param&gt;
+        /// &lt;param name=&quot;lParam&quot;&gt;The LPARAM of the message&lt;/param&gt;
+        public delegate void WindowMessageEventHandler(uint messageId, IntPtr wParam, IntPtr lParam);
+
+        private readonly uint taskbarWindowMessageId;
+
+        private NativeMethods.WindowProcedureHandler internalWindowMessageHandler;
+
+        public WindowMessageSink()
+        {
+            var className = $&quot;sink@{Guid.NewGuid()}&quot;;
+
+            internalWindowMessageHandler = OnWindowMessageInternal;
+
+            NativeMethods.WindowClass windowClass;
+
+            windowClass.style = 0;
+            windowClass.lpfnWndProc = internalWindowMessageHandler;
+            windowClass.cbClsExtra = 0;
+            windowClass.cbWndExtra = 0;
+            windowClass.hInstance = IntPtr.Zero;
+            windowClass.hIcon = IntPtr.Zero;
+            windowClass.hCursor = IntPtr.Zero;
+            windowClass.hbrBackground = IntPtr.Zero;
+            windowClass.lpszMenuName = &quot;&quot;;
+            windowClass.lpszClassName = className;
+
+            NativeMethods.RegisterClass(ref windowClass);
+            taskbarWindowMessageId = NativeMethods.RegisterWindowMessage(&quot;TaskbarCreated&quot;);
+
+            WindowHandle = NativeMethods.CreateWindowEx(0,
+                                                        className,
+                                                        &quot;&quot;,
+                                                        0,
+                                                        0, 0,
+                                                        1, 1,
+                                                        IntPtr.Zero,
+                                                        IntPtr.Zero,
+                                                        IntPtr.Zero,
+                                                        IntPtr.Zero);
+        }
+
+        /// &lt;summary&gt;
+        /// The underlying window handle
+        /// &lt;/summary&gt;
+        public IntPtr WindowHandle { get; }
+
+        /// &lt;summary&gt;
+        /// Event invoked when a window message is received
+        /// &lt;/summary&gt;
+        public event WindowMessageEventHandler? WindowMessage;
+
+        /// &lt;summary&gt;
+        /// Event invoked when the taskbar created message is received
+        /// &lt;/summary&gt;
+        public event TaskbarCreatedEventHandler? TaskbarCreated;
+
+        private IntPtr OnWindowMessageInternal(IntPtr hWnd, uint messageId, IntPtr wParam, IntPtr lParam)
+        {
+            if (messageId == taskbarWindowMessageId)
+            {
+                TaskbarCreated?.Invoke();
+            }
+
+            WindowMessage?.Invoke(messageId, wParam, lParam);
+
+            return NativeMethods.DefWindowProc(hWnd, messageId, wParam, lParam);
+        }
+
+        #region Dispose
+
+        private bool isDisposed;
+
+        /// &lt;summary&gt;
+        /// Frees all unmanaged resources
+        /// &lt;/summary&gt;
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        ~WindowMessageSink()
+        {
+            Dispose(false);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (isDisposed || !disposing)
+            {
+                return;
+            }
+
+            isDisposed = true;
+
+            NativeMethods.DestroyWindow(WindowHandle);
+            internalWindowMessageHandler = null!;
+        }
+
+        #endregion
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[27,9,27,35,0],[28,9,28,10,0],[29,13,29,54,0],[31,13,31,68,0],[35,13,35,35,0],[36,13,36,68,0],[37,13,37,40,0],[38,13,38,40,0],[39,13,39,49,0],[40,13,40,45,0],[41,13,41,47,0],[42,13,42,53,0],[43,13,43,43,0],[44,13,44,51,0],[46,13,46,58,0],[47,13,47,92,0],[49,13,58,70,0],[59,9,59,10,0],[64,38,64,42,0],[77,9,77,10,0],[78,13,78,53,0],[79,13,79,14,0],[80,17,80,42,0],[81,13,81,14,0],[83,13,83,62,0],[85,13,85,81,0],[86,9,86,10,0],[96,9,96,10,0],[97,13,97,27,0],[98,9,98,10,0],[101,9,101,10,0],[101,9,101,10,0],[102,13,102,28,0],[103,9,103,10,0],[103,9,103,10,0],[106,9,106,10,0],[107,13,107,42,0],[108,13,108,14,0],[109,17,109,24,0],[112,13,112,31,0],[114,13,114,55,0],[115,13,115,50,0],[116,9,116,10,0]]);
+    </script>
+  </body>
+</html>

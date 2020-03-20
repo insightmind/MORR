@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\CLI\Commands\Processing\ProcessCommand.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using MORR.Core.CLI.Output;
+using MORR.Core.Session;
+using MORR.Shared.Utility;
+using System;
+using System.Diagnostics;
+using System.IO;
+
+namespace MORR.Core.CLI.Commands.Processing
+{
+    public class ProcessCommand : ICommand&lt;ProcessOptions&gt;
+    {
+        #region Constants
+
+        private const string loadedFileMessage = &quot;Load configuration file.&quot;;
+        private const string loadInputMessage = &quot;Load input file.&quot;;
+        private const string sessionManagerMessage = &quot;Load session manager with configuration file.&quot;;
+        private const string startProcessingMessage = &quot;Start processing session:&quot;;
+        private const string completeProcessingMessage = &quot;Processing did complete!&quot;;
+
+        #endregion
+
+        #region Dependencies
+
+        private readonly ISessionManager sessionManager;
+        private readonly IConsoleFormatter? consoleFormatter;
+
+        #endregion
+
+        #region LifeCycle
+
+        public ProcessCommand(ISessionManager sessionManager) : this(sessionManager, new ConsoleFormatter()) { }
+
+        public ProcessCommand(
+            ISessionManager sessionManager,
+            IConsoleFormatter consoleFormatter)
+        {
+            this.sessionManager = sessionManager;
+            if (consoleFormatter != null) this.consoleFormatter = consoleFormatter;
+        }
+
+        #endregion
+
+        #region Execution
+
+        public int Execute(ProcessOptions options)
+        {
+            Debug.Assert(consoleFormatter != null, nameof(consoleFormatter) + &quot; != null&quot;);
+            Debug.Assert(sessionManager != null, nameof(sessionManager) + &quot; != null&quot;);
+
+            if (options == null) return -1;
+
+            try
+            {
+                consoleFormatter.IsVerbose = options.IsVerbose;
+
+                // Load configuration file
+                consoleFormatter.PrintDebug(loadedFileMessage);
+                var configPath = new FilePath(Path.GetFullPath(options.ConfigPath));
+
+                // Load input file
+                consoleFormatter.PrintDebug(loadInputMessage);
+                var inputPath = new DirectoryPath(Path.GetFullPath(options.InputFile));
+
+                // Start session manager
+                consoleFormatter.PrintDebug(sessionManagerMessage);
+
+                // Start processing
+                consoleFormatter.PrintDebug(startProcessingMessage);
+                sessionManager.Process(new[] { inputPath });
+                consoleFormatter.PrintDebug(completeProcessingMessage);
+
+                return 0;
+            }
+            catch (Exception exception)
+            {
+                consoleFormatter.PrintError(exception);
+
+                return -1;
+            }
+        }
+
+        #endregion
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[31,65,31,109,0],[31,110,31,111,0],[31,112,31,113,0],[33,9,35,48,1],[36,9,36,10,1],[37,13,37,50,1],[38,13,38,42,1],[38,43,38,84,1],[39,9,39,10,1],[46,9,46,10,1],[47,13,47,91,1],[48,13,48,87,1],[50,13,50,33,1],[50,34,50,44,1],[53,13,53,14,1],[54,17,54,64,1],[57,17,57,64,1],[58,17,58,85,1],[61,17,61,63,1],[62,17,62,88,1],[65,17,65,68,1],[68,17,68,69,1],[69,17,69,61,1],[70,17,70,72,1],[72,17,72,26,1],[74,13,74,40,1],[75,13,75,14,1],[76,17,76,56,1],[78,17,78,27,1],[80,9,80,10,1]]);
+    </script>
+  </body>
+</html>

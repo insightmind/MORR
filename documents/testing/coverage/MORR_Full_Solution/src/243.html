@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\KeyboardTest\Producers\KeyboardInteractEventProducerPressedKeyTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
+using System.Diagnostics;
+using System.Threading;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using MORR.Modules.Keyboard;
+using MORR.Modules.Keyboard.Events;
+using MORR.Modules.Keyboard.Producers;
+using MORR.Shared.Hook;
+using SharedTest.TestHelpers.INativeHook;
+using System.Windows.Input;
+using MORR.Modules.Keyboard.Native;
+using System.Collections.Generic;
+
+namespace KeyboardTest
+{
+    [TestClass]
+    public class KeyboardInteractEventProducerPressedKeyTest
+    {
+        protected const int maxWaitTime = 5000;
+
+        private CompositionContainer container;
+        private KeyboardInteractEventProducer keyboardInteractEventProducer;
+        private KeyboardModule keyboardModule;
+        private HookNativeMethodsMock hookNativeMethodsMock;
+        private Mock&lt;INativeKeyboard&gt; nativeKeyboardMock;
+
+        private readonly GlobalHook.MessageType[] KeyboardInteractListenedMessagesTypes =
+        {
+            GlobalHook.MessageType.WM_KEYDOWN,
+            GlobalHook.MessageType.WM_SYSKEYDOWN
+        };
+
+        [TestInitialize]
+        public void BeforeTest()
+        {
+            //initialize module, producers and configuration
+            keyboardModule = new KeyboardModule();
+            keyboardInteractEventProducer = new KeyboardInteractEventProducer();
+
+            // initialize the container and fulfill the MEF inports exports
+            container = new CompositionContainer();
+            container.ComposeExportedValue(keyboardInteractEventProducer);
+            container.ComposeParts(keyboardModule);
+
+            //initialize the native keyboard mock
+            nativeKeyboardMock = new Mock&lt;INativeKeyboard&gt;();
+
+            //initialzie the hookNativeMethodsMock
+            hookNativeMethodsMock = new HookNativeMethodsMock();
+            hookNativeMethodsMock.Initialize();
+        }
+
+        [TestCleanup]
+        public void AfterTest()
+        {
+            // null everything!
+            keyboardModule = null;
+            keyboardInteractEventProducer = null;
+            nativeKeyboardMock = null;
+            container.Dispose();
+            container = null;
+            hookNativeMethodsMock = null;
+        }
+
+        [TestMethod]
+        public void TestKeyboardInteractEventProducer_PressedKeyTest()
+        {
+            /* PRECONDITIONS */
+            Debug.Assert(keyboardModule != null);
+            Debug.Assert(keyboardInteractEventProducer != null);
+            Debug.Assert(hookNativeMethodsMock != null);
+            Debug.Assert(hookNativeMethodsMock.Mock != null);
+            Debug.Assert(nativeKeyboardMock != null);
+
+            /* GIVEN */
+            //get the callback
+            GlobalHook.CppGetMessageCallback callback = GetCallback();
+
+            //setting up fake nativeKeyboardMock behaviors, messages and corresponding expected Events
+            nativeKeyboardMock.Setup(nativeK =&gt; nativeK.KeyFromVirtualKey(0x41)).Returns(Key.A);
+            nativeKeyboardMock.Setup(nativeK =&gt; nativeK.KeyFromVirtualKey(0x48)).Returns(Key.H);
+            nativeKeyboardMock.Setup(nativeK =&gt; nativeK.KeyFromVirtualKey(0x36)).Returns(Key.D6);
+            nativeKeyboardMock.Setup(nativeK =&gt; nativeK.KeyFromVirtualKey(0x30)).Returns(Key.D0);
+            nativeKeyboardMock.Setup(nativeK =&gt; nativeK.KeyFromVirtualKey(0xBB)).Returns(Key.OemPlus);
+            nativeKeyboardMock.Setup(nativeK =&gt; nativeK.KeyFromVirtualKey(0xBF)).Returns(Key.OemQuestion);
+            nativeKeyboardMock.Setup(nativeK =&gt; nativeK.KeyFromVirtualKey(0xA0)).Returns(Key.LeftShift);
+            nativeKeyboardMock.Setup(nativeK =&gt; nativeK.KeyFromVirtualKey(0x24)).Returns(Key.Home);
+            nativeKeyboardMock.Setup(nativeK =&gt; nativeK.KeyFromVirtualKey(0x25)).Returns(Key.Left);
+            nativeKeyboardMock.Setup(nativeK =&gt; nativeK.KeyFromVirtualKey(0x12)).Returns(Key.LeftAlt);
+
+            GlobalHook.HookMessage[] hookMessages = {
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_KEYDOWN, wParam = (IntPtr)0x41}, //A
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_SYSKEYDOWN, wParam = (IntPtr)0x48}, //H
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_KEYDOWN, wParam = (IntPtr)0x36}, //6
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_KEYDOWN, wParam = (IntPtr)0x30}, //0
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_SYSKEYDOWN, wParam = (IntPtr)0xBB}, //+
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_KEYDOWN, wParam = (IntPtr)0xBF}, //&quot;/&quot; or ?
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_SYSKEYDOWN, wParam = (IntPtr)0xA0},//Left SHIFT
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_SYSKEYDOWN, wParam = (IntPtr)0x24},//HOME
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_KEYDOWN, wParam = (IntPtr)0x25}, //LeftArrow
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_KEYDOWN, wParam = (IntPtr)0x12} //Alt
+            };
+            
+            KeyboardInteractEvent[] expectedEvents = {
+            new KeyboardInteractEvent { PressedKey_System_Windows_Input_Key = Key.A},
+            new KeyboardInteractEvent { PressedKey_System_Windows_Input_Key = Key.H},
+            new KeyboardInteractEvent { PressedKey_System_Windows_Input_Key = Key.D6},
+            new KeyboardInteractEvent { PressedKey_System_Windows_Input_Key = Key.D0},
+            new KeyboardInteractEvent { PressedKey_System_Windows_Input_Key = Key.OemPlus},
+            new KeyboardInteractEvent { PressedKey_System_Windows_Input_Key = Key.OemQuestion},
+            new KeyboardInteractEvent { PressedKey_System_Windows_Input_Key = Key.LeftShift},
+            new KeyboardInteractEvent { PressedKey_System_Windows_Input_Key = Key.Home},
+            new KeyboardInteractEvent { PressedKey_System_Windows_Input_Key = Key.Left},
+            new KeyboardInteractEvent { PressedKey_System_Windows_Input_Key = Key.LeftAlt}
+            };
+
+            Assert.IsTrue(hookMessages.Length == expectedEvents.Length);
+
+            /* WHEN */
+            // consumedEvent.Signal() will be called gdw one event has been found and meet expectation
+            using var consumedEvent = new CountdownEvent(hookMessages.Length);
+            Assert.IsTrue(consumedEvent.CurrentCount == hookMessages.Length);
+
+            //didStartConsumingEvent.Set() will be called in Await method gdw the consumer is attached
+            using var didStartConsumingEvent = new ManualResetEvent(false);
+
+            //Running the task in another thread
+            var thread = new Thread(async () =&gt;
+            {
+                await foreach (var @event in Await&lt;IAsyncEnumerable&lt;KeyboardInteractEvent&gt;&gt;(keyboardInteractEventProducer.GetEvents(), didStartConsumingEvent))
+                {
+                    if (!IsKeyboardInteractEventFound(@event, expectedEvents))
+                    {
+                        continue;
+                    }
+                    consumedEvent.Signal();
+                }
+            });
+            thread.Start();
+            // true if the consumer is attached!
+            Assert.IsTrue(didStartConsumingEvent.WaitOne(maxWaitTime));
+
+            // We must call the callback after the consumer is attached!
+            // otherwise the message is automatically dismissed.
+            foreach (GlobalHook.HookMessage message in hookMessages)
+            {
+                callback(message);
+            }
+
+            /* THEN */
+            //true if all events generated by the fake messages have meet expectation.
+            Assert.IsTrue(consumedEvent.Wait(maxWaitTime), &quot;Did not find all matching keyboard interact events in time.&quot;);
+
+            //total shut down and resources release
+            keyboardInteractEventProducer.StopCapture();
+            keyboardModule.Initialize(false);
+        }
+
+        /// &lt;summary&gt;
+        ///     Set the ManualResetEvent to indicate that the consumer has been attached.
+        ///     Then return the awaitedObject, which in this case should be an 
+        ///     IAsyncEnumerable&lt;SomeEvent&gt; Type.
+        /// &lt;/summary&gt;
+        /// &lt;typeparam name=&quot;T&quot;&gt;The type of the returned object, which in this case should be an IAsyncEnumerable&lt;SomeEvent&gt; &lt;/typeparam&gt;
+        /// &lt;param name=&quot;awaitedObject&quot;&gt;the object to &quot;await foreach&quot;, which in this case should be of type IAsyncEnumerable&lt;SomeEvent&gt; &lt;/param&gt;
+        /// &lt;param name=&quot;expectation&quot;&gt;a ManualRestEvent to Set to indicate that the consumer has been attached&lt;/param&gt;
+        /// &lt;returns&gt;&lt;/returns&gt;
+        public static T Await&lt;T&gt;(T awaitedObject, ManualResetEvent expectation)
+        {
+            expectation.Set();
+            return awaitedObject;
+        }
+
+        /// &lt;summary&gt;
+        ///     Call AllowMessageTypeRegistry() methods on all messages related to keyboard producers.
+        /// &lt;/summary&gt;
+        private void AllowMessageTypeRegistryForAll()
+        {
+            foreach (GlobalHook.MessageType messageType in KeyboardInteractListenedMessagesTypes)
+            {
+                hookNativeMethodsMock.AllowMessageTypeRegistry(messageType);
+            }
+        }
+
+        /// &lt;summary&gt;
+        ///     Performs a series of initialization and Setups to get the CppGetMessageCallback.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;withNativeKeyboardMock&quot;&gt;true if a nativeKeyboard mock is wanted, false if a nativeKeyboard is wanted&lt;/param&gt;
+        /// &lt;returns&gt;the callback that can be called with a message, which in turns calls a callback in the producers that is interested in this type of message&lt;/returns&gt;
+        private GlobalHook.CppGetMessageCallback GetCallback()
+        {
+            GlobalHook.CppGetMessageCallback callback = null;
+            AllowMessageTypeRegistryForAll();
+            hookNativeMethodsMock.AllowLibraryLoad();
+            using var callbackReceivedEvent = new AutoResetEvent(false);
+
+            hookNativeMethodsMock.Mock
+                 .Setup(hook =&gt; hook.SetHook(It.IsAny&lt;GlobalHook.CppGetMessageCallback&gt;(), It.IsAny&lt;bool&gt;()))?
+                 .Callback((GlobalHook.CppGetMessageCallback cppCallback, bool isBlocking) =&gt;
+                 {
+                     callback = cppCallback;
+                     callbackReceivedEvent.Set();
+                 });
+            //here the SetHook() method is called!
+            keyboardModule.Initialize(true);
+            keyboardInteractEventProducer.StartCapture(nativeKeyboardMock.Object);
+
+            //wait for the hookNativeMethodsMock.Mock.Callback is called!
+            Assert.IsTrue(callbackReceivedEvent.WaitOne(maxWaitTime), &quot;Did not receive callback in time!&quot;);
+            Assert.IsNotNull(callback, &quot;Callback received however unexpectedly null!&quot;);
+            return callback;
+        }
+
+        /// &lt;summary&gt;
+        ///     Return true if an keyboard Interact event is in the array of expected events.
+        ///     This method itslef defines the logic to determine if two keyboardInteract events are equal.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;event&quot;&gt;an event that is expected to be in the array of expected events&lt;/param&gt;
+        /// &lt;param name=&quot;expectedEvents&quot;&gt;an array of expected events&lt;/param&gt;
+        /// &lt;returns&gt;true if an event is indeed in the array of expected events.&lt;/returns&gt;
+        private bool IsKeyboardInteractEventFound(KeyboardInteractEvent @event, KeyboardInteractEvent[] expectedEvents)
+        {
+            foreach (KeyboardInteractEvent e in expectedEvents)
+            {
+                if (@event.PressedKey_System_Windows_Input_Key.Equals(e.PressedKey_System_Windows_Input_Key)
+                    &amp;&amp; @event.PressedKey_System_Windows_Input_Key.ToString().Equals(e.PressedKey_System_Windows_Input_Key.ToString())) return true;
+            }
+            return false;
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[30,9,34,11,1],[38,9,38,10,1],[40,13,40,51,1],[41,13,41,81,1],[44,13,44,52,1],[45,13,45,75,1],[46,13,46,52,1],[49,13,49,62,1],[52,13,52,65,1],[53,13,53,48,1],[54,9,54,10,1],[58,9,58,10,1],[60,13,60,35,1],[61,13,61,50,1],[62,13,62,39,1],[63,13,63,33,1],[64,13,64,30,1],[65,13,65,42,1],[66,9,66,10,1],[70,9,70,10,1],[72,13,72,50,1],[73,13,73,65,1],[74,13,74,57,1],[75,13,75,62,1],[76,13,76,54,1],[80,13,80,71,1],[83,13,83,97,1],[84,13,84,97,1],[85,13,85,98,1],[86,13,86,98,1],[87,13,87,103,1],[88,13,88,107,1],[89,13,89,105,1],[90,13,90,100,1],[91,13,91,100,1],[92,13,92,103,1],[94,13,105,15,1],[107,13,118,15,1],[120,13,120,73,1],[124,13,124,79,1],[125,13,125,78,1],[128,13,128,76,1],[131,13,132,13,1],[132,13,132,14,1],[132,14,133,17,1],[133,17,133,30,1],[133,30,133,32,1],[133,32,133,42,1],[133,42,133,43,1],[133,43,133,45,1],[133,45,133,46,1],[133,46,133,159,1],[133,159,134,17,1],[134,17,134,18,1],[134,18,135,21,1],[135,21,135,79,1],[135,79,136,21,1],[136,21,136,22,0],[136,22,137,25,1],[137,25,137,34,0],[137,34,139,21,1],[139,21,139,44,1],[139,44,140,17,1],[140,17,140,18,1],[140,18,141,13,1],[141,13,141,14,1],[141,14,141,16,1],[131,13,141,16,1],[142,13,142,28,1],[144,13,144,72,1],[148,13,148,20,1],[148,22,148,52,1],[148,53,148,55,1],[148,56,148,68,1],[149,13,149,14,1],[150,17,150,35,1],[151,13,151,14,1],[155,13,155,123,1],[158,13,158,57,1],[159,13,159,46,1],[160,9,160,10,1],[160,9,160,10,1],[172,9,172,10,1],[173,13,173,31,1],[174,13,174,34,1],[175,9,175,10,1],[181,9,181,10,1],[182,13,182,20,1],[182,22,182,56,1],[182,57,182,59,1],[182,60,182,97,1],[183,13,183,14,1],[184,17,184,77,1],[185,13,185,14,1],[186,9,186,10,1],[194,9,194,10,1],[195,13,195,62,1],[196,13,196,46,1],[197,13,197,54,1],[198,13,198,73,1],[200,13,203,18,1],[203,18,203,19,1],[203,19,204,22,1],[204,22,204,45,1],[204,45,205,22,1],[205,22,205,50,1],[205,50,206,18,1],[206,18,206,19,1],[206,19,206,21,1],[200,13,206,21,1],[208,13,208,45,1],[209,13,209,83,1],[212,13,212,108,1],[213,13,213,88,1],[214,13,214,29,1],[215,9,215,10,1],[225,9,225,10,1],[226,13,226,20,1],[226,22,226,45,1],[226,46,226,48,1],[226,49,226,63,1],[227,13,227,14,1],[228,17,229,135,1],[229,136,229,148,1],[230,13,230,14,1],[231,13,231,26,0],[232,9,232,10,1]]);
+    </script>
+  </body>
+</html>

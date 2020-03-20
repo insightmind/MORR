@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\WindowManagement\Producers\WindowFocusEventProducer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using MORR.Modules.WindowManagement.Events;
+using MORR.Modules.WindowManagement.Native;
+using MORR.Shared.Events.Queue;
+using MORR.Shared.Hook;
+
+namespace MORR.Modules.WindowManagement.Producers
+{
+    /// &lt;summary&gt;
+    ///     Provides a single-writer-multiple-reader queue for WindowFocusEvent
+    /// &lt;/summary&gt;
+    public class WindowFocusEventProducer : DefaultEventQueue&lt;WindowFocusEvent&gt;
+    {
+        private const int WA_ACTIVE = 1;
+        private static INativeWindowManagement nativeWindowManagement;
+        private IntPtr lastHwnd = IntPtr.Zero;
+
+        public void StartCapture(INativeWindowManagement nativeWinManagement)
+        {
+            nativeWindowManagement = nativeWinManagement;
+            GlobalHook.AddListener(WindowHookCallback, GlobalHook.MessageType.WM_ACTIVATE);
+            GlobalHook.IsActive = true;
+        }
+
+        public void StopCapture()
+        {
+            GlobalHook.RemoveListener(WindowHookCallback, GlobalHook.MessageType.WM_ACTIVATE);
+            Close();
+        }
+
+        /// &lt;summary&gt;
+        ///     Everytime a WM_ACTIVATE is received, check if this message contains the information
+        ///     of a window being activated (by (int)msg.wParam == WA_ACTIVE) and if the Message
+        ///     contains new information (by lastHwnd != hwnd). If the both requirements are met,
+        ///     record the information of the activated window in a WindowFocusEvent.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;msg&quot;&gt;the hook message&lt;/param&gt;
+        private void WindowHookCallback(GlobalHook.HookMessage msg)
+        {
+            if ((int) msg.wParam == WA_ACTIVE)
+            {
+                var hwnd = nativeWindowManagement.GetForegroundWindow();
+                if (lastHwnd != hwnd)
+                {
+                    var processName = nativeWindowManagement.GetProcessNameFromHwnd(hwnd);
+                    var windowTitle = nativeWindowManagement.GetWindowTitleFromHwnd(hwnd);
+                    var @event = new WindowFocusEvent
+                    {
+                        IssuingModule = WindowManagementModule.Identifier,
+                        ProcessName = processName,
+                        Title = windowTitle
+                    };
+                    Enqueue(@event);
+                }
+
+                lastHwnd = hwnd;
+            }
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[16,9,16,47,1],[19,9,19,10,1],[20,13,20,58,1],[21,13,21,92,1],[22,13,22,40,1],[23,9,23,10,1],[26,9,26,10,1],[27,13,27,95,1],[28,13,28,21,1],[29,9,29,10,1],[39,9,39,10,1],[40,13,40,47,1],[41,13,41,14,1],[42,17,42,73,1],[43,17,43,38,1],[44,17,44,18,1],[45,21,45,91,1],[46,21,46,91,1],[47,21,52,23,1],[53,21,53,37,1],[54,17,54,18,1],[56,17,56,33,1],[57,13,57,14,1],[58,9,58,10,1]]);
+    </script>
+  </body>
+</html>

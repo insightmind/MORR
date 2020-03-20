@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\UI\Dialogs\ErrorDialog.xaml.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Windows;
+
+namespace MORR.Core.UI.Dialogs
+{
+    /// &lt;summary&gt;
+    ///     Interaction logic for ErrorDialog.xaml
+    /// &lt;/summary&gt;
+    public partial class ErrorDialog : Window
+    {
+        public ErrorDialog(string errorMessage)
+        {
+            ErrorMessage = errorMessage;
+            InitializeComponent();
+            DataContext = this;
+        }
+
+        public string ErrorMessage { get; }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[10,9,10,48,0],[11,9,11,10,0],[12,13,12,41,0],[13,13,13,35,0],[14,13,14,32,0],[15,9,15,10,0],[17,38,17,42,0]]);
+    </script>
+  </body>
+</html>

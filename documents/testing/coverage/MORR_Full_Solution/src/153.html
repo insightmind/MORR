@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\MouseTest\Producers\MouseClickEventProducerTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MORR.Modules.Mouse;
+using MORR.Modules.Mouse.Events;
+using MORR.Modules.Mouse.Producers;
+using MORR.Shared.Hook;
+using SharedTest.TestHelpers.INativeHook;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
+using System.Diagnostics;
+using System.Windows.Input;
+using System.Threading;
+using Moq;
+using System.Windows;
+
+namespace MouseTest.Producers
+{
+    [TestClass]
+    public class MouseClickEventProducerTest
+    {
+        protected const int maxWaitTime = 5000;
+
+        private CompositionContainer container;
+        private MouseClickEventProducer mouseClickEventProducer;
+        private MouseMoveEventProducer mouseMoveEventProducer;
+        private MouseScrollEventProducer mouseScrollEventProducer;
+        private MouseModule mouseModule;
+        private MouseModuleConfiguration mouseModuleConfiguration;
+        private HookNativeMethodsMock hookNativeMethodsMock;
+        private class TestMouseModuleConfiguration : MouseModuleConfiguration
+        {
+            public TestMouseModuleConfiguration()
+            {
+                SamplingRateInHz = 10;
+                Threshold = 50;
+            }
+        }
+
+        private readonly GlobalHook.MessageType[] mouseClickListenedMessagesTypes =
+        {
+            GlobalHook.MessageType.WM_RBUTTONDOWN,
+            GlobalHook.MessageType.WM_LBUTTONDOWN,
+            GlobalHook.MessageType.WM_MBUTTONDOWN,
+            GlobalHook.MessageType.WM_RBUTTONDBLCLK,
+            GlobalHook.MessageType.WM_LBUTTONDBLCLK,
+            GlobalHook.MessageType.WM_MBUTTONDBLCLK,
+            GlobalHook.MessageType.WM_NCRBUTTONDOWN,
+            GlobalHook.MessageType.WM_NCLBUTTONDOWN,
+            GlobalHook.MessageType.WM_NCMBUTTONDOWN,
+            GlobalHook.MessageType.WM_NCRBUTTONDBLCLK,
+            GlobalHook.MessageType.WM_NCLBUTTONDBLCLK,
+            GlobalHook.MessageType.WM_NCMBUTTONDBLCLK
+        };
+
+        private readonly GlobalHook.MessageType[] mouseScrollListenedMessagesTypes =
+        {
+            GlobalHook.MessageType.WM_MOUSEWHEEL
+        };
+
+        [TestInitialize]
+        public void BeforeTest()
+        {
+            //initialize module, producers and configuration
+            mouseModule = new MouseModule();
+            mouseClickEventProducer = new MouseClickEventProducer();
+            mouseMoveEventProducer = new MouseMoveEventProducer();
+            mouseScrollEventProducer = new MouseScrollEventProducer();
+            mouseModuleConfiguration = new TestMouseModuleConfiguration();
+
+            // initialize the container and fulfill the MEF inports exports
+            container = new CompositionContainer();
+            container.ComposeExportedValue(mouseClickEventProducer);
+            container.ComposeExportedValue(mouseMoveEventProducer);
+            container.ComposeExportedValue(mouseScrollEventProducer);
+            container.ComposeExportedValue(mouseModuleConfiguration);
+            container.ComposeParts(mouseModule);
+
+            //initialzie the hookNativeMethodsMock
+            hookNativeMethodsMock = new HookNativeMethodsMock();
+            hookNativeMethodsMock.Initialize();
+        }
+
+        [TestCleanup]
+        public void AfterTest()
+        {
+            // null everything!
+            mouseModule = null;
+            mouseClickEventProducer = null;
+            mouseMoveEventProducer = null;
+            mouseScrollEventProducer = null;
+            mouseModuleConfiguration = null;
+            container.Dispose();
+            container = null;
+            hookNativeMethodsMock = null;
+        }
+
+        [TestMethod]
+        public void TestMouseClickEventProducer_Callback()
+        {
+            /* PRECONDITIONS */
+            Debug.Assert(mouseModule != null);
+            Debug.Assert(mouseClickEventProducer != null);
+            Debug.Assert(hookNativeMethodsMock != null);
+            Debug.Assert(hookNativeMethodsMock.Mock != null);
+
+            /* GIVEN */
+            //get the callback
+            GlobalHook.CppGetMessageCallback callback = GetCallback();
+
+            //setting up fake nativeMouseMock behaviors, messages and corresponding expected Events
+            GlobalHook.HookMessage[] hookMessages = {
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_RBUTTONDOWN, Hwnd = (IntPtr)1, Data = new int[] { 1, 1 } },
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_LBUTTONDOWN, Hwnd = (IntPtr)2, Data = new int[] { 2, 2 } },
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_MBUTTONDOWN, Hwnd = (IntPtr)3, Data = new int[] { 3, 3 } },
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_RBUTTONDBLCLK, Hwnd = (IntPtr)4, Data = new int[] { 4, 4 } },
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_LBUTTONDBLCLK, Hwnd = (IntPtr)5, Data = new int[] { 5, 5 } },
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_MBUTTONDBLCLK, Hwnd = (IntPtr)6, Data = new int[] { 6, 6 } },
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_NCRBUTTONDOWN, Hwnd = (IntPtr)7, Data = new int[] { 7, 7 } },
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_NCLBUTTONDOWN, Hwnd = (IntPtr)8, Data = new int[] { 8, 8 } },
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_NCMBUTTONDOWN, Hwnd = (IntPtr)9, Data = new int[] { 9, 9 } },
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_NCRBUTTONDBLCLK, Hwnd = (IntPtr)10, Data = new int[] { 10, 10 } },
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_NCLBUTTONDBLCLK, Hwnd = (IntPtr)11, Data = new int[] { 11, 11 } },
+            new GlobalHook.HookMessage { Type = (uint)GlobalHook.MessageType.WM_NCMBUTTONDBLCLK, Hwnd = (IntPtr)12, Data = new int[] { 12, 12 } }
+            };
+            MouseClickEvent[] expectedEvents = {
+            new MouseClickEvent { MouseAction = MouseAction.RightClick, HWnd = &quot;1&quot;, MousePosition = new Point { X = 1, Y = 1 } },
+            new MouseClickEvent { MouseAction = MouseAction.LeftClick, HWnd = &quot;2&quot;, MousePosition = new Point { X = 2, Y = 2 } },
+            new MouseClickEvent { MouseAction = MouseAction.MiddleClick, HWnd = &quot;3&quot;, MousePosition = new Point { X = 3, Y = 3 } },
+            new MouseClickEvent { MouseAction = MouseAction.RightDoubleClick, HWnd = &quot;4&quot;, MousePosition = new Point { X = 4, Y = 4 } },
+            new MouseClickEvent { MouseAction = MouseAction.LeftDoubleClick, HWnd = &quot;5&quot;, MousePosition = new Point { X = 5, Y = 5 } },
+            new MouseClickEvent { MouseAction = MouseAction.MiddleDoubleClick, HWnd = &quot;6&quot;, MousePosition = new Point { X = 6, Y = 6 } },
+            new MouseClickEvent { MouseAction = MouseAction.RightClick, HWnd = &quot;7&quot;, MousePosition = new Point { X = 7, Y = 7 } },
+            new MouseClickEvent { MouseAction = MouseAction.LeftClick, HWnd = &quot;8&quot;, MousePosition = new Point { X = 8, Y = 8 } },
+            new MouseClickEvent { MouseAction = MouseAction.MiddleClick, HWnd = &quot;9&quot;, MousePosition = new Point { X = 9, Y = 9 } },
+            new MouseClickEvent { MouseAction = MouseAction.RightDoubleClick, HWnd = &quot;10&quot;, MousePosition = new Point { X = 10, Y = 10 } },
+            new MouseClickEvent { MouseAction = MouseAction.LeftDoubleClick, HWnd = &quot;11&quot;, MousePosition = new Point { X = 11, Y = 11 } },
+            new MouseClickEvent { MouseAction = MouseAction.MiddleDoubleClick, HWnd = &quot;12&quot;, MousePosition = new Point { X = 12, Y = 12 } }
+            };
+
+            Assert.IsTrue(hookMessages.Length == expectedEvents.Length);
+
+            /* WHEN */
+            // consumedEvent.Signal() will be called gdw one event has been found and meet expectation
+            using var consumedEvent = new CountdownEvent(hookMessages.Length);
+            Assert.IsTrue(consumedEvent.CurrentCount == hookMessages.Length);
+
+            //didStartConsumingEvent.Set() will be called in Await method gdw the consumer is attached
+            using var didStartConsumingEvent = new ManualResetEvent(false);
+
+            //Running the task in another thread
+            var thread = new Thread(async () =&gt;
+            {
+                await foreach (var @event in Await&lt;IAsyncEnumerable&lt;MouseClickEvent&gt;&gt;(mouseClickEventProducer.GetEvents(), didStartConsumingEvent))
+                {
+                    if (!IsMouseClickEventFound(@event, expectedEvents))
+                    {
+                        continue;
+                    }
+                    consumedEvent.Signal();
+                }
+            });
+            thread.Start();
+            // true if the consumer is attached!
+            Assert.IsTrue(didStartConsumingEvent.WaitOne(maxWaitTime));
+
+            // We must call the callback after the consumer is attached!
+            // otherwise the message is automatically dismissed.
+            foreach (GlobalHook.HookMessage message in hookMessages)
+            {
+                callback(message);
+            }
+
+            /* THEN */
+            //true if all events generated by the fake messages have meet expectation.
+            Assert.IsTrue(consumedEvent.Wait(maxWaitTime), &quot;Did not find all matching mouse click events in time.&quot;);
+
+            //total shut down and resources release
+            mouseModule.IsActive = false;
+            mouseModule.Initialize(false);
+        }
+
+        /// &lt;summary&gt;
+        ///     Set the ManualResetEvent to indicate that the consumer has been attached.
+        ///     Then return the awaitedObject, which in this case should be an 
+        ///     IAsyncEnumerable&lt;SomeEvent&gt; Type.
+        /// &lt;/summary&gt;
+        /// &lt;typeparam name=&quot;T&quot;&gt;The type of the returned object, which in this case should be an IAsyncEnumerable&lt;SomeEvent&gt; &lt;/typeparam&gt;
+        /// &lt;param name=&quot;awaitedObject&quot;&gt;the object to &quot;await foreach&quot;, which in this case should be of type IAsyncEnumerable&lt;SomeEvent&gt; &lt;/param&gt;
+        /// &lt;param name=&quot;expectation&quot;&gt;a ManualRestEvent to Set to indicate that the consumer has been attached&lt;/param&gt;
+        /// &lt;returns&gt;&lt;/returns&gt;
+        public static T Await&lt;T&gt;(T awaitedObject, ManualResetEvent expectation)
+        {
+            expectation.Set();
+            return awaitedObject;
+        }
+
+        /// &lt;summary&gt;
+        ///     Call AllowMessageTypeRegistry() methods on all messages related to the mouse producers.
+        /// &lt;/summary&gt;
+        private void AllowMessageTypeRegistryForAll()
+        {
+            foreach (GlobalHook.MessageType messageType in mouseClickListenedMessagesTypes)
+            {
+                hookNativeMethodsMock.AllowMessageTypeRegistry(messageType);
+            }
+            foreach (GlobalHook.MessageType messageType in mouseScrollListenedMessagesTypes)
+            {
+                hookNativeMethodsMock.AllowMessageTypeRegistry(messageType);
+            }
+        }
+
+        /// &lt;summary&gt;
+        ///     Performs a series of initialization and Setups to get the CppGetMessageCallback.
+        /// &lt;/summary&gt;
+        /// &lt;returns&gt;the callback that can be called with a message, which in turns calls a callback in the producers that is interested in this type of message&lt;/returns&gt;
+        private GlobalHook.CppGetMessageCallback GetCallback()
+        {
+            GlobalHook.CppGetMessageCallback callback = null;
+            AllowMessageTypeRegistryForAll();
+            hookNativeMethodsMock.AllowLibraryLoad();
+            using var callbackReceivedEvent = new AutoResetEvent(false);
+
+            hookNativeMethodsMock.Mock
+                 .Setup(hook =&gt; hook.SetHook(It.IsAny&lt;GlobalHook.CppGetMessageCallback&gt;(), It.IsAny&lt;bool&gt;()))?
+                 .Callback((GlobalHook.CppGetMessageCallback cppCallback, bool isBlocking) =&gt;
+                 {
+                     callback = cppCallback;
+                     callbackReceivedEvent.Set();
+                 });
+            //here the SetHook() method is called!
+            mouseModule.Initialize(true);
+            mouseModule.IsActive = true;
+
+            //wait for the hookNativeMethodsMock.Mock.Callback is called!
+            Assert.IsTrue(callbackReceivedEvent.WaitOne(maxWaitTime), &quot;Did not receive callback in time!&quot;);
+            Assert.IsNotNull(callback, &quot;Callback received however unexpectedly null!&quot;);
+            return callback;
+        }
+
+        /// &lt;summary&gt;
+        ///     Return true if an mouse click event is in the array of expected events.
+        ///     This method itslef defines the logic to determine if two mouse click events are equal.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;event&quot;&gt;an event that is expected to be in the array of expected events&lt;/param&gt;
+        /// &lt;param name=&quot;expectedEvents&quot;&gt;an array of expected events&lt;/param&gt;
+        /// &lt;returns&gt;true if an event is indeed in the array of expected events.&lt;/returns&gt;
+        private bool IsMouseClickEventFound(MouseClickEvent @event, MouseClickEvent[] expectedEvents)
+        {
+            foreach (MouseClickEvent e in expectedEvents)
+            {
+                if (@event.MouseAction.Equals(e.MouseAction) &amp;&amp; @event.MousePosition.Equals(e.MousePosition) &amp;&amp; @event.HWnd.Equals(e.HWnd)) return true;
+            }
+            return false;
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[33,13,33,50,1],[34,13,34,14,1],[35,17,35,39,1],[36,17,36,32,1],[37,13,37,14,1],[40,9,54,11,1],[56,9,59,11,1],[63,9,63,10,1],[65,13,65,45,1],[66,13,66,69,1],[67,13,67,67,1],[68,13,68,71,1],[69,13,69,75,1],[72,13,72,52,1],[73,13,73,69,1],[74,13,74,68,1],[75,13,75,70,1],[76,13,76,70,1],[77,13,77,49,1],[80,13,80,65,1],[81,13,81,48,1],[82,9,82,10,1],[86,9,86,10,1],[88,13,88,32,1],[89,13,89,44,1],[90,13,90,43,1],[91,13,91,45,1],[92,13,92,45,1],[93,13,93,33,1],[94,13,94,30,1],[95,13,95,42,1],[96,9,96,10,1],[100,9,100,10,1],[102,13,102,47,1],[103,13,103,59,1],[104,13,104,57,1],[105,13,105,62,1],[109,13,109,71,1],[112,13,125,15,1],[126,13,139,15,1],[141,13,141,73,1],[145,13,145,79,1],[146,13,146,78,1],[149,13,149,76,1],[152,13,153,13,1],[153,13,153,14,1],[153,14,154,17,1],[154,17,154,30,1],[154,30,154,32,1],[154,32,154,42,1],[154,42,154,43,1],[154,43,154,45,1],[154,45,154,46,1],[154,46,154,147,1],[154,147,155,17,1],[155,17,155,18,1],[155,18,156,21,1],[156,21,156,73,1],[156,73,157,21,1],[157,21,157,22,0],[157,22,158,25,1],[158,25,158,34,0],[158,34,160,21,1],[160,21,160,44,1],[160,44,161,17,1],[161,17,161,18,1],[161,18,162,13,1],[162,13,162,14,1],[162,14,162,16,1],[152,13,162,16,1],[163,13,163,28,1],[165,13,165,72,1],[169,13,169,20,1],[169,22,169,52,1],[169,53,169,55,1],[169,56,169,68,1],[170,13,170,14,1],[171,17,171,35,1],[172,13,172,14,1],[176,13,176,117,1],[179,13,179,42,1],[180,13,180,43,1],[181,9,181,10,1],[181,9,181,10,1],[193,9,193,10,1],[194,13,194,31,1],[195,13,195,34,1],[196,9,196,10,1],[202,9,202,10,1],[203,13,203,20,1],[203,22,203,56,1],[203,57,203,59,1],[203,60,203,91,1],[204,13,204,14,1],[205,17,205,77,1],[206,13,206,14,1],[207,13,207,20,1],[207,22,207,56,1],[207,57,207,59,1],[207,60,207,92,1],[208,13,208,14,1],[209,17,209,77,1],[210,13,210,14,1],[211,9,211,10,1],[218,9,218,10,1],[219,13,219,62,1],[220,13,220,46,1],[221,13,221,54,1],[222,13,222,73,1],[224,13,227,18,1],[227,18,227,19,1],[227,19,228,22,1],[228,22,228,45,1],[228,45,229,22,1],[229,22,229,50,1],[229,50,230,18,1],[230,18,230,19,1],[230,19,230,21,1],[224,13,230,21,1],[232,13,232,42,1],[233,13,233,41,1],[236,13,236,108,1],[237,13,237,88,1],[238,13,238,29,1],[239,9,239,10,1],[249,9,249,10,1],[250,13,250,20,1],[250,22,250,39,1],[250,40,250,42,1],[250,43,250,57,1],[251,13,251,14,1],[252,17,252,140,1],[252,141,252,153,1],[253,13,253,14,1],[254,13,254,26,0],[255,9,255,10,1]]);
+    </script>
+  </body>
+</html>

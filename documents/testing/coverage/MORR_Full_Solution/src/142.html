@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\Clipboard\Producers\ClipboardPasteEventProducer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using MORR.Modules.Clipboard.Events;
+using MORR.Modules.Clipboard.Native;
+using MORR.Shared.Events.Queue;
+using MORR.Shared.Hook;
+
+namespace MORR.Modules.Clipboard.Producers
+{
+    /// &lt;summary&gt;
+    ///     Provides a single-writer-multiple-reader queue for ClipboardPasteEvent
+    /// &lt;/summary&gt;
+    public class ClipboardPasteEventProducer : DefaultEventQueue&lt;ClipboardPasteEvent&gt;
+    {
+        private static INativeClipboard nativeClipboard;
+
+        public void StartCapture(INativeClipboard nativeCl)
+        {
+            nativeClipboard = nativeCl;
+            GlobalHook.IsActive = true;
+            GlobalHook.AddListener(GlobalHookCallBack, GlobalHook.MessageType.WM_PASTE);
+        }
+
+        public void StopCapture()
+        {
+            GlobalHook.RemoveListener(GlobalHookCallBack, GlobalHook.MessageType.WM_PASTE);
+            Close();
+        }
+
+
+        #region private methods
+
+        private void GlobalHookCallBack(GlobalHook.HookMessage message)
+        {
+            string text;
+
+            try
+            {
+                text = nativeClipboard.GetClipboardText();
+            }
+            catch (Exception)
+            {
+                return;
+            }
+
+            //create the corresponding new Event
+            var clipboardPasteEvent = new ClipboardPasteEvent
+                { ClipboardText = text, IssuingModule = ClipboardModule.Identifier };
+
+            //enqueue the new event.
+            Enqueue(clipboardPasteEvent);
+        }
+
+        #endregion
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[17,9,17,10,1],[18,13,18,40,1],[19,13,19,40,1],[20,13,20,89,1],[21,9,21,10,1],[24,9,24,10,1],[25,13,25,92,1],[26,13,26,21,1],[27,9,27,10,1],[33,9,33,10,1],[37,13,37,14,1],[38,17,38,59,1],[39,13,39,14,1],[40,13,40,30,0],[41,13,41,14,0],[42,17,42,24,0],[46,13,47,86,1],[50,13,50,42,1],[51,9,51,10,1]]);
+    </script>
+  </body>
+</html>

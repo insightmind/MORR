@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\WebBrowserTest\WebBrowserModuleTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
+using System.Diagnostics;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using MORR.Modules.WebBrowser;
+using MORR.Modules.WebBrowser.Events;
+using MORR.Modules.WebBrowser.Producers;
+
+namespace WebBrowserTest
+{
+    [TestClass]
+    public class WebBrowserModuleTest
+    {
+        private static readonly WebBrowserModuleConfiguration config = new TestWebBrowserModuleConfiguration();
+        private static HttpClient testClient;
+        private Mock&lt;ButtonClickEventProducer&gt; buttonClickEventProducer;
+        private Mock&lt;CloseTabEventProducer&gt; closeTabEventProducer;
+        private CompositionContainer container;
+        private Mock&lt;FileDownloadEventProducer&gt; fileDownloadEventProducer;
+        private Mock&lt;HoverEventProducer&gt; hoverEventProducer;
+        private JsonElement? lastJson;
+        private Mock&lt;NavigationEventProducer&gt; navigationEventProducer;
+        private Mock&lt;OpenTabEventProducer&gt; openTabEventProducer;
+        private Mock&lt;SwitchTabEventProducer&gt; switchTabEventProducer;
+        private WebBrowserModuleConfiguration testWebBrowserModuleConfiguration;
+        private Mock&lt;TextInputEventProducer&gt; textInputEventProducer;
+        private Mock&lt;TextSelectionEventProducer&gt; textSelectionEventProducer;
+        private WebBrowserModule webBrowserModule;
+
+        [ClassInitialize]
+        public static void InitializeClass(TestContext context)
+        {
+            InitializeHTTPClient(config.UrlSuffix);
+        }
+
+        [TestCleanup]
+        public void AfterTest()
+        {
+            webBrowserModule.Reset();
+        }
+
+        [TestInitialize]
+        public void BeforeTest()
+        {
+            lastJson = null;
+            webBrowserModule = new WebBrowserModule();
+            buttonClickEventProducer = new Mock&lt;ButtonClickEventProducer&gt;();
+            buttonClickEventProducer.Setup(p =&gt; p.Notify(It.IsAny&lt;JsonElement&gt;()))
+                                    .Callback&lt;JsonElement&gt;(r =&gt; lastJson = r);
+            closeTabEventProducer = new Mock&lt;CloseTabEventProducer&gt;();
+            fileDownloadEventProducer = new Mock&lt;FileDownloadEventProducer&gt;();
+            hoverEventProducer = new Mock&lt;HoverEventProducer&gt;();
+            navigationEventProducer = new Mock&lt;NavigationEventProducer&gt;();
+            openTabEventProducer = new Mock&lt;OpenTabEventProducer&gt;();
+            switchTabEventProducer = new Mock&lt;SwitchTabEventProducer&gt;();
+            textInputEventProducer = new Mock&lt;TextInputEventProducer&gt;();
+            textSelectionEventProducer = new Mock&lt;TextSelectionEventProducer&gt;();
+            testWebBrowserModuleConfiguration = new TestWebBrowserModuleConfiguration();
+            container = new CompositionContainer();
+
+            container.ComposeExportedValue(buttonClickEventProducer.Object);
+            container.ComposeExportedValue(closeTabEventProducer.Object);
+            container.ComposeExportedValue(fileDownloadEventProducer.Object);
+            container.ComposeExportedValue(hoverEventProducer.Object);
+            container.ComposeExportedValue(navigationEventProducer.Object);
+            container.ComposeExportedValue(openTabEventProducer.Object);
+            container.ComposeExportedValue(switchTabEventProducer.Object);
+            container.ComposeExportedValue(textInputEventProducer.Object);
+            container.ComposeExportedValue(textSelectionEventProducer.Object);
+            container.ComposeExportedValue(testWebBrowserModuleConfiguration);
+            container.ComposeParts(webBrowserModule);
+        }
+
+        [TestMethod]
+        public void TestWebBrowserModule_Activate()
+        {
+            // Preconditions
+            Debug.Assert(webBrowserModule != null);
+
+            /* GIVEN */
+
+            /* WHEN */
+            webBrowserModule.Initialize(true);
+            webBrowserModule.IsActive = true;
+
+            /* THEN */
+            Assert.IsTrue(webBrowserModule.IsActive);
+        }
+
+        [TestMethod]
+        public void TestWebbrowserModule_Deactivate()
+        {
+            // Preconditions
+            Debug.Assert(webBrowserModule != null);
+
+            /* GIVEN */
+
+            /* WHEN */
+            webBrowserModule.IsActive = false;
+
+            /* THEN */
+            Assert.IsFalse(webBrowserModule.IsActive);
+        }
+
+        [TestMethod]
+        //verify that connect-request is correctly handled
+        public async Task SendConnectionRequest()
+        {
+            // Preconditions
+            webBrowserModule.Initialize(true);
+            webBrowserModule.IsActive = true;
+
+            /* WHEN */
+            var result = await SendHTTPMessage(new { Request = &quot;Connect&quot; });
+
+            /* THEN */
+            Assert.AreEqual(StringConstants.okString, result.GetProperty(&quot;response&quot;).GetString());
+            Assert.AreEqual(StringConstants.appIdentifier, result.GetProperty(&quot;application&quot;).GetString());
+        }
+
+        [TestMethod]
+        //verify that an invalid request is correctly answered
+        public async Task SendInvalidRequest()
+        {
+            // Preconditions
+            webBrowserModule.Initialize(true);
+            webBrowserModule.IsActive = true;
+
+            /* WHEN */
+            var result = await SendHTTPMessage(new { Request = &quot;HelloItsMe&quot; });
+
+            /* THEN */
+            Assert.AreEqual(StringConstants.invalidString, result.GetProperty(&quot;response&quot;).GetString());
+            Assert.AreEqual(StringConstants.appIdentifier, result.GetProperty(&quot;application&quot;).GetString());
+        }
+
+        [TestMethod]
+        //verify that config-request is correctly handled
+        public async Task SendConfigRequest()
+        {
+            // Preconditions
+            webBrowserModule.Initialize(true);
+            webBrowserModule.IsActive = true;
+
+            /* WHEN */
+            var result = await SendHTTPMessage(new { Request = &quot;Config&quot; });
+
+            /* THEN */
+            Assert.AreEqual(StringConstants.okString, result.GetProperty(&quot;response&quot;).GetString());
+            Assert.AreEqual(StringConstants.appIdentifier, result.GetProperty(&quot;application&quot;).GetString());
+            Assert.IsTrue(result.TryGetProperty(&quot;config&quot;, out var config));
+            //Sending a config from MORR to the webextension is only added as a stub (unused),
+            //so we only verify that any config string is sent.
+            Assert.AreNotEqual(0, config.ToString().Length);
+        }
+
+        [TestMethod]
+        //verify that senddata-request is correctly handled
+        public async Task SendData()
+        {
+            // Preconditions
+            webBrowserModule.Initialize(true);
+            webBrowserModule.IsActive = true;
+            var data = new
+            {
+                buttonTitle = &quot;SomeText&quot;,
+                buttonHref = &quot;https://sample.com/redirect&quot;,
+                tabID = 5,
+                url = &quot;https://sample.com&quot;,
+                timeStamp = new DateTime(2015, 5, 6, 7, 8, 9, 512),
+                type = &quot;BUTTONCLICK&quot;
+            };
+            /* WHEN */
+            var result = await SendHTTPMessage(new
+            {
+                Request = &quot;SendData&quot;,
+                Data = data
+            });
+
+            /* THEN */
+            Assert.AreEqual(StringConstants.okString, result.GetProperty(&quot;response&quot;).GetString());
+            Assert.AreEqual(StringConstants.appIdentifier, result.GetProperty(&quot;application&quot;).GetString());
+
+            buttonClickEventProducer.Verify(mock =&gt; mock.Notify(It.IsAny&lt;JsonElement&gt;()), Times.Once);
+            Assert.IsNotNull(lastJson);
+            var parsedEvent = new ButtonClickEvent();
+            parsedEvent.Deserialize((JsonElement) lastJson);
+
+            Assert.AreEqual(data.timeStamp, parsedEvent.Timestamp);
+            Assert.AreEqual(data.buttonTitle, parsedEvent.Button);
+            Assert.AreEqual(data.buttonHref, parsedEvent.Href);
+            Assert.AreEqual(data.tabID, parsedEvent.TabID);
+            Assert.AreEqual(new Uri(data.url), parsedEvent.CurrentURL);
+        }
+
+        [TestMethod]
+        //verify that senddata-request is correctly handled of no recording is active
+        public async Task SendDataNotRecording()
+        {
+            // Preconditions
+            webBrowserModule.Initialize(true);
+            var data = new
+            {
+                buttonTitle = &quot;SomeText&quot;,
+                buttonHref = &quot;https://sample.com/redirect&quot;,
+                tabID = 5,
+                url = &quot;https://sample.com&quot;,
+                timeStamp = new DateTime(2015, 5, 6, 7, 8, 9, 512),
+                type = &quot;BUTTONCLICK&quot;
+            };
+            /* WHEN */
+            var result = await SendHTTPMessage(new
+            {
+                Request = &quot;SendData&quot;,
+                Data = data
+            });
+
+            /* THEN */
+            Assert.AreEqual(StringConstants.stopString, result.GetProperty(&quot;response&quot;).GetString());
+            Assert.AreEqual(StringConstants.appIdentifier, result.GetProperty(&quot;application&quot;).GetString());
+        }
+
+        [TestMethod]
+        //verify that start-request is correctly answered
+        public async Task IssueStart()
+        {
+            // Preconditions
+            webBrowserModule.Initialize(true);
+
+            /* WHEN */
+            ChangeModuleActiveState(true);
+            var result = await SendHTTPMessage(new { Request = &quot;Start&quot; });
+
+            /* THEN */
+            Assert.AreEqual(StringConstants.startString, result.GetProperty(&quot;response&quot;).GetString());
+            Assert.AreEqual(StringConstants.appIdentifier, result.GetProperty(&quot;application&quot;).GetString());
+        }
+
+
+        [TestMethod]
+        //verify that start-request is not answered until module is started
+        public async Task QueueStart()
+        {
+            // Preconditions
+            webBrowserModule.Initialize(true);
+
+            /* WHEN */
+            Task result = SendHTTPMessage(new { Request = &quot;Start&quot; });
+
+            /* THEN */
+            //wait for two seconds since waiting for an infinite time is not practical
+            if (await Task.WhenAny(result, Task.Delay(2000)) == result)
+            {
+                Assert.Fail(&quot;Start request should not receive response until module is active.&quot;);
+            }
+
+            webBrowserModule.IsActive = true;
+            await result;
+        }
+
+        [TestMethod]
+        //verify that stop-request is correctly answered
+        public async Task IssueStop()
+        {
+            // Preconditions
+            webBrowserModule.Initialize(true);
+            webBrowserModule.IsActive = false;
+
+            /* WHEN */
+            ChangeModuleActiveState(false);
+            var result = await SendHTTPMessage(new { Request = &quot;WAITSTOP&quot; });
+
+            /* THEN */
+            Assert.AreEqual(StringConstants.stopString, result.GetProperty(&quot;response&quot;).GetString());
+            Assert.AreEqual(StringConstants.appIdentifier, result.GetProperty(&quot;application&quot;).GetString());
+        }
+
+        [TestMethod]
+        //verify that stop-request is not answered until module is stopped
+        public async Task QueueStop()
+        {
+            // Preconditions
+            webBrowserModule.Initialize(true);
+            webBrowserModule.IsActive = true;
+
+            /* WHEN */
+            Task result = SendHTTPMessage(new { Request = &quot;WAITSTOP&quot; });
+
+            /* THEN */
+            //wait for two seconds since waiting for an infinite time is not practical
+            if (await Task.WhenAny(result, Task.Delay(2000)) == result)
+            {
+                Assert.Fail(&quot;Stop request should not receive response until module is inactive.&quot;);
+            }
+
+            webBrowserModule.IsActive = false;
+            await result;
+        }
+
+        [TestMethod]
+        public async Task StopListeningSuccess()
+        {
+            // Preconditions
+            webBrowserModule.Initialize(true);
+
+            /* THEN */
+            var result = await SendHTTPMessage(new { Request = &quot;STOPLISTENING&quot; });
+
+            /* THEN */
+            Assert.AreEqual(StringConstants.okString, result.GetProperty(&quot;response&quot;).GetString());
+            Assert.AreEqual(StringConstants.appIdentifier, result.GetProperty(&quot;application&quot;).GetString());
+        }
+
+        [TestMethod]
+        public async Task StopListeningDenied()
+        {
+            // Preconditions
+            webBrowserModule.Initialize(true);
+            webBrowserModule.IsActive = true;
+            /* THEN */
+            var result = await SendHTTPMessage(new { Request = &quot;STOPLISTENING&quot; });
+
+            /* THEN */
+            Assert.AreEqual(StringConstants.requestDenied, result.GetProperty(&quot;response&quot;).GetString());
+            Assert.AreEqual(StringConstants.appIdentifier, result.GetProperty(&quot;application&quot;).GetString());
+            Assert.IsTrue((webBrowserModule.IsActive));
+        }
+
+        private async Task ChangeModuleActiveState(bool active)
+        {
+            await Task.Run(() =&gt;
+            {
+                Task.Delay(200);
+                webBrowserModule.IsActive = active;
+            });
+        }
+
+        private static JsonElement GetJsonFromString(string data)
+        {
+            return JsonDocument.Parse(data).RootElement;
+        }
+
+        private static void InitializeHTTPClient(string UrlSuffix)
+        {
+            testClient = new HttpClient();
+            var requestUri = new Uri(&quot;http://localhost:&quot; + UrlSuffix);
+            testClient.BaseAddress = requestUri;
+            testClient.DefaultRequestHeaders
+                      .Accept
+                      .Add(new MediaTypeWithQualityHeaderValue(&quot;application/json&quot;)); //ACCEPT header
+        }
+
+        private async Task&lt;JsonElement&gt; SendHTTPMessage(object data)
+        {
+            var requestUri = new Uri(&quot;http://localhost:&quot; + config.UrlSuffix);
+            var request = new HttpRequestMessage(HttpMethod.Post, &quot;relativeAddress&quot;);
+            request.Content = new StringContent(JsonSerializer.Serialize(data),
+                                                Encoding.UTF8,
+                                                &quot;application/json&quot;); //CONTENT-TYPE header
+
+            var response = await testClient.PostAsync(requestUri, request.Content);
+            var result = response.Content.ReadAsStringAsync().Result;
+            return GetJsonFromString(result);
+        }
+
+        private struct StringConstants
+        {
+            public const string appIdentifier = &quot;MORR&quot;;
+            public const string okString = &quot;Ok&quot;;
+            public const string startString = &quot;Start&quot;;
+            public const string stopString = &quot;Stop&quot;;
+            public const string invalidString = &quot;Invalid Request&quot;;
+            public const string requestDenied = &quot;Denied&quot;;
+        }
+
+        private class TestWebBrowserModuleConfiguration : WebBrowserModuleConfiguration
+        {
+            public TestWebBrowserModuleConfiguration()
+            {
+                UrlSuffix = &quot;60024/&quot;;
+            }
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[21,9,21,112,1],[39,9,39,10,1],[40,13,40,52,1],[41,9,41,10,1],[45,9,45,10,1],[46,13,46,38,1],[47,9,47,10,1],[51,9,51,10,1],[52,13,52,29,1],[53,13,53,55,1],[54,13,54,77,1],[55,13,56,65,1],[56,65,56,77,1],[56,77,56,79,1],[55,13,56,79,1],[57,13,57,71,1],[58,13,58,79,1],[59,13,59,65,1],[60,13,60,75,1],[61,13,61,69,1],[62,13,62,73,1],[63,13,63,73,1],[64,13,64,81,1],[65,13,65,89,1],[66,13,66,52,1],[68,13,68,77,1],[69,13,69,74,1],[70,13,70,78,1],[71,13,71,71,1],[72,13,72,76,1],[73,13,73,73,1],[74,13,74,75,1],[75,13,75,75,1],[76,13,76,79,1],[77,13,77,79,1],[78,13,78,54,1],[79,9,79,10,1],[83,9,83,10,1],[85,13,85,52,1],[90,13,90,47,1],[91,13,91,46,1],[94,13,94,54,1],[95,9,95,10,1],[99,9,99,10,1],[101,13,101,52,1],[106,13,106,47,1],[109,13,109,55,1],[110,9,110,10,1],[115,9,115,10,1],[117,13,117,47,1],[118,13,118,46,1],[121,13,121,77,1],[124,13,124,99,1],[125,13,125,107,1],[126,9,126,10,1],[131,9,131,10,1],[133,13,133,47,1],[134,13,134,46,1],[137,13,137,80,1],[140,13,140,104,1],[141,13,141,107,1],[142,9,142,10,1],[147,9,147,10,1],[149,13,149,47,1],[150,13,150,46,1],[153,13,153,76,1],[156,13,156,99,1],[157,13,157,107,1],[158,13,158,76,1],[161,13,161,61,1],[162,9,162,10,1],[167,9,167,10,1],[169,13,169,47,1],[170,13,170,46,1],[171,13,179,15,1],[181,13,185,16,1],[188,13,188,99,1],[189,13,189,107,1],[191,13,191,103,1],[192,13,192,40,1],[193,13,193,54,1],[194,13,194,61,1],[196,13,196,68,1],[197,13,197,67,1],[198,13,198,64,1],[199,13,199,60,1],[200,13,200,72,1],[201,9,201,10,1],[206,9,206,10,1],[208,13,208,47,1],[209,13,217,15,1],[219,13,223,16,1],[226,13,226,101,1],[227,13,227,107,1],[228,9,228,10,1],[233,9,233,10,1],[235,13,235,47,1],[238,13,238,43,1],[239,13,239,75,1],[242,13,242,102,1],[243,13,243,107,1],[244,9,244,10,1],[250,9,250,10,1],[252,13,252,47,1],[255,13,255,70,1],[259,13,259,72,1],[260,13,260,14,0],[261,17,261,98,0],[262,13,262,14,0],[264,13,264,46,1],[265,13,265,26,1],[266,9,266,10,1],[271,9,271,10,1],[273,13,273,47,1],[274,13,274,47,1],[277,13,277,44,1],[278,13,278,78,1],[281,13,281,101,1],[282,13,282,107,1],[283,9,283,10,1],[288,9,288,10,1],[290,13,290,47,1],[291,13,291,46,1],[294,13,294,73,1],[298,13,298,72,1],[299,13,299,14,0],[300,17,300,99,0],[301,13,301,14,0],[303,13,303,47,1],[304,13,304,26,1],[305,9,305,10,1],[309,9,309,10,1],[311,13,311,47,1],[314,13,314,83,1],[317,13,317,99,1],[318,13,318,107,1],[319,9,319,10,1],[323,9,323,10,1],[325,13,325,47,1],[326,13,326,46,1],[328,13,328,83,1],[331,13,331,104,1],[332,13,332,107,1],[333,13,333,56,1],[334,9,334,10,1],[337,9,337,10,1],[338,13,342,16,1],[339,13,339,14,1],[340,17,340,33,1],[341,17,341,52,1],[342,13,342,14,1],[343,9,343,10,1],[346,9,346,10,1],[347,13,347,57,1],[348,9,348,10,1],[351,9,351,10,1],[352,13,352,43,1],[353,13,353,71,1],[354,13,354,49,1],[355,13,357,85,1],[358,9,358,10,1],[361,9,361,10,1],[362,13,362,78,1],[363,13,363,86,1],[364,13,366,69,1],[368,13,368,84,1],[369,13,369,70,1],[370,13,370,46,1],[371,9,371,10,1],[385,13,385,55,1],[386,13,386,14,1],[387,17,387,38,1],[388,13,388,14,1]]);
+    </script>
+  </body>
+</html>

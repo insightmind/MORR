@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\CLITest\Commands\RecordCommandTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using MORR.Core.CLI.Commands.Record;
+using MORR.Core.CLI.Interactive;
+using MORR.Core.CLI.Output;
+using MORR.Core.CLI.Utility;
+using MORR.Core.Session;
+using System;
+using System.Diagnostics;
+using System.Reflection;
+using MORR.Shared.Utility;
+
+namespace CLITest.Commands
+{
+    [TestClass]
+    public class RecordCommandTest
+    {
+        private const int failCode = -1;
+        private const int successCode = 0;
+
+        private Mock&lt;ISessionManager&gt; managerMock;
+        private Mock&lt;IConsoleFormatter&gt; outputMock;
+        private Mock&lt;IInteractiveCommandLine&gt; commandLineMock;
+        private Mock&lt;IMessageLoop&gt; messageLoopMock;
+
+        [TestInitialize]
+        public void BeforeTest()
+        {
+            managerMock = new Mock&lt;ISessionManager&gt;();
+            outputMock = new Mock&lt;IConsoleFormatter&gt;();
+            commandLineMock = new Mock&lt;IInteractiveCommandLine&gt;();
+            messageLoopMock = new Mock&lt;IMessageLoop&gt;();
+        }
+
+        [TestMethod]
+        public void TestRecordCommand_Successful()
+        {
+            // Preconditions
+            Debug.Assert(managerMock != null);
+            Debug.Assert(outputMock != null);
+            Debug.Assert(commandLineMock != null);
+            Debug.Assert(messageLoopMock != null);
+
+            /* GIVEN */
+            var mockSequence = new MockSequence();
+            managerMock.InSequence(mockSequence)?.Setup(manager =&gt; manager.StartRecording());
+            managerMock.InSequence(mockSequence)?.Setup(manager =&gt; manager.StopRecording());
+
+            commandLineMock
+                .Setup(cli =&gt; cli.Launch(It.IsAny&lt;Action&gt;()))?
+                .Callback((Action action) =&gt; action?.Invoke())?
+                .Verifiable();
+
+            var command = new RecordCommand(managerMock.Object, outputMock.Object, commandLineMock.Object, messageLoopMock.Object);
+            var options = new RecordOptions
+            {
+                IsVerbose = false,
+                ConfigPath = Assembly.GetExecutingAssembly().Location
+            };
+
+            /* WHEN */
+            var returnCode = command.Execute(options);
+
+            /* THEN */
+
+            // We test if the command was successful and returned code 0.
+            Assert.AreEqual(successCode, returnCode);
+
+            managerMock.VerifyAll();
+            managerMock.Verify(manager =&gt; manager.StartRecording(), Times.Once);
+            managerMock.Verify(manager =&gt; manager.StopRecording(), Times.Once);
+
+            messageLoopMock.Verify(loop =&gt; loop.Start(), Times.Once);
+            messageLoopMock.Verify(loop =&gt; loop.Stop(), Times.Once);
+        }
+
+        [TestMethod]
+        public void TestRecordCommand_OnStartError()
+        {
+            // Preconditions
+            Debug.Assert(managerMock != null);
+            Debug.Assert(outputMock != null);
+            Debug.Assert(commandLineMock != null);
+            Debug.Assert(messageLoopMock != null);
+
+            /* GIVEN */
+            managerMock
+                .Setup(manager =&gt; manager.StartRecording())?
+                .Throws(new InvalidOperationException());
+
+            var command = new RecordCommand(managerMock.Object, outputMock.Object, commandLineMock.Object, messageLoopMock.Object);
+            var options = new RecordOptions
+            {
+                IsVerbose = false,
+                ConfigPath = Assembly.GetExecutingAssembly().Location
+            };
+
+            /* WHEN */
+            var returnCode = command.Execute(options);
+
+            /* THEN */
+
+            // We test if the command failed and returned code -1.
+            Assert.AreEqual(failCode, returnCode);
+
+            managerMock.Verify(manager =&gt; manager.StartRecording(), Times.Once);
+            managerMock.Verify(manager =&gt; manager.StopRecording(), Times.Never);
+
+            outputMock.Verify(output =&gt; output.PrintError(It.IsAny&lt;InvalidOperationException&gt;()), Times.Once);
+
+            messageLoopMock.Verify(loop =&gt; loop.Start(), Times.Never);
+            messageLoopMock.Verify(loop =&gt; loop.Stop(), Times.Never);
+        }
+
+        [TestMethod]
+        public void TestRecordCommand_NullOptions()
+        {
+            // Preconditions
+            Debug.Assert(managerMock != null);
+            Debug.Assert(outputMock != null);
+            Debug.Assert(commandLineMock != null);
+            Debug.Assert(messageLoopMock != null);
+
+            /* GIVEN */
+            var command = new RecordCommand(managerMock.Object, outputMock.Object, commandLineMock.Object, messageLoopMock.Object);
+
+            /* WHEN */
+            var returnCode = command.Execute(null);
+
+            /* THEN */
+
+            // We test if the command was unsuccessful and returned code -1.
+            Assert.AreEqual(-1, returnCode);
+
+            managerMock.Verify(manager =&gt; manager.StartRecording(), Times.Never);
+            managerMock.Verify(manager =&gt; manager.StopRecording(), Times.Never);
+        }
+
+        [TestMethod]
+        public void TestRecordCommand_IsVerbosePropagation()
+        {
+            // Preconditions
+            Debug.Assert(managerMock != null);
+            Debug.Assert(outputMock != null);
+            Debug.Assert(commandLineMock != null);
+            Debug.Assert(messageLoopMock != null);
+
+            /* GIVEN */
+            outputMock.SetupSet(output =&gt; output.IsVerbose = true);
+
+            var command = new RecordCommand(managerMock.Object, outputMock.Object, commandLineMock.Object, messageLoopMock.Object);
+            var options = new RecordOptions
+            {
+                IsVerbose = true,
+                ConfigPath = &quot;&quot;
+            };
+
+            /* WHEN */
+            command.Execute(options);
+
+            /* THEN */
+            outputMock.VerifySet(output =&gt; output.IsVerbose = true);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[28,9,28,10,1],[29,13,29,55,1],[30,13,30,56,1],[31,13,31,67,1],[32,13,32,56,1],[33,9,33,10,1],[37,9,37,10,1],[39,13,39,47,1],[40,13,40,46,1],[41,13,41,51,1],[42,13,42,51,1],[45,13,45,51,1],[46,13,46,94,1],[47,13,47,93,1],[49,13,51,46,1],[51,46,51,62,1],[51,62,52,31,1],[49,13,52,31,1],[54,13,54,132,1],[55,13,59,15,1],[62,13,62,55,1],[67,13,67,54,1],[69,13,69,37,1],[70,13,70,81,1],[71,13,71,80,1],[73,13,73,70,1],[74,13,74,69,1],[75,9,75,10,1],[79,9,79,10,1],[81,13,81,47,1],[82,13,82,46,1],[83,13,83,51,1],[84,13,84,51,1],[87,13,89,58,1],[91,13,91,132,1],[92,13,96,15,1],[99,13,99,55,1],[104,13,104,51,1],[106,13,106,81,1],[107,13,107,81,1],[109,13,109,111,1],[111,13,111,71,1],[112,13,112,70,1],[113,9,113,10,1],[117,9,117,10,1],[119,13,119,47,1],[120,13,120,46,1],[121,13,121,51,1],[122,13,122,51,1],[125,13,125,132,1],[128,13,128,52,1],[133,13,133,45,1],[135,13,135,82,1],[136,13,136,81,1],[137,9,137,10,1],[141,9,141,10,1],[143,13,143,47,1],[144,13,144,46,1],[145,13,145,51,1],[146,13,146,51,1],[149,13,149,43,1],[149,43,149,66,1],[149,66,149,68,1],[149,13,149,68,1],[151,13,151,132,1],[152,13,156,15,1],[159,13,159,38,1],[162,13,162,44,1],[162,44,162,67,1],[162,67,162,69,1],[162,13,162,69,1],[163,9,163,10,1]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\UI\Utility\RelayCommand.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Windows.Input;
+
+namespace MORR.Core.UI.Utility
+{
+    public class RelayCommand : ICommand
+    {
+        private readonly Predicate&lt;object&gt;? canExecute;
+        private readonly Action&lt;object&gt; execute;
+
+        public RelayCommand(Action&lt;object&gt; execute, Predicate&lt;object&gt;? canExecute = null)
+        {
+            this.execute = execute ?? throw new ArgumentNullException(nameof(execute));
+            this.canExecute = canExecute;
+        }
+
+        public event EventHandler CanExecuteChanged
+        {
+            add =&gt; CommandManager.RequerySuggested += value;
+            remove =&gt; CommandManager.RequerySuggested -= value;
+        }
+
+        public bool CanExecute(object parameter)
+        {
+            return canExecute == null || canExecute(parameter);
+        }
+
+        public void Execute(object parameter)
+        {
+            execute?.Invoke(parameter);
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[11,9,11,90,0],[12,9,12,10,0],[13,13,13,88,0],[14,13,14,42,0],[15,9,15,10,0],[19,20,19,60,0],[20,23,20,63,0],[24,9,24,10,0],[25,13,25,64,0],[26,9,26,10,0],[29,9,29,10,0],[30,13,30,40,0],[31,9,31,10,0]]);
+    </script>
+  </body>
+</html>

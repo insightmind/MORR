@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\CLI\Commands\Validate\ValidateCommand.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using MORR.Core.CLI.Output;
+using MORR.Core.Configuration;
+using MORR.Shared.Utility;
+using System;
+using System.Diagnostics;
+using System.IO;
+
+namespace MORR.Core.CLI.Commands.Validate
+{
+    public class ValidateCommand : ICommand&lt;ValidateOptions&gt;
+    {
+        #region Constants
+
+        private const string successMessage = &quot;The configuration file is valid!&quot;;
+        private const string failureMessage = &quot;The configuration file is invalid!&quot;;
+        private const string loadedFileMessage = &quot;Load configuration file.&quot;;
+        private const string assemblyMessage = &quot;Load all assemblies.&quot;;
+        private const string resolveConfigMessage = &quot;Resolving Configuration&quot;;
+
+        #endregion
+
+        #region Dependencies
+
+        private readonly IConfigurationManager configurationManager;
+        private readonly IConsoleFormatter consoleFormatter;
+        private readonly IBootstrapper bootstrapper;
+
+        #endregion
+
+        #region LifeCycle
+
+        public ValidateCommand() : this(new ConfigurationManager(), new ConsoleFormatter(), new Bootstrapper()) { }
+
+        public ValidateCommand(
+            IConfigurationManager configurationManager, 
+            IConsoleFormatter consoleFormatter,
+            IBootstrapper bootstrapper) 
+        {
+            this.configurationManager = configurationManager;
+            this.consoleFormatter = consoleFormatter;
+            this.bootstrapper = bootstrapper;
+        }
+
+        #endregion
+
+        #region Execution
+
+        public int Execute(ValidateOptions options)
+        {
+            Debug.Assert(consoleFormatter != null, nameof(consoleFormatter) + &quot; != null&quot;);
+            Debug.Assert(bootstrapper != null, nameof(bootstrapper) + &quot; != null&quot;);
+
+            if (options == null)
+            {
+                return -1;
+            }
+
+            try
+            {
+                
+                consoleFormatter.IsVerbose = options.IsVerbose;
+
+                // Load Configuration File
+                consoleFormatter.PrintDebug(loadedFileMessage);
+                var filePath = new FilePath(Path.GetFullPath(options.ConfigPath));
+
+                // Start Configuration Manager and Bootstrapper
+                consoleFormatter.PrintDebug(assemblyMessage);
+                bootstrapper.ComposeImports(configurationManager);
+
+                // Resolve Configuration File
+                consoleFormatter.PrintDebug(resolveConfigMessage);
+                configurationManager.LoadConfiguration(filePath);
+
+                Console.WriteLine(successMessage);
+                return 0;
+            }
+            catch (InvalidConfigurationException exception)
+            {
+                consoleFormatter.PrintError(exception);
+                Console.WriteLine(failureMessage);
+                return 1;
+            }
+            catch (Exception exception)
+            {
+                consoleFormatter.PrintError(exception);
+                return -1;
+            }
+        }
+
+        #endregion
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[32,36,32,112,0],[32,113,32,114,0],[32,115,32,116,0],[34,9,37,40,1],[38,9,38,10,1],[39,13,39,62,1],[40,13,40,54,1],[41,13,41,46,1],[42,9,42,10,1],[49,9,49,10,1],[50,13,50,91,1],[51,13,51,83,1],[53,13,53,33,1],[54,13,54,14,1],[55,17,55,27,1],[59,13,59,14,1],[61,17,61,64,1],[64,17,64,64,1],[65,17,65,83,1],[68,17,68,62,1],[69,17,69,67,1],[72,17,72,67,1],[73,17,73,66,1],[75,17,75,51,1],[76,17,76,26,1],[78,13,78,60,1],[79,13,79,14,1],[80,17,80,56,1],[81,17,81,51,1],[82,17,82,26,1],[84,13,84,40,1],[85,13,85,14,1],[86,17,86,56,1],[87,17,87,27,1],[89,9,89,10,1]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Common\Shared\Events\Queue\Strategy\SingleConsumer\SingleConsumerChannelStrategy.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Channels;
+using System.Threading.Tasks;
+
+namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
+{
+    /// &lt;summary&gt;
+    /// A SingleConsumerChannelStrategy is a Distributive-FIFO Queue which allows multiple producers and a single consumer.
+    /// This queue is performance optimized for a single consumer and should be preferred in this case.
+    /// Please make sure only a single consumer will request. Otherwise an exception is thrown.
+    /// &lt;/summary&gt;
+    /// &lt;typeparam name=&quot;TEvent&quot;&gt;The type of event which is queued by the channel&lt;/typeparam&gt;
+    public abstract class SingleConsumerChannelStrategy&lt;TEvent&gt; : IEventQueueStorageStrategy&lt;TEvent&gt; where TEvent : Event
+    {
+        private Channel&lt;TEvent, TEvent&gt;? eventChannel;
+        private bool isOccupied;
+        private readonly Mutex subscriptionMutex = new Mutex();
+        private const int timeOut = 500;
+        public bool IsClosed { get; private set; } = true;
+
+        /// &lt;summary&gt;
+        ///     Asynchronously gets all events as concrete type &lt;typeparamref name=&quot;T&quot; /&gt;.
+        /// &lt;/summary&gt;
+        /// &lt;returns&gt;A stream of &lt;typeparamref name=&quot;T&quot; /&gt;&lt;/returns&gt;
+        public IAsyncEnumerable&lt;TEvent&gt; GetEvents(CancellationToken token = default)
+        {
+            subscriptionMutex.WaitOne(timeOut);
+
+            if (isOccupied)
+            {
+                subscriptionMutex.ReleaseMutex();
+                throw new ChannelConsumingException(&quot;Channel already occupied!&quot;);
+            }
+
+            isOccupied = true;
+            token.Register(FreeReading);
+
+            if (eventChannel == null)
+            {
+                eventChannel = CreateChannel();
+            }
+
+            subscriptionMutex.ReleaseMutex();
+            return eventChannel.Reader.ReadAllAsync(token);
+        }
+
+        /// &lt;summary&gt;
+        ///     Asynchronously enqueues a new event.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;event&quot;&gt;The event to enqueue&lt;/param&gt;
+        public async void Enqueue(TEvent @event)
+        {
+            if (eventChannel == null || IsClosed) return;
+            await EnqueueAsync(eventChannel, @event);
+        }
+
+        public void Open()
+        {
+            subscriptionMutex.WaitOne(timeOut);
+
+            if (!IsClosed)
+            {
+                subscriptionMutex.ReleaseMutex();
+                return;
+            }
+
+            IsClosed = false;
+            subscriptionMutex.ReleaseMutex();
+
+            FreeReading();
+            eventChannel = CreateChannel();
+        }
+
+        public void Close()
+        {
+            subscriptionMutex.WaitOne(timeOut);
+            if (IsClosed)
+            {
+                subscriptionMutex.ReleaseMutex();
+                return;
+            }
+
+            IsClosed = true;
+            subscriptionMutex.ReleaseMutex();
+
+            eventChannel?.Writer.TryComplete();
+            FreeReading();
+        }
+
+        private static ValueTask&lt;bool&gt; EnqueueAsync(Channel&lt;TEvent, TEvent&gt; channel, TEvent @event)
+        {
+            async Task&lt;bool&gt; AsyncSlowPath(TEvent item)
+            {
+                while (await channel.Writer.WaitToWriteAsync())
+                {
+                    if (channel.Writer.TryWrite(item)) return true;
+                }
+                return false; // Channel was completed during the wait
+            }
+
+            return channel.Writer.TryWrite(@event) ? new ValueTask&lt;bool&gt;(true) : new ValueTask&lt;bool&gt;(AsyncSlowPath(@event));
+        }
+
+        private void FreeReading()
+        {
+            subscriptionMutex.WaitOne(timeOut);
+            isOccupied = false;
+            subscriptionMutex.ReleaseMutex();
+        }
+
+        protected abstract Channel&lt;TEvent&gt; CreateChannel();
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[18,9,18,64,1],[20,32,20,36,1],[20,37,20,49,1],[20,54,20,58,1],[27,9,27,10,1],[28,13,28,48,1],[30,13,30,28,1],[31,13,31,14,1],[32,17,32,50,1],[33,17,33,82,1],[36,13,36,31,1],[37,13,37,41,1],[39,13,39,38,1],[40,13,40,14,1],[41,17,41,48,1],[42,13,42,14,1],[44,13,44,46,1],[45,13,45,60,1],[46,9,46,10,1],[53,9,53,10,1],[54,13,54,50,1],[54,51,54,58,0],[55,13,55,54,1],[56,9,56,10,1],[59,9,59,10,1],[60,13,60,48,1],[62,13,62,27,1],[63,13,63,14,1],[64,17,64,50,1],[65,17,65,24,1],[68,13,68,30,1],[69,13,69,46,1],[71,13,71,27,1],[72,13,72,44,1],[73,9,73,10,1],[76,9,76,10,1],[77,13,77,48,1],[78,13,78,26,1],[79,13,79,14,1],[80,17,80,50,1],[81,17,81,24,1],[84,13,84,29,1],[85,13,85,46,1],[87,13,87,48,1],[88,13,88,27,1],[89,9,89,10,1],[92,9,92,10,1],[94,13,94,14,0],[95,17,95,64,0],[96,17,96,18,0],[97,21,97,55,0],[97,56,97,68,0],[98,17,98,18,0],[99,17,99,30,0],[100,13,100,14,0],[102,13,102,125,1],[103,9,103,10,1],[106,9,106,10,1],[107,13,107,48,1],[108,13,108,32,1],[109,13,109,46,1],[110,9,110,10,1]]);
+    </script>
+  </body>
+</html>

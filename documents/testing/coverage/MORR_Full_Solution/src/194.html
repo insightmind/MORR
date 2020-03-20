@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\WebBrowser\WebBrowserModule.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Runtime.CompilerServices;
+using MORR.Modules.WebBrowser.Producers;
+using MORR.Shared.Modules;
+using MORR.Shared.Utility;
+
+[assembly: InternalsVisibleTo(&quot;WebBrowserTest&quot;)]
+namespace MORR.Modules.WebBrowser
+{
+    /// &lt;summary&gt;
+    ///     The &lt;see cref=&quot;WebBrowserModule&quot; /&gt; is responsible for recording all browser related user interactions
+    /// &lt;/summary&gt;
+    public class WebBrowserModule : IModule
+    {
+        [Import] private ButtonClickEventProducer buttonClickEventProducer;
+
+        [Import] private CloseTabEventProducer closeTabEventProducer;
+
+        [Import] private FileDownloadEventProducer fileDownloadEventProducer;
+
+        [Import] private HoverEventProducer hoverEventProducer;
+
+        [Import] private NavigationEventProducer navigationEventProducer;
+
+        [Import] private OpenTabEventProducer openTabEventProducer;
+
+        [Import] private SwitchTabEventProducer switchTabEventProducer;
+
+        [Import] private TextInputEventProducer textInputEventProducer;
+
+        [Import] private TextSelectionEventProducer textSelectionEventProducer;
+        [Import] private WebBrowserModuleConfiguration Configuration { get; set; }
+
+        private bool isActive;
+        private WebExtensionListener listener;
+        private List&lt;IWebBrowserEventObserver&gt; producers;
+
+        public static Guid Identifier { get; } = new Guid(&quot;e9240dc4-f33f-43db-a419-5b36d8279c88&quot;);
+        Guid IModule.Identifier =&gt; Identifier;
+
+        public bool IsActive
+        {
+            get =&gt; isActive;
+            set =&gt; Utility.SetAndDispatch(ref isActive, value, StartRecording, StopRecording);
+        }
+
+        private void StartRecording()
+        {
+            listener.RecordingActive = true;
+        }
+
+        private void StopRecording()
+        {
+            listener.RecordingActive = false;
+            producers?.ForEach(producer =&gt; producer.Close());
+        }
+
+        public void Initialize(bool isEnabled)
+        {
+            producers = new List&lt;IWebBrowserEventObserver&gt;
+            {
+                buttonClickEventProducer, closeTabEventProducer, fileDownloadEventProducer,
+                hoverEventProducer, navigationEventProducer, openTabEventProducer,
+                switchTabEventProducer, textInputEventProducer, textSelectionEventProducer
+            };
+
+            if (isEnabled)
+            {
+                if (listener == null)
+                {
+                    listener = new WebExtensionListener(Configuration.UrlSuffix);
+                }
+
+                foreach (var producer in producers)
+                {
+                    listener.Subscribe(producer, producer.HandledEventLabel);
+                }
+                listener.StartListening();
+                producers.ForEach(producer =&gt; producer.Open());
+            }
+            else
+            {
+                producers.ForEach(producer =&gt; producer.Close());
+            }
+        }
+
+        //revert back to unitialized state, only needed for (unit-)testing
+        internal void Reset()
+        {
+            if (listener != null)
+            {
+                listener.StopListening();
+                listener = null;
+            }
+            producers = null;
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[34,72,34,76,1],[34,77,34,81,1],[40,41,40,45,1],[40,50,40,98,1],[41,36,41,46,0],[45,20,45,28,1],[46,20,46,94,1],[50,9,50,10,1],[51,13,51,45,1],[52,9,52,10,1],[55,9,55,10,1],[56,13,56,46,1],[57,13,57,44,1],[57,44,57,60,1],[57,60,57,62,1],[57,13,57,62,1],[58,9,58,10,1],[61,9,61,10,1],[62,13,67,15,1],[69,13,69,27,1],[70,13,70,14,1],[71,17,71,38,1],[72,17,72,18,1],[73,21,73,82,1],[74,17,74,18,1],[76,17,76,24,1],[76,26,76,38,1],[76,39,76,41,1],[76,42,76,51,1],[77,17,77,18,1],[78,21,78,78,1],[79,17,79,18,1],[80,17,80,43,1],[81,17,81,47,1],[81,47,81,62,1],[81,62,81,64,1],[81,17,81,64,1],[82,13,82,14,1],[84,13,84,14,0],[85,17,85,47,0],[85,47,85,63,0],[85,63,85,65,0],[85,17,85,65,0],[86,13,86,14,0],[87,9,87,10,1],[91,9,91,10,1],[92,13,92,34,1],[93,13,93,14,1],[94,17,94,42,1],[95,17,95,33,1],[96,13,96,14,1],[97,13,97,30,1],[98,9,98,10,1]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\Mouse\Producers\MouseMoveEventProducer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Threading;
+using System.Windows;
+using MORR.Modules.Mouse.Events;
+using MORR.Modules.Mouse.Native;
+using MORR.Shared.Events.Queue;
+
+namespace MORR.Modules.Mouse.Producers
+{
+    /// &lt;summary&gt;
+    ///     Provides a single-writer-multiple-reader queue for MouseMoveEvent
+    /// &lt;/summary&gt;
+    public class MouseMoveEventProducer : DefaultEventQueue&lt;MouseMoveEvent&gt;
+    {
+        private static INativeMouse nativeMouse;
+
+        /// &lt;summary&gt;
+        ///     The mouse position in screen coordinates in the last period.
+        ///     This field will be initialized to the mouse position
+        ///     when the StartTimer() is called.
+        /// &lt;/summary&gt;
+        private INativeMouse.POINT lastMousePosition;
+
+        /// &lt;summary&gt;
+        ///     A timer that records the mouse position at specific intervals.
+        /// &lt;/summary&gt;
+        private Timer? mousePositionRecordingTimer;
+
+        /// &lt;summary&gt;
+        ///     The sampling rate of the mouse position capture, in Hz.
+        /// &lt;/summary&gt;
+        internal uint SamplingRateInHz { get; set; }
+
+        /// &lt;summary&gt;
+        ///     The minimal distance(computed with screen coordinates) a mouse move
+        ///     must reach in a period to be recorded.
+        ///     A mouse move with distance less than the Threshold will be ignored,
+        ///     in other words, a new MouseMoveEvent will not be generated and
+        ///     the mouse position will not be recorded.
+        /// &lt;/summary&gt;
+        internal int Threshold { get; set; }
+
+        /// &lt;summary&gt;
+        ///     Get the mouse position and create &amp; enqueue corresponding event
+        ///     if the Threshold is reached.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;stateInfo&quot;&gt;state object&lt;/param&gt;
+        private void GetMousePosition(object stateInfo)
+        {
+            // get the current mouse position as Point
+            var currentMousePosition = nativeMouse.GetCursorPos();
+            var currentMousePositionAsPoint = new Point(currentMousePosition.X, currentMousePosition.Y);
+            var lastMousePositionAsPoint = new Point(lastMousePosition.X, lastMousePosition.Y);
+            // compare the last and the current mouse position and compute their distance
+            var distance = Point.Subtract(lastMousePositionAsPoint, currentMousePositionAsPoint).Length;
+
+            // replace the last mouse position with the current mouse position
+            lastMousePosition = currentMousePosition;
+
+            //if the distance that the mouse has been moved reaches(is greater than) the Threshold
+            //record the new Position in the created MouseMoveEvent and enqueue it
+            if (distance &gt;= Threshold)
+            {
+                var @event = new MouseMoveEvent
+                    { MousePosition = currentMousePositionAsPoint, IssuingModule = MouseModule.Identifier };
+                Enqueue(@event);
+            }
+        }
+
+        /// &lt;summary&gt;
+        ///     start the mouse movement capture by starting the timer that records mouse position.
+        /// &lt;/summary&gt;
+        public void StartCapture(INativeMouse nativeM)
+        {
+            nativeMouse = nativeM;
+            lastMousePosition = nativeMouse.GetCursorPos();
+            var samplingTimeIntervalInMilliseconds = (int) ((double) 1 / SamplingRateInHz * 1000);
+            mousePositionRecordingTimer = new Timer(GetMousePosition, null, 0, samplingTimeIntervalInMilliseconds);
+        }
+
+        /// &lt;summary&gt;
+        ///     stop the mouse movement capture by disposing the timer that records mouse position.
+        /// &lt;/summary&gt;
+        public void StopCapture()
+        {
+            mousePositionRecordingTimer?.Dispose();
+            Close();
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[31,42,31,46,1],[31,47,31,51,1],[40,34,40,38,1],[40,39,40,43,1],[48,9,48,10,1],[50,13,50,67,1],[51,13,51,105,1],[52,13,52,96,1],[54,13,54,105,1],[57,13,57,54,1],[61,13,61,39,1],[62,13,62,14,1],[63,17,64,109,1],[65,17,65,33,1],[66,13,66,14,1],[67,9,67,10,1],[73,9,73,10,1],[74,13,74,35,1],[75,13,75,60,1],[76,13,76,99,1],[77,13,77,116,1],[78,9,78,10,1],[84,9,84,10,1],[85,13,85,52,1],[86,13,86,21,1],[87,9,87,10,1]]);
+    </script>
+  </body>
+</html>

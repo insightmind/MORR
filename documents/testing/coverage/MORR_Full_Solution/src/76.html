@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Common\Shared\Events\Queue\Aliases.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using MORR.Shared.Events.Queue.Strategy.MultiConsumer;
+using MORR.Shared.Events.Queue.Strategy.SingleConsumer;
+
+namespace MORR.Shared.Events.Queue
+{
+    /// &lt;summary&gt;
+    ///     Provides an event queue for the most common scenarios that supports deserialization.
+    /// &lt;/summary&gt;
+    /// &lt;typeparam name=&quot;T&quot;&gt;The type of &lt;see cref=&quot;Event&quot; /&gt; in this queue.&lt;/typeparam&gt;
+    public abstract class DefaultEventQueue&lt;T&gt; : SupportDeserializationEventQueue&lt;T&gt; where T : Event
+    {
+        protected DefaultEventQueue(int bufferCapacity = 1024, uint? maxConsumers = null) :
+            base(new BoundedMultiConsumerChannelStrategy&lt;T&gt;(bufferCapacity, maxConsumers)) { }
+    }
+
+    /// &lt;summary&gt;
+    ///     Provides an event queue for events intended for encoding.
+    /// &lt;/summary&gt;
+    /// &lt;typeparam name=&quot;T&quot;&gt;The type of &lt;see cref=&quot;Event&quot; /&gt; in this queue.&lt;/typeparam&gt;
+    public abstract class DefaultEncodableEventQueue&lt;T&gt; : EventQueue&lt;T&gt;, IEncodableEventQueue&lt;T&gt; where T : Event
+    {
+        protected DefaultEncodableEventQueue(int bufferCapacity = 1024) : base(
+            new BoundedSingleConsumerChannelStrategy&lt;T&gt;(bufferCapacity)) { }
+    }
+
+    /// &lt;summary&gt;
+    ///     Provides an event queue for events intended for decoding.
+    /// &lt;/summary&gt;
+    /// &lt;typeparam name=&quot;T&quot;&gt;The type of &lt;see cref=&quot;Event&quot; /&gt; in this queue.&lt;/typeparam&gt;
+    public abstract class DefaultDecodableEventQueue&lt;T&gt; : EventQueue&lt;T&gt;, IDecodableEventQueue&lt;T&gt; where T : Event
+    {
+        protected DefaultDecodableEventQueue(int bufferCapacity = 1024, uint? maxConsumers = null) : base(
+            new BoundedMultiConsumerChannelStrategy&lt;T&gt;(bufferCapacity, maxConsumers)) { }
+    }
+
+    /// &lt;summary&gt;
+    ///     Provides an event queue for events that do not support deserialization.
+    /// &lt;/summary&gt;
+    /// &lt;typeparam name=&quot;T&quot;&gt;The type of &lt;see cref=&quot;Event&quot; /&gt; in this queue.&lt;/typeparam&gt;
+    public abstract class NonDeserializableEventQueue&lt;T&gt; : EventQueue&lt;T&gt;, IReadOnlyEventQueue&lt;T&gt; where T : Event
+    {
+        protected NonDeserializableEventQueue(int bufferCapacity = 1024, uint? maxConsumers = null) : base(
+            new BoundedMultiConsumerChannelStrategy&lt;T&gt;(bufferCapacity, maxConsumers)) { }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[13,13,13,91,1],[13,92,13,93,1],[13,94,13,95,1],[22,75,23,73,1],[23,74,23,75,1],[23,76,23,77,1],[32,102,33,86,1],[33,87,33,88,1],[33,89,33,90,1],[42,103,43,86,1],[43,87,43,88,1],[43,89,43,90,1]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\MORR\Configuration\ConfigurationManager.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.IO.Abstractions;
+using System.Linq;
+using System.Text.Json;
+using MORR.Shared.Configuration;
+using MORR.Shared.Utility;
+
+namespace MORR.Core.Configuration
+{
+    /// &lt;summary&gt;
+    ///     Manages the application&#39;s configuration
+    /// &lt;/summary&gt;
+    public class ConfigurationManager : IConfigurationManager
+    {
+        /// &lt;summary&gt;
+        ///     All configuration wrappers
+        /// &lt;/summary&gt;
+        [ImportMany]
+        private IEnumerable&lt;IConfiguration&gt;? Configurations { get; set; }
+
+        /// &lt;summary&gt;
+        /// The file system used to load the configuration file.
+        /// &lt;/summary&gt;
+        private readonly IFileSystem fileSystem;
+
+        /// &lt;summary&gt;
+        /// Initializes the configuration manager using the default file system.
+        /// &lt;/summary&gt;
+        public ConfigurationManager() : this(new FileSystem()) { }
+
+        /// &lt;summary&gt;
+        /// Initializes the configuration manager using the specified file system.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;fileSystem&quot;&gt;The file system used to load the configuration file.&lt;/param&gt;
+        public ConfigurationManager(IFileSystem fileSystem) =&gt; this.fileSystem = fileSystem;
+
+        /// &lt;summary&gt;
+        ///     Loads the configuration from the specified path
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;path&quot;&gt;The path to load the configuration from&lt;/param&gt;
+        public void LoadConfiguration(FilePath path)
+        {
+            using var document = LoadJsonDocument(path);
+            CommitConfigurations(document);
+        }
+
+        private JsonDocument LoadJsonDocument(FilePath path)
+        {
+            if (path == null || fileSystem?.File == null)
+            {
+                throw new ArgumentNullException(nameof(path), &quot;Invalid file path to configuration file.&quot;);
+            }
+
+            var jsonString = fileSystem.File.ReadAllText(path.ToString());
+            var options = new JsonDocumentOptions()
+            {
+                AllowTrailingCommas = true,
+                CommentHandling = JsonCommentHandling.Skip
+            };
+
+            return JsonDocument.Parse(jsonString, options);
+        }
+
+        private void CommitConfigurations(JsonDocument document)
+        {
+            if (Configurations == null || document == null)
+            {
+                return; // We simply return as we do not need to commit any configs.
+            }
+
+            foreach (var configurationObject in document.RootElement.EnumerateObject())
+            {
+                var configurationType = Utility.GetTypeFromAnyAssembly(configurationObject.Name);
+                var resolvedConfiguration = Configurations.SingleOrDefault(x =&gt; x.GetType() == configurationType);
+
+                if (resolvedConfiguration == null)
+                {
+                    throw new InvalidConfigurationException($&quot;Could not find specified configuration type {configurationObject}&quot;);
+                }
+
+                resolvedConfiguration.Parse(new RawConfiguration(configurationObject.Value.GetRawText()));
+            }
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[21,63,21,67,1],[21,68,21,72,1],[31,41,31,63,0],[31,64,31,65,0],[31,66,31,67,0],[37,9,37,60,1],[37,64,37,92,1],[44,9,44,10,1],[45,13,45,57,1],[46,13,46,44,1],[47,9,47,10,1],[47,9,47,10,1],[50,9,50,10,1],[51,13,51,58,1],[52,13,52,14,1],[53,17,53,107,1],[56,13,56,75,1],[57,13,61,15,1],[63,13,63,60,1],[64,9,64,10,1],[67,9,67,10,1],[68,13,68,60,1],[69,13,69,14,1],[70,17,70,24,1],[73,13,73,20,1],[73,22,73,45,1],[73,46,73,48,1],[73,49,73,87,1],[74,13,74,14,1],[75,17,75,98,1],[76,17,76,81,1],[76,81,76,113,1],[76,113,76,115,1],[76,17,76,115,1],[78,17,78,51,1],[79,17,79,18,1],[80,21,80,131,1],[83,17,83,107,1],[84,13,84,14,1],[85,9,85,10,1]]);
+    </script>
+  </body>
+</html>

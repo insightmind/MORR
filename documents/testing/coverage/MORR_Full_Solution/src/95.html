@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\UI\App.xaml.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Globalization;
+using System.Linq;
+using System.Threading;
+using System.Windows;
+
+namespace MORR.Core.UI
+{
+    /// &lt;summary&gt;
+    ///     Entry point for WPF application
+    /// &lt;/summary&gt;
+    public partial class App : Application
+    {
+        internal static bool HasLanguageCommandLineArgument { get; private set; }
+
+        internal static bool IsLanguageCommandLineArgument(string argument)
+        {
+            return string.CompareOrdinal(argument, &quot;no-force-german-ui&quot;) == 0;
+        }
+
+        public App()
+        {
+            // Set culture before WPF components get initialized so they use the correct language
+
+            HasLanguageCommandLineArgument = Environment.GetCommandLineArgs().Any(IsLanguageCommandLineArgument);
+
+            if (!HasLanguageCommandLineArgument)
+            {
+                Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo(&quot;de-DE&quot;);
+                Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(&quot;de-DE&quot;);
+            }
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[14,63,14,67,0],[14,68,14,80,0],[17,9,17,10,0],[18,13,18,79,0],[19,9,19,10,0],[21,9,21,21,0],[22,9,22,10,0],[25,13,25,114,0],[27,13,27,49,0],[28,13,28,14,0],[29,17,29,91,0],[30,17,30,93,0],[31,13,31,14,0],[32,9,32,10,0]]);
+    </script>
+  </body>
+</html>
