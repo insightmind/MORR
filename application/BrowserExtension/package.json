@@ -1,6 +1,6 @@
 {
   "name": "morr_browser_extension",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "MORR browser extension.",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,14 @@
     "dbuild": "npx tsc --noEmit && npx parcel build ./src/background.ts ./src/Listeners/DOM/ContentScript/DOMEventRecorder.ts --no-source-maps --no-minify -d debug --detailed-report 10",
     "clean": "rm -rf dist/ debug/"
   },
-  "author": "Karl Rubel",
+  "author": "PSE Team 2",
+  "contributors": [
+    "Irma Suppes",
+    "Karl Rubel",
+    "Mingyi Li",
+    "Niklas Bülow",
+    "Sönke Jendral"
+  ],
   "license": "UNLICENSED",
   "staticFiles": {
     "staticPath": "materials"
