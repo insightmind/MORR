@@ -11,6 +11,8 @@ Implementing a project on the scale of MORR with multiple collaborators requires
 
 We set up common .editorconfig and .DotSettings files that contained our code quality conventions. These conventions encouraged use of modern C\# features (try-casts, coalescing null operators, pattern matching and more) and enforced use of const, readonly, nameof and correct accessibility modifiers. We activated nullability to force potentially nullable variables to be clearly declared as such. We also used attributes consumed by code analyzers and compiler directives to indicate certain exceptions to the agreed upon conventions.
 
+Additionally, we utilized Github Actions CI for Continuous Integration: The CI was configured to build and run tests for the application (split into the web extension, the C++ code for the global hook implementation and the rest of the code) on every change to a Pull Request. By so doing we received immediate feedback on the build status, test status and any build warnings introduced with the new changes.
+
 \section{Reviews}
 
 Besides focusing on correctness, our code reviews also focused on readability of the code. Suggestions for alternative implementations or different variable names were a frequent occurence and helped raise code quality and ensure a consistent style.
