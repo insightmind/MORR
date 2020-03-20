@@ -37,9 +37,9 @@ namespace MORR.Core.Data.Transcoding.Json
 
         private async void EncodeEvents(DirectoryPath recordingDirectoryPath)
         {
-            await using var fileStream = GetFileStream(recordingDirectoryPath);
+            var fileStream = GetFileStream(recordingDirectoryPath);
             // using statement with IDisposable will close writer at end of scope
-            await using var writer = new Utf8JsonWriter(fileStream);
+            var writer = new Utf8JsonWriter(fileStream);
             writer.WriteStartArray();
 
             EncodeFinished.Reset();
@@ -55,6 +55,9 @@ namespace MORR.Core.Data.Transcoding.Json
             }
 
             writer.WriteEndArray();
+            writer.Dispose();
+            fileStream.Close();
+            fileStream.Dispose();
             EncodeFinished.Set();
         }
 

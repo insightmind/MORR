@@ -22,7 +22,21 @@ namespace MORR.Core.Data.Transcoding.Json
 
         private readonly IFileSystem fileSystem;
 
-        public ManualResetEvent DecodeFinished { get; } = new ManualResetEvent(false);
+        private readonly ManualResetEvent decodeFinished = new ManualResetEvent(false);
+
+        public ManualResetEvent DecodeFinished
+        {
+            get
+            {
+                var finishEvent = decodeFinished;
+                if (finishEvent.WaitOne(0))
+                {
+                    Close();
+                }
+
+                return finishEvent;
+            }
+        }
 
         [ImportingConstructor]
         public JsonDecoder() : this(new FileSystem()) { }
@@ -34,6 +48,7 @@ namespace MORR.Core.Data.Transcoding.Json
 
         public void Decode(DirectoryPath recordingDirectoryPath)
         {
+            Open();
             Task.Run(() => DecodeEvents(recordingDirectoryPath));
         }
 
@@ -48,8 +63,7 @@ namespace MORR.Core.Data.Transcoding.Json
             await using var fileStream = GetFileStream(recordingDirectoryPath);
             var document = JsonDocument.Parse(fileStream).RootElement;
 
-            Open();
-            DecodeFinished.Reset();
+            decodeFinished.Reset();
 
             foreach (var eventElement in document.EnumerateArray())
             {
@@ -74,8 +88,7 @@ namespace MORR.Core.Data.Transcoding.Json
                 Enqueue(intermediateFormatSample);
             }
 
-            Close();
-            DecodeFinished.Set();
+            decodeFinished.Set();
         }
     }
 }
