@@ -55,7 +55,7 @@
 
     \begin{attributes}
         \attribute{public int TabID}{The identifier of the tab where the web browser event occured in}
-        \attribute{public Uri CurrentURL}{The URL of the website where the web browser event occured in}
+        \attribute{public System.Uri CurrentURL}{The URL of the website where the web browser event occured in}
     \end{attributes}
     
     \begin{methods}
@@ -64,9 +64,9 @@
     			\para{string serialized}{The serialized event}
     		\end{parameters}
     	\end{method}
-    	\begin{method}{public void Deserialize(JsonElement parsed)}{Deserialize a browser event from a JSONElement instance.}
+    	\begin{method}{public void Deserialize(System.Text.Json.JsonElement parsed)}{Deserialize a browser event from a JSONElement instance.}
     		\begin{parameters}	
-    			\para{JsonElement parsed}{A JSONElement parsed from a serialized event.}
+    			\para{System.Text.Json.JsonElement parsed}{A JSONElement parsed from a serialized event.}
     		\end{parameters}
     	\end{method}
     \end{methods}
@@ -104,7 +104,7 @@
 
     \begin{attributes}
         \attribute{public string MIMEType}{MIME type of the file that was downloaded}
-        \attribute{public Uri FileURL}{The URL of the file that was downloaded}
+        \attribute{public System.Uri FileURL}{The URL of the file that was downloaded}
     \end{attributes}
 \end{class}
 
@@ -189,9 +189,9 @@
 	\end{attributes}
 	
 	\begin{methods}
-		\begin{method}{public virtual void Notify(JsonElement eventJson)}{Simply forward the event to the internal queue if its of the appropriate type. Ignore otherwise.}
+		\begin{method}{public virtual void Notify(System.Text.Json.JsonElement eventJson)}{Simply forward the event to the internal queue if its of the appropriate type. Ignore otherwise.}
 			\begin{parameters}
-				\para{JsonElement eventJson}{A JsonElement holding an event.}
+				\para{System.Text.Json.JsonElement eventJson}{A JsonElement holding an event.}
 			\end{parameters}
 			
 			\begin{exceptions}

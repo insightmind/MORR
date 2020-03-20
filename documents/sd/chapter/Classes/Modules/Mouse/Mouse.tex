@@ -33,7 +33,7 @@
     \clsdsp{A generic mouse event which all specific MouseEvents inherit from.}
     
     \begin{attributes}
-    	\attribute{public Point MousePosition}{The current position of the mouse in screen coordinates}
+    	\attribute{public System.Windows.Point MousePosition}{The current position of the mouse in screen coordinates}
     \end{attributes}
 \end{absclass}
 
@@ -45,7 +45,7 @@
     \clsdsp{ A mouse click user interaction.}
 
     \begin{attributes}
-        \attribute{public MouseAction MouseAction}{Specifies constants that define actions performed by the mouse.}
+        \attribute{public System.Windows.Input.MouseAction MouseAction}{Specifies constants that define actions performed by the mouse.}
         \attribute{public string HWnd}{The handle of the window in which the mouse click occurred.}
     \end{attributes}
 \end{class}
@@ -96,7 +96,10 @@
     \clsdsp{A single-writer-multiple-reader queue for MouseMoveEvent}
 
     \begin{methods}
-        \begin{method}{public void StartCapture()}{Starts capturing mouse move events}
+        \begin{method}{public void StartCapture(INativeMouse nativeM)}{Starts capturing mouse move events}
+        	\begin{parameters}
+        		\para{INativeMouse nativeM}{Required for capturing MouseMoveEvent.}
+        	\end{parameters}
         \end{method}
         \begin{method}{public void StopCapture()}{Stop capturing mouse move events}
         \end{method}

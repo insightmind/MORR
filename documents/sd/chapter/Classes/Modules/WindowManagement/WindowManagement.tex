@@ -39,8 +39,8 @@
     \clsdsp{ A window movement user interaction.}
 
     \begin{attributes}
-        \attribute{public Point OldLocation}{The old location of the window.}
-        \attribute{public Point NewLocation}{The new location of the window.}
+        \attribute{public System.Windows.Point OldLocation}{The old location of the window.}
+        \attribute{public System.Windows.Point NewLocation}{The new location of the window.}
     \end{attributes}
 \end{class}
 
@@ -52,8 +52,8 @@
     \clsdsp{A window resizing user interaction.}
 
     \begin{attributes}
-        \attribute{public Size OldSize}{The old size of the window.}
-        \attribute{public Size NewSize}{The new size of the window.}
+        \attribute{public System.Drawing.Size OldSize}{The old size of the window.}
+        \attribute{public System.Drawing.Size NewSize}{The new size of the window.}
     \end{attributes}
 \end{class}
 
@@ -65,7 +65,7 @@
     \clsdsp{An user interaction that changes the state of a window.}
 
     \begin{attributes}
-        \attribute{public WindowState State}{The new state of the window.}
+        \attribute{public System.Windows.WindowState State}{The new state of the window.}
     \end{attributes}
 \end{class}
 
@@ -79,7 +79,10 @@
     \clsdsp{A single-writer-multiple-reader queue for WindowFocusEvent}
 
     \begin{methods}
-        \begin{method}{public void StartCapture()}{Starts capturing window focus events}
+        \begin{method}{public void StartCapture(INativeWindowManagement nativeWinManagement)}{Starts capturing window focus events}
+        	\begin{parameters}
+    			\para{INativeWindowManagement nativeWinManagement}{Required for capturing WindowFocusEvent.}
+    		\end{parameters}
         \end{method}
         \begin{method}{public void StopCapture()}{Stop capturing window focus events}
     	\end{method}
@@ -94,7 +97,10 @@
     \clsdsp{A single-writer-multiple-reader queue for WindowMovementEvent}
 
     \begin{methods}
-    	\begin{method}{public void StartCapture()}{Starts capturing window movement events}
+    	\begin{method}{public void StartCapture(INativeWindowManagement nativeWinManagement)}{Starts capturing window movement events}
+    		\begin{parameters}
+    			\para{INativeWindowManagement nativeWinManagement}{Required for capturing WindowMovementEvent.}
+    		\end{parameters}
         \end{method}
         \begin{method}{public void StopCapture()}{Stop capturing window movement events}
     	\end{method}
@@ -109,7 +115,10 @@
     \clsdsp{A single-writer-multiple-reader queue for WindowResizingEvent}
 
     \begin{methods}
-        \begin{method}{public void StartCapture()}{Starts capturing window resizing events}
+        \begin{method}{public void StartCapture(INativeWindowManagement nativeWinManagement)}{Starts capturing window resizing events}
+        	\begin{parameters}
+    			\para{INativeWindowManagement nativeWinManagement}{Required for capturing WindowResizingEvent.}
+    		\end{parameters}
         \end{method}
         \begin{method}{public void StopCapture()}{Stop capturing window resizing events}
     	\end{method}
@@ -124,7 +133,10 @@
     \clsdsp{A single-writer-multiple-reader queue for WindowStateChangedEvent}
 
     \begin{methods}
-        \begin{method}{public void StartCapture()}{Starts capturing window state changed events}
+        \begin{method}{public void StartCapture(INativeWindowManagement nativeWinManagement)}{Starts capturing window state changed events}
+        	\begin{parameters}
+    			\para{INativeWindowManagement nativeWinManagement}{Required for capturing WindowStateChangedEvent.}
+    		\end{parameters}
         \end{method}
         \begin{method}{public void StopCapture()}{Stop capturing window state changed events}
     	\end{method}
