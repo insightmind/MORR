@@ -6,9 +6,9 @@ namespace MORR.Core.CLI.Commands.Processing
     public class ProcessOptions : CommandOptions
     {
         [Option('c', "config", Required = true, HelpText = "Path to configuration file")]
-        public string ConfigPath { get; set; }
+        public string ConfigPath { get; set; } = "";
 
         [Option('i', "inputFile", Required = true, HelpText = "Path to input file, which should be processed")]
-        public string InputFile { get; set; }
+        public string InputFile { get; set; } = "";
     }
 }
