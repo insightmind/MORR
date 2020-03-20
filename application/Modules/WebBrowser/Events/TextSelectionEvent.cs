@@ -12,7 +12,7 @@ namespace MORR.Modules.WebBrowser.Events
         /// <summary>
         ///     The text that was selected on the website
         /// </summary>
-        public string SelectedText { get; set; }
+        public string SelectedText { get; private set; } = "";
 
         protected override void DeserializeSpecificAttributes(JsonElement parsed)
         {

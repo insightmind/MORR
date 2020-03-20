@@ -12,7 +12,7 @@ namespace MORR.Modules.WebBrowser.Events
         /// <summary>
         ///     The element on the website that has been hovered
         /// </summary>
-        public string HoveredElement { get; set; }
+        public string HoveredElement { get; private set; } = "";
 
         protected override void DeserializeSpecificAttributes(JsonElement parsed)
         {

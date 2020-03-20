@@ -235,7 +235,7 @@ namespace WebBrowserTest
             webBrowserModule.Initialize(true);
 
             /* WHEN */
-            ChangeModuleActiveState(true);
+            await ChangeModuleActiveState(true);
             var result = await SendHTTPMessage(new { Request = "Start" });
 
             /* THEN */
@@ -274,7 +274,7 @@ namespace WebBrowserTest
             webBrowserModule.IsActive = false;
 
             /* WHEN */
-            ChangeModuleActiveState(false);
+            await ChangeModuleActiveState(false);
             var result = await SendHTTPMessage(new { Request = "WAITSTOP" });
 
             /* THEN */
