@@ -1,11 +1,13 @@
 @startuml
 skinparam monochrome true
 skinparam ClassAttributeIconSize 0
+!startsub default
 class KeyboardInteractEventProducer {
-    + StartCapture() : void
+    + StartCapture(nativeK : INativeKeyboard) : void
     + StopCapture() : void
 }
-class "DefaultEventQueue<T>" {
+abstract class "DefaultEventQueue<T>" {
 }
+!endsub
 "DefaultEventQueue<T>" "      <KeyboardInteractEvent>" <|-- KeyboardInteractEventProducer
 @enduml

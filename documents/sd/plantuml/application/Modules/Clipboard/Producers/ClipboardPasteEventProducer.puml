@@ -1,11 +1,13 @@
 @startuml
 skinparam monochrome true
 skinparam ClassAttributeIconSize 0
+!startsub default
 class ClipboardPasteEventProducer {
-    + StartCapture() : void
+    + StartCapture(nativeClip:INativeClipboard) : void
     + StopCapture() : void
 }
 class "DefaultEventQueue<T>" {
 }
+!endsub
 "DefaultEventQueue<T>" "    <ClipboardPasteEvent>" <|-- ClipboardPasteEventProducer
 @enduml

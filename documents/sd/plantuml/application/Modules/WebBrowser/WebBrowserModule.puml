@@ -7,7 +7,7 @@ class WebBrowserModule {
 
 
 interface IModule {
-    + Identifier : Guid
+    + Identifier : System.Guid
     + IsActive : bool <<get>> <<set>>
     + Initialize() : void
 }

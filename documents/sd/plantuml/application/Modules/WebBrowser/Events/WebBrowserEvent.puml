@@ -1,12 +1,14 @@
 @startuml
 skinparam monochrome true
 skinparam ClassAttributeIconSize 0
+!startsub default
 abstract class WebBrowserEvent {
     + TabID : int <<get>> <<set>>
     + Deserialize(serialized:string) : void
-    + Deserialize(parsed:JsonElement) : void
-    + CurrentURL : Uri <<get>> <<set>>
+    + Deserialize(parsed:System.Text.Json.JsonElement) : void
+    + CurrentURL : System.Uri <<get>> <<set>>
 }
 abstract class Event
+!endsub
 Event <|-- WebBrowserEvent
 @enduml

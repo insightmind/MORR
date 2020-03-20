@@ -1,19 +1,12 @@
 @startuml
 skinparam monochrome true
 skinparam classAttributeIconSize 0
-
+!startsub default
 class ButtonClickEvent {
     + Button : string <<get>> <<set>>
     + Href : string <<get>> <<set>>
 }
-abstract class WebBrowserEvent {
-    + TabID : int <<get>> <<set>>
-    + Deserialize(serialized:string) : void
-    + Deserialize(parsed:JsonElement) : void
-    + CurrentURL : Uri <<get>> <<set>>
-}
-
-abstract class Event
+!endsub
 WebBrowserEvent <|-- ButtonClickEvent
-Event <|-- WebBrowserEvent
+!include WebBrowserEvent.puml 
 @enduml

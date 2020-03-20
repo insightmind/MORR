@@ -1,13 +1,16 @@
 @startuml
 skinparam monochrome true
 skinparam ClassAttributeIconSize 0
+!startsub default
 abstract class "WebBrowserEventProducer<T>" {
-    + <<virtual>> Notify(eventJson:JsonElement) : void
+    + <<virtual>> Notify(eventJson:System.Text.Json.JsonElement) : void
     + EnqueueFinished() : void
 }
-class "DefaultEventQueue<T>" {
+abstract class "DefaultEventQueue<T>" {
 }
 interface "IWebBrowserEventObserver"
+enum "EventLabel"
+!endsub
 "DefaultEventQueue<T>" "   <WebBrowserEvent>" <|-- "WebBrowserEventProducer<T>"
 IWebBrowserEventObserver <|-- "WebBrowserEventProducer<T>"
 "WebBrowserEventProducer<T>" --> "HandledEventLabel" EventLabel

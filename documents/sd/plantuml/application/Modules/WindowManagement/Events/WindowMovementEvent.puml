@@ -1,17 +1,12 @@
 @startuml
 skinparam monochrome true
 skinparam classAttributeIconSize 0
-
+!startsub default
 class WindowMovementEvent {
-    + OldLocation: Vector2
-    + NewLocation: Vector2
+    + OldLocation: System.Windows.Point
+    + NewLocation: System.Windows.Point
 }
 WindowEvent <|-- WindowMovementEvent
-
-abstract class WindowEvent {
-    + Title : string <<get>> <<set>>
-    + ProcessName : string <<get>> <<set>>
-}
-abstract class Event
-Event <|-- WindowEvent
+!endsub
+!include WindowEvent.puml
 @enduml
