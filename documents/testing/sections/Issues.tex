@@ -15,6 +15,7 @@ The primary purpose of the testing phase is to identify and correct issues with 
 
 \subsection{ClipboardModule}
 \bug{Copying non-text data into clipboard causes the crash of the application.}{GetClipboardText() method in NativeClipboard throws an exception which was not handled when user copies non-text data.}{ Handle the exception by not creating an event.}
+\bug{ClipboardCopyEvent wasn't recorded when user restarts the recording without quitting the application.}{ClipboardWindowMessageSink was disposed when user stops the recording and not recreated on the restart.}{Move the creating of ClipboardWindowMessageSink instance in StartCapture() method.}
 
 \subsection{KeyboardModule}
 \bug{Certain keypresses, especially when the ALT key is held down, are not recorded as events.}{System keys (such as F10 or ALT-combinations) trigger a specific WM\_SYSKEYDOWN message instead of WM\_KEYDOWN.}{Handle WM\_SYSKEYDOWN messages in addition to WM\_KEYDOWN.}
