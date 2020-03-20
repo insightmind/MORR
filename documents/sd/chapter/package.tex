@@ -211,6 +211,7 @@ The \textbf{CORE.SESSION} package is responsible for session management.
 
 \begin{packpack}
 \packobj{EXCEPTIONS}
+\packobj{CRYPTO}
 \end{packpack}
 
 \section*{MORR.CORE.SESSION.EXCEPTIONS}
@@ -219,6 +220,12 @@ The \textbf{CORE.SESSION} package is responsible for session management.
 \packobj{AlreadyRecordingException}
 \packobj{NotRecordingException}
 \packobj{RecordingException}
+\end{packclass}
+
+\section*{MORR.CORE.SESSION.CRYPTO}
+
+\begin{packclass}
+\packobj{CryptoHelper}
 \end{packclass}
 
 \newpage
@@ -270,14 +277,62 @@ The \textbf{SHARED} package provides interfaces and classes which have to be kno
 \packobj{IEncodableEventQueue<T: Event>}
 \end{packif}
 
+
+\begin{packpack}
+\packobj{UTILITY}
+\packobj{HOOK}
+\packobj{EVENTS}
+\packobj{CONFIGURATION}
+\packobj{MODULES}
+\end{packpack}
+
+\subsection{MORR.SHARED.UTILITY}
+\begin{packclass}
+\packobj{FilePath}
+\packobj{DirectoryPath}
+\packobj{Utility}
+\end{packclass}
+
+\subsection{MORR.SHARED.CONFIGURATION}
 \begin{packclass}
 \packobj{RawConfiguration}
-\packobj{\abstract{Event}}
 \packobj{InvalidConfigurationException}
+\end{packclass}
+
+\subsection{MORR.SHARED.HOOK}
+\begin{packclass}
+\packobj{GlobalHook}
+\packobj{HookLibraryException}
+\packobj{NativeMethods}
+\end{packclass}
+
+\subsection*{MORR.SHARED.EVENTS}
+\begin{packclass}
+\packobj{\abstract{Event}}
+\end{packclass}
+
+\begin{packpack}
+\packobj{QUEUE}
+\end{packpack}
+
+\subsection*{MORR.SHARED.EVENTS.QUEUE}
+\begin{packclass}
+\packobj{\abstract{DecodableEventQueue<T: Event>}}
+\packobj{\abstract{EncodableEventQueue<T: Event>}}
+\packobj{DefaultEncodableEventQueue<T: Event>}
+\packobj{DefaultDecodableEventQueue<T: Event>}
 \packobj{\abstract{ReadOnlyEventQueue<T: Event>}}
 \packobj{\abstract{SupportDeserializationEventQueue<T: Event>}}
 \packobj{DefaultEventQueue<T: Event>}
 \packobj{NonDeserializableEventQueue<T: Event>}
+\end{packclass}
+
+\begin{packpack}
+\packobj{STORAGESTRATEGY}
+\end{packpack}
+
+\subsubsection*{MORR.SHARED.EVENTS.QUEUE.STORAGESTRATEGY}
+\begin{packclass}
 \packobj{\abstract{MultiConsumerChannelStrategy<T: Event>}}
 \packobj{\abstract{SingleConsumerChannelStrategy<T: Event>}}
 \packobj{BoundedMultiConsumerChannelStrategy<T: Event>}
@@ -285,17 +340,8 @@ The \textbf{SHARED} package provides interfaces and classes which have to be kno
 \packobj{BoundedSingleConsumerChannelStrategy<T: Event>}
 \packobj{UnboundedSingleConsumerChannelStrategy<T: Event>}
 \packobj{ChannelConsumingException}
-\packobj{\abstract{DecodableEventQueue<T: Event>}}
-\packobj{\abstract{EncodableEventQueue<T: Event>}}
-\packobj{DefaultEncodableEventQueue<T: Event>}
-\packobj{DefaultDecodableEventQueue<T: Event>}
-\packobj{FilePath}
-\packobj{DirectoryPath}
-\packobj{GlobalHook}
-\packobj{Utility}
-\packobj{HookLibraryException}
-\packobj{NativeMethods}
 \end{packclass}
+
 
 \newpage
 \section{MORR.MODULES}
@@ -320,13 +366,31 @@ The \textbf{MODULES.WINDOWMANAGEMENT} package is responsible for providing the c
 
 \begin{packclass}
 \packobj{WindowManagementModule}
+\end{packclass}
+
+\begin{packpack}
+\packobj{EVENTS}
+\packobj{PRODUCERS}
+\end{packpack}
+
+\subsection*{MORR.MODULES.WINDOWMANAGEMENT.EVENTS}
+\begin{packclass}
 \packobj{\abstract{WindowEvent}}
 \packobj{WindowMovementEvent}
 \packobj{WindowFocusEvent}
 \packobj{WindowSateChangedEvent}
 \packobj{WindowResizingEvent}
 \end{packclass}
+
+\subsection*{MORR.MODULES.WINDOWMANAGEMENT.PRODUCERS}
+\begin{packclass}
+\packobj{WindowMovementEventProducer}
+\packobj{WindowFocusEventproducer}
+\packobj{WindowSateChangedEventProducer}
+\packobj{WindowResizingEventProducer}
+\end{packclass}
 \newpage
+
 \subsection*{MORR.MODULES.KEYBOARD}
 
 \begin{center}
@@ -336,9 +400,23 @@ The \textbf{MODULES.WINDOWMANAGEMENT} package is responsible for providing the c
 The \textbf{MODULES.KEYBOARD} package is responsible for providing the classes and concepts necessary for recording the keyboard related user-inputs.
 
 \begin{packclass}
-\packobj{\abstract{KeyboardEvent}}
 \packobj{KeyboardModule}
+\end{packclass}
+
+\begin{packpack}
+\packobj{EVENTS}
+\packobj{PRODUCERS}
+\end{packpack}
+
+\subsection*{MORR.MODULES.KEYBOARD.EVENTS}
+\begin{packclass}
+\packobj{\abstract{KeyboardEvent}}
 \packobj{KeyboardInteractEvent}
+\end{packclass}
+
+\subsection*{MORR.MODULES.KEYBOARD.PRODUCERS}
+\begin{packclass}
+\packobj{KeyboardInteractEventProducer}
 \end{packclass}
 
 \newpage
@@ -352,6 +430,16 @@ The \textbf{MODULES.WEBBROWSER} package is responsible for providing the classes
 
 \begin{packclass}
 \packobj{WebBrowserModule}
+\packobj{WebBrowserModuleConfiguration}
+\end{packclass}
+
+\begin{packpack}
+\packobj{EVENTS}
+\packobj{PRODUCERS}
+\end{packpack}
+
+\subsection*{MORR.MODULES.WEBBROWSER.EVENTS}
+\begin{packclass}
 \packobj{\abstract{WebBrowserEvent}}
 \packobj{TextSelectionEvent}
 \packobj{TextInputEvent}
@@ -362,7 +450,23 @@ The \textbf{MODULES.WEBBROWSER} package is responsible for providing the classes
 \packobj{HoverEvent}
 \packobj{FileDownloadEvent}
 \packobj{ButtonClickEvent}
+
 \end{packclass}
+
+\subsection*{MORR.MODULES.WEBBROWSER.PRODUCERS}
+\begin{packclass}
+\packobj{\abstract{WebBrowserEventProducer}}
+\packobj{TextSelectionEventProducer}
+\packobj{TextInputEventProducer}
+\packobj{SwitchTabEventProducer}
+\packobj{OpenTabEventProducer}
+\packobj{CloseTabEventProducer}
+\packobj{NavigationEventProducer}
+\packobj{HoverEventProducer}
+\packobj{FileDownloadEventProducer}
+\packobj{ButtonClickEventProducer}
+\end{packclass}
+
 
 \newpage
 \subsection*{MORR.MODULES.CLIPBOARD}
@@ -375,13 +479,29 @@ The \textbf{MODULES.CLIPBOARD} package is responsible for providing the classes 
 
 \begin{packclass}
 \packobj{ClipboardModule}
-\packobj{\abstract{ClipboardEvent}}
-\packobj{ClipBoardInteractEvent}
 \end{packclass}
 
-\begin{packenum}
-\packobj{InteractionType}
-\end{packenum}
+\begin{packpack}
+\packobj{EVENTS}
+\packobj{PRODUCERS}
+\end{packpack}
+
+\subsection*{MORR.MODULES.CLIPBOARD.EVENTS}
+\begin{packclass}
+\packobj{\abstract{ClipboardEvent}}
+\packobj{ClipboardCopyEvent}
+\packobj{ClipboardCutEvent}
+\packobj{ClipboardPasteEvent}
+\end{packclass}
+
+\subsection*{MORR.MODULES.CLIPBOARD.PRODUCERS}
+\begin{packclass}
+\packobj{ClipboardCopyEventProducer}
+\packobj{ClipboardCutEventProducer}
+\packobj{ClipboardPasteEventProducer}
+\end{packclass}
+
+
 
 \newpage
 \subsection*{MORR.MODULES.MOUSE}
@@ -394,16 +514,29 @@ The \textbf{MODULES.MOUSE} package is responsible for providing the classes and 
 
 \begin{packclass}
 \packobj{MouseModule}
+\packobj{MouseModuleConfiguration}
+\end{packclass}
+
+\begin{packpack}
+\packobj{EVENTS}
+\packobj{PRODUCERS}
+\end{packpack}
+
+\subsection*{MORR.MODULES.MOUSE.EVENTS}
+\begin{packclass}
 \packobj{\abstract{MouseEvent}}
 \packobj{MouseScrollEvent}
 \packobj{MouseClickEvent}
 \packobj{MouseMoveEvent}
 \end{packclass}
 
-\begin{packenum}
-\packobj{MouseButton}
-\packobj{MouseButtonState}
-\end{packenum}
+\subsection*{MORR.MODULES.MOUSE.PRODUCERS}
+\begin{packclass}
+\packobj{MouseScrollEventProducer}
+\packobj{MouseClickEventProducer}
+\packobj{MouseMoveEventProducer}
+\end{packclass}
+
 \newpage
 
 \section{MORR.UI}
@@ -418,6 +551,7 @@ The \textbf{UI} package is responsible for the graphical user interface.
 \packobj{NotifyIcon}
 \packobj{<<partial> App}
 \packobj{<<partial>> InformationDialog}
+\packobj{<<partial>> ConfirmationDialog}
 \packobj{<<partial>> SaveDialog}
 \packobj{<<partial>> ErrorDialog}
 \packobj{ApplicationViewModel}

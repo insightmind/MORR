@@ -6,7 +6,11 @@ class GlobalHook {
     + {static} IsActive : bool <<get>> <<set>>
     + {static} AddListener(callback: RetrieveMessageCallBack, types: NativeMethods.MessageType[])
     + {static} RemoveListener(callback: RetrieveMessageCallBack, types: NativeMethods.MessageType[])
+    + {static} Initialize() : void
+    + {static} Initialize(hook:IHookNativeMethods) : void
     + {static} FreeLibrary()
 }
+
 !endsub
+GlobalHook +-- MessageType
 @enduml

@@ -1,10 +1,11 @@
 @startuml
 skinparam monochrome true
 skinparam classAttributeIconSize 0
-
+!startsub default
 abstract class MouseEvent {
-    + MousePosition : Point <<get>> <<set>>
+    + MousePosition : System.Windows.Point <<get>> <<set>>
 }
 abstract class Event
+!endsub
 Event <|-- MouseEvent
 @enduml

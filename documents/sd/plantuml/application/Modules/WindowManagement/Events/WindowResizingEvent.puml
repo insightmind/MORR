@@ -1,17 +1,13 @@
 @startuml
 skinparam monochrome true
 skinparam classAttributeIconSize 0
-
+!startsub default
 class WindowResizingEvent {
-    + OldSize: Size
-    + NewSize: Size
+    + OldSize: System.Drawing.Size
+    + NewSize: System.Drawing.Size
 }
 WindowEvent <|-- WindowResizingEvent
 
-abstract class WindowEvent {
-    + Title : string <<get>> <<set>>
-    + ProcessName : string <<get>> <<set>>
-}
-abstract class Event
-Event <|-- WindowEvent
+!include WindowEvent.puml
+!endsub
 @enduml

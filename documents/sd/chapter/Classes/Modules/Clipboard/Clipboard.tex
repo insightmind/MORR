@@ -1,7 +1,7 @@
     \subsection{Clipboard}
 
 \begin{class}{ClipboardModule} 
-    \clsdiagram[scale = 0.6]{resources/Classes/Modules/Clipboard/ClipboardModule.png}
+    \clsdiagram[width=0.80\textwidth]{resources/Classes/Modules/Clipboard/ClipboardModule.png}
 
     \clsdcl{public class ClipboardModule : IModule}
 
@@ -52,14 +52,18 @@
 \subsection*{Producers}
 
 \begin{class}{ClipboardCopyEventProducer} 
-	\clsdiagram[scale = 0.7]{resources/Classes/Modules/Clipboard/Producers/ClipboardCopyEventProducer.png}
+	\clsdiagram[scale = 0.9]{resources/Classes/Modules/Clipboard/Producers/ClipboardCopyEventProducer.png}
     
     \clsdcl{public class ClipboardCopyEventProducer : DefaultEventQueue<ClipboardCopyEvent>}
 
     \clsdsp{Provides a single-writer-multiple-reader queue for ClipboardCopyEvent}
 
     \begin{methods}
-        \begin{method}{public void StartCapture()}{Starts capturing clipboard copy events}
+        \begin{method}{public void StartCapture(IClipboardWindowMessageSink windowMessageSink, INativeClipboard nativeClip)}{Starts capturing clipboard copy events}
+        	\begin{parameters}
+        		\para{IClipboardWindowMessageSink windowMessageSink}{Required for capturing ClipboardCopyEvent. Creates a window procedure to receive window messages.}
+        		\para{INativeClipboard nativeClip}{Required for getting clipboard text from the clipboard}
+        	\end{parameters}
         \end{method}
         \begin{method}{public void StopCapture()}{Stops capturing clipboard copy events}
         \end{method}
@@ -67,14 +71,18 @@
 \end{class}
 
 \begin{class}{ClipboardCutEventProducer} 
-	\clsdiagram[scale = 0.7]{resources/Classes/Modules/Clipboard/Producers/ClipboardCutEventProducer.png}
+	\clsdiagram[scale = 0.8]{resources/Classes/Modules/Clipboard/Producers/ClipboardCutEventProducer.png}
     
     \clsdcl{public class ClipboardCutEventProducer : DefaultEventQueue<ClipboardCutEvent>}
 
     \clsdsp{Provides a single-writer-multiple-reader queue for ClipboardCutEvent}
 
     \begin{methods}
-        \begin{method}{public void StartCapture()}{Starts capturing clipboard cut events}
+        \begin{method}{public void StartCapture(IClipboardWindowMessageSink windowMessageSink, INativeClipboard nativeClip)}{Starts capturing clipboard cut events}
+        	\begin{parameters}
+        		\para{IClipboardWindowMessageSink windowMessageSink}{Required for capturing ClipboardCutEvent. Creates a window procedure to receive window messages.}
+        		\para{INativeClipboard nativeClip}{Required for getting clipboard text from the clipboard}
+        	\end{parameters}
         \end{method}
         \begin{method}{public void StopCapture()}{Stops capturing clipboard cut events}
         \end{method}
@@ -82,14 +90,17 @@
 \end{class}
 
 \begin{class}{ClipboardPasteEventProducer} 
-	\clsdiagram[scale = 0.7]{resources/Classes/Modules/Clipboard/Producers/ClipboardPasteEventProducer.png}
+	\clsdiagram[scale = 1]{resources/Classes/Modules/Clipboard/Producers/ClipboardPasteEventProducer.png}
     
     \clsdcl{public class ClipboardPasteEventProducer : DefaultEventQueue<ClipboardPasteEvent>}
 
     \clsdsp{Provides a single-writer-multiple-reader queue for ClipboardPasteEvent}
 
     \begin{methods}
-        \begin{method}{public void StartCapture()}{Starts capturing clipboard paste events}
+        \begin{method}{public void StartCapture(INativeClipboard nativeClip)}{Starts capturing clipboard paste events}
+        	\begin{parameters}
+        		\para{INativeClipboard nativeClip}{Required for capturing ClipboardPasteEvent and getting clipboard text from the clipboard}
+        	\end{parameters}
         \end{method}
         \begin{method}{public void StopCapture()}{Stops capturing clipboard paste events}
         \end{method}

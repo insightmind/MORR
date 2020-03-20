@@ -5,6 +5,8 @@ skinparam classAttributeIconSize 0
 interface IEncoder
 !startsub default
 class MpegEncoder {
+    + <<create>> MpegEncoder()
+    + <<create>> MpegEncoder(fileSystem:IFileSystem)
     + EncodeFinished : ManualResetEvent <<get>>
     + Encode(recordingDirectoryPath: DirectoryPath) : void
 }

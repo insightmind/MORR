@@ -11,7 +11,7 @@ package "UI" #E6E6E6 {
         + ErrorDialog(errorMessage:string)
         + ErrorMessage : string <<get>>
     }
-
+    !includesub ../application/Core/UI/Dialogs/ConfirmationDialog.xaml.puml!default
     !includesub ../application/Core/UI/Dialogs/InformationDialog.xaml.puml!default
 
     !includesub ../application/Core/UI/Dialogs/SaveDialog.xaml.puml!default
@@ -41,6 +41,7 @@ package "UI" #E6E6E6 {
 ApplicationViewModel --> "1" ISessionManager : uses
 ApplicationViewModel o--> "n" ICommand
 App --> "1" ApplicationViewModel
+ApplicationViewModel o-> ConfirmationDialog
 ApplicationViewModel o-> SaveDialog
 ApplicationViewModel o-> ErrorDialog
 ApplicationViewModel o-> InformationDialog

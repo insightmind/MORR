@@ -7,31 +7,32 @@ left to right direction
 hide empty fields
 !startsub default
 package "CLIPBOARD" #BFBFBF {
-    class ClipboardModule {
+    class ClipboardModule 
     
+    package "EVENTS" <<rectangle>> {
+        abstract class ClipboardEvent {
+            + Text : string <<get>> <<set>>
+        }
+        class ClipboardCopyEvent
+        class ClipboardCutEvent
+        class ClipboardPasteEvent
     }
 
-    abstract class ClipboardEvent {
-    
-    }
-
-    class ClipBoardInteractEvent {
-        + Text : string <<get>> <<set>>
-    }
-
-    enum InteractionType {
-        CLEAR
-        COPY
-        CUT
-        PASTE
+    package "PRODUCERS" <<rectangle>>{
+        class ClipboardPasteEventProducer
+        class ClipboardCutEventProducer
+        class ClipboardCopyEventProducer
     }
 }
 
 'Clipboard
 IModule <|.. ClipboardModule
 Event <|-- ClipboardEvent
-ClipboardEvent <|-- ClipBoardInteractEvent
-ClipBoardInteractEvent --> "Interaction" InteractionType
-ClipBoardInteractEvent +-- InteractionType
+ClipboardEvent <|-- ClipboardCopyEvent
+ClipboardEvent <|-- ClipboardCutEvent
+ClipboardEvent <|-- ClipboardPasteEvent
+ClipboardModule ..> ClipboardCopyEventProducer : "uses"
+ClipboardModule ..> ClipboardCutEventProducer : "uses"
+ClipboardModule ..> ClipboardPasteEventProducer : "uses"
 !endsub
 @enduml

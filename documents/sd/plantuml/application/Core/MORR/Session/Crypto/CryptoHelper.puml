@@ -1,0 +1,9 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
+class CryptoHelper <<static>> {
+    + {static} GenerateHash(rawData:string) : string
+}
+!endsub
+@enduml

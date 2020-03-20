@@ -1,16 +1,10 @@
 @startuml
 skinparam monochrome true
 skinparam classAttributeIconSize 0
-
+!startsub default
 class OpenTabEvent {
 }
-abstract class WebBrowserEvent {
-    + TabID : int <<get>> <<set>>
-    + Deserialize(serialized:string) : void
-    + Deserialize(parsed:JsonElement) : void
-    + CurrentURL : Uri <<get>> <<set>>
-}
-abstract class Event
+!endsub
+!include WebBrowserEvent.puml
 WebBrowserEvent <|-- OpenTabEvent
-Event <|-- WebBrowserEvent
 @enduml

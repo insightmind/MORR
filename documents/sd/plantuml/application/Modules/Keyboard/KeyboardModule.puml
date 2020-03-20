@@ -6,11 +6,11 @@ class KeyboardModule {
 }
 
 interface IModule {
-    + Identifier : Guid
+    + Identifier : System.Guid
     + IsActive : bool <<get>> <<set>>
     + Initialize() : void
 }
 
 IModule <|-- KeyboardModule
-KeyboardModule --> "  KeyboardInteractEventProducer" KeyboardInteractEventProducer
+KeyboardModule ..> KeyboardInteractEventProducer : "uses"
 @enduml

@@ -1,18 +1,20 @@
 @startuml
 skinparam monochrome true
 skinparam classAttributeIconSize 0
-
+!startsub default
 class MouseModule {
 }
 
 interface IModule {
-    + Identifier : Guid
+    + Identifier : System.Guid
     + IsActive : bool <<get>> <<set>>
     + Initialize() : void
 }
 
+!endsub
 IModule <|-- MouseModule
-MouseModule --> "  MouseScrollEventProducer" MouseScrollEventProducer
-MouseModule --> " MouseMoveEventProducer " MouseMoveEventProducer
-MouseModule --> "   MouseClickEventProducer" MouseClickEventProducer
+MouseModule ..> MouseMoveEventProducer : "uses"
+MouseModule ..> MouseClickEventProducer : "uses"
+MouseModule ..> MouseScrollEventProducer : "uses"
+MouseModule ..> MouseModuleConfiguration : "uses"
 @enduml

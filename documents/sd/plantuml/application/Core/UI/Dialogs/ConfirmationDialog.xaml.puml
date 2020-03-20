@@ -1,0 +1,10 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
+class ConfirmationDialog <<partial>> {
+    + <<create>> ConfirmationDialog()
+}
+!endsub
+Window <|-- ConfirmationDialog
+@enduml

@@ -7,9 +7,9 @@ interface IConfiguration
 IConfiguration <|-- SessionConfiguration
 !startsub default
 class SessionConfiguration {
-    + Encoders : IEnumerable<Type> <<get>
-    + Decoders : IEnumerable<Type>? <<get>>
-    + RecordingDirectory : DirectoryPath <<get>>
+    + Encoders : IEnumerable<Type> <<get>> <<set>>
+    + Decoders : IEnumerable<Type>? <<get>> <<set>>
+    + RecordingDirectory : DirectoryPath <<get>> <<set>>
     + Parse(configuration : RawConfiguration) : void
 }
 !endsub

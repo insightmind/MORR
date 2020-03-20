@@ -7,62 +7,93 @@ left to right direction
 hide empty fields
 !startsub default
 package "WEBBROWSER" #BFBFBF {
-    class WebBrowserModule {
+    class WebBrowserModule
+    class WebBrowserModuleConfiguration
 
+    package "EVENTS" {
+        class ButtonClickEvent {
+            + Button : string <<get>> <<set>>
+            + URL: System.Uri
+        }
+        class CloseTabEvent
+        class FileDownloadEvent {
+            + MIMEType : string <<get>> <<set>>
+            + FileURL: System.Uri
+        }
+        
+        class HoverEvent {
+            + HoveredElement : string <<get>> <<set>>
+        }
+        class NavigationEvent 
+        class OpenTabEvent 
+        class SwitchTabEvent {
+            + NewTabID: int <<get>> <<set>>
+        }
+        
+        class TextInputEvent {
+            + InputtedText : string <<get>> <<set>>
+            + Textbox : string <<get>> <<set>>
+        }
+        
+        class TextSelectionEvent {
+            + SelectedText : string <<get>> <<set>>
+        }
+        
+        abstract class WebBrowserEvent {
+            + TabID: int <<get>> <<set>>
+            + CurrentURL: System.Uri <<get>> <<set>>
+        }
     }
 
-    class ButtonClickEvent {
-        + Button : string <<get>> <<set>>
-        + URL: Uri
-    }
+    package "PRODUCERS" {
+        class ButtonClickEventProducer
+        class CloseTabEventProducer
+        class FileDownloadEventProducer
+        class HoverEventProducer
+        class NavigationEventProducer
+        class OpenTabEventProducer
+        class SwitchTabEventProducer
+        class TextInputEventProducer
+        class TextSelectionEventProducer
+        abstract class WebBrowserEventProducer
+    } 
     
-    class CloseTabEvent {
-    }
-    
-    class FileDownloadEvent {
-        + MIMEType : string <<get>> <<set>>
-        + FileURL: Uri
-    }
-    
-    class HoverEvent {
-        + HoveredElement : string <<get>> <<set>>
-    }
-    class NavigationEvent {
-    }
-    
-    class OpenTabEvent {
-    }
-    
-    class SwitchTabEvent {
-        + NewTabID: Guid
-    }
-    
-    class TextInputEvent {
-        + InputtedText : string <<get>> <<set>>
-        + Textbox : string <<get>> <<set>>
-    }
-    
-    class TextSelectionEvent {
-        + SelectedText : string <<get>> <<set>>
-    }
-    
-    abstract class WebBrowserEvent {
-        + TabID: Guid
-        + CurrentURL: Uri
-    }
 }
 
 ' WebBrowser
+abstract class Event
+interface IModule
+interface IConfiguration
+IConfiguration <|-- WebBrowserModuleConfiguration
 Event <|-- WebBrowserEvent
 IModule <|.. WebBrowserModule
-WebBrowserEvent <|-- ButtonClickEvent
+WebBrowserEventProducer <|- ButtonClickEventProducer
+WebBrowserEventProducer <|- CloseTabEventProducer
+WebBrowserEventProducer <|--- FileDownloadEventProducer
+WebBrowserEventProducer <|-- HoverEventProducer
+WebBrowserEventProducer <|--- NavigationEventProducer
+WebBrowserEventProducer <|-- OpenTabEventProducer
+WebBrowserEventProducer <|--- SwitchTabEventProducer
+WebBrowserEventProducer <|--- TextInputEventProducer
+WebBrowserEventProducer <|--- TextSelectionEventProducer
+WebBrowserEvent <|---- ButtonClickEvent
 WebBrowserEvent <|-- CloseTabEvent
-WebBrowserEvent <|-- FileDownloadEvent
+WebBrowserEvent <|---- FileDownloadEvent
 WebBrowserEvent <|-- HoverEvent
-WebBrowserEvent <|-- NavigationEvent
+WebBrowserEvent <|---- NavigationEvent
 WebBrowserEvent <|-- OpenTabEvent
-WebBrowserEvent <|-- SwitchTabEvent
+WebBrowserEvent <|---- SwitchTabEvent
 WebBrowserEvent <|-- TextInputEvent
-WebBrowserEvent <|-- TextSelectionEvent
+WebBrowserEvent <|---- TextSelectionEvent
+WebBrowserModule ..> WebBrowserModuleConfiguration : "uses"
+WebBrowserModule ..> ButtonClickEventProducer : "uses"
+WebBrowserModule ..> CloseTabEventProducer : "uses"
+WebBrowserModule ..> FileDownloadEventProducer : "uses"
+WebBrowserModule ..> HoverEventProducer : "uses"
+WebBrowserModule ..> NavigationEventProducer : "uses"
+WebBrowserModule ..> OpenTabEventProducer : "uses"
+WebBrowserModule ..> SwitchTabEventProducer : "uses"
+WebBrowserModule ..> TextInputEventProducer : "uses"
+WebBrowserModule ..> TextSelectionEventProducer : "uses"
 !endsub
 @enduml

@@ -1,7 +1,7 @@
 \subsection{Webbrowser}
 
 \begin{class}{WebBrowserModule} 
-	\clsdiagram[scale = 0.6]{resources/Classes/Modules/WebBrowser/WebBrowserModule.png}
+	\clsdiagram[width=0.80\textwidth]{resources/Classes/Modules/WebBrowser/WebBrowserModule.png}
 	
     \clsdcl{public class WebBrowserModule : IModule}
 
@@ -55,7 +55,7 @@
 
     \begin{attributes}
         \attribute{public int TabID}{The identifier of the tab where the web browser event occured in}
-        \attribute{public Uri CurrentURL}{The URL of the website where the web browser event occured in}
+        \attribute{public System.Uri CurrentURL}{The URL of the website where the web browser event occured in}
     \end{attributes}
     
     \begin{methods}
@@ -64,9 +64,9 @@
     			\para{string serialized}{The serialized event}
     		\end{parameters}
     	\end{method}
-    	\begin{method}{public void Deserialize(JsonElement parsed)}{Deserialize a browser event from a JSONElement instance.}
+    	\begin{method}{public void Deserialize(System.Text.Json.JsonElement parsed)}{Deserialize a browser event from a JSONElement instance.}
     		\begin{parameters}	
-    			\para{JsonElement parsed}{A JSONElement parsed from a serialized event.}
+    			\para{System.Text.Json.JsonElement parsed}{A JSONElement parsed from a serialized event.}
     		\end{parameters}
     	\end{method}
     \end{methods}
@@ -104,7 +104,7 @@
 
     \begin{attributes}
         \attribute{public string MIMEType}{MIME type of the file that was downloaded}
-        \attribute{public Uri FileURL}{The URL of the file that was downloaded}
+        \attribute{public System.Uri FileURL}{The URL of the file that was downloaded}
     \end{attributes}
 \end{class}
 
@@ -178,7 +178,7 @@
 \subsection*{Producers}
 
 \begin{absclass}{WebBrowserEventProducer}
-	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/WebBrowserEventProducer.png}
+	\clsdiagram[scale = 0.9]{resources/Classes/Modules/WebBrowser/Producers/WebBrowserEventProducer.png}
 	
 	\clsdcl{public abstract class WebBrowserEventProducer<T> : DefaultEventQueue<T>, IWebBrowserEventObserver where T : WebBrowserEvent}
 	
@@ -189,9 +189,9 @@
 	\end{attributes}
 	
 	\begin{methods}
-		\begin{method}{public virtual void Notify(JsonElement eventJson)}{Simply forward the event to the internal queue if its of the appropriate type. Ignore otherwise.}
+		\begin{method}{public virtual void Notify(System.Text.Json.JsonElement eventJson)}{Simply forward the event to the internal queue if its of the appropriate type. Ignore otherwise.}
 			\begin{parameters}
-				\para{JsonElement eventJson}{A JsonElement holding an event.}
+				\para{System.Text.Json.JsonElement eventJson}{A JsonElement holding an event.}
 			\end{parameters}
 			
 			\begin{exceptions}
@@ -208,7 +208,7 @@
 			
 \begin{class}{ButtonClickEventProducer}
  
-	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/ButtonClickEventProducer.png}
+	\clsdiagram[scale = 0.9]{resources/Classes/Modules/WebBrowser/Producers/ButtonClickEventProducer.png}
     
     \clsdcl{public class ButtonClickEventProducer : WebBrowserEventProducer<ButtonClickEvent>}
 
@@ -221,7 +221,7 @@
 \end{class}
 
 \begin{class}{CloseTabEventProducer} 
-	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/CloseTabEventProducer.png}
+	\clsdiagram[scale = 0.9]{resources/Classes/Modules/WebBrowser/Producers/CloseTabEventProducer.png}
     
     \clsdcl{public class CloseTabEventProducer : WebBrowserEventProducer<CloseTabEvent>}
 
@@ -234,7 +234,7 @@
 \end{class}
 
 \begin{class}{FileDownloadEventProducer} 
-	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/FileDownloadEventProducer.png}
+	\clsdiagram[scale = 0.9]{resources/Classes/Modules/WebBrowser/Producers/FileDownloadEventProducer.png}
     
     \clsdcl{public class FileDownloadEventProducer :  WebBrowserEventProducer<FileDownloadEvent>}
 
@@ -247,7 +247,7 @@
 \end{class}
 
 \begin{class}{HoverEventProducer} 
-	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/HoverEventProducer.png}
+	\clsdiagram[scale = 0.9]{resources/Classes/Modules/WebBrowser/Producers/HoverEventProducer.png}
     
     \clsdcl{public class HoverEventProducer : WebBrowserEventProducer<HoverEvent>}
 
@@ -259,7 +259,7 @@
 \end{class}
 
 \begin{class}{NavigationEventProducer} 
-	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/NavigationEventProducer.png}
+	\clsdiagram[scale = 0.9]{resources/Classes/Modules/WebBrowser/Producers/NavigationEventProducer.png}
     
     \clsdcl{public class NavigationEventProducer :  WebBrowserEventProducer<NavigationEvent>}
 
@@ -271,7 +271,7 @@
 \end{class}
 
 \begin{class}{OpenTabEventProducer} 
-	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/OpenTabEventProducer.png}
+	\clsdiagram[scale = 0.9]{resources/Classes/Modules/WebBrowser/Producers/OpenTabEventProducer.png}
     
     \clsdcl{public class OpenTabEventProducer : WebBrowserEventProducer<OpenTabEvent>}
 
@@ -283,7 +283,7 @@
 \end{class}
 
 \begin{class}{SwitchTabEventProducer} 
-	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/SwitchTabEventProducer.png}
+	\clsdiagram[scale = 0.9]{resources/Classes/Modules/WebBrowser/Producers/SwitchTabEventProducer.png}
     
     \clsdcl{public class SwitchTabEventProducer : WebBrowserEventProducer<SwitchTabEvent>}
 
@@ -295,7 +295,7 @@
 \end{class}
 
 \begin{class}{TextInputEventProducer} 
-	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/TextInputEventProducer.png}
+	\clsdiagram[scale = 0.9]{resources/Classes/Modules/WebBrowser/Producers/TextInputEventProducer.png}
     
     \clsdcl{public class TextInputEventProducer : WebBrowserEventProducer<TextInputEvent>}
 
@@ -307,7 +307,7 @@
 \end{class}
 
 \begin{class}{TextSelectionEventProducer} 
-	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Producers/TextSelectionEventProducer.png}
+	\clsdiagram[scale = 0.9]{resources/Classes/Modules/WebBrowser/Producers/TextSelectionEventProducer.png}
     
     \clsdcl{public class TextSelectionEventProducer:\\\ WebBrowserEventProducer<TextSelectionEvent>}
 

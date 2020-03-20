@@ -1,11 +1,13 @@
 @startuml
 skinparam monochrome true
 skinparam ClassAttributeIconSize 0
+!startsub default
 class WindowMovementEventProducer {
-    + StartCapture() : void
+    + StartCapture(nativeWinManagement : INativeWindowManagement) : void
     + StopCapture() : void
 }
-class "DefaultEventQueue<T>" {
+abstract class "DefaultEventQueue<T>" {
 }
+!endsub
 "DefaultEventQueue<T>" "     <WindowMovementEvent>" <|-- WindowMovementEventProducer
 @enduml
