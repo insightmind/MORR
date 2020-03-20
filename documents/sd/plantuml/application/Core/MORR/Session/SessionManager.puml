@@ -4,7 +4,8 @@ skinparam classAttributeIconSize 0
 !startsub default
 class SessionManager {
     + <<create>> SessionManager(configurationPath : FilePath)
-    + <<create>> SessionManager(configurationPath : FilePath, bootstrapper : IBootstrapper, configurationManager : IConfigurationManager, moduleManager : IModuleManager, fileSystem : IFileSystem )
+    + <<create>> SessionManager(configurationPath : FilePath, bootstrapper : IBootstrapper, 
+       configurationManager : IConfigurationManager, moduleManager : IModuleManager, fileSystem : IFileSystem )
     + CurrentRecordingDirectory : DirectoryPath? <<get>>
     + RecordingsFolder : DirectoryPath? <<get>>
     + StartRecording() : void

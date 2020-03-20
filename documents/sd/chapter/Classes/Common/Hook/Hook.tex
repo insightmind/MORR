@@ -27,10 +27,26 @@
 			\end{parameters}
 		\end{method}
 		
+		\begin{method}{public static void Initialize()}{Initializes the Library with the default hook.}
+		\end{method}
+		
+		\begin{method}{public static void Initialize(IHookNativeMethods hook)}{Initializes the Library with the given hook.}
+			\begin{parameters}
+				\para{IHookNativeMethods hook}{The hook used as an interaction point.}
+			\end{parameters}
+		\end{method}
+		
 		\begin{method}{public static void FreeLibrary()}{Free the loaded library. To be called when this application terminates.}
 		\end{method}
 	\end{methods}
+	
+	\begin{enum}{public enum MessageType}
+	
+	\clsdsp{Subset of window messages.}
+		
+	\end{enum}
 \end{class}
+
 
 \subsubsection*{MORR.Shared.Hook.Exception}
 
