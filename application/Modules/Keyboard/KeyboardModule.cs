@@ -15,7 +15,9 @@ namespace MORR.Modules.Keyboard
         private bool isActive;
 
         [Import]
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         private KeyboardInteractEventProducer KeyboardInteractEventProducer { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
         /// <summary>
         ///     Indicates whether the module is active or not.

@@ -17,7 +17,7 @@ namespace MORR.Modules.Keyboard.Events
         ///     The name of the key on the keyboard that is pressed
         ///     This field is only for increasing the human readability. 
         /// </summary>
-        public string PressedKeyName { get; set; }
+        public string PressedKeyName { get; set; } = "";
 
         /// <summary>
         ///     The modifier keys to the key pressed.
@@ -29,7 +29,7 @@ namespace MORR.Modules.Keyboard.Events
         ///     The name of the key on the keyboard that is pressed
         ///     This field is only for increasing the human readability. 
         /// </summary>
-        public string ModifierKeysName { get; set; }
+        public string ModifierKeysName { get; set; } = "";
 
         /// <summary>
         ///     The actual user input according to Input locale.
