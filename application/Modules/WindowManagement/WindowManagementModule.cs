@@ -2,7 +2,6 @@
 using System.ComponentModel.Composition;
 using MORR.Modules.WindowManagement.Native;
 using MORR.Modules.WindowManagement.Producers;
-using MORR.Shared.Hook;
 using MORR.Shared.Modules;
 using MORR.Shared.Utility;
 
@@ -19,6 +18,7 @@ namespace MORR.Modules.WindowManagement
         ///     A single-writer-multiple-reader queue for WindowFocusEvent
         /// </summary>
         [Import]
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public WindowFocusEventProducer WindowFocusEventProducer { get; private set; }
 
         /// <summary>
@@ -38,6 +38,7 @@ namespace MORR.Modules.WindowManagement
         /// </summary>
         [Import]
         public WindowStateChangedEventProducer WindowStateChangedEventProducer { get; private set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
         public static Guid Identifier { get; } = new Guid("FAB5BC0D-8B33-4DFD-9FA3-C58E0F1435B5");
         Guid IModule.Identifier => Identifier;
