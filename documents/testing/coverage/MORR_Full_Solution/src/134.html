@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\Keyboard\Native\NativeKeyboard.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows.Input;
+using MORR.Shared.Hook;
+
+namespace MORR.Modules.Keyboard.Native
+{
+    internal class NativeKeyboard : INativeKeyboard
+    {
+        #region Subtypes
+
+        public enum KeyMask
+        {
+            KEY_PRESSED = 0x8000
+        }
+
+        #endregion
+
+        #region Keyboard state helper
+
+        /// &lt;summary&gt;
+        ///     Indicates whether a key identified by its virtual key code is pressed
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;virtualKeyCode&quot;&gt;The &lt;see cref=&quot;INativeKeyboard.VirtualKeyCode&quot; /&gt; of the key to check.&lt;/param&gt;
+        /// &lt;returns&gt;&lt;see langword=&quot;true&quot; /&gt; if the key is pressed, &lt;see langword=&quot;false&quot; /&gt; otherwise.&lt;/returns&gt;
+        public bool IsKeyPressed(INativeKeyboard.VirtualKeyCode virtualKeyCode)
+        {
+            return Convert.ToBoolean(GetKeyState(virtualKeyCode) &amp; (int) KeyMask.KEY_PRESSED);
+        }
+
+        #endregion
+
+        /// &lt;summary&gt;
+        ///     Sets a low-level keyboard hook.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;callback&quot;&gt;The callback of the hook.&lt;/param&gt;
+        /// &lt;param name=&quot;handle&quot;&gt;The handle of the hook. Valid if the method returns &lt;see langword=&quot;true&quot; /&gt;&lt;/param&gt;
+        /// &lt;returns&gt;&lt;see langword=&quot;true&quot; /&gt; if the hook could successfully be set, &lt;see langword=&quot;false&quot; /&gt; otherwise.&lt;/returns&gt;
+        public bool TrySetKeyboardHook(INativeKeyboard.LowLevelKeyboardProc callback, out IntPtr handle)
+        {
+            if (!TryGetCurrentModuleHandle(out var moduleHandle))
+            {
+                handle = IntPtr.Zero;
+                return false;
+            }
+
+
+            handle = SetWindowsHookEx(INativeKeyboard.HookType.WH_KEYBOARD_LL, callback, moduleHandle, 0);
+            return true;
+        }
+
+        Key INativeKeyboard.KeyFromVirtualKey(int virtualKeyCode) 
+        {
+            return KeyInterop.KeyFromVirtualKey(virtualKeyCode);
+        }
+
+        int INativeKeyboard.CallNextHookEx(IntPtr hhk,
+                                           int nCode,
+                                           GlobalHook.MessageType wParam,
+                                           [In] INativeKeyboard.KBDLLHOOKSTRUCT lParam)
+        {
+            return CallNextHookEx(hhk, nCode, wParam, lParam);
+        }
+
+        bool INativeKeyboard.UnhookWindowsHookEx(IntPtr hhk)
+        {
+            return UnhookWindowsHookEx(hhk);
+        }
+
+        IntPtr INativeKeyboard.SetWindowsHookEx(INativeKeyboard.HookType hookType,
+                                                INativeKeyboard.LowLevelKeyboardProc lpFn,
+                                                IntPtr hMod,
+                                                uint dwThreadId)
+        {
+            return SetWindowsHookEx(hookType, lpFn, hMod, dwThreadId);
+        }
+
+        IntPtr INativeKeyboard.GetKeyboardLayout(uint idThread) { return GetKeyboardLayout(idThread);}
+
+        char INativeKeyboard.ToUnicode(uint wVirtKey) 
+        {
+            byte[] keyState = new byte[256];
+            GetKeyboardState(keyState);
+            StringBuilder sbString = new StringBuilder(256);
+
+            ToUnicodeEx((uint)(wVirtKey),
+                0, keyState, sbString, sbString.Capacity, 0, IntPtr.Zero);
+
+            string keyString = sbString.ToString();
+            char key = &#39;\0&#39;;
+            if (!String.IsNullOrEmpty(keyString)) key = sbString.ToString()[0];
+            return key;
+        }
+
+        private bool TryGetCurrentModuleHandle(out IntPtr handle)
+        {
+            using var currentProcess = Process.GetCurrentProcess();
+            using var currentModule = currentProcess.MainModule;
+            if (currentModule == null)
+            {
+                handle = IntPtr.Zero;
+                return false;
+            }
+
+            handle = GetModuleHandle(currentModule.ModuleName);
+            return true;
+        }
+
+
+        #region DllImports
+
+        [DllImport(&quot;user32.dll&quot;)]
+        private static extern int CallNextHookEx(IntPtr hhk,
+                                                 int nCode,
+                                                 GlobalHook.MessageType wParam,
+                                                 [In] INativeKeyboard.KBDLLHOOKSTRUCT lParam);
+
+        [DllImport(&quot;user32.dll&quot;)]
+        private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+
+        [DllImport(&quot;user32.dll&quot;)]
+        private static extern IntPtr SetWindowsHookEx(INativeKeyboard.HookType hookType,
+                                                      INativeKeyboard.LowLevelKeyboardProc lpFn,
+                                                      IntPtr hMod,
+                                                      uint dwThreadId);
+
+        [DllImport(&quot;user32.dll&quot;)]
+        private static extern short GetKeyState(INativeKeyboard.VirtualKeyCode nVirtualKeyCode);
+
+        [DllImport(&quot;kernel32.dll&quot;)]
+        private static extern IntPtr GetModuleHandle(string lpModuleName);
+
+        [DllImport(&quot;user32.dll&quot;)]
+        static extern IntPtr GetKeyboardLayout(uint idThread);
+
+        [DllImport(&quot;user32.dll&quot;)]
+        static extern int ToUnicodeEx(uint wVirtKey, uint wScanCode, byte[]
+   lpKeyState, [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pwszBuff,
+   int cchBuff, uint wFlags, IntPtr dwhkl);
+
+        [DllImport(&quot;user32.dll&quot;, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool GetKeyboardState(byte[] lpKeyState);
+
+        #endregion
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[29,9,29,10,0],[30,13,30,95,0],[31,9,31,10,0],[42,9,42,10,0],[43,13,43,66,0],[44,13,44,14,0],[45,17,45,38,0],[46,17,46,30,0],[50,13,50,107,0],[51,13,51,25,0],[52,9,52,10,0],[55,9,55,10,0],[56,13,56,65,0],[57,9,57,10,0],[63,9,63,10,0],[64,13,64,63,0],[65,9,65,10,0],[68,9,68,10,0],[69,13,69,45,0],[70,9,70,10,0],[76,9,76,10,0],[77,13,77,71,0],[78,9,78,10,0],[80,65,80,66,0],[80,67,80,102,0],[80,102,80,103,0],[83,9,83,10,0],[84,13,84,45,0],[85,13,85,40,0],[86,13,86,61,0],[88,13,89,75,0],[91,13,91,52,0],[92,13,92,29,0],[93,13,93,50,0],[93,51,93,80,0],[94,13,94,24,0],[95,9,95,10,0],[98,9,98,10,0],[99,13,99,68,0],[100,13,100,65,0],[101,13,101,39,0],[102,13,102,14,0],[103,17,103,38,0],[104,17,104,30,0],[107,13,107,64,0],[108,13,108,25,0],[109,9,109,10,0]]);
+    </script>
+  </body>
+</html>

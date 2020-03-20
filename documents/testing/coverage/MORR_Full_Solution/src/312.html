@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\MORR\Data\IntermediateFormat\Json\JsonIntermediateFormatSerializer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Linq;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
+using MORR.Shared.Events;
+using MORR.Shared.Events.Queue;
+using MORR.Shared.Modules;
+using MORR.Shared.Utility;
+
+namespace MORR.Core.Data.IntermediateFormat.Json
+{
+    public class JsonIntermediateFormatSerializer : DefaultEncodableEventQueue&lt;JsonIntermediateFormatSample&gt;, IModule
+    {
+        private bool isActive;
+        private CountdownEvent resetCounter = new CountdownEvent(0);
+
+        [ImportMany]
+        private IEnumerable&lt;IReadOnlyEventQueue&lt;Event&gt;&gt; EventQueues { get; set; } = null!;
+
+        public void Initialize(bool isEnabled)
+        {
+            if (isEnabled)
+            {
+                Open();
+            }
+            else
+            {
+                Close();
+            }
+        }
+
+        public bool IsActive
+        {
+            get =&gt; isActive;
+            set =&gt; Utility.SetAndDispatch(ref isActive, value, LinkAllQueues, () =&gt; { });
+        }
+
+        public Guid Identifier { get; } = new Guid(&quot;2D61FFB2-9CC1-4AAD-B1B9-A362FCF022A0&quot;);
+
+        private void LinkAllQueues()
+        {
+            var enabledQueues = EventQueues.Where(queue =&gt; !queue.IsClosed);
+            resetCounter = new CountdownEvent(enabledQueues.Count());
+
+            foreach (var eventQueue in enabledQueues)
+            {
+                Task.Run(() =&gt; LinkSingleQueue(eventQueue));
+            }
+        }
+
+        /// &lt;summary&gt;
+        ///     Creates &lt;see cref=&quot;IntermediateFormatSample&quot; /&gt; instances from &lt;see cref=&quot;Event&quot; /&gt; instances using serialization
+        ///     to JSON.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;event&quot;&gt;The &lt;see cref=&quot;Event&quot; /&gt; instance to convert&lt;/param&gt;
+        /// &lt;returns&gt;The &lt;see cref=&quot;IntermediateFormatSample&quot; /&gt; that the event was converted to&lt;/returns&gt;
+        private JsonIntermediateFormatSample MakeSample(Event @event)
+        {
+            var eventType = @event.GetType();
+            var serializedData = JsonSerializer.SerializeToUtf8Bytes(@event, eventType);
+
+            var sample = new JsonIntermediateFormatSample
+            {
+                Type = eventType,
+                Data = serializedData,
+                IssuingModule = Identifier
+            };
+
+            return sample;
+        }
+
+        private async void LinkSingleQueue(IReadOnlyEventQueue&lt;Event&gt; eventQueue)
+        {
+            await foreach (var @event in eventQueue.GetEvents())
+            {
+                var sample = MakeSample(@event);
+                Enqueue(sample);
+            }
+
+            if (resetCounter.Signal())
+            {
+                Close();
+            }
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[18,9,18,69,1],[21,71,21,75,1],[21,76,21,80,1],[21,85,21,90,1],[24,9,24,10,1],[25,13,25,27,1],[26,13,26,14,1],[27,17,27,24,1],[28,13,28,14,1],[30,13,30,14,1],[31,17,31,25,1],[32,13,32,14,1],[33,9,33,10,1],[37,20,37,28,1],[38,20,38,85,1],[38,85,38,86,0],[38,86,38,87,1],[38,87,38,88,0],[38,88,38,89,1],[38,20,38,89,1],[41,34,41,38,1],[41,43,41,91,1],[44,9,44,10,1],[45,13,45,60,1],[45,60,45,75,1],[45,75,45,77,1],[45,13,45,77,1],[46,13,46,70,1],[48,13,48,20,1],[48,22,48,36,1],[48,37,48,39,1],[48,40,48,53,1],[49,13,49,14,1],[50,17,50,32,1],[50,32,50,59,1],[50,59,50,61,1],[50,17,50,61,1],[51,13,51,14,1],[52,9,52,10,1],[61,9,61,10,1],[62,13,62,46,1],[63,13,63,89,1],[65,13,70,15,1],[72,13,72,27,1],[73,9,73,10,1],[76,9,76,10,1],[77,13,77,26,1],[77,28,77,38,1],[77,39,77,41,1],[77,42,77,64,1],[78,13,78,14,1],[79,17,79,49,1],[80,17,80,33,1],[81,13,81,14,1],[83,13,83,39,0],[84,13,84,14,0],[85,17,85,25,0],[86,13,86,14,0],[87,9,87,10,0]]);
+    </script>
+  </body>
+</html>

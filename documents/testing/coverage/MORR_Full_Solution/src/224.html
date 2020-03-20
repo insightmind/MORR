@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\ClipboardTest\ClipboardPasteEventProducerTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
+using System.Diagnostics;
+using System.Threading;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using MORR.Modules.Clipboard;
+using MORR.Modules.Clipboard.Producers;
+using MORR.Shared.Hook;
+using SharedTest.TestHelpers.INativeHook;
+
+namespace ClipboardTest
+{
+    [TestClass]
+    public class ClipboardPasteEventProducerTest
+    {
+        protected const int MaxWaitTime = 500;
+        private ClipboardCopyEventProducer clipboardCopyEventProducer;
+        private ClipboardCutEventProducer clipboardCutEventProducer;
+        private ClipboardModule clipboardModule;
+        private ClipboardPasteEventProducer clipboardPasteEventProducer;
+
+        private CompositionContainer container;
+        private HookNativeMethodsMock hookNativeMethods;
+        private NativeClipboardMock nativeClipboard;
+
+        [TestInitialize]
+        public void BeforeTest()
+        {
+            clipboardModule = new ClipboardModule();
+            clipboardCopyEventProducer = new ClipboardCopyEventProducer();
+            clipboardCutEventProducer = new ClipboardCutEventProducer();
+            clipboardPasteEventProducer = new ClipboardPasteEventProducer();
+
+            container = new CompositionContainer();
+            container.ComposeExportedValue(clipboardCopyEventProducer);
+            container.ComposeExportedValue(clipboardCutEventProducer);
+            container.ComposeExportedValue(clipboardPasteEventProducer);
+            container.ComposeParts(clipboardModule);
+
+            nativeClipboard = new NativeClipboardMock();
+
+            hookNativeMethods = new HookNativeMethodsMock();
+            hookNativeMethods.Initialize();
+        }
+
+        [TestCleanup]
+        public void AfterTest()
+        {
+            clipboardModule = null;
+            clipboardCopyEventProducer = null;
+            clipboardPasteEventProducer = null;
+            clipboardCutEventProducer = null;
+            nativeClipboard = null;
+            container.Dispose();
+            container = null;
+            hookNativeMethods = null;
+        }
+
+        [TestMethod]
+        public void ClipboardPasteEventProducerCallbackTest()
+        {
+            /* PRECONDITIONS */
+            Debug.Assert(clipboardModule != null);
+            Debug.Assert(clipboardPasteEventProducer != null);
+            Debug.Assert(hookNativeMethods != null);
+            Debug.Assert(hookNativeMethods.Mock != null);
+            Debug.Assert(nativeClipboard != null);
+            Debug.Assert(nativeClipboard.Mock != null);
+
+            /* GIVEN */
+            var callback = GetCallback();
+
+            nativeClipboard.GetText();
+
+            using var consumedEvent = new CountdownEvent(1);
+
+            using var didStartConsumingEvent = new ManualResetEvent(false);
+
+            var thread = new Thread(async () =&gt;
+            {
+                await foreach (var @event in Await(
+                    clipboardPasteEventProducer.GetEvents(), didStartConsumingEvent))
+                {
+                    if (!@event.ClipboardText.Equals(&quot;ClipboardText&quot;))
+                    {
+                        continue;
+                    }
+
+                    consumedEvent.Signal();
+                }
+            });
+
+            thread.Start();
+
+            Assert.IsTrue(didStartConsumingEvent.WaitOne(MaxWaitTime));
+            callback(new GlobalHook.HookMessage
+                         { Type = (uint) GlobalHook.MessageType.WM_PASTE });
+
+            /* THEN */
+            Assert.IsTrue(consumedEvent.Wait(MaxWaitTime), &quot;Did not find all matching clipboard paste event in time.&quot;);
+
+            //total shut down and resources release
+            clipboardPasteEventProducer.StopCapture();
+            clipboardModule.Initialize(false);
+        }
+
+        private GlobalHook.CppGetMessageCallback GetCallback()
+        {
+            GlobalHook.CppGetMessageCallback callback = null;
+
+            hookNativeMethods.AllowMessageTypeRegistry(GlobalHook.MessageType.WM_CLIPBOARDUPDATE);
+            hookNativeMethods.AllowMessageTypeRegistry(GlobalHook.MessageType.WM_PASTE);
+            hookNativeMethods.AllowMessageTypeRegistry(GlobalHook.MessageType.WM_CUT);
+
+            hookNativeMethods.AllowLibraryLoad();
+            var callbackReceivedEvent = new AutoResetEvent(false);
+
+            hookNativeMethods.Mock
+                             .Setup(
+                                 hook =&gt; hook.SetHook(It.IsAny&lt;GlobalHook.CppGetMessageCallback&gt;(), It.IsAny&lt;bool&gt;()))?
+                             .Callback((GlobalHook.CppGetMessageCallback cppCallback, bool isBlocking) =&gt;
+                             {
+                                 callback = cppCallback;
+                                 callbackReceivedEvent.Set();
+                             });
+            //here the SetHook() method is called!
+            clipboardModule.Initialize(true);
+            clipboardPasteEventProducer.StartCapture(nativeClipboard.Mock.Object);
+
+            //wait for the hookNativeMethodsMock.Mock.Callback is called!
+            Assert.IsTrue(callbackReceivedEvent.WaitOne(MaxWaitTime), &quot;Did not receive callback in time!&quot;);
+            callbackReceivedEvent.Dispose();
+            Assert.IsNotNull(callback, &quot;Callback received however unexpectedly null!&quot;);
+            return callback;
+        }
+
+        public static T Await&lt;T&gt;(T awaitedObject, ManualResetEvent expectation)
+        {
+            expectation.Set();
+            return awaitedObject;
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[29,9,29,10,1],[30,13,30,53,1],[31,13,31,75,1],[32,13,32,73,1],[33,13,33,77,1],[35,13,35,52,1],[36,13,36,72,1],[37,13,37,71,1],[38,13,38,73,1],[39,13,39,53,1],[41,13,41,57,1],[43,13,43,61,1],[44,13,44,44,1],[45,9,45,10,1],[49,9,49,10,1],[50,13,50,36,1],[51,13,51,47,1],[52,13,52,48,1],[53,13,53,46,1],[54,13,54,36,1],[55,13,55,33,1],[56,13,56,30,1],[57,13,57,38,1],[58,9,58,10,1],[62,9,62,10,1],[64,13,64,51,1],[65,13,65,63,1],[66,13,66,53,1],[67,13,67,58,1],[68,13,68,51,1],[69,13,69,56,1],[72,13,72,42,1],[74,13,74,39,1],[76,13,76,61,1],[78,13,78,76,1],[80,13,81,13,1],[81,13,81,14,1],[81,14,82,17,1],[82,17,82,30,1],[82,30,82,32,1],[82,32,82,42,1],[82,42,82,43,1],[82,43,82,45,1],[82,45,82,46,1],[82,46,83,85,1],[83,85,84,17,1],[84,17,84,18,1],[84,18,85,21,1],[85,21,85,71,1],[85,71,86,21,1],[86,21,86,22,0],[86,22,87,25,1],[87,25,87,34,0],[87,34,90,21,1],[90,21,90,44,1],[90,44,91,17,1],[91,17,91,18,1],[91,18,92,13,1],[92,13,92,14,1],[92,14,92,16,1],[80,13,92,16,1],[94,13,94,28,1],[96,13,96,72,1],[97,13,98,77,1],[101,13,101,120,1],[104,13,104,55,1],[105,13,105,47,1],[106,9,106,10,1],[106,9,106,10,1],[109,9,109,10,1],[110,13,110,62,1],[112,13,112,99,1],[113,13,113,89,1],[114,13,114,87,1],[116,13,116,50,1],[117,13,117,67,1],[119,13,123,30,1],[123,30,123,31,1],[123,31,124,34,1],[124,34,124,57,1],[124,57,125,34,1],[125,34,125,62,1],[125,62,126,30,1],[126,30,126,31,1],[126,31,126,33,1],[119,13,126,33,1],[128,13,128,46,1],[129,13,129,83,1],[132,13,132,108,1],[133,13,133,45,1],[134,13,134,88,1],[135,13,135,29,1],[136,9,136,10,1],[139,9,139,10,1],[140,13,140,31,1],[141,13,141,34,1],[142,9,142,10,1]]);
+    </script>
+  </body>
+</html>

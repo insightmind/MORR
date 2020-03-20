@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\MouseTest\Producers\MouseMoveEventProducerTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MORR.Modules.Mouse;
+using MORR.Modules.Mouse.Events;
+using MORR.Modules.Mouse.Producers;
+using MORR.Shared.Hook;
+using SharedTest.TestHelpers.INativeHook;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
+using System.Diagnostics;
+using System.Threading;
+using Moq;
+using System.Windows;
+using MORR.Modules.Mouse.Native;
+
+namespace MouseTest.Producers
+{
+    [TestClass]
+    public class MouseMoveEventProducerTest
+    {
+        protected const int maxWaitTime = 5000;
+
+        private CompositionContainer container;
+        private MouseClickEventProducer mouseClickEventProducer;
+        private MouseMoveEventProducer mouseMoveEventProducer;
+        private MouseScrollEventProducer mouseScrollEventProducer;
+        private MouseModule mouseModule;
+        private MouseModuleConfiguration mouseModuleConfiguration;
+        private HookNativeMethodsMock hookNativeMethodsMock;
+        private Mock&lt;INativeMouse&gt; nativeMouseMock;
+        private class TestMouseModuleConfiguration : MouseModuleConfiguration
+        {
+            public TestMouseModuleConfiguration()
+            {
+                SamplingRateInHz = 10;
+                Threshold = 50;
+            }
+        }
+
+        private readonly GlobalHook.MessageType[] mouseClickListenedMessagesTypes =
+        {
+            GlobalHook.MessageType.WM_RBUTTONDOWN,
+            GlobalHook.MessageType.WM_LBUTTONDOWN,
+            GlobalHook.MessageType.WM_MBUTTONDOWN,
+            GlobalHook.MessageType.WM_RBUTTONDBLCLK,
+            GlobalHook.MessageType.WM_LBUTTONDBLCLK,
+            GlobalHook.MessageType.WM_MBUTTONDBLCLK,
+            GlobalHook.MessageType.WM_NCRBUTTONDOWN,
+            GlobalHook.MessageType.WM_NCLBUTTONDOWN,
+            GlobalHook.MessageType.WM_NCMBUTTONDOWN,
+            GlobalHook.MessageType.WM_NCRBUTTONDBLCLK,
+            GlobalHook.MessageType.WM_NCLBUTTONDBLCLK,
+            GlobalHook.MessageType.WM_NCMBUTTONDBLCLK
+        };
+
+        private readonly GlobalHook.MessageType[] mouseScrollListenedMessagesTypes =
+        {
+            GlobalHook.MessageType.WM_MOUSEWHEEL
+        };
+
+        [TestInitialize]
+        public void BeforeTest()
+        {
+            //initialize module, producers and configuration
+            mouseModule = new MouseModule();
+            mouseClickEventProducer = new MouseClickEventProducer();
+            mouseMoveEventProducer = new MouseMoveEventProducer();
+            mouseScrollEventProducer = new MouseScrollEventProducer();
+            mouseModuleConfiguration = new TestMouseModuleConfiguration();
+
+            // initialize the container and fulfill the MEF inports exports
+            container = new CompositionContainer();
+            container.ComposeExportedValue(mouseClickEventProducer);
+            container.ComposeExportedValue(mouseMoveEventProducer);
+            container.ComposeExportedValue(mouseScrollEventProducer);
+            container.ComposeExportedValue(mouseModuleConfiguration);
+            container.ComposeParts(mouseModule);
+
+            //initialize the native mouse mock
+            nativeMouseMock = new Mock&lt;INativeMouse&gt;();
+
+            //initialzie the hookNativeMethodsMock
+            hookNativeMethodsMock = new HookNativeMethodsMock();
+            hookNativeMethodsMock.Initialize();
+        }
+
+        [TestCleanup]
+        public void AfterTest()
+        {
+            // null everything!
+            mouseModule = null;
+            mouseClickEventProducer = null;
+            mouseMoveEventProducer = null;
+            mouseScrollEventProducer = null;
+            mouseModuleConfiguration = null;
+            container.Dispose();
+            container = null;
+            hookNativeMethodsMock = null;
+            nativeMouseMock = null;
+        }
+
+        [TestMethod]
+        public void TestMouseMoveEventProducer_Callback()
+        {
+            /* PRECONDITIONS */
+            Debug.Assert(mouseModule != null);
+            Debug.Assert(mouseMoveEventProducer != null);
+            Debug.Assert(hookNativeMethodsMock != null);
+            Debug.Assert(hookNativeMethodsMock.Mock != null);
+
+            /* GIVEN */
+            mouseModule.Initialize(true);
+
+            //setting up fake nativeMouseMock behaviors, messages and corresponding expected Events
+            nativeMouseMock.SetupSequence(nM =&gt; nM.GetCursorPos())
+                .Returns(new INativeMouse.POINT { X = 100, Y = 100 })
+                .Returns(new INativeMouse.POINT { X = 0, Y = 0 });
+
+            // since the the cursor position varis from 100,100 to 0,0 (&gt; threshold), we expect to
+            // receive event with position 0,0
+            MouseMoveEvent[] expectedEvents = {
+            new MouseMoveEvent {MousePosition = new Point { X = 0, Y = 0}}
+            };
+
+            /* WHEN */
+            // consumedEvent.Signal() will be called gdw one event has been found and meet expectation
+            using var consumedEvent = new CountdownEvent(expectedEvents.Length);
+            Assert.IsTrue(consumedEvent.CurrentCount == expectedEvents.Length);
+
+            //didStartConsumingEvent.Set() will be called in Await method gdw the consumer is attached
+            using var didStartConsumingEvent = new ManualResetEvent(false);
+
+            //Running the task in another thread
+            var thread = new Thread(async () =&gt;
+            {
+                await foreach (var @event in Await&lt;IAsyncEnumerable&lt;MouseMoveEvent&gt;&gt;(mouseMoveEventProducer.GetEvents(), didStartConsumingEvent))
+                {
+                    if (!IsMouseMoveEventFound(@event, expectedEvents))
+                    {
+                        continue;
+                    }
+                    consumedEvent.Signal();
+                }
+            });
+            thread.Start();
+
+            // true if the consumer is attached!
+            Assert.IsTrue(didStartConsumingEvent.WaitOne(maxWaitTime));
+
+            // We must call the callback after the consumer is attached!
+            // otherwise the message is automatically dismissed.
+            /// this is where the GetMousePosition() &quot;callback&quot; in the producer will be called! with Timer
+            mouseMoveEventProducer.StartCapture(nativeMouseMock.Object);
+
+            /* THEN */
+            //true if all events generated by the fake messages have meet expectation.
+            Assert.IsTrue(consumedEvent.Wait(maxWaitTime), &quot;Did not find all matching mouse move events in time.&quot;);
+
+            //total shut down and resources release
+            mouseMoveEventProducer.StopCapture();
+            mouseModule.Initialize(false);
+        }
+
+        /// &lt;summary&gt;
+        ///     Set the ManualResetEvent to indicate that the consumer has been attached.
+        ///     Then return the awaitedObject, which in this case should be an 
+        ///     IAsyncEnumerable&lt;SomeEvent&gt; Type.
+        /// &lt;/summary&gt;
+        /// &lt;typeparam name=&quot;T&quot;&gt;The type of the returned object, which in this case should be an IAsyncEnumerable&lt;SomeEvent&gt; &lt;/typeparam&gt;
+        /// &lt;param name=&quot;awaitedObject&quot;&gt;the object to &quot;await foreach&quot;, which in this case should be of type IAsyncEnumerable&lt;SomeEvent&gt; &lt;/param&gt;
+        /// &lt;param name=&quot;expectation&quot;&gt;a ManualRestEvent to Set to indicate that the consumer has been attached&lt;/param&gt;
+        /// &lt;returns&gt;&lt;/returns&gt;
+        public static T Await&lt;T&gt;(T awaitedObject, ManualResetEvent expectation)
+        {
+            expectation.Set();
+            return awaitedObject;
+        }
+
+        /// &lt;summary&gt;
+        ///     Call AllowMessageTypeRegistry() methods on all messages related to the mouse producers.
+        /// &lt;/summary&gt;
+        private void AllowMessageTypeRegistryForAll()
+        {
+            foreach (GlobalHook.MessageType messageType in mouseClickListenedMessagesTypes)
+            {
+                hookNativeMethodsMock.AllowMessageTypeRegistry(messageType);
+            }
+            foreach (GlobalHook.MessageType messageType in mouseScrollListenedMessagesTypes)
+            {
+                hookNativeMethodsMock.AllowMessageTypeRegistry(messageType);
+            }
+        }
+
+        /// &lt;summary&gt;
+        ///     Return true if an mouse move event is in the array of expected events.
+        ///     This method itslef defines the logic to determine if two mouse move events are equal.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;event&quot;&gt;an event that is expected to be in the array of expected events&lt;/param&gt;
+        /// &lt;param name=&quot;expectedEvents&quot;&gt;an array of expected events&lt;/param&gt;
+        /// &lt;returns&gt;true if an event is indeed in the array of expected events.&lt;/returns&gt;
+        private bool IsMouseMoveEventFound(MouseMoveEvent @event, MouseMoveEvent[] expectedEvents)
+        {
+            foreach (MouseMoveEvent e in expectedEvents)
+            {
+                if (@event.MousePosition.Equals(e.MousePosition)) return true;
+            }
+            return false;
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[34,13,34,50,1],[35,13,35,14,1],[36,17,36,39,1],[37,17,37,32,1],[38,13,38,14,1],[41,9,55,11,1],[57,9,60,11,1],[64,9,64,10,1],[66,13,66,45,1],[67,13,67,69,1],[68,13,68,67,1],[69,13,69,71,1],[70,13,70,75,1],[73,13,73,52,1],[74,13,74,69,1],[75,13,75,68,1],[76,13,76,70,1],[77,13,77,70,1],[78,13,78,49,1],[81,13,81,56,1],[84,13,84,65,1],[85,13,85,48,1],[86,9,86,10,1],[90,9,90,10,1],[92,13,92,32,1],[93,13,93,44,1],[94,13,94,43,1],[95,13,95,45,1],[96,13,96,45,1],[97,13,97,33,1],[98,13,98,30,1],[99,13,99,42,1],[100,13,100,36,1],[101,9,101,10,1],[105,9,105,10,1],[107,13,107,47,1],[108,13,108,58,1],[109,13,109,57,1],[110,13,110,62,1],[113,13,113,42,1],[116,13,118,67,1],[122,13,124,15,1],[128,13,128,81,1],[129,13,129,80,1],[132,13,132,76,1],[135,13,136,13,1],[136,13,136,14,1],[136,14,137,17,1],[137,17,137,30,1],[137,30,137,32,1],[137,32,137,42,1],[137,42,137,43,1],[137,43,137,45,1],[137,45,137,46,1],[137,46,137,145,1],[137,145,138,17,1],[138,17,138,18,1],[138,18,139,21,1],[139,21,139,72,1],[139,72,140,21,1],[140,21,140,22,0],[140,22,141,25,1],[141,25,141,34,0],[141,34,143,21,1],[143,21,143,44,1],[143,44,144,17,1],[144,17,144,18,1],[144,18,145,13,1],[145,13,145,14,1],[145,14,145,16,1],[135,13,145,16,1],[146,13,146,28,1],[149,13,149,72,1],[154,13,154,73,1],[158,13,158,116,1],[161,13,161,50,1],[162,13,162,43,1],[163,9,163,10,1],[163,9,163,10,1],[175,9,175,10,1],[176,13,176,31,1],[177,13,177,34,1],[178,9,178,10,1],[184,9,184,10,0],[185,13,185,20,0],[185,22,185,56,0],[185,57,185,59,0],[185,60,185,91,0],[186,13,186,14,0],[187,17,187,77,0],[188,13,188,14,0],[189,13,189,20,0],[189,22,189,56,0],[189,57,189,59,0],[189,60,189,92,0],[190,13,190,14,0],[191,17,191,77,0],[192,13,192,14,0],[193,9,193,10,0],[203,9,203,10,1],[204,13,204,20,1],[204,22,204,38,1],[204,39,204,41,1],[204,42,204,56,1],[205,13,205,14,1],[206,17,206,66,1],[206,67,206,79,1],[207,13,207,14,0],[208,13,208,26,0],[209,9,209,10,1]]);
+    </script>
+  </body>
+</html>

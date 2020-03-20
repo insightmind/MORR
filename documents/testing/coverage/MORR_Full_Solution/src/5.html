@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\WindowManagementTest\WindowManagementModuleTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
+using System.Diagnostics;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MORR.Modules.WindowManagement;
+using MORR.Modules.WindowManagement.Producers;
+using MORR.Shared.Hook;
+using SharedTest.TestHelpers.INativeHook;
+
+namespace WindowManagementTest
+{
+    [TestClass]
+    public class WindowManagementModuleTest
+    {
+        private readonly GlobalHook.MessageType[] windowEventListenedMessagesTypes =
+        {
+            GlobalHook.MessageType.WM_ACTIVATE,
+            GlobalHook.MessageType.WM_ENTERSIZEMOVE,
+            GlobalHook.MessageType.WM_EXITSIZEMOVE,
+            GlobalHook.MessageType.WM_SIZE
+        };
+
+        private CompositionContainer container;
+        private HookNativeMethodsMock hookNativeMethods;
+        private WindowFocusEventProducer windowFocusEventProducer;
+        private WindowManagementModule windowManagementModule;
+        private WindowMovementEventProducer windowMovementEventProducer;
+        private WindowResizingEventProducer windowResizingEventProducer;
+        private WindowStateChangedEventProducer windowStateChangedEventProducer;
+
+
+        [TestInitialize]
+        public void BeforeTest()
+        {
+            windowManagementModule = new WindowManagementModule();
+            windowFocusEventProducer = new WindowFocusEventProducer();
+            windowMovementEventProducer = new WindowMovementEventProducer();
+            windowResizingEventProducer = new WindowResizingEventProducer();
+            windowStateChangedEventProducer = new WindowStateChangedEventProducer();
+
+            container = new CompositionContainer();
+            container.ComposeExportedValue(windowFocusEventProducer);
+            container.ComposeExportedValue(windowMovementEventProducer);
+            container.ComposeExportedValue(windowResizingEventProducer);
+            container.ComposeExportedValue(windowStateChangedEventProducer);
+            container.ComposeParts(windowManagementModule);
+
+            hookNativeMethods = new HookNativeMethodsMock();
+            hookNativeMethods.Initialize();
+        }
+
+        [TestCleanup]
+        public void AfterTest()
+        {
+            windowManagementModule = null;
+            windowMovementEventProducer = null;
+            windowFocusEventProducer = null;
+            windowStateChangedEventProducer = null;
+            windowResizingEventProducer = null;
+            container.Dispose();
+            container = null;
+            hookNativeMethods = null;
+        }
+
+        [TestMethod]
+        public void TestWindowManagementModule_Activate()
+        {
+            /* PRECONDITIONS */
+            Debug.Assert(windowManagementModule != null);
+            Debug.Assert(windowFocusEventProducer != null);
+            Debug.Assert(windowMovementEventProducer != null);
+            Debug.Assert(windowResizingEventProducer != null);
+            Debug.Assert(windowStateChangedEventProducer != null);
+            Debug.Assert(hookNativeMethods != null);
+
+            /* GIVEN */
+
+            /* WHEN */
+            windowManagementModule.Initialize(true);
+            foreach (var messageType in windowEventListenedMessagesTypes)
+            {
+                hookNativeMethods.AllowMessageTypeRegistry(messageType);
+            }
+
+            hookNativeMethods.AllowLibraryLoad();
+            windowManagementModule.IsActive = true;
+
+            /* THEN */
+            Assert.IsTrue(windowManagementModule.IsActive);
+            windowManagementModule.IsActive = false;
+        }
+
+        [TestMethod]
+        public void TestWindowManagementModule_Deactivate()
+        {
+            /* PRECONDITIONS */
+            Debug.Assert(windowManagementModule != null);
+            Debug.Assert(windowFocusEventProducer != null);
+            Debug.Assert(windowMovementEventProducer != null);
+            Debug.Assert(windowResizingEventProducer != null);
+            Debug.Assert(windowStateChangedEventProducer != null);
+
+            /* GIVEN */
+
+            /* WHEN */
+            windowManagementModule.Initialize(true);
+            windowManagementModule.IsActive = false;
+
+            /* THEN */
+            Assert.IsFalse(windowManagementModule.IsActive);
+        }
+
+        [TestMethod]
+        public void TestWindowManagementModule_InitializedFalse_ChannelClosed()
+        {
+            /* PRECONDITIONS */
+            Debug.Assert(windowManagementModule != null);
+            Debug.Assert(windowFocusEventProducer != null);
+            Debug.Assert(windowMovementEventProducer != null);
+            Debug.Assert(windowResizingEventProducer != null);
+            Debug.Assert(windowStateChangedEventProducer != null);
+
+            /* GIVEN */
+
+            /* WHEN */
+            windowManagementModule.Initialize(false);
+
+            /* THEN */
+            Assert.IsTrue(windowFocusEventProducer.IsClosed);
+            Assert.IsTrue(windowMovementEventProducer.IsClosed);
+            Assert.IsTrue(windowResizingEventProducer.IsClosed);
+            Assert.IsTrue(windowStateChangedEventProducer.IsClosed);
+        }
+
+        [TestMethod]
+        public void TestWindowManagementModule_InitializedTrue_ChannelOpened()
+        {
+            /* PRECONDITIONS */
+            Debug.Assert(windowManagementModule != null);
+            Debug.Assert(windowFocusEventProducer != null);
+            Debug.Assert(windowMovementEventProducer != null);
+            Debug.Assert(windowResizingEventProducer != null);
+            Debug.Assert(windowStateChangedEventProducer != null);
+
+            /* GIVEN */
+
+            /* WHEN */
+            windowManagementModule.Initialize(true);
+
+            /* THEN */
+            Assert.IsFalse(windowFocusEventProducer.IsClosed);
+            Assert.IsFalse(windowMovementEventProducer.IsClosed);
+            Assert.IsFalse(windowResizingEventProducer.IsClosed);
+            Assert.IsFalse(windowStateChangedEventProducer.IsClosed);
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,9,21,11,1],[34,9,34,10,1],[35,13,35,67,1],[36,13,36,71,1],[37,13,37,77,1],[38,13,38,77,1],[39,13,39,85,1],[41,13,41,52,1],[42,13,42,70,1],[43,13,43,73,1],[44,13,44,73,1],[45,13,45,77,1],[46,13,46,60,1],[48,13,48,61,1],[49,13,49,44,1],[50,9,50,10,1],[54,9,54,10,1],[55,13,55,43,1],[56,13,56,48,1],[57,13,57,45,1],[58,13,58,52,1],[59,13,59,48,1],[60,13,60,33,1],[61,13,61,30,1],[62,13,62,38,1],[63,9,63,10,1],[67,9,67,10,1],[69,13,69,58,1],[70,13,70,60,1],[71,13,71,63,1],[72,13,72,63,1],[73,13,73,67,1],[74,13,74,53,1],[79,13,79,53,1],[80,13,80,20,1],[80,22,80,37,1],[80,38,80,40,1],[80,41,80,73,1],[81,13,81,14,1],[82,17,82,73,1],[83,13,83,14,1],[85,13,85,50,1],[86,13,86,52,1],[89,13,89,60,1],[90,13,90,53,1],[91,9,91,10,1],[95,9,95,10,1],[97,13,97,58,1],[98,13,98,60,1],[99,13,99,63,1],[100,13,100,63,1],[101,13,101,67,1],[106,13,106,53,1],[107,13,107,53,1],[110,13,110,61,1],[111,9,111,10,1],[115,9,115,10,1],[117,13,117,58,1],[118,13,118,60,1],[119,13,119,63,1],[120,13,120,63,1],[121,13,121,67,1],[126,13,126,54,1],[129,13,129,62,1],[130,13,130,65,1],[131,13,131,65,1],[132,13,132,69,1],[133,9,133,10,1],[137,9,137,10,1],[139,13,139,58,1],[140,13,140,60,1],[141,13,141,63,1],[142,13,142,63,1],[143,13,143,67,1],[148,13,148,53,1],[151,13,151,63,1],[152,13,152,66,1],[153,13,153,66,1],[154,13,154,70,1],[155,9,155,10,1]]);
+    </script>
+  </body>
+</html>

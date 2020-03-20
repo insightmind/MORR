@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\WebBrowserTest\WebBrowserEventTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Diagnostics;
+using System.Text.Json;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MORR.Modules.WebBrowser.Events;
+
+namespace WebBrowserTest
+{
+    [TestClass]
+    public class WebBrowserEventTest
+    {
+        private readonly DateTime commonDateTime = DateTime.Parse(&quot;2020-03-05T10:10:51.1230000+01:00&quot;);
+        private const int commonTabId = 5;
+        private const string commonText = &quot;SomeText&quot;;
+        private readonly Uri commonUrl = new Uri(&quot;https://sample.com/&quot;);
+        private const string serializedEvent = &quot;{\&quot;buttonTitle\&quot;:\&quot;SomeText\&quot;,\&quot;buttonHref\&quot;:\&quot;https://sample.com/redirect\&quot;,&quot; +
+            &quot;\&quot;tabID\&quot;:5,\&quot;url\&quot;:\&quot;https://sample.com\&quot;,&quot; +
+            &quot;\&quot;timeStamp\&quot;:\&quot;2020-03-05T10:10:51.1230000+01:00\&quot;,\&quot;fileURL\&quot;:\&quot;https://sample.com/download\&quot;,\&quot;mimeType\&quot;:\&quot;JSON\&quot;,&quot; +
+            &quot;\&quot;target\&quot;:\&quot;SomeLabel\&quot;,\&quot;newTabID\&quot;:7,\&quot;text\&quot;:\&quot;SomeInput\&quot;,\&quot;textSelection\&quot;:\&quot;SomeSelection\&quot;}&quot;;
+
+        //test if ButtonClick attributes are correctly deserialized
+        [TestMethod]
+        public void DeserializeButtonClickEvent()
+        {
+            /* GIVEN */
+            string eventJson = &quot;{\&quot;buttonTitle\&quot;:\&quot;SomeText\&quot;,\&quot;buttonHref\&quot;:\&quot;https://sample.com/redirect\&quot;,\&quot;tabID\&quot;:5,\&quot;url\&quot;:\&quot;https://sample.com\&quot;,\&quot;timeStamp\&quot;:\&quot;2020-03-05T10:10:51.1230000+01:00\&quot;}&quot;;
+            var deserialized = new ButtonClickEvent();
+
+            /* WHEN */
+            deserialized.Deserialize(eventJson);
+
+            /* THEN */
+            TestCommonAttributes(deserialized);
+            Assert.AreEqual(commonText, deserialized.Button);
+            Assert.AreEqual(&quot;https://sample.com/redirect&quot;, deserialized.Href);
+        }
+
+        //test if CloseTabEvent attributes are correctly deserialized
+        [TestMethod]
+        public void DeserializeCloseTabEvent()
+        {
+            /* GIVEN */
+            var deserialized = new CloseTabEvent();
+
+            /* WHEN */
+            deserialized.Deserialize(serializedEvent);
+
+            /* THEN */
+            TestCommonAttributes(deserialized);
+        }
+
+        //test if FileDownloadEvent attributes are correctly deserialized
+        [TestMethod]
+        public void DeserializeFileDownloadEvent()
+        {
+            /* GIVEN */
+            var deserialized = new FileDownloadEvent();
+
+            /* WHEN */
+            deserialized.Deserialize(serializedEvent);
+
+            /* THEN */
+            TestCommonAttributes(deserialized);
+            Assert.AreEqual(new Uri(&quot;https://sample.com/download&quot;), deserialized.FileURL);
+            Assert.AreEqual(&quot;JSON&quot;, deserialized.MIMEType);
+        }
+
+        //test if HoverEvent attributes are correctly deserialized
+        [TestMethod]
+        public void DeserializeHoverEvent()
+        {
+            /* GIVEN */
+            var deserialized = new HoverEvent();
+
+            /* WHEN */
+            deserialized.Deserialize(serializedEvent);
+
+            /* THEN */
+            TestCommonAttributes(deserialized);
+            Assert.AreEqual(&quot;SomeLabel&quot;, deserialized.HoveredElement);
+        }
+
+        //test if NavigationEvent attributes are correctly deserialized
+        [TestMethod]
+        public void DeserializeNavigationEvent()
+        {
+            /* GIVEN */
+            var deserialized = new NavigationEvent();
+
+            /* WHEN */
+            deserialized.Deserialize(serializedEvent);
+
+            /* THEN */
+            TestCommonAttributes(deserialized);
+        }
+
+        //test if OpenTabEvent attributes are correctly deserialized
+        [TestMethod]
+        public void DeserializeOpenTabEvent()
+        {
+            /* GIVEN */
+            var deserialized = new OpenTabEvent();
+
+            /* WHEN */
+            deserialized.Deserialize(serializedEvent);
+
+            /* THEN */
+            TestCommonAttributes(deserialized);
+        }
+
+        //test if SwitchTabEvent attributes are correctly deserialized
+        [TestMethod]
+        public void DeserializeSwitchTabEvent()
+        {
+            /* GIVEN */
+            var deserialized = new SwitchTabEvent();
+
+            /* WHEN */
+            deserialized.Deserialize(serializedEvent);
+
+            /* THEN */
+            TestCommonAttributes(deserialized);
+            Assert.AreEqual(7, deserialized.NewTabID);
+        }
+
+        //test if TextInputEvent attributes are correctly deserialized
+        [TestMethod]
+        public void DeserializeTextInputEvent()
+        {
+            /* GIVEN */
+            var deserialized = new TextInputEvent();
+
+            /* WHEN */
+            deserialized.Deserialize(serializedEvent);
+
+            /* THEN */
+            TestCommonAttributes(deserialized);
+            Assert.AreEqual(deserialized.InputtedText, &quot;SomeInput&quot;);
+            Assert.AreEqual(&quot;SomeLabel&quot;, deserialized.Textbox);
+        }
+
+        //test if TextSelectionEvent attributes are correctly deserialized
+        [TestMethod]
+        public void DeserializeTextSelectionEvent()
+        {
+            /* GIVEN */
+            var deserialized = new TextSelectionEvent();
+
+            /* WHEN */
+            deserialized.Deserialize(serializedEvent);
+
+            /* THEN */
+            TestCommonAttributes(deserialized);
+            Assert.AreEqual(&quot;SomeSelection&quot;, deserialized.SelectedText);
+        }
+
+        private void TestCommonAttributes(WebBrowserEvent deserialized)
+        {
+            Assert.AreEqual(commonUrl, deserialized.CurrentURL);
+            Assert.AreEqual(commonDateTime, deserialized.Timestamp);
+            Assert.AreEqual(commonTabId, deserialized.TabID);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[12,9,12,104,1],[15,9,15,73,1],[24,9,24,10,1],[26,13,26,207,1],[27,13,27,55,1],[30,13,30,49,1],[33,13,33,48,1],[34,13,34,62,1],[35,13,35,79,1],[36,9,36,10,1],[41,9,41,10,1],[43,13,43,52,1],[46,13,46,55,1],[49,13,49,48,1],[50,9,50,10,1],[55,9,55,10,1],[57,13,57,56,1],[60,13,60,55,1],[63,13,63,48,1],[64,13,64,91,1],[65,13,65,60,1],[66,9,66,10,1],[71,9,71,10,1],[73,13,73,49,1],[76,13,76,55,1],[79,13,79,48,1],[80,13,80,71,1],[81,9,81,10,1],[86,9,86,10,1],[88,13,88,54,1],[91,13,91,55,1],[94,13,94,48,1],[95,9,95,10,1],[100,9,100,10,1],[102,13,102,51,1],[105,13,105,55,1],[108,13,108,48,1],[109,9,109,10,1],[114,9,114,10,1],[116,13,116,53,1],[119,13,119,55,1],[122,13,122,48,1],[123,13,123,55,1],[124,9,124,10,1],[129,9,129,10,1],[131,13,131,53,1],[134,13,134,55,1],[137,13,137,48,1],[138,13,138,69,1],[139,13,139,64,1],[140,9,140,10,1],[145,9,145,10,1],[147,13,147,57,1],[150,13,150,55,1],[153,13,153,48,1],[154,13,154,73,1],[155,9,155,10,1],[158,9,158,10,1],[159,13,159,65,1],[160,13,160,69,1],[161,13,161,62,1],[162,9,162,10,1]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\MORR\Session\Crypto\CryptoHelper.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Text;
+using System.Security.Cryptography;
+
+namespace MORR.Core.Session.Crypto
+{
+    public static class CryptoHelper
+    {
+        /// &lt;summary&gt;
+        /// Generates a hash of the provided string using the SHA256 algorithm.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;rawData&quot;&gt;The string to be hashed.&lt;/param&gt;
+        /// &lt;returns&gt;The hashed version of the rawData string.&lt;/returns&gt;
+        public static string GenerateHash(string rawData)
+        {
+            using var hash = SHA256.Create();
+            var hashedBytes = hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
+
+            const string convertFormat = &quot;x2&quot;;
+            var builder = new StringBuilder();
+
+            for (var index = 0; index &lt; hashedBytes.Length; index++)
+            {
+                builder.Append(hashedBytes[index].ToString(convertFormat));
+            }
+
+            return builder.ToString();
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[14,9,14,10,1],[15,13,15,46,1],[16,13,16,81,1],[19,13,19,47,1],[21,18,21,31,1],[21,33,21,59,1],[21,61,21,68,1],[22,13,22,14,1],[23,17,23,76,1],[24,13,24,14,1],[26,13,26,39,1],[27,9,27,10,1]]);
+    </script>
+  </body>
+</html>

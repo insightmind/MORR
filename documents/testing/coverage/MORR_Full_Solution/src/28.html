@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\MORR\Data\IntermediateFormat\Json\JsonIntermediateFormatSample.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Text.Json;
+
+namespace MORR.Core.Data.IntermediateFormat.Json
+{
+    /// &lt;summary&gt;
+    ///     A sample in JSON intermediate format.
+    /// &lt;/summary&gt;
+    public class JsonIntermediateFormatSample : IntermediateFormatSample
+    {
+        /// &lt;summary&gt;
+        ///     The data that is serialized in JSON-compatible format.
+        /// &lt;/summary&gt;
+        public JsonDocument JsonEncodedData =&gt; JsonDocument.Parse(Data);
+
+        /// &lt;summary&gt;
+        ///     The type of the event that is serialized in JSON-compatible format.
+        /// &lt;/summary&gt;
+        public JsonEncodedText JsonEncodedType =&gt; JsonEncodedText.Encode(Type.ToString());
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[13,48,13,72,1],[18,51,18,90,1]]);
+    </script>
+  </body>
+</html>

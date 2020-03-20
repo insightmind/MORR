@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\WebBrowser\Events\SwitchTabEvent.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Text.Json;
+
+namespace MORR.Modules.WebBrowser.Events
+{
+    /// &lt;summary&gt;
+    ///     A switch tab user interaction
+    /// &lt;/summary&gt;
+    public class SwitchTabEvent : WebBrowserEvent
+    {
+        private const string serializedNewTabIdField = &quot;newTabID&quot;;
+
+        /// &lt;summary&gt;
+        ///     The identifier of the tab that the user switched to
+        /// &lt;/summary&gt;
+        public int NewTabID { get; set; }
+
+        protected override void DeserializeSpecificAttributes(JsonElement parsed)
+        {
+            NewTabID = parsed.GetProperty(serializedNewTabIdField).GetInt32();
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,31,15,35,1],[15,36,15,40,1],[18,9,18,10,1],[19,13,19,79,1],[20,9,20,10,1]]);
+    </script>
+  </body>
+</html>

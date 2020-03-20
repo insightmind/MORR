@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\WindowManagement\Producers\WindowResizingEventProducer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Drawing;
+using MORR.Modules.WindowManagement.Events;
+using MORR.Modules.WindowManagement.Native;
+using MORR.Shared.Events.Queue;
+using MORR.Shared.Hook;
+
+namespace MORR.Modules.WindowManagement.Producers
+{
+    /// &lt;summary&gt;
+    ///     Provides a single-writer-multiple-reader queue for WindowResizingEvent
+    /// &lt;/summary&gt;
+    public class WindowResizingEventProducer : DefaultEventQueue&lt;WindowResizingEvent&gt;
+    {
+        private static INativeWindowManagement nativeWindowManagement;
+
+        private readonly GlobalHook.MessageType[] listenedMessageTypes =
+            { GlobalHook.MessageType.WM_ENTERSIZEMOVE, GlobalHook.MessageType.WM_EXITSIZEMOVE };
+
+        /// &lt;summary&gt;
+        ///     The rectangle that holds the size and location of the window
+        ///     after the change.
+        /// &lt;/summary&gt;
+        private Rectangle windowRecAfterChange;
+
+        /// &lt;summary&gt;
+        ///     The rectangle that holds the size and location of the window
+        ///     before the change.
+        /// &lt;/summary&gt;
+        private Rectangle windowRecBeforeChange;
+
+        /// &lt;summary&gt;
+        ///     The hwnd of the windows being changed.
+        ///     Change can mean move or resize.
+        /// &lt;/summary&gt;
+        private int windowUnderChangeHwnd;
+
+        public void StartCapture(INativeWindowManagement nativeWinManagement)
+        {
+            nativeWindowManagement = nativeWinManagement;
+            GlobalHook.AddListener(WindowHookCallback, listenedMessageTypes);
+            GlobalHook.IsActive = true;
+        }
+
+        public void StopCapture()
+        {
+            GlobalHook.RemoveListener(WindowHookCallback, listenedMessageTypes);
+            Close();
+        }
+
+        /// &lt;summary&gt;
+        ///     Everytime a WM_ENTERSIZEMOVE is received,
+        ///     records the information of the window before the change
+        ///     and wait for the WM_EXITSIZEMOVE.
+        ///     Everytime a WM_EXITSIZEMOVE is received,
+        ///     records the information of the window after the change
+        ///     and see if the window has been resized.
+        ///     (by if !(Utility.IsRectSizeEqual(windowRecBeforeChange,windowRecAfterChange)))
+        ///     If so, records the relevant information into a WindowResizingEvent.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;msg&quot;&gt;the hook message&lt;/param&gt;
+        private void WindowHookCallback(GlobalHook.HookMessage msg)
+        {
+            if (msg.Type == (uint) GlobalHook.MessageType.WM_ENTERSIZEMOVE)
+            {
+                windowUnderChangeHwnd = (int) msg.Hwnd;
+                windowRecBeforeChange = new Rectangle();
+                nativeWindowManagement.GetWindowRect(windowUnderChangeHwnd, ref windowRecBeforeChange);
+            }
+
+            if (msg.Type == (uint) GlobalHook.MessageType.WM_EXITSIZEMOVE)
+            {
+                windowRecAfterChange = new Rectangle();
+                nativeWindowManagement.GetWindowRect(windowUnderChangeHwnd, ref windowRecAfterChange);
+                if (!nativeWindowManagement.IsRectSizeEqual(windowRecBeforeChange, windowRecAfterChange))
+                {
+                    var oldSize = new Size
+                    {
+                        Width = nativeWindowManagement.GetWindowWidth(windowRecBeforeChange),
+                        Height = nativeWindowManagement.GetWindowHeight(windowRecBeforeChange)
+                    };
+                    var newSize = new Size
+                    {
+                        Width = nativeWindowManagement.GetWindowWidth(windowRecAfterChange),
+                        Height = nativeWindowManagement.GetWindowHeight(windowRecAfterChange)
+                    };
+                    var @event = new WindowResizingEvent
+                    {
+                        IssuingModule = WindowManagementModule.Identifier,
+                        OldSize = oldSize,
+                        NewSize = newSize,
+                        Title = nativeWindowManagement.GetWindowTitleFromHwnd(msg.Hwnd),
+                        ProcessName = nativeWindowManagement.GetProcessNameFromHwnd(msg.Hwnd)
+                    };
+                    Enqueue(@event);
+                }
+            }
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[16,9,17,97,1],[38,9,38,10,1],[39,13,39,58,1],[40,13,40,78,1],[41,13,41,40,1],[42,9,42,10,1],[45,9,45,10,1],[46,13,46,81,1],[47,13,47,21,1],[48,9,48,10,1],[62,9,62,10,1],[63,13,63,76,1],[64,13,64,14,1],[65,17,65,56,1],[66,17,66,57,1],[67,17,67,104,1],[68,13,68,14,1],[70,13,70,75,1],[71,13,71,14,1],[72,17,72,56,1],[73,17,73,103,1],[74,17,74,106,1],[75,17,75,18,1],[76,21,80,23,1],[81,21,85,23,1],[86,21,93,23,1],[94,21,94,37,1],[95,17,95,18,1],[96,13,96,14,1],[97,9,97,10,1]]);
+    </script>
+  </body>
+</html>

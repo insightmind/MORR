@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\Clipboard\Producers\ClipboardCutEventProducer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using MORR.Modules.Clipboard.Events;
+using MORR.Modules.Clipboard.Native;
+using MORR.Shared.Events.Queue;
+using MORR.Shared.Hook;
+
+namespace MORR.Modules.Clipboard.Producers
+{
+    /// &lt;summary&gt;
+    ///     Provides a single-writer-multiple-reader queue for ClipboardCutEvent
+    /// &lt;/summary&gt;
+    public class ClipboardCutEventProducer : DefaultEventQueue&lt;ClipboardCutEvent&gt;
+    {
+        private const int wparamcut = 14;
+
+        private static IClipboardWindowMessageSink clipboardWindowMessageSink;
+
+        private static INativeClipboard nativeClipboard;
+
+        #region Private methods
+
+        private void OnClipboardUpdate(IntPtr hWnd, uint messageId, IntPtr wParam, IntPtr lParam)
+        {
+            if (messageId != (int) GlobalHook.MessageType.WM_CLIPBOARDUPDATE)
+            {
+                return;
+            }
+
+            string text;
+            try
+            {
+                text = nativeClipboard.GetClipboardText();
+                Console.WriteLine(wParam);
+            }
+            catch (Exception)
+            {
+                return;
+            }
+
+            if (wParam.ToInt64() == wparamcut)
+            {
+                var clipboardCutEvent = new ClipboardCutEvent
+                    { ClipboardText = text, IssuingModule = ClipboardModule.Identifier };
+                Enqueue(clipboardCutEvent);
+            }
+        }
+
+        private void GlobalHookCallBack(GlobalHook.HookMessage message)
+        {
+            string text;
+            try
+            {
+                text = nativeClipboard.GetClipboardText();
+            }
+            catch (Exception)
+            {
+                return;
+            }
+
+            //create the corresponding new Event
+            var clipboardCutEvent = new ClipboardCutEvent
+                { ClipboardText = text, IssuingModule = ClipboardModule.Identifier };
+
+            //enqueue the new event.
+            Enqueue(clipboardCutEvent);
+        }
+
+        #endregion
+
+        #region Public methods
+
+        /// &lt;summary&gt;
+        ///     Sets the hook for the clipboard cut event.
+        /// &lt;/summary&gt;
+        public void StartCapture(IClipboardWindowMessageSink winSink, INativeClipboard nativeCL)
+        {
+            clipboardWindowMessageSink = winSink;
+            nativeClipboard = nativeCL;
+
+            if (clipboardWindowMessageSink == null)
+            {
+                return;
+            }
+
+            clipboardWindowMessageSink.ClipboardUpdated += OnClipboardUpdate;
+
+            GlobalHook.IsActive = true;
+            GlobalHook.AddListener(GlobalHookCallBack, GlobalHook.MessageType.WM_CUT);
+        }
+
+        /// &lt;summary&gt;
+        ///     Releases the hook for the clipboard cut event.
+        /// &lt;/summary&gt;
+        public void StopCapture()
+        {
+            clipboardWindowMessageSink?.Dispose();
+            Close();
+        }
+
+        #endregion
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[23,9,23,10,1],[24,13,24,78,1],[25,13,25,14,0],[26,17,26,24,0],[31,13,31,14,1],[32,17,32,59,1],[33,17,33,43,1],[34,13,34,14,1],[35,13,35,30,0],[36,13,36,14,0],[37,17,37,24,0],[40,13,40,47,1],[41,13,41,14,1],[42,17,43,90,1],[44,17,44,44,1],[45,13,45,14,1],[46,9,46,10,1],[49,9,49,10,1],[52,13,52,14,1],[53,17,53,59,1],[54,13,54,14,1],[55,13,55,30,0],[56,13,56,14,0],[57,17,57,24,0],[61,13,62,86,1],[65,13,65,40,1],[66,9,66,10,1],[76,9,76,10,1],[77,13,77,50,1],[78,13,78,40,1],[80,13,80,52,1],[81,13,81,14,0],[82,17,82,24,0],[85,13,85,78,1],[87,13,87,40,1],[88,13,88,87,1],[89,9,89,10,1],[95,9,95,10,1],[96,13,96,51,1],[97,13,97,21,1],[98,9,98,10,1]]);
+    </script>
+  </body>
+</html>

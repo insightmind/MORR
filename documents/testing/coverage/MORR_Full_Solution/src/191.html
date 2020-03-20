@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\MORRTest\Configuration\ConfigurationManagerTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MORR.Core.Configuration;
+using MORR.Shared.Configuration;
+using MORR.Shared.Utility;
+using MORRTest.TestHelper.Configuration;
+using System;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
+using System.Diagnostics;
+using System.IO;
+using System.IO.Abstractions.TestingHelpers;
+using System.Reflection;
+
+namespace MORRTest.Configuration
+{
+    [TestClass]
+    public class ConfigurationManagerTest
+    {
+        private IConfigurationManager configManager;
+        private MockFileSystem fileSystem;
+        private CompositionContainer container;
+
+        private const string defaultPath = &quot;C:\\temp\\config.morr&quot;;
+
+        [TestInitialize]
+        public void BeforeTest()
+        {
+            fileSystem = new MockFileSystem();
+            configManager = new ConfigurationManager(fileSystem);
+            container = new CompositionContainer();
+        }
+
+        [TestCleanup]
+        public void AfterTest()
+        {
+            container.Dispose();
+            configManager = null;
+            fileSystem = null;
+        }
+
+        [TestMethod]
+        public void TestConfigurationManager_NullPath()
+        {
+            /* PRECONDITION */
+            Debug.Assert(configManager != null);
+            Assert.ThrowsException&lt;ArgumentNullException&gt;(() =&gt; configManager.LoadConfiguration(null));
+        }
+
+        [TestMethod]
+        public void TestConfigurationManager_InvalidPath()
+        {
+            /* PRECONDITION */
+            Debug.Assert(configManager != null);
+
+            /* GIVEN */
+            var assemblyPath = Assembly.GetExecutingAssembly().Location;
+            var invalidPath = Path.GetDirectoryName(assemblyPath) + &quot;\\config.morr&quot;;
+            var filePath = new FilePath(invalidPath, true);
+
+            /* THEN */
+            Assert.ThrowsException&lt;FileNotFoundException&gt;(() =&gt; configManager.LoadConfiguration(filePath));
+        }
+
+        [TestMethod]
+        public void TestConfigurationManager_EmptyConfig()
+        {
+            /* PRECONDITION */
+            Debug.Assert(configManager != null);
+            Debug.Assert(fileSystem != null);
+
+            /* GIVEN */
+            var mockData = new MockFileData(&quot;{}&quot;);
+            fileSystem.AddFile(defaultPath, mockData);
+
+            /* WHEN */
+            try
+            {
+                configManager.LoadConfiguration(new FilePath(defaultPath, true));
+            }
+            catch (Exception exception)
+            {
+                Assert.Fail(&quot;ConfigManager did throw an error (&quot; + exception.Message + &quot;) however an empty config should still be sufficient&quot;);
+            }
+        }
+
+        [TestMethod]
+        public void TestConfigurationManager_AssignConfig()
+        {
+            /* PRECONDITION */
+            Debug.Assert(configManager != null);
+            Debug.Assert(fileSystem != null);
+            Debug.Assert(container != null);
+
+            /* GIVEN */
+            var configType = typeof(TestConfiguration).FullName;
+            const string testConfig = &quot;{\n\&quot;isEnabled\&quot;: true\n}&quot;;
+            var fullConfig = &quot;{\n\&quot;&quot; + configType + &quot;\&quot;:&quot; + testConfig + &quot;\n}&quot;;
+
+            var configurationMock = new TestConfiguration(new RawConfiguration(testConfig));
+            container.ComposeExportedValue&lt;IConfiguration&gt;(configurationMock);
+            container.ComposeParts(configManager);
+
+            var mockData = new MockFileData(fullConfig);
+            fileSystem.AddFile(defaultPath, mockData);
+
+            /* WHEN */
+            try
+            {
+                configManager.LoadConfiguration(new FilePath(defaultPath, true));
+            }
+            catch (Exception exception)
+            {
+                Assert.Fail(&quot;ConfigManager did throw an error (&quot; + exception.Message + &quot;) however was supplied with valid config.&quot;);
+            }
+
+            /* THEN */
+            Debug.Assert(configurationMock.TestResult != null);
+            configurationMock.TestResult.AssertSuccess();
+        }
+
+        [TestMethod]
+        public void TestConfigurationManager_AssignUnknownConfig()
+        {
+            /* PRECONDITION */
+            Debug.Assert(configManager != null);
+            Debug.Assert(fileSystem != null);
+            Debug.Assert(container != null);
+
+            /* GIVEN */
+            // We use the normal name here as this does not uniquely identify the type
+            var configType = typeof(TestConfiguration).Name;
+            const string testConfig = &quot;{\n\&quot;isEnabled\&quot;: true\n}&quot;;
+            var fullConfig = &quot;{\n\&quot;&quot; + configType + &quot;\&quot;:&quot; + testConfig + &quot;\n}&quot;;
+
+            var configurationMock = new TestConfiguration(new RawConfiguration(testConfig));
+            
+            container.ComposeExportedValue&lt;IConfiguration&gt;(configurationMock);
+            container.ComposeParts(configManager);
+
+            var mockData = new MockFileData(fullConfig);
+            fileSystem.AddFile(defaultPath, mockData);
+
+            /* WHEN */
+            Assert.ThrowsException&lt;InvalidConfigurationException&gt;(() =&gt; configManager.LoadConfiguration(new FilePath(defaultPath, true)));
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[27,9,27,10,1],[28,13,28,47,1],[29,13,29,66,1],[30,13,30,52,1],[31,9,31,10,1],[35,9,35,10,1],[36,13,36,33,1],[37,13,37,34,1],[38,13,38,31,1],[39,9,39,10,1],[43,9,43,10,1],[45,13,45,49,1],[46,13,46,65,1],[46,65,46,102,1],[46,102,46,104,1],[46,13,46,104,1],[47,9,47,10,1],[51,9,51,10,1],[53,13,53,49,1],[56,13,56,73,1],[57,13,57,85,1],[58,13,58,60,1],[61,13,61,65,1],[61,65,61,106,1],[61,106,61,108,1],[61,13,61,108,1],[62,9,62,10,1],[66,9,66,10,1],[68,13,68,49,1],[69,13,69,46,1],[72,13,72,51,1],[73,13,73,55,1],[77,13,77,14,1],[78,17,78,82,1],[79,13,79,14,1],[80,13,80,40,0],[81,13,81,14,0],[82,17,82,144,0],[83,13,83,14,0],[84,9,84,10,1],[88,9,88,10,1],[90,13,90,49,1],[91,13,91,46,1],[92,13,92,45,1],[95,13,95,65,1],[97,13,97,80,1],[99,13,99,93,1],[100,13,100,79,1],[101,13,101,51,1],[103,13,103,57,1],[104,13,104,55,1],[108,13,108,14,1],[109,17,109,82,1],[110,13,110,14,1],[111,13,111,40,0],[112,13,112,14,0],[113,17,113,133,0],[114,13,114,14,0],[117,13,117,64,1],[118,13,118,58,1],[119,9,119,10,1],[123,9,123,10,1],[125,13,125,49,1],[126,13,126,46,1],[127,13,127,45,1],[131,13,131,61,1],[133,13,133,80,1],[135,13,135,93,1],[137,13,137,79,1],[138,13,138,51,1],[140,13,140,57,1],[141,13,141,55,1],[144,13,144,73,1],[144,73,144,137,1],[144,137,144,139,1],[144,13,144,139,1],[145,9,145,10,1]]);
+    </script>
+  </body>
+</html>

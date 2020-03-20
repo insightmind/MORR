@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\CLI\Commands\Processing\ProcessOptions.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using CommandLine;
+
+namespace MORR.Core.CLI.Commands.Processing
+{
+    [Verb(&quot;process&quot;, HelpText = &quot;Starts the processing from a container file to a new output file using the configuration.&quot;)]
+    public class ProcessOptions : CommandOptions
+    {
+        [Option(&#39;c&#39;, &quot;config&quot;, Required = true, HelpText = &quot;Path to configuration file&quot;)]
+        #pragma warning disable CS8618 // Will always be non nonull as it is required!
+        public string ConfigPath { get; set; }
+        #pragma warning restore CS8618
+
+        [Option(&#39;i&#39;, &quot;inputFile&quot;, Required = true, HelpText = &quot;Path to input file, which should be processed&quot;)]
+        #pragma warning disable CS8618 //  Will always be non nonull as it is required!
+        public string InputFile { get; set; }
+        #pragma warning restore CS8618
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[10,36,10,40,1],[10,41,10,45,1],[15,35,15,39,1],[15,40,15,44,1]]);
+    </script>
+  </body>
+</html>

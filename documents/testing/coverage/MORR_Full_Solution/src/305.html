@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\MORR\Data\Transcoding\MPEG\MPEGEncoderConfiguration.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Text.Json;
+using MORR.Core.Configuration;
+using MORR.Shared.Configuration;
+using MORR.Shared.Utility;
+
+namespace MORR.Core.Data.Transcoding.Mpeg
+{
+    public class MpegEncoderConfiguration : IConfiguration
+    {
+        /// &lt;summary&gt;
+        ///     The width in pixels of the resulting video stream.
+        /// &lt;/summary&gt;
+        public uint Width { get; set; }
+
+        /// &lt;summary&gt;
+        ///     The height in pixels of the resulting video stream.
+        /// &lt;/summary&gt;
+        public uint Height { get; set; }
+
+        /// &lt;summary&gt;
+        ///     The bit rate in bits per second of the resulting video stream.
+        /// &lt;/summary&gt;
+        public uint KiloBitsPerSecond { get; set; }
+
+        /// &lt;summary&gt;
+        ///     The frame rate in frames per second of the resulting video stream.
+        /// &lt;/summary&gt;
+        public uint FramesPerSecond { get; set; }
+
+        /// &lt;summary&gt;
+        ///     The path to the file to store the data in relative to the recording directory.
+        /// &lt;/summary&gt;
+        public FilePath RelativeFilePath { get; set; } = null!;
+
+        public void Parse(RawConfiguration configuration)
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            var element = JsonDocument.Parse(configuration.RawValue).RootElement;
+
+            Width = GetUintFromProperty(element, nameof(Width));
+            Height = GetUintFromProperty(element, nameof(Height));
+            KiloBitsPerSecond = GetUintFromProperty(element, nameof(KiloBitsPerSecond));
+            FramesPerSecond = GetUintFromProperty(element, nameof(FramesPerSecond));
+
+            if (!element.TryGetProperty(nameof(RelativeFilePath), out var recordingElement))
+            {
+                throw new InvalidConfigurationException(&quot;Failed to parse relative file path.&quot;);
+            }
+
+            RelativeFilePath = new FilePath(recordingElement.GetString(), true);
+        }
+
+        private static uint GetUintFromProperty(JsonElement element, string propertyName)
+        {
+            if (!element.TryGetProperty(propertyName, out var propertyElement)
+                || !propertyElement.TryGetUInt32(out var parsedValue))
+            {
+                throw new InvalidConfigurationException(&quot;Failed to parse value.&quot;);
+            }
+
+            return parsedValue;
+        }
+
+        protected bool Equals(MpegEncoderConfiguration other)
+        {
+            return other != null 
+                   &amp;&amp; Width == other.Width 
+                   &amp;&amp; Height == other.Height 
+                   &amp;&amp; KiloBitsPerSecond == other.KiloBitsPerSecond 
+                   &amp;&amp; FramesPerSecond == other.FramesPerSecond 
+                   &amp;&amp; RelativeFilePath.Equals(other.RelativeFilePath);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is null) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == GetType() &amp;&amp; Equals((MpegEncoderConfiguration) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Width, Height, KiloBitsPerSecond, FramesPerSecond, RelativeFilePath);
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[14,29,14,33,1],[14,34,14,38,1],[19,30,19,34,1],[19,35,19,39,1],[24,41,24,45,1],[24,46,24,50,1],[29,39,29,43,1],[29,44,29,48,1],[34,44,34,48,1],[34,49,34,53,1],[34,58,34,63,1],[37,9,37,10,1],[38,13,38,39,1],[39,13,39,14,1],[40,17,40,51,1],[43,13,43,82,1],[45,13,45,65,1],[46,13,46,67,1],[47,13,47,89,1],[48,13,48,85,1],[50,13,50,93,1],[51,13,51,14,1],[52,17,52,96,1],[55,13,55,81,1],[56,9,56,10,1],[59,9,59,10,1],[60,13,61,71,1],[62,13,62,14,1],[63,17,63,83,1],[66,13,66,32,1],[67,9,67,10,1],[70,9,70,10,1],[71,13,76,71,1],[77,9,77,10,1],[80,9,80,10,1],[81,13,81,29,1],[81,30,81,43,0],[82,13,82,44,1],[82,45,82,57,0],[83,13,83,89,1],[84,9,84,10,1],[87,9,87,10,1],[88,13,88,106,1],[89,9,89,10,1]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\Mouse\Native\NativeMouse.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Runtime.InteropServices;
+
+namespace MORR.Modules.Mouse.Native
+{
+    internal class NativeMouse : INativeMouse
+    {
+        INativeMouse.POINT INativeMouse.GetCursorPos()
+        {
+            INativeMouse.POINT lpPoint;
+            GetCursorPos(out lpPoint);
+            return lpPoint;
+        }
+
+        [DllImport(&quot;user32.dll&quot;)]
+        private static extern bool GetCursorPos(out INativeMouse.POINT lpPoint);
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[8,9,8,10,1],[10,13,10,39,1],[11,13,11,28,1],[12,9,12,10,1]]);
+    </script>
+  </body>
+</html>

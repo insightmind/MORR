@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\CLI\Utility\MessageLoop.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using MORR.Shared.Utility;
+using System;
+using System.Drawing;
+using System.Runtime.InteropServices;
+
+namespace MORR.Core.CLI.Utility
+{
+    /// &lt;summary&gt;
+    /// A MessageLoop instantiates a cancelable Win32 message loop.
+    /// 
+    /// Make sure to start the loop only on the main thread!
+    /// Keep in mind that the message loop does block its calling thread, so you have to cancel it via a separate thread!
+    /// &lt;/summary&gt;
+    public class MessageLoop : IMessageLoop
+    {
+        #region Properties
+
+        /// &lt;summary&gt;
+        /// Describes whether the MessageLoop is running or not.
+        /// &lt;/summary&gt;
+        public bool IsRunning =&gt; loopThreadId.HasValue;
+
+        /// &lt;summary&gt;
+        /// This value is used to temporarily store the thread 
+        /// &lt;/summary&gt;
+        private uint? loopThreadId;
+
+        /// &lt;summary&gt;
+        /// Registered message id for the cancel message.
+        /// &lt;/summary&gt;
+        private readonly uint cancelMessageId;
+
+        /// &lt;summary&gt;
+        /// This is the message identifier for our custom cancel message,
+        /// which is used to register a custom message for the MessageLoop.
+        /// &lt;/summary&gt;
+        private const string cancelMessage = &quot;MORR.LOOP.MESSAGE.CANCEL&quot;;
+
+        /// &lt;summary&gt;
+        /// Dll library name for user32 imports.
+        /// &lt;/summary&gt;
+        private const string user32Dll = &quot;user32.dll&quot;;
+
+        /// &lt;summary&gt;
+        /// Dll library name for kernel32 imports.
+        /// &lt;/summary&gt;
+        private const string kernel32Dll = &quot;kernel32.dll&quot;;
+
+        #endregion
+
+        #region LifeCycle
+        /// &lt;summary&gt;
+        /// Creates a new message loop object which can be used to start a new Win32 message loop.
+        /// &lt;/summary&gt;
+        public MessageLoop()
+        {
+            cancelMessageId = RegisterWindowMessage(cancelMessage);
+        }
+
+        #endregion
+
+        #region Win32 Message Loop
+
+        /// &lt;summary&gt;
+        ///     Runs a standard Win32 message loop
+        ///     &lt;remarks&gt;
+        ///         Intended for use in contexts where a Win32 message loop is required for Windows-Hooks and no such loop
+        ///         already exists (e.g. ConsoleApp).
+        ///     &lt;/remarks&gt;
+        /// &lt;/summary&gt;
+        public void Start()
+        {
+            // We need to store the current thread id to later
+            // be able to post the cancel message to the loop.
+            loopThreadId = GetCurrentThreadId();
+
+            int status;
+            while ((status = GetMessage(out var msg, IntPtr.Zero, 0, 0)) != 0)
+            {
+                // -1 indicates error - do not process such messages
+                if (status == -1) continue;
+
+                var msgId = msg.Message;
+
+                TranslateMessage(ref msg);
+                DispatchMessage(ref msg);
+
+                if (msgId == cancelMessageId) break;
+            }
+        }
+
+        /// &lt;summary&gt;
+        /// Stops a currently running message loop.
+        /// &lt;/summary&gt;
+        public void Stop()
+        {
+            if (!loopThreadId.HasValue) return;
+            PostThreadMessage(loopThreadId.Value, cancelMessageId, UIntPtr.Zero, IntPtr.Zero);
+            loopThreadId = null;
+        }
+
+        #endregion
+
+        #region NativeMethods
+
+        [DllImport(user32Dll)]
+        private static extern int GetMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
+
+        [DllImport(user32Dll)]
+        private static extern bool TranslateMessage([In] ref MSG lpMsg);
+
+        [DllImport(user32Dll)]
+        private static extern IntPtr DispatchMessage([In] ref MSG lpMsg);
+
+        [DllImport(user32Dll, SetLastError = true, CharSet = CharSet.Auto)]
+        private static extern uint RegisterWindowMessage(string lpString);
+
+        [return: MarshalAs(UnmanagedType.Bool)]
+        [DllImport(user32Dll, SetLastError = true)]
+        private static extern bool PostThreadMessage(uint threadId, uint msg, UIntPtr wParam, IntPtr lParam);
+
+        [DllImport(kernel32Dll)]
+        public static extern uint GetCurrentThreadId();
+
+        #endregion
+
+        #region Structs 
+
+        public struct MSG
+        {
+            public IntPtr HWnd;
+            public uint Message;
+            public IntPtr WParam;
+            public IntPtr LParam;
+            public uint Time;
+            public POINT Pt;
+        }
+
+        /// &lt;summary&gt;
+        ///     The POINT is of two int(32 bits) for the usage in MSLLHOOKSTRUCT.
+        /// &lt;/summary&gt;
+        [StructLayout(LayoutKind.Sequential)]
+        public struct POINT
+        {
+            public int X;
+            public int Y;
+
+            public POINT(int x, int y)
+            {
+                X = x;
+                Y = y;
+            }
+
+            public static implicit operator Point(POINT p)
+            {
+                return new Point(p.X, p.Y);
+            }
+
+            public static implicit operator POINT(Point p)
+            {
+                return new POINT(p.X, p.Y);
+            }
+        }
+
+        #endregion
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[21,34,21,55,1],[55,9,55,29,1],[56,9,56,10,1],[57,13,57,68,1],[58,9,58,10,1],[72,9,72,10,1],[75,13,75,49,1],[78,13,78,79,1],[79,13,79,14,1],[81,17,81,34,1],[81,35,81,44,0],[83,17,83,41,1],[85,17,85,43,1],[86,17,86,42,1],[88,17,88,46,1],[88,47,88,53,1],[89,13,89,14,0],[90,9,90,10,1],[96,9,96,10,1],[97,13,97,40,1],[97,41,97,48,0],[98,13,98,95,1],[99,13,99,33,1],[100,9,100,10,1],[149,13,149,14,0],[150,17,150,23,0],[151,17,151,23,0],[152,13,152,14,0],[155,13,155,14,0],[156,17,156,44,0],[157,13,157,14,0],[160,13,160,14,0],[161,17,161,44,0],[162,13,162,14,0]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Common\Shared\Events\Queue\Strategy\MultiConsumer\BoundedMultiConsumerChannelStrategy.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Threading.Channels;
+
+namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
+{
+    /// &lt;summary&gt;
+    /// A BoundedMultiConsumerChannelStrategies is a Distributive-FIFO Queue which allows multiple producers and multiple consumers.
+    /// However every event is propagated to each consumer once.
+    /// This queue is bounded by a buffer capacity. To be more detailed each channel is bound by the bufferCapacity.
+    /// Is the capacity reached for a specific channel it will drop the oldest event and write the new event.
+    /// Therefore you can calculate the maximum capacity of this queue by:
+    /// 
+    /// FullCapacity = (NumOfConsumers + 1) * bufferCapacity
+    ///
+    /// You can limit the number of consumers via the maxChannelConsumers argument.
+    /// If you only have a single consumer, please use BoundedSingleConsumerChannelStrategy.
+    /// &lt;/summary&gt;
+    /// &lt;typeparam name=&quot;TEvent&quot;&gt;The type of event which is queued by the channel&lt;/typeparam&gt;
+    public class BoundedMultiConsumerChannelStrategy&lt;TEvent&gt; : MultiConsumerChannelStrategy&lt;TEvent&gt; where TEvent : Event
+    {
+        private readonly BoundedChannelOptions offeringOptions;
+        private readonly BoundedChannelOptions receivingOptions;
+
+        /// &lt;summary&gt;
+        /// Creates a new BoundedMultiConsumerChannelStrategy with a given capacity.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;bufferCapacity&quot;&gt;Capacity of the queue.&lt;/param&gt;
+        /// &lt;param name=&quot;maxChannelConsumers&quot;&gt;Maximum number of consumers allowed or null if unbound.&lt;/param&gt;
+        public BoundedMultiConsumerChannelStrategy(int bufferCapacity, uint? maxChannelConsumers)
+        {
+            offeringOptions = new BoundedChannelOptions(bufferCapacity)
+            {
+                AllowSynchronousContinuations = false,
+                FullMode = BoundedChannelFullMode.DropOldest,
+                SingleWriter = true,
+                SingleReader = true
+            };
+
+            receivingOptions = new BoundedChannelOptions(bufferCapacity)
+            {
+                AllowSynchronousContinuations = false,
+                FullMode = BoundedChannelFullMode.DropOldest,
+                SingleWriter = false,
+                SingleReader = true
+            };
+
+            StartReceiving(maxChannelConsumers);
+        }
+
+        protected override Channel&lt;TEvent&gt; CreateOfferingChannel()
+        {
+            return Channel.CreateBounded&lt;TEvent&gt;(offeringOptions);
+        }
+
+        protected override Channel&lt;TEvent&gt; CreateReceivingChannel()
+        {
+            return Channel.CreateBounded&lt;TEvent&gt;(receivingOptions);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[28,9,28,98,1],[29,9,29,10,1],[30,13,36,15,1],[38,13,44,15,1],[46,13,46,49,1],[47,9,47,10,1],[50,9,50,10,1],[51,13,51,67,1],[52,9,52,10,1],[55,9,55,10,1],[56,13,56,68,1],[57,9,57,10,1]]);
+    </script>
+  </body>
+</html>

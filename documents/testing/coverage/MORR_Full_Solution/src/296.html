@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Common\Shared\Utility\DirectoryPath.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+
+namespace MORR.Shared.Utility
+{
+    /// &lt;summary&gt;
+    ///     Encapsulates a directory path.
+    /// &lt;/summary&gt;
+    public sealed class DirectoryPath
+    {
+        private readonly string value;
+
+        /// &lt;summary&gt;
+        ///     Creates a new &lt;see cref=&quot;DirectoryPath&quot; /&gt; with the provided value.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;value&quot;&gt;The value to create the &lt;see cref=&quot;DirectoryPath&quot; /&gt; with.&lt;/param&gt;
+        /// &lt;param name=&quot;skipValidation&quot;&gt;
+        ///     Whether to skip path validation. &lt;see langword=&quot;true&quot; /&gt; to skip validation,
+        ///     &lt;see langword=&quot;false&quot; /&gt; otherwise.
+        /// &lt;/param&gt;
+        public DirectoryPath(string value, bool skipValidation = false)
+        {
+            if (skipValidation)
+            {
+                this.value = value;
+            }
+            else
+            {
+                var result = TryGetDirectoryPath(value);
+
+                if (result == null)
+                {
+                    throw new ArgumentException($&quot;The specified value \&quot;{value}\&quot; is not a valid file path.&quot;);
+                }
+
+                this.value = result;
+            }
+        }
+
+        /// &lt;summary&gt;
+        ///     Verifies the provided string and gets a local path from it.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;path&quot;&gt;The path to verify.&lt;/param&gt;
+        /// &lt;param name=&quot;result&quot;&gt;The local path if the provided &lt;paramref name=&quot;path&quot; /&gt; is valid.&lt;/param&gt;
+        /// &lt;returns&gt;&lt;see langword=&quot;true&quot; /&gt; if the provided &lt;paramref name=&quot;path&quot; /&gt; is valid, &lt;see langword=&quot;false&quot; /&gt; otherwise.&lt;/returns&gt;
+        private static string? TryGetDirectoryPath(string path)
+        {
+            if (!Uri.TryCreate(path, UriKind.Absolute, out var parsedUri) || !parsedUri.IsFile ||
+                !string.IsNullOrEmpty(Path.GetExtension(path)))
+            {
+                return null;
+            }
+
+            return parsedUri.LocalPath;
+        }
+
+        /// &lt;summary&gt;
+        ///     A &lt;see cref=&quot;string&quot; /&gt; representation of the directory path.
+        /// &lt;/summary&gt;
+        /// &lt;returns&gt;A &lt;see cref=&quot;string&quot; /&gt; representation of the directory path.&lt;/returns&gt;
+        public override string ToString()
+        {
+            return value;
+        }
+
+        public override bool Equals(object? obj) =&gt; obj is DirectoryPath path &amp;&amp; value.Equals(path.value);
+
+        public override int GetHashCode() =&gt; HashCode.Combine(value);
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[22,9,22,72,1],[23,9,23,10,1],[24,13,24,32,1],[25,13,25,14,1],[26,17,26,36,1],[27,13,27,14,1],[29,13,29,14,1],[30,17,30,57,1],[32,17,32,36,1],[33,17,33,18,1],[34,21,34,111,1],[37,17,37,37,1],[38,13,38,14,1],[39,9,39,10,1],[48,9,48,10,1],[49,13,50,64,1],[51,13,51,14,1],[52,17,52,29,1],[55,13,55,40,1],[56,9,56,10,1],[63,9,63,10,1],[64,13,64,26,1],[65,9,65,10,1],[67,53,67,106,1],[69,46,69,69,1]]);
+    </script>
+  </body>
+</html>

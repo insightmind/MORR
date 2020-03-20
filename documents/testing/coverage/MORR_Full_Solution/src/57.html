@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\WindowManagement\Producers\WindowMovementEventProducer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Drawing;
+using MORR.Modules.WindowManagement.Events;
+using MORR.Modules.WindowManagement.Native;
+using MORR.Shared.Events.Queue;
+using MORR.Shared.Hook;
+using Point = System.Windows.Point;
+
+namespace MORR.Modules.WindowManagement.Producers
+{
+    /// &lt;summary&gt;
+    ///     Provides a single-writer-multiple-reader queue for WindowMovementEvent
+    /// &lt;/summary&gt;
+    public class WindowMovementEventProducer : DefaultEventQueue&lt;WindowMovementEvent&gt;
+    {
+        private static INativeWindowManagement nativeWindowManagement;
+
+        private readonly GlobalHook.MessageType[] listenedMessageTypes =
+            { GlobalHook.MessageType.WM_ENTERSIZEMOVE, GlobalHook.MessageType.WM_EXITSIZEMOVE };
+
+        /// &lt;summary&gt;
+        ///     The rectangle that holds the size and location of the window
+        ///     after the change.
+        /// &lt;/summary&gt;
+        private Rectangle windowRecAfterChange;
+
+        /// &lt;summary&gt;
+        ///     The rectangle that holds the size and location of the window
+        ///     before the change.
+        /// &lt;/summary&gt;
+        private Rectangle windowRecBeforeChange;
+
+        /// &lt;summary&gt;
+        ///     The hwnd of the windows being changed.
+        ///     Change can mean move or resize.
+        /// &lt;/summary&gt;
+        private int windowUnderChangeHwnd;
+
+        public void StartCapture(INativeWindowManagement nativeWinManagement)
+        {
+            nativeWindowManagement = nativeWinManagement;
+            GlobalHook.AddListener(WindowHookCallback, listenedMessageTypes);
+
+            GlobalHook.IsActive = true;
+        }
+
+        public void StopCapture()
+        {
+            GlobalHook.RemoveListener(WindowHookCallback, listenedMessageTypes);
+            Close();
+        }
+
+        /// &lt;summary&gt;
+        ///     Everytime a WM_ENTERSIZEMOVE is received,
+        ///     records the information of the window before the change
+        ///     and wait for the WM_EXITSIZEMOVE.
+        ///     Everytime a WM_EXITSIZEMOVE is received,
+        ///     records the information of the window after the change
+        ///     and see if the windows has been moved
+        ///     (by if (Utility.IsRectSizeEqual(windowRecBeforeChange,windowRecAfterChange)))
+        ///     If so, records the relevant information into a WindowMovementEvent.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;msg&quot;&gt;the hook message&lt;/param&gt;
+        private void WindowHookCallback(GlobalHook.HookMessage msg)
+        {
+            if (msg.Type == (uint) GlobalHook.MessageType.WM_ENTERSIZEMOVE)
+            {
+                windowUnderChangeHwnd = (int) msg.Hwnd;
+                windowRecBeforeChange = new Rectangle();
+                nativeWindowManagement.GetWindowRect(windowUnderChangeHwnd, ref windowRecBeforeChange);
+            }
+
+            if (msg.Type == (uint) GlobalHook.MessageType.WM_EXITSIZEMOVE)
+            {
+                windowRecAfterChange = new Rectangle();
+                nativeWindowManagement.GetWindowRect(windowUnderChangeHwnd, ref windowRecAfterChange);
+                if (nativeWindowManagement.IsRectSizeEqual(windowRecBeforeChange, windowRecAfterChange))
+                {
+                    var oldLocation = nativeWindowManagement.GetPoint(windowRecBeforeChange.X, windowRecBeforeChange.Y);
+                    var newLocation = nativeWindowManagement.GetPoint(windowRecAfterChange.X, windowRecAfterChange.Y);
+                    var @event = new WindowMovementEvent
+                    {
+                        IssuingModule = WindowManagementModule.Identifier,
+                        OldLocation = oldLocation,
+                        NewLocation = newLocation,
+                        Title = nativeWindowManagement.GetWindowTitleFromHwnd(msg.Hwnd),
+                        ProcessName = nativeWindowManagement.GetProcessNameFromHwnd(msg.Hwnd)
+                    };
+                    Enqueue(@event);
+                }
+            }
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[17,9,18,97,1],[39,9,39,10,1],[40,13,40,58,1],[41,13,41,78,1],[43,13,43,40,1],[44,9,44,10,1],[47,9,47,10,1],[48,13,48,81,1],[49,13,49,21,1],[50,9,50,10,1],[64,9,64,10,1],[65,13,65,76,1],[66,13,66,14,1],[67,17,67,56,1],[68,17,68,57,1],[69,17,69,104,1],[70,13,70,14,1],[72,13,72,75,1],[73,13,73,14,1],[74,17,74,56,1],[75,17,75,103,1],[76,17,76,105,1],[77,17,77,18,1],[78,21,78,121,1],[79,21,79,119,1],[80,21,87,23,1],[88,21,88,37,1],[89,17,89,18,1],[90,13,90,14,1],[91,9,91,10,1]]);
+    </script>
+  </body>
+</html>

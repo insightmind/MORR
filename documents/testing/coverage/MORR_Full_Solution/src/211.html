@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\WebBrowser\Events\TextInputEvent.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Text.Json;
+
+namespace MORR.Modules.WebBrowser.Events
+{
+    /// &lt;summary&gt;
+    ///     A text input user interaction
+    /// &lt;/summary&gt;
+    public class TextInputEvent : WebBrowserEvent
+    {
+        private const string serializedTextField = &quot;text&quot;;
+        private const string serializedTextBoxField = &quot;target&quot;;
+
+        /// &lt;summary&gt;
+        ///     The text that was inputted by the user on the website
+        /// &lt;/summary&gt;
+        public string InputtedText { get; set; }
+
+        /// &lt;summary&gt;
+        ///     The textbox where the text was inputted in
+        /// &lt;/summary&gt;
+        public string Textbox { get; set; }
+
+        protected override void DeserializeSpecificAttributes(JsonElement parsed)
+        {
+            InputtedText = parsed.GetProperty(serializedTextField).GetString();
+            Textbox = parsed.GetProperty(serializedTextBoxField).GetString();
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[16,38,16,42,1],[16,43,16,47,1],[21,33,21,37,1],[21,38,21,42,1],[24,9,24,10,1],[25,13,25,80,1],[26,13,26,78,1],[27,9,27,10,1]]);
+    </script>
+  </body>
+</html>

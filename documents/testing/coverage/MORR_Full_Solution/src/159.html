@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\CLI\Output\ConsoleFormatter.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+
+namespace MORR.Core.CLI.Output
+{
+    /// &lt;summary&gt;
+    /// The ConsoleFormat formats any output to the CMD console. It prints
+    /// additional indications for error or debug messages for the user.
+    /// &lt;/summary&gt;
+    public class ConsoleFormatter : IConsoleFormatter
+    {
+        /// &lt;summary&gt;
+        /// Defines whether the current output is verbose.
+        /// &lt;/summary&gt;
+        public bool IsVerbose { get; set; } = false;
+
+        private const string debugPrefix = &quot;DEBUG: &quot;;
+        private const string errorPrefix = &quot;ERROR: &quot;;
+
+        /// &lt;summary&gt;
+        /// Prints an error using the exceptions description.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;exception&quot;&gt;The exception used to infer the error output.&lt;/param&gt;
+        public void PrintError(Exception exception)
+        {
+            Console.WriteLine(errorPrefix + exception.Message);
+        }
+
+        /// &lt;summary&gt;
+        /// Prints a debug message. This may not result in an output
+        /// if the formatter is not in an verbose state.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;message&quot;&gt;The debug message to be printed.&lt;/param&gt;
+        public void PrintDebug(string message)
+        {
+            if (IsVerbose) Print(debugPrefix + message);
+        }
+
+        /// &lt;summary&gt;
+        /// Prints message no matter the state of the formatter.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;message&quot;&gt;&lt;/param&gt;
+        public void Print(string message)
+        {
+            Console.WriteLine(message);
+        }
+
+        /// &lt;summary&gt;
+        /// Reads a single line.
+        /// &lt;/summary&gt;
+        /// &lt;returns&gt;A single line in form of a string which was read by the formatter&lt;/returns&gt;
+        public string Read()
+        {
+            return Console.ReadLine();
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[14,33,14,37,1],[14,38,14,42,1],[14,47,14,52,1],[24,9,24,10,1],[25,13,25,64,1],[26,9,26,10,1],[34,9,34,10,1],[35,13,35,27,1],[35,28,35,57,1],[36,9,36,10,1],[43,9,43,10,1],[44,13,44,40,1],[45,9,45,10,1],[52,9,52,10,1],[53,13,53,39,1],[54,9,54,10,1]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\WebBrowser\Events\WebBrowserEvent.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Text.Json;
+using MORR.Shared.Events;
+
+namespace MORR.Modules.WebBrowser.Events
+{
+    /// &lt;summary&gt;
+    ///     A generic web browser event which all specific WebBrowserEvents inherit from.
+    /// &lt;/summary&gt;
+    public abstract class WebBrowserEvent : Event
+    {
+        private const string serializedTabIdField = &quot;tabID&quot;;
+        private const string serializedUrlField = &quot;url&quot;;
+        private const string serializedTimeStampField = &quot;timeStamp&quot;;
+
+        /// &lt;summary&gt;
+        ///     The identifier of the tab where the web browser event occured in
+        /// &lt;/summary&gt;
+        public int TabID { get; set; }
+
+        /// &lt;summary&gt;
+        ///     The URL of the website where the web browser event occured in
+        /// &lt;/summary&gt;
+        public Uri CurrentURL { get; set; }
+
+        /// &lt;summary&gt;
+        ///     Deserialize a browser event from a string.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;serialized&quot;&gt;The serialized event&lt;/param&gt;
+        public void Deserialize(string serialized)
+        {
+            Deserialize(JsonDocument.Parse(serialized).RootElement);
+        }
+
+        /// &lt;summary&gt;
+        ///     Deserialize a browser event from a JSONElement instance
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;parsed&quot;&gt;A JSONElement parsed from a serialized event.&lt;/param&gt;
+        public void Deserialize(JsonElement parsed)
+        {
+            DeserializeCommonAttributes(parsed);
+            DeserializeSpecificAttributes(parsed);
+        }
+
+        /// &lt;summary&gt;
+        ///     Deserialize the attributes specific to the event type.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;parsed&quot;&gt;&lt;/param&gt;
+        protected virtual void DeserializeSpecificAttributes(JsonElement parsed) { }
+
+        /// &lt;summary&gt;
+        ///     Deserialize the attributes shared by all browser event types.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;parsed&quot;&gt;&lt;/param&gt;
+        protected void DeserializeCommonAttributes(JsonElement parsed)
+        {
+            TabID = parsed.GetProperty(serializedTabIdField).GetInt32();
+            CurrentURL = new Uri(parsed.GetProperty(serializedUrlField).ToString());
+            Timestamp = parsed.GetProperty(serializedTimeStampField).GetDateTime();
+            IssuingModule = WebBrowserModule.Identifier;
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[19,28,19,32,1],[19,33,19,37,1],[24,33,24,37,1],[24,38,24,42,1],[31,9,31,10,1],[32,13,32,69,1],[33,9,33,10,1],[40,9,40,10,1],[41,13,41,49,1],[42,13,42,51,1],[43,9,43,10,1],[49,82,49,83,1],[49,84,49,85,1],[56,9,56,10,1],[57,13,57,73,1],[58,13,58,85,1],[59,13,59,84,1],[60,13,60,57,1],[61,9,61,10,1]]);
+    </script>
+  </body>
+</html>

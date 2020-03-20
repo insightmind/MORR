@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\WebBrowser\WebBrowserModuleConfiguration.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Collections.Generic;
+using System.Text.Json;
+using MORR.Core.Configuration;
+using MORR.Shared.Configuration;
+
+namespace MORR.Modules.WebBrowser
+{
+    public class WebBrowserModuleConfiguration : IConfiguration
+    {
+        private const string configUrlSuffixField = &quot;UrlSuffix&quot;;
+
+        /// &lt;summary&gt;
+        ///     A combination of port number and optionally directory.
+        ///     Will be appended to the localhost-prefix defined in &lt;see cref=&quot;WebExtensionListener&quot; /&gt;.
+        ///     Must end in a slash (&#39;/&#39;) character.
+        ///     Examples for valid values are &quot;60024/&quot; or &quot;60024/johndoe/&quot;.
+        /// &lt;/summary&gt;
+        public string UrlSuffix { get; protected set; }
+
+        public void Parse(RawConfiguration configuration)
+        {
+            var element = JsonDocument.Parse(configuration.RawValue).RootElement;
+            try
+            {
+                UrlSuffix = element.GetProperty(configUrlSuffixField).GetString();
+            }
+            catch (KeyNotFoundException)
+            {
+                throw new InvalidConfigurationException(&quot;Failed to parse UrlSuffix.&quot;);
+            }
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[18,35,18,39,1],[18,40,18,54,1],[21,9,21,10,1],[22,13,22,82,1],[24,13,24,14,1],[25,17,25,83,1],[26,13,26,14,1],[27,13,27,41,1],[28,13,28,14,1],[29,17,29,87,1],[31,9,31,10,1]]);
+    </script>
+  </body>
+</html>

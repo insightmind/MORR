@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\CLI\Program.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.IO;
+using CommandLine;
+using MORR.Core.CLI.Commands.Processing;
+using MORR.Core.CLI.Commands.Record;
+using MORR.Core.CLI.Commands.Validate;
+using MORR.Core.Session;
+using MORR.Shared.Utility;
+
+namespace MORR.Core.CLI
+{
+    /// &lt;summary&gt;
+    /// Command line tool entry point
+    /// &lt;/summary&gt;
+    public class Program
+    {
+        public static int Main(string[] args)
+        {
+            return Parser
+                   .Default
+                   .ParseArguments&lt;ValidateOptions, RecordOptions, ProcessOptions&gt;(args)
+                   .MapResult(
+                       (ValidateOptions opts) =&gt; new ValidateCommand().Execute(opts),
+                       (RecordOptions opts) =&gt;
+                       {
+                           var sessionManager = new SessionManager(new FilePath(Path.GetFullPath(opts.ConfigPath)));
+                           return new RecordCommand(sessionManager).Execute(opts);
+                       },
+                       (ProcessOptions opts) =&gt;
+                       {
+                           var sessionManager = new SessionManager(new FilePath(Path.GetFullPath(opts.ConfigPath)));
+                           return new ProcessCommand(sessionManager).Execute(opts);
+                       },
+                       errs =&gt; 1);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[17,9,17,10,0],[18,13,22,50,0],[22,50,22,85,0],[22,85,24,24,0],[24,24,24,25,0],[24,25,25,28,0],[25,28,25,117,0],[25,117,26,28,0],[26,28,26,83,0],[26,83,27,24,0],[27,24,27,25,0],[27,25,29,24,0],[29,24,29,25,0],[29,25,30,28,0],[30,28,30,117,0],[30,117,31,28,0],[31,28,31,84,0],[31,84,32,24,0],[32,24,32,25,0],[32,25,33,32,0],[33,32,33,33,0],[33,33,33,35,0],[18,13,33,35,0],[34,9,34,10,0]]);
+    </script>
+  </body>
+</html>

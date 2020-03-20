@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\MORRTest\TestHelper\Modules\TestModule.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Moq;
+using MORR.Shared.Modules;
+using System;
+using System.Diagnostics;
+
+namespace MORRTest.TestHelper.Modules
+{
+    /// &lt;summary&gt;
+    /// The TestModule class encapsulates a IModule mock.
+    /// The Purpose for this class is to inject a mock into a given configuration.
+    /// As this requires discovering the module via its class name we
+    /// cannot simply inject the Mock Object itself and therefore need to wrap it using
+    /// this class.
+    ///
+    /// Finally this results into a class which simply propagates the values to the mock object.
+    /// &lt;/summary&gt;
+    public class TestModule : IModule
+    {
+        /// &lt;summary&gt;
+        /// The Mock which can be used to verify calls using Moq
+        /// &lt;/summary&gt;
+        public readonly Mock&lt;IModule&gt; Mock = new Mock&lt;IModule&gt;();
+
+        public bool IsActive
+        {
+            get
+            {
+                Debug.Assert(Mock?.Object != null);
+                return Mock.Object.IsActive;
+            }
+            set
+            {
+                Debug.Assert(Mock?.Object != null);
+                Mock.Object.IsActive = value;
+            }
+        }
+
+        public Guid Identifier
+        {
+            get
+            {
+                Debug.Assert(Mock?.Object != null);
+                return Mock.Object.Identifier;
+            }
+        }
+
+        public void Initialize(bool isEnabled)
+        {
+            Debug.Assert(Mock?.Object != null);
+            Mock.Object.Initialize(isEnabled);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[22,9,22,66,1],[27,13,27,14,0],[28,17,28,52,0],[29,17,29,45,0],[30,13,30,14,0],[32,13,32,14,1],[33,17,33,52,1],[34,17,34,46,1],[35,13,35,14,1],[41,13,41,14,0],[42,17,42,52,0],[43,17,43,47,0],[44,13,44,14,0],[48,9,48,10,1],[49,13,49,48,1],[50,13,50,47,1],[51,9,51,10,1]]);
+    </script>
+  </body>
+</html>

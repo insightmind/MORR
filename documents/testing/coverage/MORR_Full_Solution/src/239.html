@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\CLITest\Commands\ValidateCommandTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using MORR.Core;
+using MORR.Core.CLI.Commands.Validate;
+using MORR.Core.CLI.Output;
+using MORR.Core.Configuration;
+using MORR.Shared.Utility;
+using System;
+using System.Diagnostics;
+using System.Reflection;
+
+namespace CLITest.Commands
+{
+    [TestClass]
+    public class ValidateCommandTest
+    {
+        private const int failCode = -1;
+        private const int successCode = 0;
+        private const int invalidCode = 1;
+
+        private Mock&lt;IBootstrapper&gt; bootstrapperMock;
+        private Mock&lt;IConsoleFormatter&gt; outputMock;
+        private Mock&lt;IConfigurationManager&gt; managerMock;
+
+        [TestInitialize]
+        public void BeforeTest()
+        {
+            bootstrapperMock = new Mock&lt;IBootstrapper&gt;();
+            outputMock = new Mock&lt;IConsoleFormatter&gt;();
+            managerMock = new Mock&lt;IConfigurationManager&gt;();
+        }
+
+        [TestMethod]
+        public void TestProcessCommand_Successful()
+        {
+            // Preconditions
+            Debug.Assert(managerMock != null);
+            Debug.Assert(outputMock != null);
+            Debug.Assert(bootstrapperMock != null);
+
+            /* GIVEN */
+            var command = new ValidateCommand(managerMock.Object, outputMock.Object, bootstrapperMock.Object);
+            var options = new ValidateOptions
+            {
+                IsVerbose = false,
+                ConfigPath = Assembly.GetExecutingAssembly().Location
+            };
+
+            /* WHEN */
+            var returnCode = command.Execute(options);
+
+            /* THEN */
+
+            // We test if the command was successful and returned code 0.
+            Assert.AreEqual(successCode, returnCode);
+            bootstrapperMock.Verify(bootstrapper =&gt; bootstrapper.ComposeImports(managerMock.Object), Times.Once);
+            managerMock.Verify(manager =&gt; manager.LoadConfiguration(It.IsAny&lt;FilePath&gt;()), Times.Once);
+        }
+
+        [TestMethod]
+        public void TestProcessCommand_OnConfigManagerError()
+        {
+            // Preconditions
+            Debug.Assert(managerMock != null);
+            Debug.Assert(outputMock != null);
+            Debug.Assert(bootstrapperMock != null);
+
+            /* GIVEN */
+            managerMock
+                .Setup(manager =&gt; manager.LoadConfiguration(It.IsAny&lt;FilePath&gt;()))?
+                .Throws(new InvalidOperationException());
+
+            var command = new ValidateCommand(managerMock.Object, outputMock.Object, bootstrapperMock.Object);
+            var options = new ValidateOptions
+            {
+                IsVerbose = false,
+                ConfigPath = Assembly.GetExecutingAssembly().Location
+            };
+
+            /* WHEN */
+            var returnCode = command.Execute(options);
+
+            /* THEN */
+
+            // We test if the command failed and returned code -1.
+            Assert.AreEqual(failCode, returnCode);
+            bootstrapperMock.Verify(bootstrapper =&gt; bootstrapper.ComposeImports(managerMock.Object), Times.Once);
+            managerMock.Verify(manager =&gt; manager.LoadConfiguration(It.IsAny&lt;FilePath&gt;()), Times.Once);
+            outputMock.Verify(output =&gt; output.PrintError(It.IsAny&lt;InvalidOperationException&gt;()), Times.Once);
+        }
+
+        [TestMethod]
+        public void TestProcessCommand_OnBootstrapperError()
+        {
+            // Preconditions
+            Debug.Assert(managerMock != null);
+            Debug.Assert(outputMock != null);
+            Debug.Assert(bootstrapperMock != null);
+
+            /* GIVEN */
+            bootstrapperMock
+                .Setup(bootstrapper =&gt; bootstrapper.ComposeImports(It.IsAny&lt;object&gt;()))?
+                .Throws(new InvalidOperationException());
+
+            var command = new ValidateCommand(managerMock.Object, outputMock.Object, bootstrapperMock.Object);
+            var options = new ValidateOptions
+            {
+                IsVerbose = false,
+                ConfigPath = Assembly.GetExecutingAssembly().Location
+            };
+
+            /* WHEN */
+            var returnCode = command.Execute(options);
+
+            /* THEN */
+
+            // We test if the command failed and returned code -1.
+            Assert.AreEqual(failCode, returnCode);
+            bootstrapperMock.Verify(bootstrapper =&gt; bootstrapper.ComposeImports(managerMock.Object), Times.Once);
+            managerMock.Verify(manager =&gt; manager.LoadConfiguration(It.IsAny&lt;FilePath&gt;()), Times.Never);
+            outputMock.Verify(output =&gt; output.PrintError(It.IsAny&lt;InvalidOperationException&gt;()), Times.Once);
+        }
+
+        [TestMethod]
+        public void TestProcessCommand_InvalidConfig()
+        {
+            // Preconditions
+            Debug.Assert(managerMock != null);
+            Debug.Assert(outputMock != null);
+            Debug.Assert(bootstrapperMock != null);
+
+            /* GIVEN */
+            managerMock
+                .Setup(manager =&gt; manager.LoadConfiguration(It.IsAny&lt;FilePath&gt;()))?
+                .Throws(new InvalidConfigurationException());
+
+            var command = new ValidateCommand(managerMock.Object, outputMock.Object, bootstrapperMock.Object);
+            var options = new ValidateOptions
+            {
+                IsVerbose = false,
+                ConfigPath = Assembly.GetExecutingAssembly().Location
+            };
+
+            /* WHEN */
+            var returnCode = command.Execute(options);
+
+            /* THEN */
+
+            // We test if the command was successful and returned code 0.
+            Assert.AreEqual(invalidCode, returnCode);
+            bootstrapperMock.Verify(bootstrapper =&gt; bootstrapper.ComposeImports(managerMock.Object), Times.Once);
+            managerMock.Verify(manager =&gt; manager.LoadConfiguration(It.IsAny&lt;FilePath&gt;()), Times.Once);
+            outputMock.Verify(output =&gt; output.PrintError(It.IsAny&lt;InvalidConfigurationException&gt;()), Times.Once);
+        }
+
+        [TestMethod]
+        public void TestProcessCommand_NullOptions()
+        {
+            // Preconditions
+            Debug.Assert(managerMock != null);
+            Debug.Assert(outputMock != null);
+            Debug.Assert(bootstrapperMock != null);
+
+            /* GIVEN */
+            var command = new ValidateCommand(managerMock.Object, outputMock.Object, bootstrapperMock.Object);
+
+            /* WHEN */
+            var returnCode = command.Execute(null);
+
+            /* THEN */
+
+            // We test if the command was successful and returned code 0.
+            Assert.AreEqual(-1, returnCode);
+            managerMock.Verify(manager =&gt; manager.LoadConfiguration(It.IsAny&lt;FilePath&gt;()), Times.Never);
+        }
+
+        [TestMethod]
+        public void TestProcessCommand_IsVerbosePropagation()
+        {
+            // Preconditions
+            Debug.Assert(managerMock != null);
+            Debug.Assert(outputMock != null);
+            Debug.Assert(bootstrapperMock != null);
+
+            /* GIVEN */
+            outputMock.SetupSet(output =&gt; output.IsVerbose = true);
+
+            var command = new ValidateCommand(managerMock.Object, outputMock.Object, bootstrapperMock.Object);
+            var options = new ValidateOptions
+            {
+                IsVerbose = true,
+                ConfigPath = &quot;&quot;
+            };
+
+            /* WHEN */
+            command.Execute(options);
+
+            /* THEN */
+            outputMock.VerifySet(output =&gt; output.IsVerbose = true);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[27,9,27,10,1],[28,13,28,58,1],[29,13,29,56,1],[30,13,30,61,1],[31,9,31,10,1],[35,9,35,10,1],[37,13,37,47,1],[38,13,38,46,1],[39,13,39,52,1],[42,13,42,111,1],[43,13,47,15,1],[50,13,50,55,1],[55,13,55,54,1],[56,13,56,114,1],[57,13,57,104,1],[58,9,58,10,1],[62,9,62,10,1],[64,13,64,47,1],[65,13,65,46,1],[66,13,66,52,1],[69,13,71,58,1],[73,13,73,111,1],[74,13,78,15,1],[81,13,81,55,1],[86,13,86,51,1],[87,13,87,114,1],[88,13,88,104,1],[89,13,89,111,1],[90,9,90,10,1],[94,9,94,10,1],[96,13,96,47,1],[97,13,97,46,1],[98,13,98,52,1],[101,13,103,58,1],[105,13,105,111,1],[106,13,110,15,1],[113,13,113,55,1],[118,13,118,51,1],[119,13,119,114,1],[120,13,120,105,1],[121,13,121,111,1],[122,9,122,10,1],[126,9,126,10,1],[128,13,128,47,1],[129,13,129,46,1],[130,13,130,52,1],[133,13,135,62,1],[137,13,137,111,1],[138,13,142,15,1],[145,13,145,55,1],[150,13,150,54,1],[151,13,151,114,1],[152,13,152,104,1],[153,13,153,115,1],[154,9,154,10,1],[158,9,158,10,1],[160,13,160,47,1],[161,13,161,46,1],[162,13,162,52,1],[165,13,165,111,1],[168,13,168,52,1],[173,13,173,45,1],[174,13,174,105,1],[175,9,175,10,1],[179,9,179,10,1],[181,13,181,47,1],[182,13,182,46,1],[183,13,183,52,1],[186,13,186,43,1],[186,43,186,66,1],[186,66,186,68,1],[186,13,186,68,1],[188,13,188,111,1],[189,13,193,15,1],[196,13,196,38,1],[199,13,199,44,1],[199,44,199,67,1],[199,67,199,69,1],[199,13,199,69,1],[200,9,200,10,1]]);
+    </script>
+  </body>
+</html>

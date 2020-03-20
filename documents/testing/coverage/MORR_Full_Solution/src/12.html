@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\MORR\BootstrapperConventions.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.ComponentModel.Composition.Registration;
+using System.Linq;
+using MORR.Core.Data.Transcoding;
+using MORR.Shared.Configuration;
+using MORR.Shared.Events;
+using MORR.Shared.Events.Queue;
+using MORR.Shared.Modules;
+
+namespace MORR.Core
+{
+    public static class BootstrapperConventions
+    {
+        private static bool IsQueueInterfaceType(Type typeToCheck, Type queueInterfaceType)
+        {
+            return typeToCheck.IsInterface &amp;&amp; typeToCheck.IsGenericType &amp;&amp;
+                   typeToCheck.GetGenericTypeDefinition() == queueInterfaceType;
+        }
+
+        private static bool ImplementsQueueType(Type typeToCheck, Type queueType)
+        {
+            return !typeToCheck.IsAbstract &amp;&amp; typeToCheck
+                                              .GetInterfaces()
+                                              .Any(x =&gt; x.IsGenericType &amp;&amp; x.GetGenericTypeDefinition() == queueType);
+        }
+
+        /// &lt;summary&gt;
+        ///     Gets a registration builder that contains all composition conventions
+        /// &lt;/summary&gt;
+        /// &lt;returns&gt;The &lt;see cref=&quot;RegistrationBuilder&quot; /&gt; containing all composition conventions.&lt;/returns&gt;
+        public static RegistrationBuilder GetRegistrationBuilder()
+        {
+            var registrationBuilder = new RegistrationBuilder();
+
+            // Export all modules as IModule
+            registrationBuilder.ForTypesDerivedFrom&lt;IModule&gt;().Export&lt;IModule&gt;();
+
+            // Export implementers of IConfiguration as themselves and as IConfiguration
+            registrationBuilder.ForTypesDerivedFrom&lt;IConfiguration&gt;().Export&lt;IConfiguration&gt;().Export();
+
+            // Export implementers of IReadOnlyEventQueue&lt;&#39;Event&#39;&gt; as IReadOnlyEventQueue&lt;&#39;Event&#39;&gt; and IReadOnlyEventQueue&lt;Event&gt;
+            registrationBuilder.ForTypesMatching(x =&gt; ImplementsQueueType(x, typeof(IReadOnlyEventQueue&lt;&gt;)))
+                               .Export&lt;IReadOnlyEventQueue&lt;Event&gt;&gt;();
+            registrationBuilder.ForTypesMatching(x =&gt; IsQueueInterfaceType(x, typeof(IReadOnlyEventQueue&lt;&gt;)))
+                               .Export(x =&gt; x.Inherited());
+
+            // Export implementers of ISupportDeserializationEventQueue&lt;&#39;Event&#39;&gt; as ISupportDeserializationEventQueue&lt;&#39;Event&#39;&gt;
+            // and ISupportDeserializationEventQueue&lt;Event&gt;
+            registrationBuilder
+                .ForTypesMatching(x =&gt; ImplementsQueueType(x, typeof(ISupportDeserializationEventQueue&lt;&gt;)))
+                .Export&lt;ISupportDeserializationEventQueue&lt;Event&gt;&gt;();
+            registrationBuilder
+                .ForTypesMatching(x =&gt; IsQueueInterfaceType(x, typeof(ISupportDeserializationEventQueue&lt;&gt;)))
+                .Export(x =&gt; x.Inherited());
+
+            // Export producers (e.g. IReadOnlyEventQueue or ISupportDeserializationEventQueue) as themselves
+            registrationBuilder.ForTypesMatching(x =&gt;
+                                                     ImplementsQueueType(x, typeof(IReadOnlyEventQueue&lt;&gt;)) ||
+                                                     ImplementsQueueType(
+                                                         x, typeof(ISupportDeserializationEventQueue&lt;&gt;)))
+                               .Export();
+
+            // Export implementers of IEncodableEventQueue&lt;&#39;Event&#39;&gt; as IEncodableEventQueue&lt;&#39;Event&#39;&gt; and themselves
+            registrationBuilder.ForTypesMatching(x =&gt; ImplementsQueueType(x, typeof(IEncodableEventQueue&lt;&gt;)))
+                               .Export();
+            registrationBuilder.ForTypesMatching(x =&gt; IsQueueInterfaceType(x, typeof(IEncodableEventQueue&lt;&gt;)))
+                               .Export(x =&gt; x.Inherited());
+
+            // Export implementers of IDecodeableEventQueue&lt;&#39;Event&#39;&gt; as IDecodeableEventQueue&lt;&#39;Event&#39;&gt; and themselves
+            registrationBuilder.ForTypesMatching(x =&gt; ImplementsQueueType(x, typeof(IDecodableEventQueue&lt;&gt;)))
+                               .Export();
+            registrationBuilder.ForTypesMatching(x =&gt; IsQueueInterfaceType(x, typeof(IDecodableEventQueue&lt;&gt;)))
+                               .Export(x =&gt; x.Inherited());
+
+            // Export implementers of IEncoder as IEncoder
+            registrationBuilder.ForTypesDerivedFrom&lt;IEncoder&gt;().Export&lt;IEncoder&gt;(x =&gt; x.Inherited());
+
+            // Export implementers of IDecoder as IDecoder
+            registrationBuilder.ForTypesDerivedFrom&lt;IDecoder&gt;().Export&lt;IDecoder&gt;(x =&gt; x.Inherited());
+
+            return registrationBuilder;
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,9,15,10,0],[16,13,17,81,0],[18,9,18,10,0],[21,9,21,10,0],[22,13,24,57,0],[24,57,24,117,0],[24,117,24,119,0],[22,13,24,119,0],[25,9,25,10,0],[32,9,32,10,0],[33,13,33,65,0],[36,13,36,82,0],[39,13,39,105,0],[42,13,42,55,0],[42,55,42,108,0],[42,108,43,70,0],[42,13,43,70,0],[44,13,44,55,0],[44,55,44,109,0],[44,109,45,45,0],[45,45,45,58,0],[45,58,45,60,0],[44,13,45,60,0],[49,13,50,40,0],[50,40,50,107,0],[50,107,51,69,0],[49,13,51,69,0],[52,13,53,40,0],[53,40,53,108,0],[53,108,54,30,0],[54,30,54,43,0],[54,43,54,45,0],[52,13,54,45,0],[57,13,58,54,0],[58,54,60,105,0],[60,105,61,42,0],[57,13,61,42,0],[64,13,64,55,0],[64,55,64,109,0],[64,109,65,42,0],[64,13,65,42,0],[66,13,66,55,0],[66,55,66,110,0],[66,110,67,45,0],[67,45,67,58,0],[67,58,67,60,0],[66,13,67,60,0],[70,13,70,55,0],[70,55,70,109,0],[70,109,71,42,0],[70,13,71,42,0],[72,13,72,55,0],[72,55,72,110,0],[72,110,73,45,0],[73,45,73,58,0],[73,58,73,60,0],[72,13,73,60,0],[76,13,76,87,0],[76,87,76,100,0],[76,100,76,102,0],[76,13,76,102,0],[79,13,79,87,0],[79,87,79,100,0],[79,100,79,102,0],[79,13,79,102,0],[81,13,81,40,0],[82,9,82,10,0]]);
+    </script>
+  </body>
+</html>

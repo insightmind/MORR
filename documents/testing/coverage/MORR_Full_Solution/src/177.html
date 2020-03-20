@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\MORRTest\TestHelper\Configuration\ConfigurationTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MORR.Core.Configuration;
+using MORR.Shared.Configuration;
+using System;
+using System.Diagnostics;
+
+namespace MORRTest.TestHelper.Configuration
+{
+    /// &lt;summary&gt;
+    /// The ConfigurationTest class implements certain shared tests for any class which implements the
+    /// IConfiguration Interface.
+    ///
+    /// However this class should provide a custom Equals and GetHashCode method to
+    /// allow proper validation of the correct properties of an parsed configuration.
+    /// &lt;/summary&gt;
+    /// &lt;typeparam name=&quot;T&quot;&gt;The IConfiguration Type to be tested by this class&lt;/typeparam&gt;
+    public abstract class ConfigurationTest&lt;T&gt; where T : IConfiguration, new()
+    {
+        public T Config = new T();
+
+        /// &lt;summary&gt;
+        /// Generates the DefaultConfig for tests. Make sure it matches with the RawConfiguration of GenerateDefault RawConfiguration!
+        /// This should not be an empty configuration.
+        /// &lt;/summary&gt;
+        /// &lt;returns&gt;The default configuration&lt;/returns&gt;
+        protected abstract T GenerateDefaultExpectedParsedConfig();
+
+        /// &lt;summary&gt;
+        /// Generates the default raw config associated to the default config above.
+        /// &lt;/summary&gt;
+        /// &lt;returns&gt;The RawConfiguration which presents the DefaultConfig of GenerateDefaultConfig&lt;/returns&gt;
+        protected abstract RawConfiguration GenerateDefaultExpectedRawConfig();
+
+        /// &lt;summary&gt;
+        /// Tests whether the Parse method correctly asserts a null configuration call.
+        /// &lt;/summary&gt;
+        [TestMethod]
+        public void TestConfiguration_NullConfiguration()
+        {
+            /* PRECONDITION */
+            Debug.Assert(Config != null);
+
+            /* WHEN */
+            Assert.ThrowsException&lt;ArgumentNullException&gt;(() =&gt; Config.Parse(null));
+        }
+
+        /// &lt;summary&gt;
+        /// Tests whether the Parse function correctly handles an empty json body.
+        /// &lt;/summary&gt;
+        [TestMethod]
+        public void TestConfiguration_InvalidConfiguration()
+        {
+            /* PRECONDITION */
+            Debug.Assert(Config != null);
+
+            /* GIVEN */
+            var rawConfig = new RawConfiguration(&quot;{ }&quot;);
+
+            /* WHEN */
+            Assert.ThrowsException&lt;InvalidConfigurationException&gt;(() =&gt; Config.Parse(rawConfig));
+        }
+
+        /// &lt;summary&gt;
+        /// Tests whether the parsing of an expected valid configuration works fine.
+        /// &lt;/summary&gt;
+        [TestMethod]
+        public void TestConfiguration_ValidConfiguration()
+        {
+            /* GIVEN */
+            var expectedConfig = GenerateDefaultExpectedParsedConfig();
+            var rawConfig = GenerateDefaultExpectedRawConfig();
+
+            /* WHEN */
+            Debug.Assert(Config != null);
+            Config.Parse(rawConfig);
+
+            /* THEN */
+            Console.WriteLine(rawConfig.RawValue);
+
+            Assert.AreEqual(expectedConfig, Config);
+        }
+
+        /// &lt;summary&gt;
+        /// Tests the Equals method to check if the same object is equal to itself.
+        /// &lt;/summary&gt;
+        [TestMethod]
+        public void TestConfiguration_EqualsSameObject()
+        {
+            var expectedConfig = GenerateDefaultExpectedParsedConfig();
+
+            Debug.Assert(expectedConfig != null);
+
+            Assert.AreEqual(expectedConfig, expectedConfig);
+            Assert.AreEqual(expectedConfig.GetHashCode(), expectedConfig.GetHashCode());
+        }
+
+        /// &lt;summary&gt;
+        /// Test the Equals method to check if two configurations with the same values are equal.
+        /// &lt;/summary&gt;
+        [TestMethod]
+        public void TestConfiguration_EqualsSameValues()
+        {
+            var expectedConfig = GenerateDefaultExpectedParsedConfig();
+            var otherConfig = GenerateDefaultExpectedParsedConfig();
+
+            Debug.Assert(expectedConfig != null);
+            Debug.Assert(otherConfig != null);
+
+            Assert.AreEqual(expectedConfig, otherConfig);
+        }
+
+        /// &lt;summary&gt;
+        /// Test the Equals method to check if two configurations with the different values are not equal.
+        /// &lt;/summary&gt;
+        [TestMethod]
+        public void TestConfiguration_NotEqualsDifferentObject()
+        {
+            var notExpectedConfig = GenerateDefaultExpectedParsedConfig();
+
+            Debug.Assert(Config != null);
+            Debug.Assert(notExpectedConfig != null);
+
+            Assert.AreNotEqual(notExpectedConfig, Config);
+            Assert.AreNotEqual(notExpectedConfig.GetHashCode(), Config.GetHashCode());
+        }
+
+        /// &lt;summary&gt;
+        /// Test the Equals method to check if configuration is correctly not equal to null.
+        /// &lt;/summary&gt;
+        [TestMethod]
+        public void TestConfiguration_NotEqualsNullObject()
+        {
+            var expectedConfig = GenerateDefaultExpectedParsedConfig();
+
+            Assert.AreNotEqual(expectedConfig, null);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[19,9,19,35,1],[39,9,39,10,1],[41,13,41,42,1],[44,13,44,65,1],[44,65,44,83,1],[44,83,44,85,1],[44,13,44,85,1],[45,9,45,10,1],[52,9,52,10,1],[54,13,54,42,1],[57,13,57,57,1],[60,13,60,73,1],[60,73,60,96,1],[60,96,60,98,1],[60,13,60,98,1],[61,9,61,10,1],[68,9,68,10,1],[70,13,70,72,1],[71,13,71,64,1],[74,13,74,42,1],[75,13,75,37,1],[78,13,78,51,1],[80,13,80,53,1],[81,9,81,10,1],[88,9,88,10,1],[89,13,89,72,1],[91,13,91,50,1],[93,13,93,61,1],[94,13,94,89,1],[95,9,95,10,1],[102,9,102,10,1],[103,13,103,72,1],[104,13,104,69,1],[106,13,106,50,1],[107,13,107,47,1],[109,13,109,58,1],[110,9,110,10,1],[117,9,117,10,1],[118,13,118,75,1],[120,13,120,42,1],[121,13,121,53,1],[123,13,123,59,1],[124,13,124,87,1],[125,9,125,10,1],[132,9,132,10,1],[133,13,133,72,1],[135,13,135,54,1],[136,9,136,10,1]]);
+    </script>
+  </body>
+</html>

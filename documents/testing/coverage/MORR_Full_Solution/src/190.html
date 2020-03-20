@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\MORRTest\Data\Capture\Video\Desktop\DesktopCaptureConfigurationTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MORR.Core.Configuration;
+using MORR.Core.Data.Capture.Video.Desktop;
+using MORR.Shared.Configuration;
+using MORRTest.TestHelper.Configuration;
+using System.Diagnostics;
+
+namespace MORRTest.Data.Capture.Video.Desktop
+{
+    [TestClass]
+    public class DesktopCaptureConfigurationTest : ConfigurationTest&lt;DesktopCaptureConfiguration&gt;
+    {
+        protected override DesktopCaptureConfiguration GenerateDefaultExpectedParsedConfig()
+        {
+            return new DesktopCaptureConfiguration
+            {
+                MonitorIndex = 20,
+                PromptUserForMonitorSelection = true
+            };
+        }
+
+        protected override RawConfiguration GenerateDefaultExpectedRawConfig()
+        {
+            const string config = @&quot;{
+                &quot;&quot;MonitorIndex&quot;&quot;: 20,
+                &quot;&quot;PromptUserForMonitorSelection&quot;&quot;: true
+            }&quot;;
+
+            return new RawConfiguration(config);
+        }
+
+        [TestMethod]
+        public void TestDesktopCaptureConfiguration_ParseFailsInvalidPromptUser()
+        {
+            /* PRECONDITION */
+            Debug.Assert(Config != null);
+
+            /* GIVEN */
+            const string config = @&quot;{
+                &quot;&quot;MonitorIndex&quot;&quot;: 20
+            }&quot;;
+
+            var rawConfig = new RawConfiguration(config);
+
+            /* WHEN */
+            Assert.ThrowsException&lt;InvalidConfigurationException&gt;(() =&gt; Config.Parse(rawConfig));
+        }
+
+        [TestMethod]
+        public void TestDesktopCaptureConfiguration_ParseFailsInvalidMonitorIndex()
+        {
+            /* PRECONDITION */
+            Debug.Assert(Config != null);
+
+            /* GIVEN */
+            const string config = @&quot;{
+                &quot;&quot;PromptUserForMonitorSelection&quot;&quot;: true
+            }&quot;;
+
+            var rawConfig = new RawConfiguration(config);
+
+            /* WHEN */
+            Assert.ThrowsException&lt;InvalidConfigurationException&gt;(() =&gt; Config.Parse(rawConfig));
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[14,9,14,10,1],[15,13,19,15,1],[20,9,20,10,1],[23,9,23,10,1],[29,13,29,49,1],[30,9,30,10,1],[34,9,34,10,1],[36,13,36,42,1],[43,13,43,58,1],[46,13,46,73,1],[46,73,46,96,1],[46,96,46,98,1],[46,13,46,98,1],[47,9,47,10,1],[51,9,51,10,1],[53,13,53,42,1],[60,13,60,58,1],[63,13,63,73,1],[63,73,63,96,1],[63,96,63,98,1],[63,13,63,98,1],[64,9,64,10,1]]);
+    </script>
+  </body>
+</html>

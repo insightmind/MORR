@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\CLI\Commands\Validate\ValidateOptions.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using CommandLine;
+
+namespace MORR.Core.CLI.Commands.Validate
+{
+    [Verb(&quot;validate&quot;, HelpText = &quot;Validates if a given config.&quot;)]
+    public class ValidateOptions : CommandOptions
+    {
+        [Option(&#39;c&#39;, &quot;config&quot;, Required = true, HelpText = &quot;Path to configuration file&quot;)]
+        public string ConfigPath { get; set; }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[9,36,9,40,1],[9,41,9,45,1]]);
+    </script>
+  </body>
+</html>
