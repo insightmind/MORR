@@ -1,4 +1,5 @@
 \newcommand{\bug}[3]{\begin{minipage}{\textwidth}\textbf{Bug:} #1 \\ \textbf{Identified cause:} #2 \\ \textbf{Implemented fix:} #3 \end{minipage}\vskip.2\baselineskip}
+\newcommand{\knownissue}[3]{\begin{minipage}{\textwidth}\textbf{Prerequisite:} #1 \par\vspace{4pt} \textbf{Actual behavior:} #2 \par\vspace{4pt} \textbf{Desired behavior:} #3 \end{minipage}\vskip.2\baselineskip}
 
 \chapter{Issues}
 
@@ -21,3 +22,27 @@ The primary purpose of the testing phase is to identify and correct issues with 
 
 \subsection{WebBrowserModule}
 \bug{The WebBrowserModule will accept connections from the browser extension even when the WebBrowserModule is deactivated.}{The internal listener will get started in the initialization routine, disregarding the passed parameter.}{The interal listener will only be started if "isEnabled" is true.}
+
+\chapter{Known issues}
+
+This chapter lists issues that have been identified and will not be fixed.
+
+\subsection{Core}
+
+\knownissue{A recording with video capture is active.}{When the system is put under high load, video capture may occasionally fail. In such cases, the user will not notice any change, as the recording indicator will stay visible.}{The video capture does not fail or the failure is conveyed to the user through the recording indicator.}
+\knownissue{Video capture is enabled and uses the MonitorPicker (either due to the configuration or by using Windows 10 1809).}{When starting a recording but cancelling the monitor/window selection through the "Cancel" button, MORR will close.}{MORR stays open and displays an error dialog.}
+\knownissue{Video capture is enabled and uses the MonitorPicker (either due to the configuration or by using Windows 10 1809).}{When starting a recording for the first time, the monitor/window selection sets the recording format for all subsequent recordings (until MORR is restarted):
+\begin{itemize}
+\item Selecting two monitors first and a single monitor in a subsequent recording leads to a distorted recording
+\item Selecting a single monitor first and two monitors in a subsequent recording leads to a recording only containing one monitor
+\end{itemize}}
+{The recordings are completely independent from one another.}
+\knownissue{A syntactically valid configuration is provided, but misses a subconfiguration for a specified component (e.g. **JsonEncoder** is enabled, but **MORR.Core.Data.Transcoding.Json.JsonEncoderConfiguration** is missing).}{MORR will start without an error, but crash as soon as a recording is started.}{The configuration error is detected during startup and the user is notified of this.}
+
+\subsection{Modules}
+
+\knownissue{A recording is active.}{Some events (clipboard copy event, clipboard cut event, clipboard paste event, keyboard interact event, mouse click event, mouse scroll event, window focus event, window movement event, window resizing event, window state changed event) are not recored if they occur in an application running with higher privileges than MORR (this includes the Windows start menu).}{Events are recorded regardless of privlege level.}
+
+\subsubsection{WebBrowserModule}
+
+\knownissue{MORR is running, but no recording has been started since MORR was launched; the WebBrowserModule is enabled and the web extension is already running.}{When starting a recording, the web extension may take up to 5 seconds to start recording (as indicated by its status icon).}{In accordance with the Functional Specifications Document, the delay should be no more than 1 second.}
