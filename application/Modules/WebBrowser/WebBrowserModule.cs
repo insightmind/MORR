@@ -14,6 +14,8 @@ namespace MORR.Modules.WebBrowser
     /// </summary>
     public class WebBrowserModule : IModule
     {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+#pragma warning disable CS0649 // Fields is never assigned to, and will always have its default value null
         [Import] private ButtonClickEventProducer buttonClickEventProducer;
 
         [Import] private CloseTabEventProducer closeTabEventProducer;
@@ -31,11 +33,14 @@ namespace MORR.Modules.WebBrowser
         [Import] private TextInputEventProducer textInputEventProducer;
 
         [Import] private TextSelectionEventProducer textSelectionEventProducer;
+#pragma warning restore CS0649 // Fields is never assigned to, and will always have its default value null
+
         [Import] private WebBrowserModuleConfiguration Configuration { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
         private bool isActive;
-        private WebExtensionListener listener;
-        private List<IWebBrowserEventObserver> producers;
+        private WebExtensionListener? listener;
+        private List<IWebBrowserEventObserver>? producers;
 
         public static Guid Identifier { get; } = new Guid("e9240dc4-f33f-43db-a419-5b36d8279c88");
         Guid IModule.Identifier => Identifier;
@@ -48,11 +53,21 @@ namespace MORR.Modules.WebBrowser
 
         private void StartRecording()
         {
+            if (listener == null)
+            {
+                return;
+            }
+
             listener.RecordingActive = true;
         }
 
         private void StopRecording()
         {
+            if (listener == null)
+            {
+                return;
+            }
+
             listener.RecordingActive = false;
             producers?.ForEach(producer => producer.Close());
         }
