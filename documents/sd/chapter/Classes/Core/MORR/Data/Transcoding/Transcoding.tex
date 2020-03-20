@@ -104,6 +104,16 @@
     \clsdcl{public class JsonDecoder : \linebreak DefaultDecodeableEventQueue<JsonIntermediateFormatSample>, IDecoder}
     
     \clsdsp{Decodes samples from a recording previously created with the JsonEncoder.}
+    
+    \begin{constructors}
+		\begin{constructor}{public JsonDecoder())}{Creates a new instance of the JsonDecoder}
+		\end{constructor}
+		\begin{constructor}{public JsonDecoder(IFileSystem fileSystem))}{Creates a new instance of the JsonDecoder with specified FileSystem}
+			\begin{parameters}
+				\para{IFileSystem fileSystem}{The file system to construct the instance with.}
+			\end{parameters}
+		\end{constructor}
+	\end{constructors}
 
     \begin{attributes}
         \attribute{public ManualResetEvent DecodeFinished \{ get; \}}{An event raised when decoding finishes.}
@@ -131,6 +141,16 @@
     \begin{attributes}
         \attribute{public ManualResetEvent EncodeFinished \{ get; \}}{An event raised when encoding finishes.}
     \end{attributes}
+    
+     \begin{constructors}
+		\begin{constructor}{public JsonEncoder())}{Creates a new instance of the JsonEncoder}
+		\end{constructor}
+		\begin{constructor}{public JsonEncoder(IFileSystem fileSystem))}{Creates a new instance of the JsonEncoder with specified FileSystem}
+			\begin{parameters}
+				\para{IFileSystem fileSystem}{The file system to construct the instance with.}
+			\end{parameters}
+		\end{constructor}
+	\end{constructors}
 
     \begin{methods}
         \begin{method}{void Encode(DirectoryPath recordingDirectoryPath)}{Encodes all provided samples to a recording at the specified location.}
@@ -196,6 +216,16 @@
     \begin{attributes}
         \attribute{public ManualResetEvent EncodeFinished \{ get; \}}{An event raised when encoding finishes.}
     \end{attributes}
+    
+     \begin{constructors}
+		\begin{constructor}{public MpegEncoder())}{Creates a new instance of the MpegEncoder}
+		\end{constructor}
+		\begin{constructor}{public MpegEncoder(IFileSystem fileSystem))}{Creates a new instance of the MpegEncoder with specified FileSystem}
+			\begin{parameters}
+				\para{IFileSystem fileSystem}{The file system to construct the instance with.}
+			\end{parameters}
+		\end{constructor}
+	\end{constructors}
 
     \begin{methods}
         \begin{method}{void Encode(DirectoryPath recordingDirectoryPath)}{Encodes all provided samples to a recording at the specified location.}

@@ -77,6 +77,16 @@
     \clsdcl{public class ConfigurationManager : IConfigurationManager}
 
     \clsdsp{Manages the application's configuration.}
+    
+    \begin{constructors}
+		\begin{constructor}{public ConfigurationManager())}{Creates a new instance of the ConfigurationManager}
+		\end{constructor}
+		\begin{constructor}{public ConfigurationManager(IFileSystem fileSystem))}{Creates a new instance of the ConfigurationManager with specified FileSystem}
+			\begin{parameters}
+				\para{IFileSystem fileSystem}{The file system to construct the instance with.}
+			\end{parameters}
+		\end{constructor}
+	\end{constructors}
 
     \begin{methods}
         \begin{method}{public void LoadConfiguration(FilePath path)}{Loads the configuration from the specified path.}
@@ -165,12 +175,13 @@
                 \para{FilePath configurationPath}{The configuration path to construct the instance with.}
             \end{parameters}
         \end{constructor}
-        \begin{constructor}{public SessionManager(FilePath configurationPath, IBootstrapper bootstrapper, IConfigurationManager configurationManager, IModuleManager moduleManager)}{Creates a new instance of a SessionManager with the specified configuration path, bootstrapper, configuration manager and module manager.}
+        \begin{constructor}{public SessionManager(FilePath configurationPath, IBootstrapper bootstrapper, IConfigurationManager configurationManager, IModuleManager moduleManager, IFileSystem fileSystem)}{Creates a new instance of a SessionManager with the specified configuration path, bootstrapper, configuration manager, module manager and file system}
             \begin{parameters}
                 \para{FilePath configurationPath}{The configuration path to construct the instance with.}
                 \para{IBootstrapper bootstrapper}{The bootstrapper to construct the instance with.}
                 \para{IConfigurationManager configurationManager}{The configuration manager to construct the instance with.}
                 \para{IModuleManager moduleManager}{The module manager to construct the instance with.}
+                \para{IFileSystem fileSystem}{The file system to construct the instance with.}
             \end{parameters}
         \end{constructor}
     \end{constructors}
@@ -192,6 +203,47 @@
             \end{parameters}
         \end{method}
     \end{methods}
+\end{class}
+
+\begin{class}{SessionConfiguration}
+    \clsdiagram{resources/Classes/Core/MORR/Session/SessionConfiguration.png}
+
+    \clsdcl{public class Session : IConfiguration}
+
+    \clsdsp{Encapsulates all session configuration options.}
+
+    \begin{attributes}
+        \attribute{public IEnumerable<Type> Encoders \{ get; set; \}}{The types of the encoders to use.}
+        \attribute{public IEnumerable<Type>? Decoders \{ get; set; \}}{The types of the decoders to use.}
+        \attribute{public DirectoryPath RecordingDirectory \{ get; set; \}}{The directory in which to store new recordings.}
+    \end{attributes}
+    
+    \begin{methods}
+        \begin{method}{public void Parse(RawConfiguration configuration)}{Parses the configuration from the provided value.}
+            \begin{parameters}
+                \para{RawConfiguration configuration}{The configuration value to parse from.}
+            \end{parameters}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\subsection*{MORR.Core.Session.Crypto}
+
+\begin{class}{CryptoHelper}
+	\clsdiagram{resources/Classes/Core/MORR/Session/Crypto/CryptoHelper.png}
+	
+	\clsdcl{public static class CryptoHelper}
+	
+	\clsdsp{Helper class for encrypting the name of the user.}
+	
+	\begin{methods}
+		\begin{method}{public static string GenerateHash(string rawData)}{Generates a hash of the provided string using the SHA256 algorithm.}
+			\begin{parameters}
+                \para{string rawData}{The string to be hashed.}
+            \end{parameters}
+            \return{string}{The hashed version of the rawData string.}
+        \end{method}
+     \end{methods}
 \end{class}
 
 \subsection*{MORR.Core.Session.Exceptions}
@@ -264,7 +316,7 @@
     \clsdsp{Encapsulates all global module configuration options.}
 
     \begin{attributes}
-        \attribute{public IEnumerable<Type> EnabledModules \{ get; \}}{The types of all IModule instances that should be enabled.}
+        \attribute{public IEnumerable<Type> EnabledModules \{ get; set; \}}{The types of all IModule instances that should be enabled.}
     \end{attributes}
     
     \begin{methods}
