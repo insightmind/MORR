@@ -94,7 +94,12 @@ A window-management \gls{event} is issued by the window-management \gls{module}.
 A mouse-interaction \gls{event} is issued by the mouse \gls{module}.
 
 \begin{itemize}
-\dspec{Mouse click interaction \gls{event}}{Includes the following data:
+\dspec{Generic mouse interaction \gls{event}}{Includes the following data:
+	\begin{itemize}
+	\item The current mouse position
+	\end{itemize}
+}	
+\dsubspec{Mouse click interaction \gls{event}}{Includes the following data:
 	\begin{itemize}
 	\item Clicked button:
 		\begin{itemize}
@@ -114,11 +119,9 @@ A mouse-interaction \gls{event} is issued by the mouse \gls{module}.
 	\end{itemize}
 }
 
-\dsubspec{Mouse movement interaction \gls{event}}{Includes the following data:
-	\begin{itemize}
-	\item Movement vector
-	\end{itemize}
-}
+\dsubspec{Mouse movement interaction \gls{event}}{Includes only the generic data. \\
+ The current mouse position is interpreted as the mouse position after the move.}
+
 \end{itemize}
 
 \subsection{Keyboard Interaction \Glspl{event}}
@@ -128,14 +131,17 @@ A keyboard-interaction \gls{event} is issued by the keyboard \gls{module}.
 \begin{itemize}
 \dspec{Keyboard interaction \gls{event}}{Includes the following data:
 	\begin{itemize}
-	\item Pressed key
-	\item All of the modifier keys that are pressed:
+	\item Pressed key (for data analysis purpose)
+	\item Descriptive name of the pressed key (for readability purpose)
+	\item All of the modifier keys that are pressed (for data analysis purpose):
 		\begin{itemize}
 		\item Ctrl
 		\item Alt
 		\item Shift
 		\item Windows
 		\end{itemize}
+	\item Descriptive names of all the modifier keys that are pressed (for readability purpose)
+	\item The corresponding Unicode, if such exists(for readability purpose)
 	\end{itemize}
 }
 \end{itemize}
