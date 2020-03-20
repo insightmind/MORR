@@ -6,6 +6,6 @@ namespace MORR.Core.CLI.Commands.Validate
     public class ValidateOptions : CommandOptions
     {
         [Option('c', "config", Required = true, HelpText = "Path to configuration file")]
-        public string ConfigPath { get; set; }
+        public string ConfigPath { get; set; } = "";
     }
 }

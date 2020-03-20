@@ -35,7 +35,10 @@ namespace MORR.Core.CLI.Commands.Processing
             IConsoleFormatter consoleFormatter)
         {
             this.sessionManager = sessionManager;
-            if (consoleFormatter != null) this.consoleFormatter = consoleFormatter;
+            if (consoleFormatter != null)
+            {
+                this.consoleFormatter = consoleFormatter;
+            }
         }
 
         #endregion
@@ -47,7 +50,10 @@ namespace MORR.Core.CLI.Commands.Processing
             Debug.Assert(consoleFormatter != null, nameof(consoleFormatter) + " != null");
             Debug.Assert(sessionManager != null, nameof(sessionManager) + " != null");
 
-            if (options == null) return -1;
+            if (options == null || consoleFormatter == null)
+            {
+                return -1;
+            }
 
             try
             {
