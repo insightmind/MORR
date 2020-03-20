@@ -59,7 +59,7 @@ namespace MORR.Core.Data.Capture.Video.Desktop.Utility
         /// <summary>
         ///     The name of the device.
         /// </summary>
-        public string DeviceName { get; set; }
+        public string? DeviceName { get; set; }
 
         /// <summary>
         ///     The handle of the monitor.

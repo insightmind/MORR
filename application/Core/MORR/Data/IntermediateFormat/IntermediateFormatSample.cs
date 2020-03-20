@@ -11,11 +11,11 @@ namespace MORR.Core.Data.IntermediateFormat
         /// <summary>
         ///     The type of the event that is serialized.
         /// </summary>
-        public Type Type { get; set; }
+        public Type Type { get; set; } = null!;
 
         /// <summary>
         ///     The data that is serialized.
         /// </summary>
-        public byte[] Data { get; set; }
+        public byte[] Data { get; set; } = null!;
     }
 }

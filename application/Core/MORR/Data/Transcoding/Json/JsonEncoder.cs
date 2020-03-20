@@ -13,10 +13,10 @@ namespace MORR.Core.Data.Transcoding.Json
     public class JsonEncoder : IEncoder
     {
         [Import]
-        private IEncodableEventQueue<JsonIntermediateFormatSample> IntermediateFormatSampleQueue { get; set; }
+        private IEncodableEventQueue<JsonIntermediateFormatSample> IntermediateFormatSampleQueue { get; set; } = null!;
 
         [Import]
-        private JsonEncoderConfiguration Configuration { get; set; }
+        private JsonEncoderConfiguration Configuration { get; set; } = null!;
 
         private readonly IFileSystem fileSystem;
 
@@ -63,7 +63,7 @@ namespace MORR.Core.Data.Transcoding.Json
 
         private Stream GetFileStream(DirectoryPath recordingDirectoryPath)
         {
-            var fullPath = fileSystem.Path.Combine(recordingDirectoryPath.ToString(), Configuration.RelativeFilePath.ToString());
+            var fullPath = fileSystem.Path.Combine(recordingDirectoryPath.ToString(), Configuration.RelativeFilePath?.ToString());
             return fileSystem.File.OpenWrite(fullPath);
         }
     }

@@ -112,7 +112,7 @@ namespace MORR.Core.UI.Utility
             isDisposed = true;
 
             NativeMethods.DestroyWindow(WindowHandle);
-            internalWindowMessageHandler = null;
+            internalWindowMessageHandler = null!;
         }
 
         #endregion

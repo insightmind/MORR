@@ -10,6 +10,6 @@ namespace MORR.Core.Data.Capture.Video
         /// <summary>
         ///     The surface containing the data for this sample.
         /// </summary>
-        public IDirect3DSurface Surface { get; set; }
+        public IDirect3DSurface Surface { get; set; } = null!;
     }
 }

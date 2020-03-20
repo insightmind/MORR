@@ -18,7 +18,7 @@ namespace MORR.Core.Data.IntermediateFormat.Json
         private CountdownEvent resetCounter = new CountdownEvent(0);
 
         [ImportMany]
-        private IEnumerable<IReadOnlyEventQueue<Event>> EventQueues { get; set; }
+        private IEnumerable<IReadOnlyEventQueue<Event>> EventQueues { get; set; } = null!;
 
         public void Initialize(bool isEnabled)
         {

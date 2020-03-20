@@ -121,27 +121,27 @@ namespace MORR.Core.Data.Capture.Video.Desktop
             public void Dispose()
             {
                 multithread?.Leave();
-                multithread = null;
+                multithread = null!;
             }
         }
 
         #region Fields
 
-        private Texture2D blankTexture;
-        private ManualResetEvent canCleanupNonPersistentResourcesEvent;
-        private ManualResetEvent closedEvent;
-        private Direct3D11CaptureFrame currentFrame;
+        private Texture2D blankTexture = null!;
+        private ManualResetEvent canCleanupNonPersistentResourcesEvent = null!;
+        private ManualResetEvent closedEvent = null!;
+        private Direct3D11CaptureFrame currentFrame = null!;
 
-        private IDirect3DDevice device;
+        private IDirect3DDevice device = null!;
 
-        private WaitHandle[] events;
-        private ManualResetEvent frameEvent;
-        private Direct3D11CaptureFramePool framePool;
+        private WaitHandle[] events = null!;
+        private ManualResetEvent frameEvent = null!;
+        private Direct3D11CaptureFramePool framePool = null!;
 
-        private GraphicsCaptureItem item;
-        private Multithread multithread;
-        private GraphicsCaptureSession session;
-        private Device sharpDXDevice;
+        private GraphicsCaptureItem item = null!;
+        private Multithread multithread = null!;
+        private GraphicsCaptureSession session = null!;
+        private Device sharpDXDevice = null!;
 
         #endregion
 
@@ -240,29 +240,29 @@ namespace MORR.Core.Data.Capture.Video.Desktop
                 framePool.Dispose();
             }
 
-            framePool = null;
+            framePool = null!;
 
             session?.Dispose();
-            session = null;
+            session = null!;
 
             if (item != null)
             {
                 item.Closed -= OnClosed;
             }
 
-            item = null;
+            item = null!;
             blankTexture?.Dispose();
-            blankTexture = null;
+            blankTexture = null!;
             currentFrame?.Dispose();
-            currentFrame = null;
+            currentFrame = null!;
         }
 
         private void CleanupPersistentResources()
         {
             device?.Dispose();
-            device = null;
+            device = null!;
             sharpDXDevice?.Dispose();
-            sharpDXDevice = null;
+            sharpDXDevice = null!;
         }
 
         public void Dispose()

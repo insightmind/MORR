@@ -17,7 +17,7 @@ namespace MORR.Core
     {
         private const string moduleSubdirectory = "Modules";
         private const string moduleNamePattern = "*.MORR-Module.dll";
-        private CompositionContainer container;
+        private CompositionContainer container = new CompositionContainer();
 
         public Bootstrapper()
         {

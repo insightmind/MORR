@@ -25,9 +25,16 @@ namespace MORR.Shared.Utility
             {
                 this.value = value;
             }
-            else if (!TryGetLocalFilePath(value, out this.value))
+            else
             {
-                throw new ArgumentException($"The specified value \"{value}\" is not a valid file path.");
+                var result = TryGetLocalFilePath(value);
+
+                if (result == null)
+                {
+                    throw new ArgumentException($"The specified value \"{value}\" is not a valid file path.");
+                }
+
+                this.value = result;
             }
         }
 
@@ -35,20 +42,16 @@ namespace MORR.Shared.Utility
         ///     Verifies the provided string and gets a local file path from it.
         /// </summary>
         /// <param name="path">The path to verify.</param>
-        /// <param name="result">The local path if the provided <paramref name="path" /> is valid.</param>
-        /// <returns><see langword="true" /> if the provided <paramref name="path" /> is valid, <see langword="false" /> otherwise.</returns>
-        private bool TryGetLocalFilePath(string path, [NotNullWhen(true)] out string? result)
+        /// <returns>Returns an optional string which is null if the the local file path could not be resolved.</returns>
+        private static string? TryGetLocalFilePath(string path)
         {
-            result = null;
-
             if (!Uri.TryCreate(path, UriKind.Absolute, out var parsedUri) || !parsedUri.IsFile ||
                 string.IsNullOrEmpty(Path.GetExtension(path)))
             {
-                return false;
+                return null;
             }
 
-            result = parsedUri.LocalPath;
-            return true;
+            return parsedUri.LocalPath;
         }
 
         /// <summary>

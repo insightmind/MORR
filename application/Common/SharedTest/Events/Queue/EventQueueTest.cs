@@ -117,7 +117,9 @@ namespace SharedTest.Events.Queue
             var outputEvent = Enumerable.Repeat(new TestEvent(), 50).ToArray();
             var num = 0;
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
             async IAsyncEnumerable<TestEvent> CallEvent()
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
             {
                 foreach (var innerEvent in outputEvent)
                 {

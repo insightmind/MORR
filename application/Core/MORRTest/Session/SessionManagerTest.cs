@@ -166,7 +166,7 @@ namespace MORRTest.Session
             Debug.Assert(moduleManagerMock != null, "ModuleManagerMock should not be dismissed!");
             Debug.Assert(encoder?.Mock != null, "TestEncoder should not be dismissed!");
 
-            Assert.IsTrue(sessionManager.isRecording);
+            Assert.IsTrue(sessionManager.IsRecording);
             Assert.IsNotNull(sessionManager.RecordingsFolder);
 
             moduleManagerMock.Verify(mock => mock.InitializeModules(), Times.Once);
@@ -189,14 +189,14 @@ namespace MORRTest.Session
             sessionManager.StartRecording();
 
             /* WHEN */
-            Assert.IsTrue(sessionManager.isRecording);
+            Assert.IsTrue(sessionManager.IsRecording);
             Assert.ThrowsException<AlreadyRecordingException>(() => sessionManager.StartRecording());
 
             /* THEN */
             Debug.Assert(moduleManagerMock != null, "ModuleManagerMock should not be dismissed!");
             Debug.Assert(encoder?.Mock != null, "TestEncoder should not be dismissed!");
 
-            Assert.IsTrue(sessionManager.isRecording);
+            Assert.IsTrue(sessionManager.IsRecording);
 
             moduleManagerMock.Verify(mock => mock.InitializeModules(), Times.Once);
             moduleManagerMock.Verify(mock => mock.NotifyModulesOnSessionStart(), Times.Once);
@@ -226,7 +226,7 @@ namespace MORRTest.Session
             /* THEN */
             Debug.Assert(moduleManagerMock != null, "ModuleManagerMock should not be dismissed!");
 
-            Assert.IsFalse(sessionManager.isRecording);
+            Assert.IsFalse(sessionManager.IsRecording);
 
             moduleManagerMock.Verify(mock => mock.NotifyModulesOnSessionStop(), Times.Once);
             encoder.Mock.VerifyGet(mock => mock.EncodeFinished, Times.Once);
@@ -246,14 +246,14 @@ namespace MORRTest.Session
             Debug.Assert(sessionManager != null, "SessionManager should not be dismissed!");
 
             /* WHEN */
-            Assert.IsFalse(sessionManager.isRecording);
+            Assert.IsFalse(sessionManager.IsRecording);
             Assert.ThrowsException<NotRecordingException>(() => sessionManager.StopRecording());
 
             /* THEN */
             Debug.Assert(moduleManagerMock != null, "ModuleManagerMock should not be dismissed!");
             Debug.Assert(encoder?.Mock != null, "TestEncoder should not be dismissed!");
 
-            Assert.IsFalse(sessionManager.isRecording);
+            Assert.IsFalse(sessionManager.IsRecording);
 
             moduleManagerMock.Verify(mock => mock.NotifyModulesOnSessionStop(), Times.Never);
             encoder.Mock.VerifyGet(mock => mock.EncodeFinished, Times.Never);
@@ -286,7 +286,7 @@ namespace MORRTest.Session
             var count = directories.Length;
 
             /* WHEN */
-            Assert.IsFalse(sessionManager.isRecording);
+            Assert.IsFalse(sessionManager.IsRecording);
             sessionManager.Process(directories);
 
             /* THEN */
@@ -320,7 +320,7 @@ namespace MORRTest.Session
             var directories = new[] { someDirectory };
 
             /* WHEN */
-            Assert.IsFalse(sessionManager.isRecording);
+            Assert.IsFalse(sessionManager.IsRecording);
             Assert.ThrowsException<InvalidConfigurationException>(() => sessionManager.Process(directories));
         }
 
@@ -341,9 +341,9 @@ namespace MORRTest.Session
             var someDirectory = new DirectoryPath(directoryPath, true);
             var directories = new[] { someDirectory };
 
-            Assert.IsFalse(sessionManager.isRecording);
+            Assert.IsFalse(sessionManager.IsRecording);
             sessionManager.StartRecording();
-            Assert.IsTrue(sessionManager.isRecording);
+            Assert.IsTrue(sessionManager.IsRecording);
 
             /* WHEN */
             Assert.ThrowsException<AlreadyRecordingException>(() => sessionManager.Process(directories));

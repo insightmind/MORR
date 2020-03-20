@@ -14,10 +14,10 @@ namespace MORR.Core.Data.Capture.Video.Desktop
         private bool isActive;
 
         [Import]
-        private VideoSampleProducer VideoSampleProducer { get; set; }
+        private VideoSampleProducer VideoSampleProducer { get; set; } = null!;
 
         [Import]
-        private DesktopCaptureConfiguration Configuration { get; set; }
+        private DesktopCaptureConfiguration Configuration { get; set; } = null!;
 
         public bool IsActive
         {

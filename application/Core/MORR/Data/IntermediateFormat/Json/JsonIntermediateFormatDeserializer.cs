@@ -15,10 +15,10 @@ namespace MORR.Core.Data.IntermediateFormat.Json
         private bool isActive;
 
         [ImportMany]
-        private IEnumerable<ISupportDeserializationEventQueue<Event>> EventQueues { get; set; }
+        private IEnumerable<ISupportDeserializationEventQueue<Event>> EventQueues { get; set; } = null!;
 
         [Import]
-        private IDecodableEventQueue<JsonIntermediateFormatSample> IntermediateFormatSampleQueue { get; set; }
+        private IDecodableEventQueue<JsonIntermediateFormatSample> IntermediateFormatSampleQueue { get; set; } = null!;
 
         public bool IsActive
         {

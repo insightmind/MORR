@@ -16,7 +16,7 @@ namespace MORR.Core.Data.Transcoding.Json
     public class JsonDecoder : DefaultDecodableEventQueue<JsonIntermediateFormatSample>, IDecoder
     {
         [Import]
-        private JsonDecoderConfiguration Configuration { get; set; }
+        private JsonDecoderConfiguration Configuration { get; set; } = null!;
 
         private static Guid Identifier { get; } = new Guid("E943EACB-5AD1-49A7-92CE-C42E7AD8995B");
 
@@ -54,7 +54,7 @@ namespace MORR.Core.Data.Transcoding.Json
 
         private Stream GetFileStream(DirectoryPath recordingDirectoryPath)
         {
-            var fullPath = fileSystem.Path.Combine(recordingDirectoryPath.ToString(), Configuration.RelativeFilePath.ToString());
+            var fullPath = fileSystem.Path.Combine(recordingDirectoryPath.ToString(), Configuration.RelativeFilePath?.ToString());
             return fileSystem.File.OpenRead(fullPath);
         }
 

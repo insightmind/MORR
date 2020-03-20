@@ -24,10 +24,10 @@ namespace MORR.Core.Data.Transcoding.Mpeg
         private DirectXVideoSample? nextSample;
 
         [Import]
-        private MpegEncoderConfiguration Configuration { get; set; }
+        private MpegEncoderConfiguration Configuration { get; set; } = null!;
 
         [Import]
-        private IEncodableEventQueue<DirectXVideoSample> VideoQueue { get; set; }
+        private IEncodableEventQueue<DirectXVideoSample> VideoQueue { get; set; } = null!;
 
         private readonly IFileSystem fileSystem;
 
@@ -51,7 +51,7 @@ namespace MORR.Core.Data.Transcoding.Mpeg
 
         private Stream GetFileStream(DirectoryPath recordingDirectoryPath)
         {
-            var fullPath = fileSystem.Path.Combine(recordingDirectoryPath.ToString(), Configuration.RelativeFilePath.ToString());
+            var fullPath = fileSystem.Path.Combine(recordingDirectoryPath.ToString(), Configuration.RelativeFilePath?.ToString());
             return fileSystem.File.OpenWrite(fullPath);
         }
 
@@ -88,7 +88,7 @@ namespace MORR.Core.Data.Transcoding.Mpeg
 
         private async Task ConsumeVideoSamples()
         {
-            await foreach (var videoSample in VideoQueue?.GetEvents())
+            await foreach (var videoSample in VideoQueue.GetEvents())
             {
                 if (inferredResolution == null)
                 {

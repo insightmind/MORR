@@ -22,7 +22,7 @@ namespace MORR.Core.CLI.Commands.Processing
         #region Dependencies
 
         private readonly ISessionManager sessionManager;
-        private readonly IConsoleFormatter consoleFormatter;
+        private readonly IConsoleFormatter? consoleFormatter;
 
         #endregion
 

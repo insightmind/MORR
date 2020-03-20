@@ -16,7 +16,7 @@
             Identifier = identifier;
         }
 
-        public override bool Equals(object? obj)
+        public override bool Equals(object obj)
         {
             return (obj is TestEvent @event)
                    && Identifier == @event.Identifier

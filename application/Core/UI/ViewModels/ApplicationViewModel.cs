@@ -17,7 +17,7 @@ namespace MORR.Core.UI.ViewModels
 {
     public class ApplicationViewModel : DependencyObject
     {
-        private SessionManager sessionManager;
+        private SessionManager sessionManager = null!;
 
         public ApplicationViewModel()
         {
@@ -212,11 +212,11 @@ namespace MORR.Core.UI.ViewModels
 
         #region Commands
 
-        private ICommand exitCommand;
+        private ICommand exitCommand = null!;
 
-        private ICommand openRecordingsDirectoryCommand;
+        private ICommand openRecordingsDirectoryCommand = null!;
 
-        private ICommand toggleRecordingCommand;
+        private ICommand toggleRecordingCommand = null!;
 
         public ICommand OpenRecordingsDirectoryCommand =>
             openRecordingsDirectoryCommand ??= new RelayCommand(OnOpenRecordingsDirectory);
