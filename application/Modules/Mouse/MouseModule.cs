@@ -18,6 +18,7 @@ namespace MORR.Modules.Mouse
         ///     A single-writer-multiple-reader queue for MouseClickEvent
         /// </summary>
         [Import]
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         private MouseClickEventProducer MouseClickEventProducer { get; set; }
 
         /// <summary>
@@ -37,6 +38,7 @@ namespace MORR.Modules.Mouse
         /// </summary>
         [Import]
         private MouseModuleConfiguration MouseModuleConfiguration { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
         public static Guid Identifier { get; } = new Guid("EFF894B3-4DC9-4605-9937-F02F400B4A62");
         Guid IModule.Identifier => Identifier;
