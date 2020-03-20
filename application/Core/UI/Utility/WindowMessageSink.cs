@@ -22,7 +22,7 @@ namespace MORR.Core.UI.Utility
 
         private readonly uint taskbarWindowMessageId;
 
-        private NativeMethods.WindowProcedureHandler internalWindowMessageHandler;
+        private NativeMethods.WindowProcedureHandler? internalWindowMessageHandler;
 
         public WindowMessageSink()
         {
