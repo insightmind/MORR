@@ -11,7 +11,7 @@ namespace MORR.Modules.Mouse.Producers
     /// </summary>
     public class MouseMoveEventProducer : DefaultEventQueue<MouseMoveEvent>
     {
-        private static INativeMouse nativeMouse;
+        private static INativeMouse? nativeMouse;
 
         /// <summary>
         ///     The mouse position in screen coordinates in the last period.
@@ -44,8 +44,13 @@ namespace MORR.Modules.Mouse.Producers
         ///     if the Threshold is reached.
         /// </summary>
         /// <param name="stateInfo">state object</param>
-        private void GetMousePosition(object stateInfo)
+        private void GetMousePosition(object? stateInfo)
         {
+            if (nativeMouse == null)
+            {
+                return;
+            }
+
             // get the current mouse position as Point
             var currentMousePosition = nativeMouse.GetCursorPos();
             var currentMousePositionAsPoint = new Point(currentMousePosition.X, currentMousePosition.Y);

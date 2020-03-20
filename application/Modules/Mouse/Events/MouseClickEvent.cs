@@ -15,6 +15,6 @@ namespace MORR.Modules.Mouse.Events
         /// <summary>
         ///     The handle of the window in which the mouse click occurred in String.
         /// </summary>
-        public string HWnd { get; set; }
+        public string HWnd { get; set; } = "";
     }
 }

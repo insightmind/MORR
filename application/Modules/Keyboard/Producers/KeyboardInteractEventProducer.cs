@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using MORR.Modules.Keyboard.Events;
 using MORR.Modules.Keyboard.Native;
 using MORR.Shared.Events.Queue;
@@ -12,7 +11,7 @@ namespace MORR.Modules.Keyboard.Producers
     /// </summary>
     public class KeyboardInteractEventProducer : DefaultEventQueue<KeyboardInteractEvent>
     {
-        private static INativeKeyboard nativeKeyboard;
+        private static INativeKeyboard? nativeKeyboard;
 
         private readonly GlobalHook.MessageType[] listenedMessagesTypes =
         {
@@ -35,9 +34,9 @@ namespace MORR.Modules.Keyboard.Producers
 
         private void KeyboardHookCallback(GlobalHook.HookMessage hookMessage) {
             var virtualKeyCode = hookMessage.wParam;
-            var pressedKey = nativeKeyboard.KeyFromVirtualKey((int)virtualKeyCode);
+            var pressedKey = nativeKeyboard?.KeyFromVirtualKey((int)virtualKeyCode) ?? Key.None;
             var modifierKeys = GetModifierKeys();
-            char key = nativeKeyboard.ToUnicode((uint)virtualKeyCode);
+            var key = nativeKeyboard?.ToUnicode((uint)virtualKeyCode) ?? '\u0000';
 
             var keyboardEvent = new KeyboardInteractEvent
             {
@@ -54,6 +53,11 @@ namespace MORR.Modules.Keyboard.Producers
         private static ModifierKeys GetModifierKeys()
         {
             var modifierKeys = ModifierKeys.None;
+
+            if (nativeKeyboard == null)
+            {
+                return modifierKeys;
+            }
 
             if (nativeKeyboard.IsKeyPressed(INativeKeyboard.VirtualKeyCode.VK_MENU))
             {
@@ -75,6 +79,7 @@ namespace MORR.Modules.Keyboard.Producers
             {
                 modifierKeys |= ModifierKeys.Windows;
             }
+
             return modifierKeys;
         }
     }

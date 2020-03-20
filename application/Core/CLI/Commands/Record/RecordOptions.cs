@@ -6,6 +6,6 @@ namespace MORR.Core.CLI.Commands.Record
     public class RecordOptions : CommandOptions
     {
         [Option('c', "config", Required = true, HelpText = "Path to configuration file")]
-        public string ConfigPath { get; set; }
+        public string ConfigPath { get; set; } = "";
     }
 }

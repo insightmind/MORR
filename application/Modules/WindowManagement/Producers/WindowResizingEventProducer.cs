@@ -11,7 +11,7 @@ namespace MORR.Modules.WindowManagement.Producers
     /// </summary>
     public class WindowResizingEventProducer : DefaultEventQueue<WindowResizingEvent>
     {
-        private static INativeWindowManagement nativeWindowManagement;
+        private static INativeWindowManagement? nativeWindowManagement;
 
         private readonly GlobalHook.MessageType[] listenedMessageTypes =
             { GlobalHook.MessageType.WM_ENTERSIZEMOVE, GlobalHook.MessageType.WM_EXITSIZEMOVE };
@@ -64,14 +64,14 @@ namespace MORR.Modules.WindowManagement.Producers
             {
                 windowUnderChangeHwnd = (int) msg.Hwnd;
                 windowRecBeforeChange = new Rectangle();
-                nativeWindowManagement.GetWindowRect(windowUnderChangeHwnd, ref windowRecBeforeChange);
+                nativeWindowManagement?.GetWindowRect(windowUnderChangeHwnd, ref windowRecBeforeChange);
             }
 
             if (msg.Type == (uint) GlobalHook.MessageType.WM_EXITSIZEMOVE)
             {
                 windowRecAfterChange = new Rectangle();
-                nativeWindowManagement.GetWindowRect(windowUnderChangeHwnd, ref windowRecAfterChange);
-                if (!nativeWindowManagement.IsRectSizeEqual(windowRecBeforeChange, windowRecAfterChange))
+                nativeWindowManagement?.GetWindowRect(windowUnderChangeHwnd, ref windowRecAfterChange);
+                if (nativeWindowManagement != null && !nativeWindowManagement.IsRectSizeEqual(windowRecBeforeChange, windowRecAfterChange))
                 {
                     var oldSize = new Size
                     {

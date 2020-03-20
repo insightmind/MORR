@@ -13,9 +13,9 @@ namespace MORR.Modules.Clipboard.Producers
     {
         private const int wparamcut = 14;
 
-        private static IClipboardWindowMessageSink clipboardWindowMessageSink;
+        private static IClipboardWindowMessageSink? clipboardWindowMessageSink;
 
-        private static INativeClipboard nativeClipboard;
+        private static INativeClipboard? nativeClipboard;
 
         #region Private methods
 
@@ -29,8 +29,12 @@ namespace MORR.Modules.Clipboard.Producers
             string text;
             try
             {
+                if (nativeClipboard == null)
+                {
+                    return;
+                }
+
                 text = nativeClipboard.GetClipboardText();
-                Console.WriteLine(wParam);
             }
             catch (Exception)
             {
@@ -50,6 +54,11 @@ namespace MORR.Modules.Clipboard.Producers
             string text;
             try
             {
+                if (nativeClipboard == null)
+                {
+                    return;
+                }
+
                 text = nativeClipboard.GetClipboardText();
             }
             catch (Exception)
