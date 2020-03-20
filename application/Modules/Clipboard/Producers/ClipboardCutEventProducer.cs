@@ -72,10 +72,10 @@ namespace MORR.Modules.Clipboard.Producers
         /// <summary>
         ///     Sets the hook for the clipboard cut event.
         /// </summary>
-        public void StartCapture(IClipboardWindowMessageSink winSink, INativeClipboard nativeCL)
+        public void StartCapture(IClipboardWindowMessageSink windowMessageSink, INativeClipboard nativeClip)
         {
-            clipboardWindowMessageSink = winSink;
-            nativeClipboard = nativeCL;
+            clipboardWindowMessageSink = windowMessageSink;
+            nativeClipboard = nativeClip;
 
             if (clipboardWindowMessageSink == null)
             {
