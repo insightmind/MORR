@@ -13,12 +13,12 @@ namespace MORR.Modules.WebBrowser.Events
         /// <summary>
         ///     The title of the button item that was clicked on the website
         /// </summary>
-        public string Button { get; set; }
+        public string Button { get; private set; } = "";
 
         /// <summary>
         ///     The URL of the website that the button is linked to
         /// </summary>
-        public string? Href { get; set; }
+        public string? Href { get; private set; }
 
         protected override void DeserializeSpecificAttributes(JsonElement parsed)
         {

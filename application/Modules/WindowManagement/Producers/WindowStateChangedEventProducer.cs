@@ -15,7 +15,7 @@ namespace MORR.Modules.WindowManagement.Producers
         private const int SIZE_RESTORED = 0;
         private const int SIZE_MINIMIZED = 1;
         private const int SIZE_MAXIMIZED = 2;
-        private static INativeWindowManagement nativeWindowManagement;
+        private static INativeWindowManagement? nativeWindowManagement;
 
         private readonly GlobalHook.MessageType[] listenedMessageTypes =
         {
@@ -57,6 +57,11 @@ namespace MORR.Modules.WindowManagement.Producers
 
         private void WindowHookCallback(GlobalHook.HookMessage msg)
         {
+            if (nativeWindowManagement == null)
+            {
+                return;
+            }
+
             // for detection of WindowState.Maximized and WindowState.Minimized
             if (msg.Type == (uint) GlobalHook.MessageType.WM_SIZE &&
                 ((uint) msg.wParam == SIZE_MINIMIZED || (uint) msg.wParam == SIZE_MAXIMIZED))

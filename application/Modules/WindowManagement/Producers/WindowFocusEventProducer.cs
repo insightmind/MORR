@@ -12,7 +12,7 @@ namespace MORR.Modules.WindowManagement.Producers
     public class WindowFocusEventProducer : DefaultEventQueue<WindowFocusEvent>
     {
         private const int WA_ACTIVE = 1;
-        private static INativeWindowManagement nativeWindowManagement;
+        private static INativeWindowManagement? nativeWindowManagement;
         private IntPtr lastHwnd = IntPtr.Zero;
 
         public void StartCapture(INativeWindowManagement nativeWinManagement)
@@ -37,7 +37,7 @@ namespace MORR.Modules.WindowManagement.Producers
         /// <param name="msg">the hook message</param>
         private void WindowHookCallback(GlobalHook.HookMessage msg)
         {
-            if ((int) msg.wParam == WA_ACTIVE)
+            if ((int) msg.wParam == WA_ACTIVE && nativeWindowManagement != null)
             {
                 var hwnd = nativeWindowManagement.GetForegroundWindow();
                 if (lastHwnd != hwnd)

@@ -113,7 +113,10 @@ namespace MORR.Modules.WebBrowser
         private void StopListening(HttpListenerContext? context)
         {
             if (listener == null)
+            {
                 return;
+            }
+
             if (listener.IsListening)
             {
                 //inform all the connected applications about the listener having stopped
@@ -144,7 +147,7 @@ namespace MORR.Modules.WebBrowser
         //a private helper class to parse and identify the request
         private class WebBrowserRequest
         {
-            public string Request { get; set; }
+            public string Request { get; set; } = "";
             public JsonElement? Data { get; set; }
         }
 
@@ -264,7 +267,7 @@ namespace MORR.Modules.WebBrowser
                 decodedRequest = DecodeUrlString(reader.ReadToEnd());
             }
 
-            listener.BeginGetContext(RetrieveRequest, null); //get ready for next request
+            listener?.BeginGetContext(RetrieveRequest, null); //get ready for next request
 
             //try parsing the request
             WebBrowserRequest webBrowserRequest;
@@ -275,7 +278,7 @@ namespace MORR.Modules.WebBrowser
                                                                   new JsonSerializerOptions
                                                                       { PropertyNameCaseInsensitive = true });
             }
-            catch (JsonException ex)
+            catch (JsonException)
             {
                 AnswerInvalid(context.Response);
                 return;
