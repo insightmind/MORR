@@ -12,6 +12,11 @@ The primary purpose of the testing phase is to identify and correct issues with 
 \bug{DllNotFoundException thrown for vcruntime140\_cor3.dll when closing the application}{The mouse module has a dependency on PresentationCore.dll, which in turn has a dependency on DirectWriteForwarder.dll, which has a dependency on vcruntime140\_cor3.dll. As there is no direct dependency between the module and the DLL, the DLL will not be available to the application, causing the exception to be thrown.}{Copy vcruntime140\_cor3.dll to the output directory so it is available to the application.}
 \bug{Using the GraphicsCapturePicker when running from the UI causes an exception to be thrown.}{When running from the UI, there is no console window attached to the process and there may not always be an active window associated with the process when the picking mechanism is activated. As such, the call to IInitializeWithWindow.SetWindow on the GraphicsCapturePicker will not set a valid window and the attempt to pick a monitor or window will fail.}{When running from the UI, create a new Window from the WPF context that stays open for the duration of the picking operation and will be used in the call to IInitializeWithWindow.SetWindow.}
 
+\section{Shared}
+\bug{MultiConsumerChannelStrategy race condition}{The MultiConsumerChannelStrategy allows the queue to accept multiple consumers at once. Therefore GetEvents() may get called from different threads at the same time. As a result and because of a lack of synchronization primitives in the class, a race condition could occur. This race condition is would allow more consumers to be allowed to GetEvents() than specified by the maxChannelConsumers property defined.}{This race condition has been fixed by closing the critical sections via a Mutex primitve.}
+
+\bug{Race condition in both MultiConsumerChannelStrategy as well as SingleConsumerChannelStrategy}{ In both implementations of the event queue strategy a race condition could occur in which a already opened or closed queue would be not accessible or unexpectedly accessible by a consumer. This leads to some ambiguities to the connection and general producer consumer pattern.}{This race condition has been fixed by closing the critical sections via a Mutex primitve.}
+
 \section{Modules}
 
 \subsection{ClipboardModule}
