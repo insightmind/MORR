@@ -36,12 +36,12 @@
 
   <ItemGroup>
     <Reference Include="WindowsBase">
-      <HintPath>C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\3.1.1\WindowsBase.dll</HintPath>
+      <HintPath>C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\3.1.2\WindowsBase.dll</HintPath>
     </Reference>
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\3.1.1\vcruntime140_cor3.dll">
+    <Content Include="C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\3.1.2\vcruntime140_cor3.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>  
   </ItemGroup>
