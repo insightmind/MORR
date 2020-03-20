@@ -1,0 +1,27 @@
+{
+  "MORR.Core.Modules.GlobalModuleConfiguration": {
+    "EnabledModules": [
+      "MORR.Core.Data.IntermediateFormat.Json.JsonIntermediateFormatSerializer",
+      "MORR.Core.Data.IntermediateFormat.Json.JsonIntermediateFormatDeserializer",
+	  "MORR.Modules.WebBrowser.WebBrowserModule"
+    ]
+  },
+  "MORR.Core.Session.SessionConfiguration": {
+    "Encoders": [
+      "MORR.Core.Data.Transcoding.Json.JsonEncoder"
+    ],
+    "Decoders": [
+      "MORR.Core.Data.Transcoding.Json.JsonDecoder"
+    ],
+    "RecordingDirectory": "%userprofile%\\Videos\\MORR"
+  },
+  "MORR.Modules.WebBrowser.WebBrowserModuleConfiguration": {
+    "UrlSuffix": "60024/"
+  },
+  "MORR.Core.Data.Transcoding.Json.JsonEncoderConfiguration": {
+    "RelativeFilePath": "event_data.json"
+  },
+  "MORR.Core.Data.Transcoding.Json.JsonDecoderConfiguration": {
+    "RelativeFilePath": "event_data.json"
+  }
+}
