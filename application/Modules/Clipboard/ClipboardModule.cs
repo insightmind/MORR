@@ -18,6 +18,7 @@ namespace MORR.Modules.Clipboard
         ///     A single-writer-multiple-reader queue for ClipboardCopyEvent
         /// </summary>
         [Import]
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         private ClipboardCopyEventProducer ClipboardCopyEventProducer { get; set; }
 
         /// <summary>
@@ -31,6 +32,7 @@ namespace MORR.Modules.Clipboard
         /// </summary>
         [Import]
         private ClipboardPasteEventProducer ClipboardPasteEventProducer { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
         /// <summary>
         ///     Unique module identifier
