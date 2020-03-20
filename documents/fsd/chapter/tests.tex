@@ -131,12 +131,22 @@
     \test{\fmt{FS120}{FS250}}{Save dialog - Discard}{The application is currently displaying the save dialog.}
     {\begin{enumerate}
         \item The \gls{user} clicks on the button labeled "Discard".
+        \item The \gls{user} confirms their decision in the now dispaying confirmation dialog by clicking on the button labeled "Delete anyway".
     \end{enumerate}}
     {\begin{itemize}
-        \item The application is no longer running.
+        \item The recording is no longer running. The recording file has not been saved.
+	\end{itemize}}
+
+	\test[151]{\fmt{FS120}{FS250}}{Save dialog - Cancel Discard}{The application is currently displaying the save dialog.}
+    {\begin{enumerate}
+        \item The \gls{user} clicks on the button labeled "Discard".
+        \item The \gls{user} revokes their decision by clicking on the button "Keep recording" in the confirmation dialog.
+    \end{enumerate}}
+    {\begin{itemize}
+        \item The recording is no longer running. A recording has been generated (in accordance with \ref{sec:session_recordings}) and stored at the path specified by the configuration.
     \end{itemize}}
-\newpage
-    \test{\fmt{FS130}}{Recordings folder}{The application is running.}
+
+    \test[160]{\fmt{FS130}}{Recordings folder}{The application is running.}
     {\begin{enumerate}
         \item The \gls{user} opens the tray menu by clicking on the application icon in the system tray to open the tray menu.
         \item The \gls{user} clicks on the "Open recordings folder" entry.
@@ -332,7 +342,7 @@
 	\end{enumerate}}
 	{\begin{itemize}
 		\item A recording has been created and stored at the path specified by the configuration.
-		\item The recording contains the key-press \gls{event} and release-key event. Each \gls{event} contains the name of the pressed/released key, the names of all modifier keys that were pressed along with the timestamp at which the \gls{user} pressed/released a key, the identifier of the keyboard-interaction module and the "keyboard:press-key"/"keyboard:release-key" type of the event.
+		\item The recording contains the key-press \gls{event}. The \gls{event} contains the name of the pressed key, the names of all modifier keys that were pressed along with the timestamp at which the \gls{user} pressed a key, the identifier of the keyboard-interaction module and the "keyboard:press-key" type of the event.
 	\end{itemize}}
 \end{tests}
 
