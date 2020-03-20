@@ -5,6 +5,8 @@ skinparam classAttributeIconSize 0
 interface IDecoder
 !startsub default
 class JsonDecoder {
+    + <<create>> JsonDecoder()
+    + <<create>> JsonDecoder(fileSystem:IFileSystem)
     + DecodeFinished : ManualResetEvent <<get>>
     + Decode(recordingDirectoryPath: DirectoryPath) : void
 }

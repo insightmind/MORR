@@ -7,7 +7,7 @@ interface IConfiguration
 IConfiguration <|-- GlobalModuleConfiguration
 !startsub default
 class GlobalModuleConfiguration {
-    + EnabledModules : IEnumerable<Type> <<get>>
+    + EnabledModules : IEnumerable<Type> <<get>> <<set>>
     + Parse(RawConfiguration: configuration) : void
 }
 !endsub
