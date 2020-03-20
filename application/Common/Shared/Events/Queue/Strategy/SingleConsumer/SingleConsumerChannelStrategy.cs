@@ -13,7 +13,7 @@ namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
     /// <typeparam name="TEvent">The type of event which is queued by the channel</typeparam>
     public abstract class SingleConsumerChannelStrategy<TEvent> : IEventQueueStorageStrategy<TEvent> where TEvent : Event
     {
-        private Channel<TEvent> eventChannel;
+        private Channel<TEvent, TEvent>? eventChannel;
         private bool isOccupied;
         private readonly Mutex subscriptionMutex = new Mutex();
         private const int timeOut = 500;
@@ -51,7 +51,8 @@ namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
         /// <param name="event">The event to enqueue</param>
         public async void Enqueue(TEvent @event)
         {
-            await EnqueueAsync(@event);
+            if (eventChannel == null || IsClosed) return;
+            await EnqueueAsync(eventChannel, @event);
         }
 
         public void Open()
@@ -83,14 +84,22 @@ namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
             IsClosed = true;
             subscriptionMutex.ReleaseMutex();
 
-            eventChannel.Writer.Complete();
+            eventChannel?.Writer.Complete();
             FreeReading();
         }
 
-        private ValueTask EnqueueAsync(TEvent @event)
+        private static ValueTask<bool> EnqueueAsync(Channel<TEvent, TEvent> channel, TEvent @event)
         {
-            async Task AsyncSlowPath(TEvent @event) => await eventChannel.Writer.WriteAsync(@event);
-            return eventChannel.Writer.TryWrite(@event) ? default : new ValueTask(AsyncSlowPath(@event));
+            async Task<bool> AsyncSlowPath(TEvent item)
+            {
+                while (await channel.Writer.WaitToWriteAsync())
+                {
+                    if (channel.Writer.TryWrite(item)) return true;
+                }
+                return false; // Channel was completed during the wait
+            }
+
+            return channel.Writer.TryWrite(@event) ? new ValueTask<bool>(true) : new ValueTask<bool>(AsyncSlowPath(@event));
         }
 
         private void FreeReading()
