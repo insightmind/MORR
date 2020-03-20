@@ -14,11 +14,13 @@ namespace MORR.Core.Data.IntermediateFormat.Json
     {
         private bool isActive;
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         [ImportMany]
-        private IEnumerable<ISupportDeserializationEventQueue<Event>> EventQueues { get; set; } = null!;
+        private IEnumerable<ISupportDeserializationEventQueue<Event>> EventQueues { get; set; }
 
         [Import]
-        private IDecodableEventQueue<JsonIntermediateFormatSample> IntermediateFormatSampleQueue { get; set; } = null!;
+        private IDecodableEventQueue<JsonIntermediateFormatSample> IntermediateFormatSampleQueue { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
         public bool IsActive
         {

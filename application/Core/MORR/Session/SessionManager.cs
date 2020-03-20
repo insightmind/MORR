@@ -28,6 +28,7 @@ namespace MORR.Core.Session
 
         public SessionManager(FilePath configurationPath) : this(configurationPath, new Bootstrapper(), new ConfigurationManager(), new ModuleManager(), new FileSystem()) { }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public SessionManager(FilePath configurationPath,
                               IBootstrapper bootstrapper,
                               IConfigurationManager configurationManager,
@@ -51,13 +52,14 @@ namespace MORR.Core.Session
         }
 
         [ImportMany]
-        private IEnumerable<IEncoder> Encoders { get; set; } = null!;
+        private IEnumerable<IEncoder> Encoders { get; set; }
 
         [ImportMany]
-        private IEnumerable<IDecoder> Decoders { get; set; } = null!;
+        private IEnumerable<IDecoder> Decoders { get; set; }
 
         [Import]
-        private SessionConfiguration Configuration { get; set; } = null!;
+        private SessionConfiguration Configuration { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
         public DirectoryPath? CurrentRecordingDirectory { get; private set; }
 

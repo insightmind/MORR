@@ -24,7 +24,7 @@ namespace MORR.Core.Session
         /// <summary>
         ///     The directory in which to store new recordings.
         /// </summary>
-        public DirectoryPath RecordingDirectory { get; set; } = null!;
+        public DirectoryPath RecordingDirectory { get; set; } = new DirectoryPath("", true);
 
         public void Parse(RawConfiguration configuration)
         {

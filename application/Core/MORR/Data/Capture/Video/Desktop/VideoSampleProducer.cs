@@ -127,21 +127,23 @@ namespace MORR.Core.Data.Capture.Video.Desktop
 
         #region Fields
 
-        private Texture2D blankTexture = null!;
-        private ManualResetEvent canCleanupNonPersistentResourcesEvent = null!;
-        private ManualResetEvent closedEvent = null!;
-        private Direct3D11CaptureFrame currentFrame = null!;
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+        private Texture2D blankTexture;
+        private ManualResetEvent canCleanupNonPersistentResourcesEvent;
+        private ManualResetEvent closedEvent;
+        private Direct3D11CaptureFrame currentFrame;
 
-        private IDirect3DDevice device = null!;
+        private IDirect3DDevice device;
 
-        private WaitHandle[] events = null!;
-        private ManualResetEvent frameEvent = null!;
-        private Direct3D11CaptureFramePool framePool = null!;
+        private WaitHandle[] events;
+        private ManualResetEvent frameEvent;
+        private Direct3D11CaptureFramePool framePool;
 
-        private GraphicsCaptureItem item = null!;
-        private Multithread multithread = null!;
-        private GraphicsCaptureSession session = null!;
-        private Device sharpDXDevice = null!;
+        private GraphicsCaptureItem item ;
+        private Multithread multithread;
+        private GraphicsCaptureSession session;
+        private Device sharpDXDevice;
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
         #endregion
 
@@ -186,7 +188,9 @@ namespace MORR.Core.Data.Capture.Video.Desktop
             this.item.Closed += OnClosed;
         }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public VideoSampleProducer() : base(16) { }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
         private void InitializeBlankTexture()
         {
