@@ -47,8 +47,9 @@ namespace MORR.Core.Data.Transcoding.Mpeg
 
         public void Encode(DirectoryPath recordingDirectoryPath)
         {
+            inferredResolution = null;
+            onResolutionInferred.Reset();
             encodingStart = DateTime.Now;
-
             Task.Run(ConsumeVideoSamples);
             Task.Run(() => InitializeTranscode(recordingDirectoryPath));
         }
