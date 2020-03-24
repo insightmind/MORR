@@ -1,0 +1,16 @@
+ \section{Statistics}
+\begin{frame}{Lines of Code}
+\begin{center}
+\begin{tabular}{@{} l l l @{}}
+\textbf{Language} & \textbf{LOC} & \textbf{LOC (excluding tests)}\\
+\hline
+C\# & 12657 & 6506\\
+TypeScript     & 2148 & 987\\
+C++ & 444 & 444\\
+XAML & 325 & 325\\
+\hline
+Total & 15574 & 8262
+\end{tabular}
+\end{center}
+There are no automatic tests for the XAML (UI) and C++ components. For the UI part, not snapshot-testing frameworks were available. The C++ components could not be reliably tested as the running operating system will interfere with the test results.
+\end{frame}

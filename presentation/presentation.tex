@@ -1,8 +1,11 @@
 \documentclass[aspectratio=169]{beamer}
 
 \usetheme{metropolis}
+\usepackage{xcolor}
+\newlength\MAX  \setlength\MAX{20mm}
+\newcommand*\Chart[1]{#1~\rlap{\textcolor{black!20}{\rule{\MAX}{2ex}}}\rule{#1\MAX}{2ex}}
 \title{MORR: Product presentation}
-\author{Irma Suppes, Karl Rubel, Mingyi Li, Niklas Bülow, Sönke Jendral}
+\author{Irma Suppes, Karl Rubel, Ming5yi Li, Niklas Bülow, Sönke Jendral}
 \date{26th of March, 2020}
 \institute{KIT / Teco}
 \begin{document}
@@ -73,4 +76,7 @@
           \item easy to use: user freindly instruction and  error dialog?????????
       \end{itemize}
    \end{frame}
+
+   \input{stats}
+
 \end{document}
