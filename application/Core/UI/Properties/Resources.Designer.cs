@@ -89,8 +89,10 @@ namespace MORR.Core.UI.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The configuration could not be loaded correctly.
-        ///Please check the configuration file or contact an administrator..
+        ///   Looks up a localized string similar to The configuration appears to be invalid.
+        ///Please check the configuration or contact an administrator.
+        ///Full error below:
+        ///.
         /// </summary>
         public static string Error_Configuration_Invalid {
             get {
@@ -114,6 +116,18 @@ namespace MORR.Core.UI.Properties {
         public static string Error_No_Recordings_Directory {
             get {
                 return ResourceManager.GetString("Error_No_Recordings_Directory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A generic exception occurred during initialization.
+        ///This may occur if a module fails to initialize due to missing dependencies.
+        ///Full error below:
+        ///.
+        /// </summary>
+        public static string Generic_Exception_During_Initialization {
+            get {
+                return ResourceManager.GetString("Generic_Exception_During_Initialization", resourceCulture);
             }
         }
         
