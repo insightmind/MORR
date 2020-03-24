@@ -7,22 +7,70 @@
 \institute{KIT / Teco}
 \begin{document}
   \maketitle
-
-  \begin{frame}{This is a slide title}
-    This is slide content
+  
+  \begin{frame}{MORR}
+      Medical Online Research Recorder
   \end{frame}
 
   \section{What is the goal that we try to accomplish?}
 
-  \section{What is the problem that is derived from this goal?}
+  \begin{frame}{The goal we try to accomplish}
+    Our goal is to develop an application which records multiple kinds of user interactions during online medical researches.\\
+    The recorded data will support data scientists to perform target page prediction.
+  \end{frame}
 
-  \section{MORR - How does the application solve this problem?}
-
-  \subsection{Data recording}
-
-  \subsection{Useability and User-interface}
-
-  \subsection{Extendability}
-
-  \subsection{Configurability}
+  \section{What are the problems that are derived from this goal? \\And how has our application solved these problems?}
+  
+   \subsection{Data recording}
+   
+   \begin{frame}{Problem 1}
+       What kind of user interactions are most likely to help the target page prediction?\\
+       We must be able to record these interactions.
+   \end{frame}
+   
+   \begin{frame}{A basic scope of recording, the Solution to Problem 1}
+    Our application records:
+        \begin{itemize}
+            \item  Desktop video
+            \item Clipboard:  cut, copy, paste
+            \item Keyboard:  key presses and modifiers
+            \item  Mouse:  mouse clicks, movement and scroll wheel interactions
+            \item Window management:  window focus, movement, resizing, state changes
+            \item Web browser:  button click, tab open/close/switch, file download, element hover,navigation, text input, text selection
+        \end{itemize}
+   \end{frame}
+   
+   \subsection{Extendability}
+   \begin{frame}{Problem 2}
+       There are way more other user interactions with valuable information.\\
+       How can we allow the possibility to record them?
+   \end{frame}
+   
+   \begin{frame}{Extendability, the Solution to Problem 2}
+   We encapsulate the logic to record a certain type of user interaction in a module.\\
+   And we use the Managed Extensibility Framework (MEF) to export each of the modules to the rest of the application.\\
+   In this way, any other developer can extend the scope of the recorded user interactions by their own modules.
+   \end{frame}
+   
+   \subsection{Configurability}
+   \begin{frame}{Problem 3}
+       Sometimes, not all user interactions produce values to target page prediction.\\ What if for example only the attention to mouse and keyboard interactions is needed?
+   \end{frame}
+   
+   \begin{frame}{Configurability, the Solution to Problem 3}
+   We let the entire application to be configurated by a .json file. ??? detail needed???
+   \end{frame}
+   
+   \subsection{Useability and User-interface}
+  \begin{frame}{Problem 4}
+       Our target, the doctors who conduct online medical researches, are expected to have no knowledge on any technical details in any part of our project.
+   \end{frame}
+   
+   \begin{frame}{???, the Solution to Problem 4}
+   \begin{itemize}
+          \item easy to install: short and clear user Manual?????
+          \item easy to learn: Simple User-interface and ????
+          \item easy to use: user freindly instruction and  error dialog?????????
+      \end{itemize}
+   \end{frame}
 \end{document}
