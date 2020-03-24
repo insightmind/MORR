@@ -1,0 +1,36 @@
+ \section{Experience - Applying Software Design principles}
+ \subsection{Waterfall Model}
+\begin{frame}{Using the Waterfall model}
+Requirements phase
+\begin{itemize}
+\item Assessment of implementation complexity difficult without prior knowledge of the existing APIs and libraries
+\item Some easy-to-implement features are overlooked and thus not specified
+\end{itemize}
+Design phase
+\begin{itemize}
+\item Some Packages could not be realistically designed without knowledge about the implementation
+\item UML diagrams quickly become confusing when exceeding a certain size
+\end{itemize}
+
+\end{frame}
+\begin{frame}{Using the Waterfall model}
+Implementation phase
+\begin{itemize}
+\item Software Design clashes with restrictions of the programming language or API (certain methods had to be run in specific threads)
+\item Many changes to design for practical reasons
+\item Ambiguous library documentation required replanning of event encoding feature
+\end{itemize}
+
+Testing phase
+\begin{itemize}
+\item Testing often required class redesign to allow mocking of native methods
+\item Testing of multithreaded/asynchronous code often difficult and error prone
+\item Had to employ many abstractions as many classes operate "close to the operating system" which is not suitable for automated testing
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Using the Waterfall model}
+\begin{block}{Verdict}
+Pure waterfall model would not have worked, having the feedback option was essential.
+\end{block}
+\end{frame}
