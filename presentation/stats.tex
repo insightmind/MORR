@@ -1,6 +1,6 @@
  \section{Statistics}
 \begin{frame}{Lines of Code}
-\begin{center}
+
 \begin{tabular}{@{} l l l @{}}
 \textbf{Language} & \textbf{LOC} & \textbf{LOC (excluding tests)}\\
 \hline
@@ -11,6 +11,33 @@ XAML & 325 & 325\\
 \hline
 Total & 15574 & 8262
 \end{tabular}
-\end{center}
+
 There are no automatic tests for the XAML (UI) and C++ components. For the UI part, not snapshot-testing frameworks were available. The C++ components could not be reliably tested as the running operating system will interfere with the test results.
+\end{frame}
+
+%%TODO: incorporate into organisation chapter
+\begin{frame}{Miscellaneous data}
+\begin{tabular}{l r}
+Commits & 1360\\
+Pull requests & 303\\
+\end{tabular}
+\end{frame}
+
+\begin{frame}{Testcoverage}
+\begin{tabular}{@{} l l @{}}
+UI & no automatic tests\\
+MORR & \Chart{0.50}\\
+CLI & \Chart{0.81}\\
+KeyboardModule & \Chart{0.59}\\
+WebBrowserModule & \Chart{0.75}\\
+WebExtension & \Chart{0.85}\\
+ClipboardModule & \Chart{0.78}\\
+WindowManagementModule & \Chart{0.85}\\
+MouseModule & \Chart{0.98}\\
+Shared & \Chart{0.94}\\
+&\\
+\hline
+&\\
+Total & \Chart{0.78}
+\end{tabular}
 \end{frame}

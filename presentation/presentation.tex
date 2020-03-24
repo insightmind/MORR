@@ -2,8 +2,9 @@
 
 \usetheme{metropolis}
 \usepackage{xcolor}
-\newlength\MAX  \setlength\MAX{20mm}
-\newcommand*\Chart[1]{#1~\rlap{\textcolor{black!20}{\rule{\MAX}{2ex}}}\rule{#1\MAX}{2ex}}
+\usepackage{stringstrings}
+\newlength\MAX  \setlength\MAX{0.5\textwidth}
+\newcommand*\Chart[1]{\substring{#1}{3}{4}\%~\rlap{\textcolor{black!20}{\rule{\MAX}{1.5ex}}}\rule{#1\MAX}{1.5ex}}
 \title{MORR: Product presentation}
 \author{Irma Suppes, Karl Rubel, Ming5yi Li, Niklas Bülow, Sönke Jendral}
 \date{26th of March, 2020}
