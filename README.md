@@ -22,3 +22,5 @@ MORR is an application which collects information about user behavior during onl
 
 ## Wiki
 The [Wiki](https://github.com/insightmind/MORR/wiki) contains instructions on how to install and use this software as well as guides for developers who wish to contribute to and extend the software.
+
+The wiki also contains a [Quick Start Guide](https://github.com/insightmind/MORR/wiki/Quick-Start-Guide) which only covers the essentials.
