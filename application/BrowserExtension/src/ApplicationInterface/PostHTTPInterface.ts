@@ -42,7 +42,7 @@ export default class PostHTTPInterface implements ICommunicationStrategy {
                     return;
                 }
             }
-            console.error("Post HTTPListener Received invalid URL prefix, ignoring");
+            console.error("No valid port set. Please provide a valid port in the webextension options.");
         });
     }
     /**

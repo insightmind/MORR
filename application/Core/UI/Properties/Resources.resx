@@ -128,8 +128,16 @@
 Do you wish to delete the recording?</value>
   </data>
   <data name="Error_Configuration_Invalid" xml:space="preserve">
-    <value>The configuration could not be loaded correctly.
-Please check the configuration file or contact an administrator.</value>
+    <value>The configuration appears to be invalid.
+Please check the configuration or contact an administrator.
+Full error below:
+</value>
+  </data>
+  <data name="Error_Configuration_Not_Found" xml:space="preserve">
+    <value>The configuration was specified but could not be found.
+Please check that the specified configuration file exists on disk.
+Full error below:
+</value>
   </data>
   <data name="Error_No_Configuration_Specified" xml:space="preserve">
     <value>No configuration has been specified. Please specify a configuration file as the command line argument or ensure a configuration file named "config.morr" exists relative to the executable.</value>
@@ -137,6 +145,12 @@ Please check the configuration file or contact an administrator.</value>
   <data name="Error_No_Recordings_Directory" xml:space="preserve">
     <value>The recordings folder could not be found.
 Please contact an administrator.</value>
+  </data>
+  <data name="Generic_Exception_During_Initialization" xml:space="preserve">
+    <value>A generic exception occurred during initialization.
+This may occur if a module fails to initialize due to missing dependencies.
+Full error below:
+</value>
   </data>
   <data name="Information_Dialog_Button_Cancel" xml:space="preserve">
     <value>Cancel recording</value>

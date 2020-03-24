@@ -1,12 +1,13 @@
 'use strict';
+const defaultPort = "60024";
 const portRegex = new RegExp("^([1-9][0-9]{0,4})(\/\\w+)*$");
 function constructTextField() {
     let portField = document.getElementById('portField');
     portField.value = chrome.storage.local.get(['port'], function (result) {
         portField.value = result.port;
         if (!portField.value) {
-            portField.value = "60024/someuser";
-            chrome.storage.local.set({"port": "60024/someuser"});
+            portField.value = defaultPort;
+            chrome.storage.local.set({"port": defaultPort});
         }
     });
     saveButton.addEventListener('click', function() {
@@ -24,6 +25,9 @@ function constructTextField() {
             }
         }
     });
+    defaultButton.addEventListener('click', function() {
+        portField.value = defaultPort;
+    })
 }
 
 function setStatus(ok, text) {

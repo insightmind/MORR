@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
+using MORR.Core.Configuration;
 using MORR.Core.Data.Capture.Video.Desktop.Utility;
 using MORR.Core.Session;
 using MORR.Core.UI.Dialogs;
@@ -32,9 +33,17 @@ namespace MORR.Core.UI.ViewModels
                 var configurationPath = GetConfigurationPath();
                 sessionManager = new SessionManager(configurationPath);
             }
-            catch (Exception)
+            catch (InvalidConfigurationException e)
             {
-                ExitWithError(Properties.Resources.Error_Configuration_Invalid);
+                ExitWithError(Properties.Resources.Error_Configuration_Invalid + e);
+            }
+            catch (FileNotFoundException e)
+            {
+                ExitWithError(Properties.Resources.Error_Configuration_Not_Found + e);
+            }
+            catch (Exception e)
+            {
+                ExitWithError(Properties.Resources.Generic_Exception_During_Initialization + e);
             }
         }
 
