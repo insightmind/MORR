@@ -133,6 +133,12 @@ Please check the configuration or contact an administrator.
 Full error below:
 </value>
   </data>
+  <data name="Error_Configuration_Not_Found" xml:space="preserve">
+    <value>The configuration was specified but could not be found.
+Please check that the specified configuration file exists on disk.
+Full error below:
+</value>
+  </data>
   <data name="Error_No_Configuration_Specified" xml:space="preserve">
     <value>No configuration has been specified. Please specify a configuration file as the command line argument or ensure a configuration file named "config.morr" exists relative to the executable.</value>
   </data>

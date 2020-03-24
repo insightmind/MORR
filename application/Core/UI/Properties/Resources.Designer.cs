@@ -101,6 +101,18 @@ namespace MORR.Core.UI.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The configuration was specified but could not be found.
+        ///Please check that the specified configuration file exists on disk.
+        ///Full error below:
+        ///.
+        /// </summary>
+        public static string Error_Configuration_Not_Found {
+            get {
+                return ResourceManager.GetString("Error_Configuration_Not_Found", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No configuration has been specified. Please specify a configuration file as the command line argument or ensure a configuration file named &quot;config.morr&quot; exists relative to the executable..
         /// </summary>
         public static string Error_No_Configuration_Specified {

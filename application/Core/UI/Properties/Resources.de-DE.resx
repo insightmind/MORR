@@ -133,6 +133,12 @@ Bitte überprüfen Sie die Konfiguration oder kontaktieren Sie einen Administrat
 Vollständiger Fehler:
 </value>
   </data>
+  <data name="Error_Configuration_Not_Found" xml:space="preserve">
+    <value>Die Konfigurationsdatei wurde spezifiziert aber konnte nicht gefunden werden.
+Bitte überprüfen Sie, dass die Konfigurationsdatei existiert.
+Vollständiger Fehler:
+</value>
+  </data>
   <data name="Error_No_Configuration_Specified" xml:space="preserve">
     <value>Keine Konfigurationsdatei spezifiziert. Bitte spezifizieren Sie eine Konfigurationsdatei als Kommandozeilenparameter oder stellen Sie sicher, dass eine Datei mit dem Namen "config.morr" relativ zur Applikation existiert.</value>
   </data>

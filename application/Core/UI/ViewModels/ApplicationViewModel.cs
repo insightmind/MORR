@@ -37,6 +37,10 @@ namespace MORR.Core.UI.ViewModels
             {
                 ExitWithError(Properties.Resources.Error_Configuration_Invalid + e);
             }
+            catch (FileNotFoundException e)
+            {
+                ExitWithError(Properties.Resources.Error_Configuration_Not_Found + e);
+            }
             catch (Exception e)
             {
                 ExitWithError(Properties.Resources.Generic_Exception_During_Initialization + e);
