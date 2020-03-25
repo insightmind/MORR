@@ -12,65 +12,63 @@
       Medical Online Research Recorder
   \end{frame}
 
-  \section{What is the goal that we try to accomplish?}
+  \section{Our Mission}
 
-  \begin{frame}{The goal we try to accomplish}
-    Our goal is to develop an application which records multiple kinds of user interactions during online medical researches.\\
-    The recorded data will support data scientists to perform target page prediction.
+  \begin{frame}{Our Mission}
+  	Recording a broad variety of user interactions in medical research to enable data scientists to perform target page prediction.
   \end{frame}
 
-  \section{What are the problems that are derived from this goal? \\And how has our application solved these problems?}
+  \section{Our Product}
   
-   \subsection{Data recording}
+   \subsection{Our Goals}
    
-   \begin{frame}{Problem 1}
-       What kind of user interactions are most likely to help the target page prediction?\\
-       We must be able to record these interactions.
+   \begin{frame}
+       Collecting rich and meaningful data!
    \end{frame}
    
-   \begin{frame}{A basic scope of recording, the Solution to Problem 1}
-    Our application records:
+   \begin{frame}{Collecting rich and meaningful data!}
         \begin{itemize}
-            \item  Desktop video
-            \item Clipboard:  cut, copy, paste
-            \item Keyboard:  key presses and modifiers
-            \item  Mouse:  mouse clicks, movement and scroll wheel interactions
-            \item Window management:  window focus, movement, resizing, state changes
-            \item Web browser:  button click, tab open/close/switch, file download, element hover,navigation, text input, text selection
+            \item Desktop Video Capture
+            \item Clipboard: cut, copy, paste
+            \item Keyboard: key presses and modifiers
+            \item Mouse: mouse clicks, movement and scroll wheel interactions
+            \item Window management: window focus, movement, resizing, state changes
+            \item Web browser: button click, tab open/close/switch, file download, hover, navigation, text input and selection
         \end{itemize}
    \end{frame}
    
-   \subsection{Extendability}
-   \begin{frame}{Problem 2}
-       There are way more other user interactions with valuable information.\\
-       How can we allow the possibility to record them?
+   \subsection{Modular Expandability}
+   \begin{frame}
+       Extensible and scalable application!
    \end{frame}
    
-   \begin{frame}{Extendability, the Solution to Problem 2}
-   We encapsulate the logic to record a certain type of user interaction in a module.\\
-   And we use the Managed Extensibility Framework (MEF) to export each of the modules to the rest of the application.\\
-   In this way, any other developer can extend the scope of the recorded user interactions by their own modules.
+   \begin{frame}{Extensible and scalable application!}
+   		\begin{itemize}
+            \item Modules encapsulate logic for collecting data.
+            \item MEF (Managed Extensibility Framework) allows to load modules and additional local packages.
+            \item Allow extending the scope of data collection by other developers, through well defined interfaces.
+    	\end{itemize}
+   \end{frame}
+   
+   \begin{frame}
+   		\includegraphics[width=0.8\linewidth]{resources/AllPackages.png}
    \end{frame}
    
    \subsection{Configurability}
-   \begin{frame}{Problem 3}
-       Sometimes, not all user interactions produce values to target page prediction.\\ What if for example only the attention to mouse and keyboard interactions is needed?
+   \begin{frame}{Configurability}
+       Sometimes, fewer or more types of user interactions are focused during target page prediction and some components of our application require user-defined parameters.
    \end{frame}
    
-   \begin{frame}{Configurability, the Solution to Problem 3}
-   We let the entire application to be configurated by a .json file. ??? detail needed???
+   \begin{frame}{Configurability}
+   		Configuration File allows to modify broad range of settings:
+   		\begin{itemize}
+			\item Enabled Modules
+			\item Module specific configuration
+			\item Decoder and Encoder configuration
+		\end{itemize}
    \end{frame}
    
-   \subsection{Useability and User-interface}
-  \begin{frame}{Problem 4}
-       Our target, the doctors who conduct online medical researches, are expected to have no knowledge on any technical details in any part of our project.
-   \end{frame}
-   
-   \begin{frame}{???, the Solution to Problem 4}
-   \begin{itemize}
-          \item easy to install: short and clear user Manual?????
-          \item easy to learn: Simple User-interface and ????
-          \item easy to use: user freindly instruction and  error dialog?????????
-      \end{itemize}
+   \begin{frame}
+		\includegraphics[width=0.8\linewidth]{resources/ConfigExample.png}
    \end{frame}
 \end{document}
