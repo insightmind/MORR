@@ -17,14 +17,12 @@ Design phase
 Implementation phase
 \begin{itemize}
 \item Software design clashes with restrictions of the programming language or API (certain methods had to be run in specific threads)
-\item Many changes to design for practical reasons
 \item Ambiguous library documentation required replanning of event encoding feature
 \end{itemize}
 
 Testing phase
 \begin{itemize}
 \item Testing often required class redesign to allow mocking of native methods
-\item Testing of multithreaded/asynchronous code often difficult and error prone
 \item Had to employ many abstractions as many classes operate "close to the operating system" which is not suitable for automated testing
 \end{itemize}
 \end{frame}
