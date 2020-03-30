@@ -174,7 +174,7 @@ namespace WebBrowserTest
                 buttonHref = "https://sample.com/redirect",
                 tabID = 5,
                 url = "https://sample.com",
-                timeStamp = new DateTime(2015, 5, 6, 7, 8, 9, 512),
+                timeStamp = new DateTime(2015, 5, 6, 7, 8, 9, 512, DateTimeKind.Utc),
                 type = "BUTTONCLICK"
             };
             /* WHEN */
@@ -193,7 +193,7 @@ namespace WebBrowserTest
             var parsedEvent = new ButtonClickEvent();
             parsedEvent.Deserialize((JsonElement) lastJson);
 
-            Assert.AreEqual(data.timeStamp, parsedEvent.Timestamp);
+            Assert.AreEqual(data.timeStamp.ToUniversalTime(), parsedEvent.Timestamp.ToUniversalTime());
             Assert.AreEqual(data.buttonTitle, parsedEvent.Button);
             Assert.AreEqual(data.buttonHref, parsedEvent.Href);
             Assert.AreEqual(data.tabID, parsedEvent.TabID);
