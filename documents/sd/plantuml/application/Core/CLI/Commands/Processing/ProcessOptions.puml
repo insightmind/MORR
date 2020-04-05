@@ -1,0 +1,16 @@
+@startuml ProcessOptions
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
+class ProcessOptions {
+    + IsVerbose: bool <<get>> <<set>>
+    + ConfigPath: string <<get>> <<set>>
+    + InputFile: string <<get>> <<set>>
+}
+!endsub
+
+!includesub ../CommandOptions.puml!default
+
+ProcessOptions --|> CommandOptions
+
+@enduml

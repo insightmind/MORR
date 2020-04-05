@@ -35,22 +35,11 @@ The application's main purpose is all about collecting data. This data is suppos
 	Data:
 	\begin{itemize}
 	\item Video
-	\item Audio (if enabled)
 	\end{itemize}
 }
 \end{itemize}
 
-\section{Context}
-\label{sec:context}
-
-\begin{itemize}
-\dspec[200]{Context}{Depends on the application in use but is structured as follows:
-	\begin{itemize}
-		\item A unique identifier for the application currently focused by the \gls{user}
-		\item Application-specific metadata (e.g. the URL of the current tab for the \gls{browser} or the title of the current document for Excel)
-	\end{itemize}
-}
-\end{itemize}
+\setcounter{section}{2} %% removed context section 6.2
 
 \section{Events}
 \label{sec:events}
@@ -89,12 +78,11 @@ A window-management \gls{event} is issued by the window-management \gls{module}.
 	\end{itemize}
 }
 	
-\dsubspec{Window maximizing/minimizing/restoring \gls{event}}{Includes the following additional data:
+\dsubspec{Window maximizing/minimizing \gls{event}}{Includes the following additional data:
 	\begin{itemize}
 	\item The new state of the window:
 		\begin{itemize}
 		\item Maximized
-		\item Restored
 		\item Minimized
 		\end{itemize}
 	\end{itemize}
@@ -106,7 +94,12 @@ A window-management \gls{event} is issued by the window-management \gls{module}.
 A mouse-interaction \gls{event} is issued by the mouse \gls{module}.
 
 \begin{itemize}
-\dspec{Mouse click interaction \gls{event}}{Includes the following data:
+\dspec{Generic mouse interaction \gls{event}}{Includes the following data:
+	\begin{itemize}
+	\item The current mouse position
+	\end{itemize}
+}	
+\dsubspec{Mouse click interaction \gls{event}}{Includes the following data:
 	\begin{itemize}
 	\item Clicked button:
 		\begin{itemize}
@@ -126,11 +119,9 @@ A mouse-interaction \gls{event} is issued by the mouse \gls{module}.
 	\end{itemize}
 }
 
-\dsubspec{Mouse movement interaction \gls{event}}{Includes the following data:
-	\begin{itemize}
-	\item Movement vector
-	\end{itemize}
-}
+\dsubspec{Mouse movement interaction \gls{event}}{Includes only the generic data. \\
+ The current mouse position is interpreted as the mouse position after the move.}
+
 \end{itemize}
 
 \subsection{Keyboard Interaction \Glspl{event}}
@@ -140,14 +131,17 @@ A keyboard-interaction \gls{event} is issued by the keyboard \gls{module}.
 \begin{itemize}
 \dspec{Keyboard interaction \gls{event}}{Includes the following data:
 	\begin{itemize}
-	\item Pressed key
-	\item All of the modifier keys that are pressed:
+	\item Pressed key (for data analysis purpose)
+	\item Descriptive name of the pressed key (for readability purpose)
+	\item All of the modifier keys that are pressed (for data analysis purpose):
 		\begin{itemize}
 		\item Ctrl
 		\item Alt
 		\item Shift
 		\item Windows
 		\end{itemize}
+	\item Descriptive names of all the modifier keys that are pressed (for readability purpose)
+	\item The corresponding Unicode, if such exists(for readability purpose)
 	\end{itemize}
 }
 \end{itemize}
@@ -171,13 +165,14 @@ A clipboard \gls{event} is issued by the clipboard \gls{module}.
 
 \subsection{\Gls{browser} \Glspl{event}}
 
-A \gls{browser} \gls{event} is issued by the \gls{browser} \gls{module}.
+A \gls{browser} \gls{event} is issued by the \gls{browser} \gls{module}. Some \gls{browser} \gls{event} types contain a short string labelling the targeted
+website element, these strings are hereinafter reffered to as descriptors.
 
 \begin{itemize}
 \dspec{Generic \gls{browser} \gls{event}}{Includes the following data:
 	\begin{itemize}
 	\item URL of the interacted website
-	\item The unique identifier of the tab that the \gls{event} occured in
+	\item An identifier of the tab that the \gls{event} occured in
 	\end{itemize}
 }
 
@@ -185,7 +180,7 @@ A \gls{browser} \gls{event} is issued by the \gls{browser} \gls{module}.
 
 \dsubspec{Switch tab \gls{event}}{Includes the following additional data:
 	\begin{itemize}
-		\item The unique identifier of the tab that the \gls{user} switched to
+		\item The identifier of the tab that the \gls{user} switched to
 	\end{itemize}
 }
 
@@ -196,20 +191,20 @@ A \gls{browser} \gls{event} is issued by the \gls{browser} \gls{module}.
 \dsubspec{Text input \gls{event}}{Includes the following additional data:
 	\begin{itemize}
 	\item Text which has been inputted by the user
-	\item Textbox or form
+	\item Descriptor of the textbox or form element
 	\end{itemize}
 }
 	
 \dsubspec{Button click \gls{event}}{Includes the following additional data:
 	\begin{itemize}
-	\item Button item title
+	\item Button element title if available, descriptor of the button element otherwise
 	\item URL that the button is linked to, if applicable
 	\end{itemize}
 }
 	
 \dsubspec{Hover \gls{event}}{Includes the following additional data:
 	\begin{itemize}
-	\item Element which has been hovered
+	\item Descriptor of the element which has been hovered
 	\end{itemize}
 }
 	

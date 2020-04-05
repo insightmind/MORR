@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\MORRTest\TestHelper\Json\JsonManualSerialization.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Collections.Generic;
+using System.Text;
+using System.Text.Json;
+using SharedTest.TestHelpers.Event;
+
+namespace MORRTest.TestHelper.Json
+{
+    public static class JsonManualSerialization
+    {
+        public static string GenerateSerializedEvents(IReadOnlyList&lt;TestEvent&gt; testEvents)
+        {
+            var stringBuilder = new StringBuilder();
+            stringBuilder.Append(@&quot;[&quot;);
+
+            for (var index = 0; index &lt; testEvents.Count; index++)
+            {
+                stringBuilder.Append(GenerateManualSerializedVersion(testEvents[index], testEvents[index].GetType().FullName));
+
+                if (index + 1 &lt; testEvents.Count)
+                {
+                    stringBuilder.Append(&quot;,&quot;);
+                }
+            }
+
+            stringBuilder.Append(&quot;]&quot;);
+
+            return stringBuilder.ToString();
+        }
+
+        public static string GenerateManualSerializedVersion(TestEvent testEvent, string eventType)
+        {
+            return &quot;{\&quot;Type\&quot;:\&quot;&quot; + eventType + &quot;\&quot;,\&quot;Data\&quot;:{\&quot;Identifier\&quot;:&quot; + testEvent.Identifier + &quot;,\&quot;Timestamp\&quot;:&quot; + JsonSerializer.Serialize(testEvent.Timestamp) + &quot;,\&quot;IssuingModule\&quot;:\&quot;&quot; + testEvent.IssuingModule + &quot;\&quot;}}&quot;;
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[11,9,11,10,1],[12,13,12,53,1],[13,13,13,40,1],[15,18,15,31,1],[15,33,15,57,1],[15,59,15,66,1],[16,13,16,14,1],[17,17,17,128,1],[19,17,19,50,1],[20,17,20,18,1],[21,21,21,47,1],[22,17,22,18,1],[23,13,23,14,1],[25,13,25,39,1],[27,13,27,45,1],[28,9,28,10,1],[31,9,31,10,1],[32,13,32,232,1],[33,9,33,10,1]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\MORR\Data\Transcoding\MPEG\MPEGEncoder.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.ComponentModel.Composition;
+using System.IO;
+using System.IO.Abstractions;
+using System.Threading;
+using System.Threading.Tasks;
+using Windows.Media.Core;
+using Windows.Media.MediaProperties;
+using Windows.Media.Transcoding;
+using MORR.Core.Data.Capture.Video;
+using MORR.Core.Data.Transcoding.Exceptions;
+using MORR.Shared.Events.Queue;
+using MORR.Shared.Utility;
+
+namespace MORR.Core.Data.Transcoding.Mpeg
+{
+    public class MpegEncoder : IEncoder
+    {
+        private readonly AutoResetEvent nextSampleReady = new AutoResetEvent(false);
+        private readonly ManualResetEvent onResolutionInferred = new ManualResetEvent(false);
+        private readonly AutoResetEvent sampleProcessed = new AutoResetEvent(true);
+        private DateTime encodingStart;
+        private Tuple&lt;uint, uint&gt;? inferredResolution;
+        private DirectXVideoSample? nextSample;
+
+        [Import]
+        private MpegEncoderConfiguration Configuration { get; set; } = null!;
+
+        [Import]
+        private IEncodableEventQueue&lt;DirectXVideoSample&gt; VideoQueue { get; set; } = null!;
+
+        private readonly IFileSystem fileSystem;
+
+        public ManualResetEvent EncodeFinished { get; } = new ManualResetEvent(false);
+
+        [ImportingConstructor]
+        public MpegEncoder() : this(new FileSystem()) { }
+
+        public MpegEncoder(IFileSystem fileSystem)
+        {
+            this.fileSystem = fileSystem;
+        }
+
+        public void Encode(DirectoryPath recordingDirectoryPath)
+        {
+            encodingStart = DateTime.Now;
+
+            Task.Run(ConsumeVideoSamples);
+            Task.Run(() =&gt; InitializeTranscode(recordingDirectoryPath));
+        }
+
+        private Stream GetFileStream(DirectoryPath recordingDirectoryPath)
+        {
+            var fullPath = fileSystem.Path.Combine(recordingDirectoryPath.ToString(), Configuration.RelativeFilePath?.ToString());
+            return fileSystem.File.OpenWrite(fullPath);
+        }
+
+        private async void InitializeTranscode(DirectoryPath recordingDirectoryPath)
+        {
+            onResolutionInferred.WaitOne();
+
+            if (inferredResolution == null)
+            {
+                throw new EncodingException(&quot;Failed to infer video input resolution.&quot;);
+            }
+
+            var transcoder = GetTranscoder();
+            var streamDescriptor = GetStreamDescriptor(inferredResolution.Item1, inferredResolution.Item2);
+
+            var mediaStreamSource = GetMediaStreamSource(streamDescriptor);
+            var encodingProfile = GetEncodingProfile();
+
+            await using var destinationFile = GetFileStream(recordingDirectoryPath);
+
+            EncodeFinished.Reset();
+            var prepareTranscodeResult =
+                await transcoder.PrepareMediaStreamSourceTranscodeAsync(
+                    mediaStreamSource, destinationFile.AsRandomAccessStream(), encodingProfile);
+
+            if (!prepareTranscodeResult.CanTranscode)
+            {
+                throw new EncodingException(
+                    $&quot;Failed to start transcoding operation. Reason: {prepareTranscodeResult.FailureReason}&quot;);
+            }
+
+            await prepareTranscodeResult.TranscodeAsync().AsTask().ContinueWith(_ =&gt; EncodeFinished.Set());
+        }
+
+        private async Task ConsumeVideoSamples()
+        {
+            await foreach (var videoSample in VideoQueue.GetEvents())
+            {
+                if (inferredResolution == null)
+                {
+                    // DesktopCapture may enqueue null samples intentionally to stop encoding
+                    if (videoSample == null)
+                    {
+                        throw new EncodingException(&quot;Failed to infer video input resolution.&quot;);
+                    }
+
+                    var description = videoSample.Surface.Description;
+                    var inferredWidth = (uint) description.Width;
+                    var inferredHeight = (uint) description.Height;
+
+                    inferredResolution = new Tuple&lt;uint, uint&gt;(inferredWidth, inferredHeight);
+                    onResolutionInferred.Set();
+                }
+
+                sampleProcessed.WaitOne();
+                nextSample = videoSample;
+                nextSampleReady.Set();
+            }
+
+            // Stop encoding by sending null sample
+            sampleProcessed.WaitOne();
+            nextSample = null;
+            nextSampleReady.Set();
+        }
+
+        #region Transcoder setup
+
+        private MediaEncodingProfile GetEncodingProfile()
+        {
+            var profile = new MediaEncodingProfile();
+            var containerEncoding = new ContainerEncodingProperties
+            {
+                Subtype = MediaEncodingSubtypes.Mpeg4
+            };
+
+            const uint bitsPerKiloBit = 1000;
+
+            var videoEncoding = new VideoEncodingProperties
+            {
+                Subtype = MediaEncodingSubtypes.H264,
+                Width = Configuration.Width,
+                Height = Configuration.Height,
+                Bitrate = Configuration.KiloBitsPerSecond * bitsPerKiloBit,
+                FrameRate = { Denominator = 1, Numerator = Configuration.FramesPerSecond },
+                PixelAspectRatio = { Denominator = 1, Numerator = 1 }
+            };
+
+            profile.Container = containerEncoding;
+            profile.Video = videoEncoding;
+
+            return profile;
+        }
+
+        private static VideoStreamDescriptor GetStreamDescriptor(uint width, uint height)
+        {
+            var videoEncoding = VideoEncodingProperties.CreateUncompressed(MediaEncodingSubtypes.Bgra8,
+                                                                           width, height);
+
+            var videoStreamDescriptor = new VideoStreamDescriptor(videoEncoding)
+            {
+                Name = &quot;Desktop video stream&quot;,
+                Label = &quot;Desktop video stream&quot;
+            };
+
+            return videoStreamDescriptor;
+        }
+
+        private MediaStreamSource GetMediaStreamSource(IMediaStreamDescriptor videoStreamDescriptor)
+        {
+            var mediaStreamSource = new MediaStreamSource(videoStreamDescriptor)
+            {
+                BufferTime = TimeSpan.FromSeconds(0)
+            };
+
+            mediaStreamSource.Starting += OnStart;
+            mediaStreamSource.SampleRequested += OnSampleRequested;
+
+            return mediaStreamSource;
+        }
+
+        private static MediaTranscoder GetTranscoder()
+        {
+            var transcoder = new MediaTranscoder { HardwareAccelerationEnabled = true };
+            return transcoder;
+        }
+
+        #endregion
+
+        #region Event handlers
+
+        private void OnStart(MediaStreamSource sender, MediaStreamSourceStartingEventArgs args)
+        {
+            args.Request.SetActualStartPosition(DateTime.Now - encodingStart);
+        }
+
+        private void OnSampleRequested(MediaStreamSource sender, MediaStreamSourceSampleRequestedEventArgs args)
+        {
+            if (args.Request.StreamDescriptor is VideoStreamDescriptor)
+            {
+                var deferral = args.Request.GetDeferral();
+                nextSampleReady.WaitOne();
+
+                if (nextSample != null)
+                {
+                    args.Request.Sample =
+                        MediaStreamSample.CreateFromDirect3D11Surface(nextSample.Surface,
+                                                                      nextSample.Timestamp - encodingStart);
+                    // Manually forcing the surface to be disposed helps with memory consumption
+                    // As this is the only consumer, this is safe
+                    nextSample.Surface.Dispose();
+                }
+                else
+                {
+                    args.Request.Sample = null;
+                }
+
+                sampleProcessed.Set();
+                deferral.Complete();
+            }
+        }
+
+        #endregion
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[19,9,19,85,0],[20,9,20,94,0],[21,9,21,84,0],[27,58,27,62,0],[27,63,27,67,0],[27,72,27,77,0],[30,71,30,75,0],[30,76,30,80,0],[30,85,30,90,0],[34,50,34,54,0],[34,59,34,86,0],[37,32,37,54,0],[37,55,37,56,0],[37,57,37,58,0],[39,9,39,51,0],[40,9,40,10,0],[41,13,41,42,0],[42,9,42,10,0],[45,9,45,10,0],[46,13,46,42,0],[48,13,48,43,0],[49,13,49,28,0],[49,28,49,71,0],[49,71,49,73,0],[49,13,49,73,0],[50,9,50,10,0],[53,9,53,10,0],[54,13,54,131,0],[55,13,55,56,0],[56,9,56,10,0],[59,9,59,10,0],[60,13,60,44,0],[62,13,62,44,0],[63,13,63,14,0],[64,17,64,88,0],[67,13,67,46,0],[68,13,68,108,0],[70,13,70,76,0],[71,13,71,56,0],[73,13,73,85,0],[75,13,75,36,0],[76,13,78,97,0],[80,13,80,54,0],[81,13,81,14,0],[82,17,83,111,0],[86,13,86,108,0],[86,86,86,106,0],[87,9,87,10,0],[90,9,90,10,0],[91,13,91,26,0],[91,28,91,43,0],[91,44,91,46,0],[91,47,91,69,0],[92,13,92,14,0],[93,17,93,48,0],[94,17,94,18,0],[96,21,96,45,0],[97,21,97,22,0],[98,25,98,96,0],[101,21,101,71,0],[102,21,102,66,0],[103,21,103,68,0],[105,21,105,95,0],[106,21,106,48,0],[107,17,107,18,0],[109,17,109,43,0],[110,17,110,42,0],[111,17,111,39,0],[112,13,112,14,0],[115,13,115,39,0],[116,13,116,31,0],[117,13,117,35,0],[118,9,118,10,0],[123,9,123,10,0],[124,13,124,54,0],[125,13,128,15,0],[132,13,140,15,0],[142,13,142,51,0],[143,13,143,43,0],[145,13,145,28,0],[146,9,146,10,0],[149,9,149,10,0],[150,13,151,91,0],[153,13,157,15,0],[159,13,159,42,0],[160,9,160,10,0],[163,9,163,10,0],[164,13,167,15,0],[169,13,169,51,0],[170,13,170,68,0],[172,13,172,38,0],[173,9,173,10,0],[176,9,176,10,0],[177,13,177,89,0],[178,13,178,31,0],[179,9,179,10,0],[186,9,186,10,0],[187,13,187,79,0],[188,9,188,10,0],[191,9,191,10,0],[192,13,192,72,0],[193,13,193,14,0],[194,17,194,59,0],[195,17,195,43,0],[197,17,197,40,0],[198,17,198,18,0],[199,21,201,109,0],[204,21,204,50,0],[205,17,205,18,0],[207,17,207,18,0],[208,21,208,48,0],[209,17,209,18,0],[211,17,211,39,0],[212,17,212,37,0],[213,13,213,14,0],[214,9,214,10,0]]);
+    </script>
+  </body>
+</html>

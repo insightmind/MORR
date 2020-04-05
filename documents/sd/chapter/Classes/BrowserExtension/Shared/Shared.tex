@@ -1,0 +1,83 @@
+\subsection{Shared}
+\begin{interface}{IEvent}
+
+\clsdiagram[width=0.5\textwidth]{resources/Classes/BrowserExtension/Shared/IEvent.png}
+
+\clsdcl{interface IEvent}
+
+\clsdsp{Defines the same interface to use for recorded events as present in the MORR application.}
+
+\begin{attributes}
+\attribute{public timeStamp : Date}{The time at which the event was created.}
+\attribute{public issuingModule : number}{The ID of the browser module. This is a fixed value in the context of the browser extension.}
+\attribute{public type : EventType}{The type of the event.}
+\end{attributes}
+\begin{methods}
+\begin{method}{public serialize() : string}{Serialize the event to a JSON string.}
+\return{string}{The JSON string encoding the event.}
+\end{method}
+\end{methods}
+\end{interface}
+
+\begin{class}{BrowserEvent}
+
+\clsdiagram[width=0.5\textwidth]{resources/Classes/BrowserExtension/Shared/BrowserEvent.png}
+
+\clsdcl{class BrowserEvent implements IEvent}
+
+\clsdsp{Implements the interface IEvent and extends it by browser specific, generic event data.}
+
+\begin{attributes}
+\attribute{public timeStamp : Date}{The time at which the event was created.}
+\attribute{public issuingModule : number}{The ID of the browser module. This is a fixed value in the context of the browser extension.}
+\attribute{public type : EventType}{The type of the event.}
+\attribute{public windowID : number}{The ID of the browser window the event occured in. According to the functional specification this does not need to be serialized.}
+\attribute{public tabID : number}{The ID of the tab the event occured in.}
+\attribute{public url : URL}{The URL that was opened in the tab with ID tabID as the event occured.}
+\end{attributes}
+\begin{constructors}
+\begin{constructor}{constructor(type : EventType, tabID : number, windowID: number, url : string)}{Create a new generic browser event.}
+\begin{parameters}
+\para{type : EventType}{The type to set for the event.}
+\para{tabID : number}{The tabID to set for the event.}
+\para{windowID : number}{The windowID to set for the event.}
+\para{url : string}{The url to set for the event.}
+\end{parameters}
+\begin{exceptions}
+    \excp{TypeError}{Thrown if the url parameter is not a valid URL.}
+\end{exceptions}
+\end{constructor}
+\end{constructors}
+\begin{methods}
+\begin{method}{public serialize(noUnderScore : boolean) : string}{Serialize the event to a JSON string.}
+\return{string}{The JSON string encoding the event.}
+\begin{parameters}
+\para{noUnderScore : boolean}{Define whether the underscore '\_' internally prefixed before class members should be omitted. It is recommended
+to set this to true when the serialized data should be used outside of the Webextension and false for internal use.}
+\end{parameters}
+\end{method}
+\end{methods}
+\end{class}
+
+\begin{interface}{IListener}
+
+\clsdiagram[width=0.5\textwidth]{resources/Classes/BrowserExtension/Shared/IListener.png}
+
+\clsdcl{interface IListener}
+
+\clsdsp{A listener is a class responsible for recording certain browser-specific events and sending them to the BackgroundScript.}
+
+\begin{constructors}
+\begin{constructor}{constructor(callback: (event : BrowserEvent) => void)}{Create a new listener.}
+\begin{parameters}
+\para{callback : (event : BrowserEvent) => void}{The function to invoke on created events in order to send them back to the BackgroundScript.}
+\end{parameters}
+\end{constructor}
+\end{constructors}
+\begin{methods}
+\begin{method}{public start() : void}{Start the listener. The listener will generate events and invoke the callback method on them until it is stopped.}
+\end{method}
+\begin{method}{public stop() : void}{Stop the listener.}
+\end{method}
+\end{methods}
+\end{interface}

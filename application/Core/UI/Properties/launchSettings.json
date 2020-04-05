@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "UI": {
+      "commandName": "Project",
+      "commandLineArgs": "config.morr",
+      "workingDirectory": "$(SolutionDir)\\BuildEnvironment"
+    },
+    "DefaultConfig": {
+      "commandName": "Project"
+    }
+  }
+}

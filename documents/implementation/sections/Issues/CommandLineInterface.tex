@@ -1,0 +1,44 @@
+\section{CommandLineInterface}
+
+\issue{
+Different Options for different Commands
+}{
+Add class strategy for commands and make \class{Command} generic. 
+}{
+A new abstract class \class{CommandOptions} has been added which contains only those options which are a necessity for all commands. This in our case is for example the \keyword{IsVerbose} property.
+All specific commands need then to generically define their specific option they need.
+}
+
+\issue{
+Bad performance of \package{CORE} when using \package{CLI}.
+}{
+Start own \keyword{MessagePump} on main thread in \package{CLI}.
+}{
+To accomplish this solution we implemented a new class \class{MessageLoop} which allows to start a message loop from the main thread. This achieves better performance in the \package{CORE} as
+a \keyword{MessagePump} is not naturally present in command line applications in difference to \keyword{WPF} applications.
+}
+
+\issue{
+\class{MessageLoop} blocks main thread and user interaction.
+}{
+Introduce \class{InteractiveCommandLine} and possiblity to stop \keyword{MessagePump}
+}{
+A new class \class{InteractiveCommandLine} was added which is launched on a seperate thread, to allow user interaction while recording. You are now able to use the 'x' command to cancel a currently running session.
+The \class{MessageLoop} has been extended to support cancellation of a currently running \keyword{MessagePump} from a different thread using the method \member{MessageLoop.Cancel}.
+}
+
+\issue{
+Missing command for starting a recording session.
+}{
+Implement a new command to start a recording session.
+}{
+Add classes \class{RecordCommand} and \class{RecordOptions}.
+}
+
+\issue{
+Missing command for validating a given configuration file.
+}{
+Implement a new command validate a given configuration file. 
+}{
+Add classes \class{ValidateCommand} and \class{ValidateOptions}.
+}

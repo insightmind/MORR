@@ -1,0 +1,11 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
+class SwitchTabEvent {
+    + NewTabID: int <<get>><<set>>
+}
+!endsub
+WebBrowserEvent <|-- SwitchTabEvent
+!include WebBrowserEvent.puml
+@enduml

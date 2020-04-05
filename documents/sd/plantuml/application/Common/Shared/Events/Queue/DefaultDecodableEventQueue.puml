@@ -1,0 +1,21 @@
+@startuml(id=default)
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+!startsub default
+abstract class "DefaultDecodableEventQueue<T>" {
+    
+}
+abstract class "BaseEventQueue<T>" {
+    + IsClosed : bool <<get>>
+    + GetEvents() : IAsyncEnumerable<TEvent>
+    + Enqueue(@event:TEvent) : void
+    + Open() : void
+    + Close() : void
+}
+interface "IDecodableEventQueue<T>"
+abstract class "BaseEventQueue<T>"
+"IDecodableEventQueue<T>" <|-- "DefaultDecodableEventQueue<T>"
+"BaseEventQueue<T>" <|-- "DefaultDecodableEventQueue<T>"
+!endsub
+@enduml

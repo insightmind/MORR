@@ -16,6 +16,9 @@
 *.sln.docstates
 
 documents/fsd/FunctionalSpecifications.pdf
+documents/sd/SoftwareDesign.pdf
+documents/implementation/ImplementationReport.pdf
+documents/testing/TestingReport.pdf
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -36,6 +39,12 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+
+# Browser Extension build results
+[Dd]ist/
+
+#Browser Extension test results
+application/BrowserExtension/coverage
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/

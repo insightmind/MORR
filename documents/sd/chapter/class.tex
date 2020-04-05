@@ -1,0 +1,102 @@
+\chapter{Classes}
+\label{ch:class}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Notes about this chapter%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Each namespace correspondes to a section
+% Each project in a namespace correspondes to a subsection in its namespaces' section.
+% Each class, abstract class, enumeration or interface in the project corresponds to a subsubsection in its project's subsection.
+% Each class, abstract class, enumeration or interface has some of the followings: class diagram, description, declaration, constructor, attributes and Methods.
+%
+% namespace------section
+%     |            |
+%  project-----subsection
+%     ||           |
+%   class-------subsubsection
+%
+%  IMPORTANT: the structure above should corresponds to the directory structure chapter. \autoref{ch:dirstructure}
+%
+% At the start of each namespace \section{namespace name} should be called to start a new section
+% At the start of each project \subsection{project name} should be called to start a new subsection
+% At the start of each class, abstract class, enumeration or interface, a corresponding environment \begin{class},... will be called to start a new subsubsection
+% At the start of class diagram, description, declaration, constructor, fields and Methods,
+% a corresponding commad \cls----- or environment \begin{methods}... will be called to start a new paragraph.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Notes about this chapter%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%T he description
+% para1: the description in text
+\newcommand{\dsp}{\textbf{Description: }}
+
+\newenvironment{class}[1]{\subsubsection{{\textbf{Class: #1}}}\index{#1 (Class)}}{\newpage}
+\newenvironment{absclass}[1]{\subsubsection{{\textbf{Abstract Class: #1}}}\index{#1 (Abstract Class)}}{\newpage}
+\newenvironment{interface}[1]{\subsubsection{{\textbf{Interface: #1}}}\index{#1 (Interface)}}{\newpage}
+\newenvironment{enum}[1]{\subsubsection{{\textbf{Enumeration: #1}}}\index{#1 (Enumeration)}}{\newpage}
+ 
+% Enum elements enumeration
+\newenvironment{elements}{\textbf{Elements:}  \begin{enumerate}
+}{\end{enumerate}}
+% Eeum element
+% para1: declaration para2: description
+\newcommand{\element}[2]{\item \texttt{#1} \\ \dsp #2}
+
+%include a class diagram
+% optional para1: the optional argument of \includegraphics
+% para2: the directory of the diagram
+\newcommand{\clsdiagram}[2][]{\textbf{Class diagram:} \newline
+\begin{center}
+    \includegraphics[#1]{#2}
+\end{center}}
+
+% The declaration of a class, abstrat class or interface.
+% para1: declaration in text
+\newcommand{\clsdcl}[1]{\textbf{Declaration:} \newline \texttt{#1}} %para1: description 
+
+% The description of a class, abstrat class or interface.
+% para1: description in text
+\newcommand{\clsdsp}[1]{\textbf{\dsp} \newline #1}
+
+% Constructors enumeration with \constructor (constructor item)
+\newenvironment{constructors}{\textbf{Constructors:}  \begin{enumerate}
+}{\end{enumerate}}
+% constructor
+% para1: declaration para2: description
+\newenvironment{constructor}[2]{\item \texttt{#1} \\ \dsp #2 \\}{}
+
+% Attributes enumeration with attribute(attribute item)
+\newenvironment{attributes}{\textbf{Attributes:}  \begin{enumerate}
+}{\end{enumerate}}
+% attribute
+% para1: declaration para2: description
+\newcommand{\attribute}[2]{\item \texttt{#1} \\ \dsp #2}
+
+% Methods enumeration with method(method item)
+\newenvironment{methods}{\textbf{Methods:}  \begin{enumerate}
+}{\end{enumerate}}
+% method
+% para1: declaration para2: description
+\newenvironment{method}[2]{\item \texttt{#1} \\ \dsp #2 \\}{}
+
+% Parameters enumeration with \para (parameter item)
+\newenvironment{parameters}{\textbf{Parameters:}  \begin{enumerate}
+}{\end{enumerate}}
+% parameter
+% para1: declaration para2: description
+\newcommand{\para}[2]{\item \texttt{#1} \\ \dsp #2}
+
+% Exceptions enumeration with \excp (exception item)
+\newenvironment{exceptions}{\textbf{Exceptions:} \begin{enumerate}
+}{\end{enumerate}}
+% exception
+% para1: exception type para2: condition for throwing
+\newcommand{\excp}[2]{\item \texttt{#1} \\ \dsp #2}
+
+% return value
+% para1: declaration para2: description
+\newcommand{\return}[2]{\textbf{Return values:} \begin{itemize} \item \texttt{#1} \\ Description: #2 \end{itemize}}
+
+\input{chapter/Classes/Core/Core}
+\newpage
+\input{chapter/Classes/Modules/Modules}
+\newpage
+\input{chapter/Classes/Common/Common}
+\newpage
+\input{chapter/Classes/BrowserExtension/BrowserExtension}

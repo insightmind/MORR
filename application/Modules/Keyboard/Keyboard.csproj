@@ -1,0 +1,32 @@
+﻿<Project>
+  <PropertyGroup>
+    <BaseIntermediateOutputPath>$(SolutionDir)build\temp\$(Configuration)\$(Platform)\Keyboard</BaseIntermediateOutputPath>
+  </PropertyGroup>
+
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>MORR.Modules.Keyboard</RootNamespace>
+    <Platforms>x64</Platforms>
+    <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)\Modules</OutDir>
+    <AssemblyName>Keyboard.MORR-Module</AssemblyName>
+    <Nullable>enable</Nullable>
+    <CopyLocalLockFileDependencies>true</CopyLocalLockFileDependencies>
+  </PropertyGroup>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Shared\Shared.csproj">
+      <Private>false</Private>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="WindowsBase">
+      <HintPath>C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\3.1.1\WindowsBase.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,21 @@
+\subsection*{MORR.Shared.Modules}
+
+\begin{interface}{IModule}
+    \clsdiagram[width=0.3\textwidth]{resources/Classes/Common/Shared/Modules/IModule.png}
+
+    \clsdcl{public interface IModule}
+
+    \clsdsp{Defines a module.}
+
+    \begin{attributes}
+        \attribute{bool IsActive \{ get; set; \}}{Indicates whether the module is currently active. True if the module is active, false otherwise.}
+        \attribute{Guid Identifier \{ get; \}}{The identifier of the module.}
+    \end{attributes}
+    \begin{methods}
+        \begin{method}{void Initialize(bool isEnabled)}{Initializes the module.}
+       		\begin{parameters}
+       			\para{bool isEnabled}{True if the module is active, false otherwise}
+       		\end{parameters}
+        \end{method}
+    \end{methods}
+\end{interface}

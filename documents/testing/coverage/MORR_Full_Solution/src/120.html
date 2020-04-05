@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\Mouse\MouseModule.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.ComponentModel.Composition;
+using MORR.Modules.Mouse.Native;
+using MORR.Modules.Mouse.Producers;
+using MORR.Shared.Modules;
+using MORR.Shared.Utility;
+
+namespace MORR.Modules.Mouse
+{
+    /// &lt;summary&gt;
+    ///     The &lt;see cref=&quot;MouseModule&quot; /&gt; is responsible for recording all mouse related user interactions
+    /// &lt;/summary&gt;
+    public class MouseModule : IModule
+    {
+        private bool isActive;
+
+        /// &lt;summary&gt;
+        ///     A single-writer-multiple-reader queue for MouseClickEvent
+        /// &lt;/summary&gt;
+        [Import]
+        private MouseClickEventProducer MouseClickEventProducer { get; set; }
+
+        /// &lt;summary&gt;
+        ///     A single-writer-multiple-reader queue for MouseScrollEvent
+        /// &lt;/summary&gt;
+        [Import]
+        private MouseScrollEventProducer MouseScrollEventProducer { get; set; }
+
+        /// &lt;summary&gt;
+        ///     A single-writer-multiple-reader queue for MouseMoveEvent
+        /// &lt;/summary&gt;
+        [Import]
+        private MouseMoveEventProducer MouseMoveEventProducer { get; set; }
+
+        /// &lt;summary&gt;
+        ///     Configuration of the MouseModule.
+        /// &lt;/summary&gt;
+        [Import]
+        private MouseModuleConfiguration MouseModuleConfiguration { get; set; }
+
+        public static Guid Identifier { get; } = new Guid(&quot;EFF894B3-4DC9-4605-9937-F02F400B4A62&quot;);
+        Guid IModule.Identifier =&gt; Identifier;
+
+        /// &lt;summary&gt;
+        ///     if the module is active or not.
+        ///     When a module is being activated, all the producers will start to capture user interacts.
+        ///     When a module is being deactivated, all the producers will stop capturing user interacts.
+        /// &lt;/summary&gt;
+        public bool IsActive
+        {
+            get =&gt; isActive;
+            set =&gt; Utility.SetAndDispatch(ref isActive, value, StartCapture,
+                                          StopCapture);
+        }
+
+        /// &lt;summary&gt;
+        ///     Initialize the module with Configuration and Producers.
+        /// &lt;/summary&gt;
+        public void Initialize(bool isEnabled)
+        {
+            // configure all producers with retrieved parameters
+            MouseMoveEventProducer.SamplingRateInHz = MouseModuleConfiguration.SamplingRateInHz;
+            MouseMoveEventProducer.Threshold = MouseModuleConfiguration.Threshold;
+
+            if (isEnabled)
+            {
+                MouseClickEventProducer?.Open();
+                MouseScrollEventProducer?.Open();
+                MouseMoveEventProducer?.Open();
+            }
+            else
+            {
+                MouseClickEventProducer?.Close();
+                MouseScrollEventProducer?.Close();
+                MouseMoveEventProducer?.Close();
+            }
+        }
+
+        private void StartCapture()
+        {
+            MouseClickEventProducer?.StartCapture();
+            MouseScrollEventProducer?.StartCapture();
+            MouseMoveEventProducer?.StartCapture(new NativeMouse());
+        }
+
+        private void StopCapture()
+        {
+            MouseClickEventProducer?.StopCapture();
+            MouseScrollEventProducer?.StopCapture();
+            MouseMoveEventProducer?.StopCapture();
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[21,67,21,71,1],[21,72,21,76,1],[27,69,27,73,1],[27,74,27,78,1],[33,65,33,69,1],[33,70,33,74,1],[39,69,39,73,1],[39,74,39,78,1],[41,41,41,45,1],[41,50,41,98,1],[42,36,42,46,0],[51,20,51,28,1],[52,20,53,55,1],[60,9,60,10,1],[62,13,62,97,1],[63,13,63,83,1],[65,13,65,27,1],[66,13,66,14,1],[67,17,67,49,1],[68,17,68,50,1],[69,17,69,48,1],[70,13,70,14,1],[72,13,72,14,1],[73,17,73,50,1],[74,17,74,51,1],[75,17,75,49,1],[76,13,76,14,1],[77,9,77,10,1],[80,9,80,10,1],[81,13,81,53,1],[82,13,82,54,1],[83,13,83,69,1],[84,9,84,10,1],[87,9,87,10,1],[88,13,88,52,1],[89,13,89,53,1],[90,13,90,51,1],[91,9,91,10,1]]);
+    </script>
+  </body>
+</html>

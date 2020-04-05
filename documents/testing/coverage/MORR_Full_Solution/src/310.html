@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\MORR\Data\IntermediateFormat\IntermediateFormatSample.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using MORR.Shared.Events;
+
+namespace MORR.Core.Data.IntermediateFormat
+{
+    /// &lt;summary&gt;
+    ///     A sample in an intermediate format.
+    /// &lt;/summary&gt;
+    public abstract class IntermediateFormatSample : Event
+    {
+        /// &lt;summary&gt;
+        ///     The type of the event that is serialized.
+        /// &lt;/summary&gt;
+        public Type Type { get; set; } = null!;
+
+        /// &lt;summary&gt;
+        ///     The data that is serialized.
+        /// &lt;/summary&gt;
+        public byte[] Data { get; set; } = null!;
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[14,28,14,32,1],[14,33,14,37,1],[14,42,14,47,1],[19,30,19,34,1],[19,35,19,39,1],[19,44,19,49,1]]);
+    </script>
+  </body>
+</html>

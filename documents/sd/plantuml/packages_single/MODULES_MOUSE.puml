@@ -1,0 +1,55 @@
+@startuml MODULES_MOUSE
+skinparam monochrome true
+'skinparam linetype ortho
+skinparam classAttributeIconSize 0
+
+left to right direction
+hide empty fields
+!startsub default
+package "MOUSE" #BFBFBF {
+    class MouseModule 
+    class MouseModuleConfiguration
+
+    package "EVENTS" {
+        abstract class MouseEvent {
+            + MousePosition : System.Windows.Point <<get>> <<set>>
+        }
+
+        class MouseMoveEvent {
+            + MousePosition : System.Windows.Point <<get>> <<set>>
+        }
+
+        class MouseClickEvent {
+            + HWnd : string <<get>> <<set>>
+            + MouseAction : System.Windows.Input.MouseAction <<get>> <<set>>
+        }
+        
+        class MouseScrollEvent {
+            + ScrollAmount : short <<get>> <<set>>
+            + HWnd : string <<get>> <<set>>
+        }
+    }
+
+    package "PRODUCERS" {
+        class MouseClickEventProducer
+        class MouseMoveEventProducer
+        class MouseScrollEventProducer
+    }
+}
+
+' Mouse
+interface IConfiguration
+interface IModule
+abstract class Event
+Event <|-- MouseEvent
+IModule <|.. MouseModule
+IConfiguration <|.. MouseModuleConfiguration
+MouseEvent <|- MouseClickEvent
+MouseEvent <|-- MouseScrollEvent
+MouseEvent <|-- MouseMoveEvent
+MouseModule ..> MouseMoveEventProducer : "uses"
+MouseModule ..> MouseClickEventProducer : "uses"
+MouseModule ..> MouseScrollEventProducer : "uses"
+MouseModule ..> MouseModuleConfiguration : "uses"
+!endsub
+@enduml

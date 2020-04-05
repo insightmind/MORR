@@ -1,0 +1,9 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+abstract class KeyboardEvent {
+}
+abstract class Event
+Event <|-- KeyboardEvent
+@enduml

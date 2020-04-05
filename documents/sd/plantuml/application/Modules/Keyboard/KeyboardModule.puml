@@ -1,0 +1,16 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+class KeyboardModule {
+}
+
+interface IModule {
+    + Identifier : System.Guid
+    + IsActive : bool <<get>> <<set>>
+    + Initialize() : void
+}
+
+IModule <|-- KeyboardModule
+KeyboardModule ..> KeyboardInteractEventProducer : "uses"
+@enduml

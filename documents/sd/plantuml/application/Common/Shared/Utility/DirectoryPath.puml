@@ -1,0 +1,10 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
+class DirectoryPath {
+    + <<create>> DirectoryPath(value: string)
+    + ToString() : string
+}
+!endsub
+@enduml

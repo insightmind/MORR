@@ -1,0 +1,26 @@
+@startuml
+skinparam linetype ortho
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+class CloseTabEvent extends BrowserEvent {
+    + CloseTabEvent(tabID : number, windowID : number, url : string)
+}
+interface IEvent {
+    + timeStamp : Date
+    + issuingModule : number
+    + type : EventType
+    + serialize() : string
+}
+
+IEvent <|.DOWN. BrowserEvent : implements
+class BrowserEvent {
+    + BrowserEvent(type : EventType, tabID : number, windowID: number, url : string)
+    + timeStamp : Date
+    + issuingModule : number
+    + type : EventType
+    + tabID : number
+    + url : URL
+    + windowID : number
+    + serialize(noUnderScore : boolean) : string
+}
+@enduml

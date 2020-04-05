@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Common\Shared\Hook\HookNativeMethods.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Runtime.InteropServices;
+
+namespace MORR.Shared.Hook
+{
+    internal class HookNativeMethods: IHookNativeMethods
+    {
+        private const string hookLibName = @&quot;HookLibrary64&quot;;
+
+        #region Interface Methods
+
+        string IHookNativeMethods.HookLibraryName=&gt; hookLibName;
+
+        bool IHookNativeMethods.FreeLibrary(IntPtr hModule) =&gt; FreeLibrary(hModule);
+
+        void IHookNativeMethods.SetHook(GlobalHook.CppGetMessageCallback callbackPointer, bool blocking) =&gt; SetHook(callbackPointer, blocking);
+
+        IntPtr IHookNativeMethods.LoadLibrary() =&gt; LoadLibrary(hookLibName);
+
+        bool IHookNativeMethods.Capture(uint type) =&gt; Capture(type);
+
+        void IHookNativeMethods.StopCapture(uint type) =&gt; StopCapture(type);
+
+        void IHookNativeMethods.RemoveHook() =&gt; RemoveHook();
+
+        #endregion
+
+        #region Static Imports
+        [DllImport(&quot;kernel32&quot;, SetLastError = true, CharSet = CharSet.Ansi)]
+        private static extern IntPtr LoadLibrary([MarshalAs(UnmanagedType.LPStr)]string lpFileName);
+
+        [DllImport(&quot;kernel32.dll&quot;, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool FreeLibrary(IntPtr hModule);
+
+        [DllImport(hookLibName, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void SetHook([MarshalAs(UnmanagedType.FunctionPtr)] GlobalHook.CppGetMessageCallback callbackPointer, [MarshalAs(UnmanagedType.Bool)] bool blocking);
+
+        [DllImport(hookLibName, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void RemoveHook();
+
+        [DllImport(hookLibName, CallingConvention = CallingConvention.Cdecl)]
+        [return: MarshalAs(UnmanagedType.I1)]
+        private static extern bool Capture([MarshalAs(UnmanagedType.U4)] uint type);
+
+        [DllImport(hookLibName, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void StopCapture([MarshalAs(UnmanagedType.U4)] uint type);
+
+        #endregion
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[12,53,12,64,0],[14,64,14,84,0],[16,109,16,143,0],[18,52,18,76,0],[20,55,20,68,0],[22,59,22,76,0],[24,49,24,61,0]]);
+    </script>
+  </body>
+</html>

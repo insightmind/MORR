@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\WebBrowser\Producers\WebBrowserEventProducer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Text.Json;
+using MORR.Modules.WebBrowser.Events;
+using MORR.Shared.Events.Queue;
+
+namespace MORR.Modules.WebBrowser.Producers
+{
+    /// &lt;summary&gt;
+    ///     A generic producer for WebBrowserEvents, which will need to be subscribed to a &lt;see cref=&quot;IWebBrowserEventObservable&quot;/&gt; to gather
+    ///     incoming event data. The default implementation here simply forwards the incoming events to the Queue if they are
+    ///     of the appropriate type.
+    /// &lt;/summary&gt;
+    /// &lt;typeparam name=&quot;T&quot;&gt;The BrowserEvent type to produce.&lt;/typeparam&gt;
+    public abstract class WebBrowserEventProducer&lt;T&gt; : DefaultEventQueue&lt;T&gt;, IWebBrowserEventObserver where T : WebBrowserEvent, new()
+    {
+        /// &lt;summary&gt;
+        ///     Simply forward the event to the internal queue if its of the appropriate type. Ignore otherwise.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;eventJson&quot;&gt;A JsonElement holding an event.&lt;/param&gt;
+        public virtual void Notify(JsonElement eventJson)
+        {
+            var @value = new T();
+            @value.Deserialize(eventJson);
+            Enqueue(@value);
+        }
+
+        /// &lt;summary&gt;
+        ///     The BrowserEvent label to be handled by this producer.
+        /// &lt;/summary&gt;
+        public virtual EventLabel HandledEventLabel =&gt; throw new NotSupportedException(&quot;Cannot get property from abstract WebBrowserEventProducer&quot;);
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[21,9,21,10,0],[22,13,22,34,0],[23,13,23,43,0],[24,13,24,29,0],[25,9,25,10,0],[30,56,30,148,0]]);
+    </script>
+  </body>
+</html>

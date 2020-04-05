@@ -1,0 +1,76 @@
+\label{ch:glossary}
+%%A dot will be automatically added to the description.
+%%Keep in mind that only entries with at least one reference will be visible in the compiled PDF
+%%To refer to a glossary entry, use \gls{ID} (singular), \glspl (plural) or \Gls and \Glspl to print the first character in uppercase.
+%%The glossary will automatically be printed in alphabetical order
+
+\newglossaryentry{glossarydummy} %%this is the ID by which the entry will be referenced
+{
+	name=Dummy, %%the name displayed in the glossary
+	text=dummy, %%the name inserted in text
+	plural=dummies, %%the plural inserted when using \glspl
+	description={This entry will not be visible in the final document as it should stay unreferenced}, %%the description printed in the glossary
+}
+\newglossaryentry{user} %%this is the ID by which the entry will be referenced
+{
+	name=User,
+	text=user,
+	plural=users,
+	description={A doctor conducting cancer or genetic disorder related research on a \gls{device}}
+}
+\newglossaryentry{session}
+{
+	name=Session,
+	text=session,
+	plural=sessions,
+	description={A session refers to a continuous time interval in which a recording was made on a \gls{device}}
+}
+\newglossaryentry{device}
+{
+	name=Device,
+	text = device,
+	plural=devices,
+	description={A single electronic device intended for direct usage by \glspl{user}. In the scope of this project this always refers to a Windows PC as specified in chapter \ref{ch:environment}}
+}
+\newglossaryentry{event}
+{
+	name=Event,
+	text=event,
+	plural=events,
+	description={Actions a user performs on a \gls{device} such as pressing a key or launching a program. The specifics are discussed in chapter \ref{ch:data}}
+}
+\newglossaryentry{module}
+{
+	name=Module,
+	text=module,
+	plural=modules,
+	description={In the context of this document, a module refers to an optional component which extends to application's functionality, e.g. by collecting additional data}
+}
+\newglossaryentry{scientist}
+{
+	name=Data scientist,
+	text=data scientist,
+	plural=data scientists,
+	description={A person working with the recorded data in order to extract knowledge and insights}
+}
+\newglossaryentry{videostream}
+{
+	name=Video stream,
+	text=video stream,
+	plural=video streams,
+	description={Digital, coherent data encoding the video (and optionally audio-) output of a \gls{device}}
+}
+\newglossaryentry{browser}
+   {
+   	name=Web browser,
+   	text=web browser,
+   	plural=web browsers,
+	description={An application which allows \glspl{user} to view and interact with websites}
+}
+\newglossaryentry{admin}
+{
+	name=Administrator,
+	text=administrator,
+	plural=administrators,
+	description={A person responsible for setting up and configuring the software. Usually has permissions exceeding those of \glspl{user}}
+}

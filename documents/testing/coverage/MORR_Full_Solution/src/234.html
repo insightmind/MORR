@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\CLITest\Utility\MessageLoopTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Threading;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MORR.Core.CLI.Utility;
+
+namespace CLITest.Utility
+{
+    [TestClass]
+    public class MessageLoopTest
+    {
+        private const int waitTimeInMilliseconds = 1000;
+
+        [TestMethod]
+        public void TestMessageLoop()
+        {
+            /* GIVEN */
+            var autoResetEvent = new AutoResetEvent(false);
+            var messageLoop = new MessageLoop();
+
+            /* WHEN */
+            var cancelThread = new Thread(() =&gt;
+            {
+                while (!messageLoop.IsRunning)
+                {
+                     /*
+                      * We need to wait until it actually started.
+                      * However this will stop if the autoResetEvent is not fulfilled in time.
+                      */
+                }
+
+                autoResetEvent.Set();
+                messageLoop.Stop();
+            });
+
+            cancelThread.Start();
+            messageLoop.Start();
+
+            /* THEN */
+            Assert.IsTrue(autoResetEvent.WaitOne(waitTimeInMilliseconds));
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[14,9,14,10,1],[16,13,16,60,1],[17,13,17,49,1],[20,13,21,13,1],[21,13,21,14,1],[21,14,22,17,1],[22,17,22,47,1],[22,47,23,17,1],[23,17,23,18,1],[23,18,28,17,1],[28,17,28,18,1],[28,18,30,17,1],[30,17,30,38,1],[30,38,31,17,1],[31,17,31,36,1],[31,36,32,13,1],[32,13,32,14,1],[32,14,32,16,1],[20,13,32,16,1],[34,13,34,34,1],[35,13,35,33,1],[38,13,38,75,1],[39,9,39,10,1]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\CLI\Commands\Record\RecordOptions.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using CommandLine;
+
+namespace MORR.Core.CLI.Commands.Record
+{
+    [Verb(&quot;record&quot;, HelpText = &quot;Starts a new recording with the give configuration&quot;)]
+    public class RecordOptions : CommandOptions
+    {
+        [Option(&#39;c&#39;, &quot;config&quot;, Required = true, HelpText = &quot;Path to configuration file&quot;)]
+        public string ConfigPath { get; set; }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[9,36,9,40,1],[9,41,9,45,1]]);
+    </script>
+  </body>
+</html>

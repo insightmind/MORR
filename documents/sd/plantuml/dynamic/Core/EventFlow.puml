@@ -1,0 +1,43 @@
+@startuml
+'skinparam monochrome true
+hide footbox
+title Event flow from KeyboardModule to JsonEncoder
+actor User
+
+participant ":KeyboardInteractEventProducer" as KeyboardEventProducer
+User -> KeyboardEventProducer : <<performs keypress>>
+activate KeyboardEventProducer
+create "keypressEvent :KeyboardInteractEvent" as KeyboardEvent
+KeyboardEventProducer -> KeyboardEvent : <<create>>
+KeyboardEventProducer <-- KeyboardEvent
+KeyboardEventProducer -> KeyboardEventProducer : Enqueue(keypressEvent)
+activate KeyboardEventProducer
+deactivate KeyboardEventProducer
+
+participant ":JsonIntermediateFormatSerializer" as JsonIntermediateFormatSerializer
+JsonIntermediateFormatSerializer -> KeyboardEventProducer : GetEvents()
+activate JsonIntermediateFormatSerializer
+JsonIntermediateFormatSerializer <-- KeyboardEventProducer : <<keypressEvent>>
+note right
+This is an asynchronous stream
+that returns events in a loop
+as they are enqueued
+end note
+deactivate KeyboardEventProducer
+
+create "intermediateFormatSample :JsonIntermediateFormatSample" as JsonIntermediateFormatSample
+JsonIntermediateFormatSerializer -> JsonIntermediateFormatSample : <<create>>
+JsonIntermediateFormatSerializer <-- JsonIntermediateFormatSample
+deactivate JsonIntermediateFormatSerializer
+
+participant ":JsonEncoder" as JsonEncoder
+activate JsonEncoder
+JsonEncoder -> JsonIntermediateFormatSerializer : GetEvents()
+activate JsonIntermediateFormatSerializer
+JsonEncoder <-- JsonIntermediateFormatSerializer : <<intermediateFormatSample>>
+deactivate JsonIntermediateFormatSerializer
+JsonEncoder -> JsonEncoder : <<perform encoding>>
+activate JsonEncoder
+deactivate JsonEncoder
+
+@enduml

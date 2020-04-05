@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\MORR\Session\SessionConfiguration.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Text.Json;
+using MORR.Core.Configuration;
+using MORR.Shared.Configuration;
+using MORR.Shared.Utility;
+
+namespace MORR.Core.Session
+{
+    public class SessionConfiguration : IConfiguration
+    {
+        /// &lt;summary&gt;
+        ///     The types of the encoders to use.
+        /// &lt;/summary&gt;
+        public IEnumerable&lt;Type&gt; Encoders { get; set; } = new Type[0];
+
+        /// &lt;summary&gt;
+        ///     The types of the decoders to use.
+        /// &lt;/summary&gt;
+        public IEnumerable&lt;Type&gt;? Decoders { get; set; } = new Type[0];
+
+        /// &lt;summary&gt;
+        ///     The directory in which to store new recordings.
+        /// &lt;/summary&gt;
+        public DirectoryPath RecordingDirectory { get; set; } = null!;
+
+        public void Parse(RawConfiguration configuration)
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            var element = JsonDocument.Parse(configuration.RawValue).RootElement;
+            var encoders = new List&lt;Type&gt;();
+
+            if (!element.TryGetProperty(nameof(Encoders), out var encodersElement))
+            {
+                throw new InvalidConfigurationException(&quot;Failed to parse encoders property.&quot;);
+            }
+
+            foreach (var encoderElement in encodersElement.EnumerateArray())
+            {
+                if (!TryGetType(encoderElement, out var encoder))
+                {
+                    throw new InvalidConfigurationException(&quot;Failed to parse encoder type.&quot;);
+                }
+
+                encoders.Add(encoder);
+            }
+
+            Encoders = encoders;
+
+            // Specifying a decoder is optional; do not throw an error if the property does not exist
+            if (element.TryGetProperty(nameof(Decoders), out var decodersElement))
+            {
+                var decoders = new List&lt;Type&gt;();
+
+                foreach (var decoderElement in decodersElement.EnumerateArray())
+                {
+                    if (!TryGetType(decoderElement, out var decoder))
+                    {
+                        throw new InvalidConfigurationException(&quot;Failed to parse decoder type.&quot;);
+                    }
+
+                    decoders.Add(decoder);
+                }
+
+                Decoders = decoders;
+            }
+
+            if (!element.TryGetProperty(nameof(RecordingDirectory), out var directoryElement))
+            {
+                throw new InvalidConfigurationException(&quot;Failed to parse directory path.&quot;);
+            }
+
+            try
+            {
+                var directoryPath = directoryElement.GetString();
+                directoryPath = Environment.ExpandEnvironmentVariables(directoryPath);
+                RecordingDirectory = new DirectoryPath(directoryPath);
+            }
+            catch (ArgumentException innerException)
+            {
+                throw new InvalidConfigurationException(&quot;Failed to evaluate directory path.&quot;, innerException);
+            }
+        }
+
+        private static bool TryGetType(JsonElement element, [NotNullWhen(true)] out Type? value)
+        {
+            value = Utility.GetTypeFromAnyAssembly(element.ToString());
+            return value != null;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            try
+            {
+                return (obj is SessionConfiguration configuration)
+                    &amp;&amp; Encoders.SequenceEqual(configuration.Encoders)
+                    &amp;&amp; Decoders.SequenceEqual(configuration.Decoders)
+                    &amp;&amp; RecordingDirectory.Equals(configuration.RecordingDirectory);
+            }
+            catch (ArgumentNullException)
+            {
+                return false;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Encoders, Decoders, RecordingDirectory);
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[17,45,17,49,1],[17,50,17,54,1],[17,59,17,70,1],[22,46,22,50,1],[22,51,22,55,1],[22,60,22,71,1],[27,51,27,55,1],[27,56,27,60,1],[27,65,27,70,1],[30,9,30,10,1],[31,13,31,39,1],[32,13,32,14,1],[33,17,33,51,1],[36,13,36,82,1],[37,13,37,45,1],[39,13,39,84,1],[40,13,40,14,1],[41,17,41,95,1],[44,13,44,20,1],[44,22,44,40,1],[44,41,44,43,1],[44,44,44,76,1],[45,13,45,14,1],[46,17,46,66,1],[47,17,47,18,1],[48,21,48,94,1],[51,17,51,39,1],[52,13,52,14,1],[54,13,54,33,1],[57,13,57,83,1],[58,13,58,14,1],[59,17,59,49,1],[61,17,61,24,1],[61,26,61,44,1],[61,45,61,47,1],[61,48,61,80,1],[62,17,62,18,1],[63,21,63,70,1],[64,21,64,22,1],[65,25,65,98,1],[68,21,68,43,1],[69,17,69,18,1],[71,17,71,37,1],[72,13,72,14,1],[74,13,74,95,1],[75,13,75,14,0],[76,17,76,92,0],[80,13,80,14,1],[81,17,81,66,1],[82,17,82,87,1],[83,17,83,71,1],[84,13,84,14,1],[85,13,85,53,1],[86,13,86,14,1],[87,17,87,111,1],[89,9,89,10,1],[92,9,92,10,1],[93,13,93,72,1],[94,13,94,34,1],[95,9,95,10,1],[98,9,98,10,1],[100,13,100,14,1],[101,17,104,84,1],[106,13,106,42,0],[107,13,107,14,0],[108,17,108,30,0],[110,9,110,10,1],[113,9,113,10,1],[114,13,114,77,1],[115,9,115,10,1]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Common\Shared\Events\Queue\Strategy\SingleConsumer\UnboundedSingleConsumerStrategy.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Threading.Channels;
+
+namespace MORR.Shared.Events.Queue.Strategy.SingleConsumer
+{
+    /// &lt;summary&gt;
+    /// An UnboundedSingleConsumerChannelStrategy is a Distributive-FIFO Queue which allows multiple producers and a single consumer.
+    /// This queue is performance optimized for a single consumer and should be preferred in this case.
+    /// Please make sure only a single consumer will request. Otherwise an exception is thrown.
+    ///
+    /// This queue is unbounded and will therefore don&#39;t dismiss any events. Please make sure that the num of events is bounded by a maximum number. 
+    ///
+    /// &lt;/summary&gt;
+    /// &lt;typeparam name=&quot;TEvent&quot;&gt;The type of event which is queued by the channel&lt;/typeparam&gt;
+    public class UnboundedSingleConsumerChannelStrategy&lt;TEvent&gt; : SingleConsumerChannelStrategy&lt;TEvent&gt; where TEvent : Event
+    {
+        private readonly UnboundedChannelOptions options;
+
+        /// &lt;summary&gt;
+        /// Creates a new UnboundedSingleConsumerChannelStrategy.
+        /// &lt;/summary&gt;
+        public UnboundedSingleConsumerChannelStrategy()
+        {
+            options = new UnboundedChannelOptions()
+            {
+                AllowSynchronousContinuations = false,
+                SingleWriter = false,
+                SingleReader = true
+            };
+        }
+
+        protected override Channel&lt;TEvent&gt; CreateChannel()
+        {
+            return Channel.CreateUnbounded&lt;TEvent&gt;(options);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[21,9,21,56,1],[22,9,22,10,1],[23,13,28,15,1],[29,9,29,10,1],[32,9,32,10,1],[33,13,33,61,1],[34,9,34,10,1]]);
+    </script>
+  </body>
+</html>

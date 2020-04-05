@@ -1,0 +1,33 @@
+﻿<Window x:Class="MORR.Core.UI.Dialogs.InformationDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:localization="clr-namespace:MORR.Core.UI.Properties"
+        mc:Ignorable="d"
+        Title="MORR" Style="{StaticResource Dialog.WindowStyle}" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="15" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" TextAlignment="Center"
+                   Text="{x:Static localization:Resources.Information_Dialog_Content}" />
+        <Grid Grid.Row="2" HorizontalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" SharedSizeGroup="Button" />
+                <ColumnDefinition Width="15" />
+                <ColumnDefinition Width="Auto" SharedSizeGroup="Button" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" IsDefault="True"
+                    Content="{x:Static localization:Resources.Information_Dialog_Button_OK}" Width="200"
+                    Click="OnAccept"
+                    Style="{StaticResource Dialog.ButtonStyle}" />
+            <Button Grid.Column="2" IsCancel="True"
+                    Content="{x:Static localization:Resources.Information_Dialog_Button_Cancel}" Width="200"
+                    Style="{StaticResource Dialog.ButtonStyle}" />
+        </Grid>
+    </Grid>
+</Window>

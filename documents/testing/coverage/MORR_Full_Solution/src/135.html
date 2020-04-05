@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\Keyboard\Events\KeyboardInteractEvent.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Windows.Input;
+
+namespace MORR.Modules.Keyboard.Events
+{
+    /// &lt;summary&gt;
+    ///     A keyboard user interaction
+    /// &lt;/summary&gt;
+    public class KeyboardInteractEvent : KeyboardEvent
+    {
+        /// &lt;summary&gt;
+        ///     The key that was pressed.
+        ///     This field is for data processing.
+        /// &lt;/summary&gt;
+        public Key PressedKey_System_Windows_Input_Key { get; set; }
+
+        /// &lt;summary&gt;
+        ///     The name of the key on the keyboard that is pressed
+        ///     This field is only for increasing the human readability. 
+        /// &lt;/summary&gt;
+        public string PressedKeyName { get; set; }
+
+        /// &lt;summary&gt;
+        ///     The modifier keys to the key pressed.
+        ///     This field is for data processing
+        /// &lt;/summary&gt;
+        public ModifierKeys ModifierKeys_System_Windows_Input_ModifierKeys { get; set; }
+
+        /// &lt;summary&gt;
+        ///     The name of the key on the keyboard that is pressed
+        ///     This field is only for increasing the human readability. 
+        /// &lt;/summary&gt;
+        public string ModifierKeysName { get; set; }
+
+        /// &lt;summary&gt;
+        ///     The actual user input according to Input locale.
+        ///     If the event has &#39;\u0000&#39; at this property, the
+        ///     pressed key is not mapped to a unicode. It can
+        ///     be Shift, Alt etc.
+        ///     This field is only for increasing the human readability.
+        /// &lt;/summary&gt;
+        public char MappedCharacter_Unicode { get; set; }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[14,58,14,62,1],[14,63,14,67,1],[20,40,20,44,1],[20,45,20,49,1],[26,78,26,82,1],[26,83,26,87,1],[32,42,32,46,1],[32,47,32,51,1],[41,47,41,51,1],[41,52,41,56,1]]);
+    </script>
+  </body>
+</html>

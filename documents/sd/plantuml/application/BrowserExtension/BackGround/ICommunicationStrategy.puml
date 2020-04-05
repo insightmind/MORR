@@ -1,0 +1,13 @@
+@startuml
+skinparam linetype ortho
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+interface ICommunicationStrategy {
+    + establishConnection() : Promise<void>
+    + requestConfig() : Promise<string>
+    + waitForStart() : Promise<void>
+    + sendData(data : string) : Promise<string>
+    + addOnStopListener(callback: (error? : boolean) => void) : void
+}
+@enduml

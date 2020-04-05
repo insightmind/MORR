@@ -1,0 +1,13 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+!startsub default
+abstract class "ReadOnlyEventQueue<T: Event>" {
+    # <<create>> ReadOnlyEventQueue(storageStrategy: IEventQueueStorageStrategy<T: Event>)
+    + GetEvents(cancellationToken: CancellationToken) : IAsyncEnumerable<T: Event>
+    + Enqueue(event: T) : void
+}
+!endsub
+
+@enduml

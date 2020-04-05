@@ -1,0 +1,200 @@
+@startuml
+'skinparam linetype ortho
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+'skinparam backgroundColor transparent
+'skinparam classBackgroundColor transparent
+'skinparam style strictuml
+skinparam groupInheritance 3
+left to right direction
+namespace BrowserExtension {
+namespace Shared #A1AAA1 {
+
+	enum EventType {
+		Navigation
+		OpenTab
+		CloseTab
+		SwitchTab
+		TextInput
+		ButtonClick
+		Hover
+		TextSelection
+		Download
+		Generic
+	}
+
+	interface IListener {
+		+ IListener(callback : (BrowserEvent) => void)
+		+ start() : void
+		+ stop() : void
+	}
+
+	interface IEvent {
+		+ timeStamp : Date
+		+ issuingModule : number
+		+ type : EventType
+		+ serialize() : string
+	}
+	IEvent ..> EventType
+
+	
+	IEvent <|.. BrowserEvent
+	class BrowserEvent {
+        + BrowserEvent(type : EventType, tabID : number, windowID: number, url : string)
+		+ timeStamp : Date
+		+ issuingModule : number
+		+ type : EventType
+		+ serialize()
+		+ tabID : number
+		+ url : URL
+        + windowID : number
+		+ serialize(noUnderScore : boolean) : string
+	}
+
+}
+namespace Background #D1D1DD {
+	class BackgroundScript {
+		+ BackgroundScript()
+		+ run() : void
+		+ callback(event : Shared.BrowserEvent) : void
+	}
+
+    class ListenerManager {
+        + ListenerManager(callback : (Shared.BrowserEvent) => void, configurationString? : string)
+        + startAll()
+        + stopAll()
+    }
+
+	interface ICommunicationStrategy {
+        + establishConnection() : Promise<void>
+		+ requestConfig() : Promise<string>
+		+ waitForStart() : Promise<void>
+		+ sendData(data : string) : Promise<string>
+		+ addOnStopListener(callback: (error? : boolean) => void) : void
+	}
+	class PostHTTPInterface implements ICommunicationStrategy {
+		+ PostHTTPInterface(uri? : string)
+        + establishConnection() : Promise<void>
+		+ requestConfig() : Promise<string>
+		+ waitForStart() : Promise<void>
+		+ sendData(data : string) : Promise<string>
+		+ addOnStopListener(callback: (error? : boolean) => void) : void
+	}
+
+	BackgroundScript "1" *-- "1" ListenerManager
+	ListenerManager "1" *-- "0..*" BrowserExtension.Shared.IListener
+	BackgroundScript "1" *-- "1" ICommunicationStrategy
+
+}
+namespace Listeners #AAAAA1{
+		namespace DOMListener #DDDDD1{
+		class DOMEventListener implements BrowserExtension.Shared.IListener {
+			+ DOMEventListener(callback : (Shared.BrowserEvent) => void)
+			+ start()
+			+ stop()
+		}
+        DOMEventListener ..> BrowserExtension.Listeners.DOMEventType : uses
+		class TextInputEvent extends BrowserExtension.Shared.BrowserEvent {
+			+ text : string
+			+ target : string
+			+ TextInputEvent(tabID : number, windowID : number, text : string, target : string, url : string)
+			+ {static} deserialize(parsed : any, sender? : chrome.runtime.MessageSender) : TextInputEvent
+		}
+		class ButtonClickEvent extends BrowserExtension.Shared.BrowserEvent {
+			+ buttonTitle : string
+			+ buttonHref? : string
+			+ ButtonClickEvent(tabID : number, windowID : number, buttonTitle : string, buttonHref? : string, url : string)
+			+ {static} deserialize(parsed : any, sender? : chrome.runtime.MessageSender) : ButtonClickEvent
+		}
+		class HoverEvent extends BrowserExtension.Shared.BrowserEvent {
+			+ target : string
+			+ HoverEvent(tabID : number, windowID : number, target : string, url : string)
+			+ {static} deserialize(parsed : any, sender? : chrome.runtime.MessageSender) : HoverEvent
+		}
+		class TextSelectionEvent extends BrowserExtension.Shared.BrowserEvent {
+			+ textSelection : string
+			+ TextSelectionEvent(tabID : number, windowID : number, textSelection : string, url : string)
+			+ {static} deserialize(parsed : any, sender? : chrome.runtime.MessageSender) : TextSelectionEvent
+		}
+
+	}
+	namespace TabListener #DDDDD1 {
+		class TabListener implements BrowserExtension.Shared.IListener {
+			+ TabListener(callback : (Shared.BrowserEvent) => void)
+			+ start()
+			+ stop()
+		}
+		class OpenTabEvent extends BrowserExtension.Shared.BrowserEvent {
+			+ OpenTabEvent(tabID : number, windowID : number)
+		}
+		class CloseTabEvent extends BrowserExtension.Shared.BrowserEvent {
+			+ CloseTabEvent(tabID : number, windowID : number, url? : string)
+		}
+		class SwitchTabEvent extends BrowserExtension.Shared.BrowserEvent {
+			+ newTab : number
+			+ SwitchTabEvent(tabID : number, windowID : number, newTabID : number, url : string)
+		}
+		class NavigationEvent extends BrowserExtension.Shared.BrowserEvent {
+			+ NavigationEvent(tabID : number, windowID : number, url : string)
+		}
+		class TabEventFactory {
+			+ createNavigationEvent(tabId : number, changeInfo : tabs.TabChangeInfo, tab : tabs.Tab) : NavigationEvent
+			+ createSwitchTabEvent(activeInfo : tabs.TabActiveInfo, tabs.Tab) : SwitchTabEvent
+			+ createCloseTabEvent(tabId : number, removeInfo: tabs.TabRemoveInfom tab : tabs.Tab) : CloseTabEvent
+			+ createOpenTabEvent(tab : tabs.Tab) : OpenTabEvent
+		}
+		TabListener *-- TabEventFactory
+		TabEventFactory .DOWN.> OpenTabEvent : creates
+		TabEventFactory .DOWN.> CloseTabEvent : creates
+		TabEventFactory .DOWN.> SwitchTabEvent : creates
+		TabEventFactory .DOWN.> NavigationEvent : creates
+	}
+	namespace DownloadListener #DDDDD1{
+		class DownloadListener implements BrowserExtension.Shared.IListener {
+			+ DownloadListener(callback : (Shared.BrowserEvent) => void)
+			+ start()
+			+ stop()
+		}
+		class DownloadEvent extends BrowserExtension.Shared.BrowserEvent {
+		    + mimeType : string
+		    + fileURL : URL
+		    + Download(tabID : number, windowID : number, mimeType : string, fileURL : string, url : string)
+		}
+		class DownloadEventFactory {
+			+ createEvent(downloadItem: downloads.DownloadItem) : Promise<DownloadEvent>
+		}
+		DownloadListener *-- DownloadEventFactory
+		DownloadEventFactory .DOWN.> DownloadEvent : creates
+	}
+	enum DOMEventType {
+		CLICK
+		CHANGE
+		DBCLICK
+		KEYUP
+		MOUSEENTER
+		MOUSEUP
+		SELECT
+		SUBMIT
+		SEARCH
+		FOCUS
+	}
+}
+namespace WebsiteContext #FFF1F1 {
+	class DOMEventRecorder {
+		+ DomEventRecorder()
+		+ start() : void
+		+ stop() : void
+	}
+			class DOMEventFactory {
+			+ createEvent(domEvent : Event) : Promise<BrowserEvent | undefined>
+		}
+	DOMEventFactory .DOWN.> BrowserExtension.Listeners.DOMListener.TextInputEvent : creates
+	DOMEventFactory .DOWN.> BrowserExtension.Listeners.DOMListener.TextSelectionEvent : creates
+	DOMEventFactory .DOWN.> BrowserExtension.Listeners.DOMListener.ButtonClickEvent : creates
+	DOMEventFactory .DOWN.> BrowserExtension.Listeners.DOMListener.HoverEvent : creates
+	DOMEventRecorder ..> BrowserExtension.Listeners.DOMEventType : uses
+	DOMEventRecorder *-- DOMEventFactory
+	BrowserExtension.Listeners.DOMListener.DOMEventListener ..> DOMEventRecorder : injects
+}
+}
+@enduml

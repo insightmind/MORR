@@ -1,0 +1,19 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+!startsub default
+class "UnboundedSingleConsumerChannelStrategy<TEvent>" {
+}
+abstract class "SingleConsumerChannelStrategy<TEvent>" {
+    + IsClosed : bool <<get>>
+    + GetEvents(token: CancellationToken) : IAsyncEnumerable<TEvent>
+    + Enqueue(event: T) : void
+    + Open() : void
+    + Close() : void
+}
+interface "IEventQueueStorageStrategy<TEvent>"
+"IEventQueueStorageStrategy<TEvent>" <|-- "SingleConsumerChannelStrategy<TEvent>"
+"SingleConsumerChannelStrategy<TEvent>" <|-- "UnboundedSingleConsumerChannelStrategy<TEvent>"
+!endsub
+@enduml

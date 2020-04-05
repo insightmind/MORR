@@ -1,0 +1,10 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
+class SaveDialog <<partial>> {
+    + <<create>> SaveDialog()
+}
+!endsub
+Window <|-- SaveDialog
+@enduml

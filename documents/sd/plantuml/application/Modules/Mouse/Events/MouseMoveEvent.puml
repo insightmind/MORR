@@ -1,0 +1,14 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
+class MouseMoveEvent {
+}
+abstract class Event
+abstract class MouseEvent {
+    + MousePosition : System.Windows.Point <<get>> <<set>>
+}
+!endsub
+MouseEvent <|-- MouseMoveEvent
+Event <|-- MouseEvent
+@enduml

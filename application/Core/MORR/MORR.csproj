@@ -1,0 +1,29 @@
+﻿<Project>
+  <PropertyGroup>
+    <BaseIntermediateOutputPath>$(SolutionDir)build\temp\$(Configuration)\$(Platform)\MORR</BaseIntermediateOutputPath>
+  </PropertyGroup>
+
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>MORR.Core</RootNamespace>
+    <Platforms>x64</Platforms>
+    <OutDir>$(SolutionDir)build\$(Configuration)\$(Platform)</OutDir>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.18362.2005" />
+    <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
+    <PackageReference Include="System.ComponentModel.Composition" Version="4.7.0" />
+    <PackageReference Include="System.ComponentModel.Composition.Registration" Version="4.7.0" />
+    <PackageReference Include="System.IO.Abstractions" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Shared\Shared.csproj" />
+  </ItemGroup>
+</Project>

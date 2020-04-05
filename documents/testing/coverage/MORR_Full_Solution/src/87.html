@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Common\Shared\Events\Queue\Strategy\MultiConsumer\UnboundedMultiConsumerChannelStrategy.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Threading.Channels;
+
+namespace MORR.Shared.Events.Queue.Strategy.MultiConsumer
+{
+    /// &lt;summary&gt;
+    /// An UnboundedMultiConsumerChannelStrategy is a Distributive-FIFO Queue which allows multiple producers and multiple consumers.
+    /// However every event is propagated to each consumer once.
+    /// 
+    /// This queue is unbound, which means that an event is never dismissed.
+    /// Make sure to only use this queue if you are sure it is bound by a maximum number of events.
+    ///
+    /// You can limit the number of consumers via the maxChannelConsumers argument.
+    /// If you only have a single consumer, please use UnboundedSingleConsumerChannelStrategy.
+    /// &lt;/summary&gt;
+    /// &lt;typeparam name=&quot;TEvent&quot;&gt;The type of event which is queued by the channel&lt;/typeparam&gt;
+    public class UnboundedMultiConsumerChannelStrategy&lt;TEvent&gt; : MultiConsumerChannelStrategy&lt;TEvent&gt; where TEvent : Event
+    {
+        private readonly UnboundedChannelOptions offeringOptions;
+        private readonly UnboundedChannelOptions receivingOptions;
+
+        /// &lt;summary&gt;
+        /// Creates a new UnboundedMultiConsumerChannelStrategy.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;maxChannelConsumers&quot;&gt;Maximum number of consumers allowed or null if unbound.&lt;/param&gt;
+        public UnboundedMultiConsumerChannelStrategy(uint? maxChannelConsumers)
+        {
+            offeringOptions = new UnboundedChannelOptions()
+            {
+                AllowSynchronousContinuations = false,
+                SingleWriter = true,
+                SingleReader = true
+            };
+
+            receivingOptions = new UnboundedChannelOptions()
+            {
+                AllowSynchronousContinuations = false,
+                SingleWriter = false,
+                SingleReader = true
+            };
+
+            StartReceiving(maxChannelConsumers);
+        }
+
+        protected override Channel&lt;TEvent&gt; CreateOfferingChannel()
+        {
+            return Channel.CreateUnbounded&lt;TEvent&gt;(offeringOptions);
+        }
+
+        protected override Channel&lt;TEvent&gt; CreateReceivingChannel()
+        {
+            return Channel.CreateUnbounded&lt;TEvent&gt;(receivingOptions);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[25,9,25,80,1],[26,9,26,10,1],[27,13,32,15,1],[34,13,39,15,1],[41,13,41,49,1],[42,9,42,10,1],[45,9,45,10,1],[46,13,46,69,1],[47,9,47,10,1],[50,9,50,10,1],[51,13,51,70,1],[52,9,52,10,1]]);
+    </script>
+  </body>
+</html>

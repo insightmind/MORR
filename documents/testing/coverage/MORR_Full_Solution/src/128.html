@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\Mouse\Events\MouseScrollEvent.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+namespace MORR.Modules.Mouse.Events
+{
+    /// &lt;summary&gt;
+    ///     A mouse scroll user interaction
+    /// &lt;/summary&gt;
+    public class MouseScrollEvent : MouseEvent
+    {
+        /// &lt;summary&gt;
+        ///     The amount of the wheel being scrolled.
+        ///     A positive value indicates that the wheel was rotated forward,
+        ///     away from the user; a negative value indicates that the wheel
+        ///     was rotated backward, toward the user.
+        ///     One wheel click is defined as WHEEL_DELTA, which is 120.
+        /// &lt;/summary&gt;
+        public short ScrollAmount { get; set; }
+
+        /// &lt;summary&gt;
+        ///     The handle of the window in which the mouse scroll occurred in String.
+        /// &lt;/summary&gt;
+        public string HWnd { get; set; }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,37,15,41,1],[15,42,15,46,1],[20,30,20,34,1],[20,35,20,39,1]]);
+    </script>
+  </body>
+</html>

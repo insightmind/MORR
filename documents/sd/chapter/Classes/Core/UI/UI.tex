@@ -1,0 +1,161 @@
+\subsection{UI}
+
+\begin{class}{App}
+	\clsdiagram[scale = 0.7]{resources/Classes/Core/UI/App.png}
+
+    \clsdcl{public partial class App : Application}
+
+    \clsdsp{Auto-generated WPF application class}
+
+\end{class}
+
+\subsection*{Controls. NotifyIcon}
+\begin{class}{NotifyIcon}
+	\clsdiagram[scale = 0.7]{resources/Classes/Core/UI/NotifyIcon.png}
+
+    \clsdcl{public class NotifyIcon : Control, IDisposable}
+
+    \clsdsp{Manages a tray icon}
+
+    \begin{attributes}
+        \attribute{public Uri IconUri}{The uri of the icon shown in the tray.}
+        \attribute{public string Tooltip}{The tooltip shown during hovering}
+        \attribute{public ICommand Command}{The command to execute on left click}
+        \attribute{public object CommandParameter}{The parameter of the command to execute on left click}
+        \attribute{public new ContextMenu ContextMenu}{The context menu to show on right click}
+    \end{attributes}
+
+   	\begin{constructors}
+        \begin{constructor}{public NotifyIcon()}{Initializes a NotifyIcon}
+        \end{constructor}
+    \end{constructors}
+    
+    \begin{methods}
+    	\begin{method}{public void Dispose()}{Frees all unmanaged resources}
+        \end{method}
+     \end{methods}
+
+\end{class}
+
+\subsection*{Dialogs}
+
+\begin{class}{ConfirmationDialog}
+	\clsdiagram[scale = 1]{resources/Classes/Core/UI/ConfirmationDialog.png}
+
+    \clsdcl{public partial class ConfirmationDialog : Window}
+
+    \clsdsp{A dialog shown when user clicks on the "Discard" button of the SaveDialog.}
+    
+    \begin{constructors}
+        \begin{constructor}{public ConfirmationDialog()}{Initializes a ConfirmationDialog.}
+        \end{constructor}
+     \end{constructors}
+
+\end{class}
+
+\begin{class}{ErrorDialog}
+	\clsdiagram[scale = 0.7]{resources/Classes/Core/UI/ErrorDialog.png}
+
+    \clsdcl{public partial class ErrorDialog : Window}
+
+    \clsdsp{A dialog shown when an error occured}
+
+    \begin{attributes}
+        \attribute{public string ErrorMessage}{Error message of the error dialog}
+    \end{attributes}
+    
+    \begin{constructors}
+        \begin{constructor}{public ErrorDialog(string errorMessage)}{Initializes an ErrorDialog with errorMessage}
+            \begin{parameters}
+                \para{String errorMessage}{A string with an error message}
+            \end{parameters}
+        \end{constructor}
+     \end{constructors}
+
+\end{class}
+
+\begin{class}{InfomationDialog}
+	\clsdiagram[scale = 0.7]{resources/Classes/Core/UI/InformationDialog.png}
+
+    \clsdcl{public partial class InformationDialog : Window }
+
+    \clsdsp{A dialog shown before the start of the recording}
+
+     \begin{constructors}
+        \begin{constructor}{public InformationDialog()}{Initializes an InformationDialog}
+        \end{constructor}
+     \end{constructors}
+
+\end{class}
+
+\begin{class}{SaveDialog}
+	\clsdiagram[scale = 0.7]{resources/Classes/Core/UI/SaveDialog.png}
+
+    \clsdcl{public partial class SaveDialog : Window}
+
+    \clsdsp{A dialog shown after the end of the recording}
+    
+    \begin{constructors}
+        \begin{constructor}{public SaveDialog()}{Initializes a SaveDialog}
+        \end{constructor}
+     \end{constructors}
+
+\end{class}
+
+\subsection*{ViewModels}
+
+\begin{class}{ApplicationViewModel}
+	\clsdiagram[scale = 0.7]{resources/Classes/Core/UI/ApplicationViewModel.png}
+
+    \clsdcl{public class ApplicationViewModel : DependencyObject}
+
+    \clsdsp{}
+
+	\begin{attributes}
+        \attribute{public bool IsRecording}{Current state of the recording process}
+    \end{attributes}    
+    
+    \begin{constructors}
+        \begin{constructor}{public ApplicationViewModel()}{Initializes an ApplicationViewModel}
+        \end{constructor}
+     \end{constructors}
+ 
+
+\end{class}
+
+\subsection*{Utility}
+
+\begin{class}{RelayCommand}
+	\clsdiagram[scale = 0.7]{resources/Classes/Core/UI/RelayCommand.png}
+
+    \clsdcl{public RelayCommand : ICommand }
+
+    \clsdsp{A concrete command that implements ICommand interface}
+
+	\begin{constructors}
+        \begin{constructor}{public RelayCommand(Action<object> execute, Predicate<object>? canExecute = null)}{Creates a new RelayCommand}
+        \begin{parameters}
+                \para{Action<object> execute}{The execution logic}
+                \para{Predicate<object>? canExecute = null}{The execution status logic, set to null}
+            \end{parameters}
+        \end{constructor}
+     \end{constructors}
+    
+    
+    \begin{methods}
+    	\begin{method}{public bool CanExecute(object parameter)}{Determines whether the RelayCommand can be executed in current state}
+            \return{bool}{True if this RelayCommand can be executed; otherwise, false.}
+            \begin{parameters}
+                \para{object parameter}{Data used by the RelayCommand}
+            \end{parameters}
+        \end{method}
+        \begin{method}{public void Execute(object parameter)}{Executes the RelayCommand}
+            \begin{parameters}
+               \para{object parameter}{Data used by the RelayCommand}
+            \end{parameters}
+        \end{method}
+        
+    \end{methods}
+
+\end{class}
+

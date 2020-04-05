@@ -1,0 +1,61 @@
+\chapter*{Document Version History}
+\label{ch:versionhistory}
+\begin{table}[h]
+\begin{tabular}{lll}
+\textbf{Revision} & \textbf{Date} & \textbf{Description}              \\
+\hline
+1.0.0             & 13.12.2019    & Creation and release of document. \\
+\hline
+1.1.0			  & 14.02.2020	  & Update software-design: \\
+&& Update CLI \\
+&& (Improved Command Pattern with additional commands) \\
+&& Update Shared \\
+&& (Altered EventQueue and StorageStrategies) \\
+&& Update CORE \\
+&& (renamed Recording to Session, removed CSV in favor of Json) \\
+&& Update Directory Structure design. \\                                                          
+&& Update BrowserExtension Shared section\\
+&& (Update EventType enum and serialize method)\\
+&& Update BrowserExtension Background section\\
+&& (Update methods of BackgroundScript and ICommunicationInterface)\\
+&& Update BrowserExtension Listeners section\\
+&& (Update factory methods)\\
+&& Update BrowserExtension Content section\\
+&& (Update method signature in DOMEventFactory)\\
+&& Update ClipboardModule section\\
+&& (Update producers methods, add new ClipboardEvents)\\
+&& Update KeyboardModule section\\
+&& (Update producers methods, update attributes in KeyboardInteractEvent)\\
+&& Update MouseModule section\\
+&& (Update producers methods, add MouseModuleConfiguration,\\
+&& update attributes in mouse events)\\
+&& Update WebBrowserModule section\\
+&& (Update producers methods, add WebBrowserModuleConfiguration,\\
+&& add classes for communication with WebExtension,\\
+&& add WebBrowserProducer abstract class)\\
+&& Update WindowManagementModule section\\
+&& (Update producers methods)
+\end{tabular}
+\end{table}
+\newpage
+\begin{table}[h]
+\begin{tabular}{lll}
+\hline
+1.1.0			  & 20.03.2020	  & Update software-design:\\
+&& Update Shared\\
+&& (Added constructors and property for injecting filesystem\\
+&& in ConfigurationManager, JsonDecoder, JsonEncoder, MpegEncoder, \\ 
+&& SessionManager. Changed properties in DesktopCaptureConfiguration,\\
+&& GlobalModuleConfiguration, SessionConfiguration)\\
+&& Update Core\\
+&& (Added CryptoHelper. Added ConfirmationDialog to UI)\\
+&& Update ClipboardModule\\
+&& (Changed StartCapture() method in Producers)\\
+&& Update KeyboardModule\\
+&& (Added new properties in KeyboardInteractEvent)\\
+&& Update MouseModule\\
+&& (Changed StartCapture() method in MouseMoveEventProducer)\\
+&& Update WindowManagementModule\\
+&& (Changed StartCapture() method in Producers)\\
+\end{tabular}
+\end{table}

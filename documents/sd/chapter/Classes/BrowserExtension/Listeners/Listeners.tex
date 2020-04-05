@@ -1,0 +1,368 @@
+\subsection{Listeners}
+%%Tab%%
+\begin{class}{TabListener}
+
+\clsdiagram[width=1.0\textwidth]{resources/Classes/BrowserExtension/Listeners/TabListener.png}
+
+\clsdcl{class TabListener implements IListener}
+
+\clsdsp{Listener responsible for recording events connected to the tab-API.}
+
+\begin{constructors}
+\begin{constructor}{constructor(callback: (event: BrowserEvent) => void)}{Create a new TabListener.}
+\begin{parameters}
+\para{callback : (event : BrowserEvent) => void}{The function to invoke on created events.}
+\end{parameters}
+\end{constructor}
+\end{constructors}
+\begin{methods}
+\begin{method}{public start() : void}{Start the listener. While the listener is running, it will create events and invoke the callback function on them.}
+\end{method}
+\begin{method}{public stop() : void}{Stop the listener.}
+\end{method}
+\end{methods}
+\end{class}
+
+\begin{class}{OpenTabEvent}
+
+\clsdiagram[width=0.5\textwidth]{resources/Classes/BrowserExtension/Listeners/OpenTabEvent.png}
+
+\clsdcl{class OpenTabEvent extends BrowserEvent}
+
+\clsdsp{An OpenTabEvent occurs when a new tab created. This does include the creation of a new browser window, which automatically creates at least one tab.
+As newly created tabs have not set an URL yet, the URL of the OpenTabEvent will always be set to 'url:unknown'.}
+
+\begin{constructors}
+\begin{constructor}{constructor(tabID : number, windowID: number)}{Create a new OpenTabEvent.}
+\begin{parameters}
+\para{tabID : number}{The ID of the newly created tab.}
+\para{windowID : number}{The ID of the window the tab with tabID belongs to.}
+\end{parameters}
+\end{constructor}
+\end{constructors}
+\end{class}
+
+\begin{class}{CloseTabEvent}
+
+\clsdiagram[width=0.5\textwidth]{resources/Classes/BrowserExtension/Listeners/CloseTabEvent.png}
+
+\clsdcl{class CloseTabEvent extends BrowserEvent}
+
+\clsdsp{A CloseTabEvent occurs when a tab is closed. This does include the closing of a browser window, where all attached tabs are automatically closed.}
+
+\begin{constructors}
+\begin{constructor}{constructor(tabID : number, windowID: number, url? : string)}{Create a new CloseTabEvent.}
+\begin{parameters}
+\para{tabID : number}{The ID of the closed tab.}
+\para{windowID : number}{The ID of the window the tab with tabID belongs to.}
+\para{url : string}{The URL of the webpage which was opened in the now closed tab or undefined if this information cannot be retrieved.}
+\end{parameters}
+\end{constructor}
+\end{constructors}
+\end{class}
+
+\begin{class}{SwitchTabEvent}
+
+\clsdiagram[width=0.8\textwidth]{resources/Classes/BrowserExtension/Listeners/SwitchTabEvent.png}
+
+\clsdcl{class SwitchTabEvent extends BrowserEvent}
+
+\clsdsp{A SwitchTabEvent occurs when the user switches between two existing tabs.}
+
+\begin{attributes}
+\attribute{public newTab : number}{The ID of the tab which gained focus.}
+\end{attributes}
+\begin{constructors}
+\begin{constructor}{constructor(tabID : number, windowID: number, newTabID : number, url : string)}{Create a new SwitchTabEvent.}
+\begin{parameters}
+\para{tabID : number}{The ID of the previously focused tab.}
+\para{windowID : number}{The ID of the window the tab with tabID belongs to.}
+\para{newTabID : number}{The ID of the newly focused tab.}
+\para{url : string}{The URL opened in the newly focused tab.}
+\end{parameters}
+\end{constructor}
+\end{constructors}
+\end{class}
+
+\begin{class}{NavigationEvent}
+
+\clsdiagram[width=0.5\textwidth]{resources/Classes/BrowserExtension/Listeners/NavigationEvent.png}
+
+\clsdcl{class NavigationEvent extends BrowserEvent}
+
+\clsdsp{A NavigationEvent occurs when the browser navigates to an URL. This also includes navigation/redirection without explicit user input.}
+
+\begin{constructors}
+\begin{constructor}{constructor(tabID : number, windowID: number, url : string)}{Create a new NavigationEvent.}
+\begin{parameters}
+\para{tabID : number}{The ID of the tab in which the navigation occured in.}
+\para{windowID : number}{The ID of the window the tab with tabID belongs to.}
+\para{url : string}{The URL that was navigated to.}
+\end{parameters}
+\end{constructor}
+\end{constructors}
+\end{class}
+
+\begin{class}{TabEventFactory}
+
+\clsdiagram[width=1.0\textwidth]{resources/Classes/BrowserExtension/Listeners/TabEventFactory.png}
+
+\clsdcl{class TabEventFactory}
+
+\clsdsp{The TabEventFactory is responsible for creating BrowserEvent objects from the information a TabListener gathers.}
+
+\begin{methods}
+\begin{method}{public createNavigationEvent(tabId : number, changeInfo : tabs.TabChangeInfo, tab : tabs.Tab) : NavigationEvent}{Create a new NavigationEvent from the input parameters.}
+\return{NavigationEvent}{A NavigationEvent.}
+\begin{parameters}
+\para{tabID : number}{The ID of the tab which provided the TabChangeInfo.}
+\para{changeInfo : tabs.TabChangeInfo}{The TabChangeInfo object created by the browser when navgiation occurs.}
+\para{tab : tabs.Tab}{The tab object associated with the TabChangeInfo}
+\end{parameters}
+\end{method}
+\begin{method}{public createSwitchTabEvent(activeInfo : tabs.TabActiveInfo, prevtab : tabs.Tab) : SwitchTabEvent}{Create a new SwitchTabEvent from the input parameters.}
+\return{SwitchTabEvent}{A SwitchTabEvent.}
+\begin{parameters}
+\para{activeInfo : tabs.TabActiveInfo}{The TabActiveInfo to create the event from.}
+\para{prevtab : tabs.Tab}{The tab which was active before the switch occured.}
+\end{parameters}
+\end{method}
+\begin{method}{public createCloseTabEvent(tabId : number, removeInfo: tabs.TabRemoveInfo, tab : tabs.Tab) : CloseTabEvent}{Create a new CloseTabEvent from the input parameters.}
+\return{CloseTabEvent}{A CloseTabEvent.}
+\begin{parameters}
+\para{tabId : number}{The ID of the tab which notified the caller.}
+\para{removeInfo : tabs.TabRemoveInfo}{The TabRemoveInfo to create the event from.}
+\para{tab : tabs.Tab}{The tab which was active when the tabs.TabRemoveInfo was created. If this tab was the closed tab, the URL can be recovered from this tab. Otherwise the URl of
+the created CloseTabEvent will be set to 'url:unknown'.}
+\end{parameters}
+\end{method}
+\begin{method}{public createOpenTabEvent(tab : tabs.Tab) : OpenTabEvent}{Create a new OpenTabEvent from the input parameters.}
+\return{OpenTabEvent}{An OpenTabEvent.}
+\begin{parameters}
+\para{tab : tabs.Tab}{The tab to create the event from.}
+\end{parameters}
+\end{method}
+\end{methods}
+\end{class}
+%%End Tab%%
+
+%%DOM%%
+\begin{class}{DOMListener}
+
+\clsdiagram[width=1.0\textwidth]{resources/Classes/BrowserExtension/Listeners/DOMListener.png}
+
+\clsdcl{class DOMListener implements IListener}
+
+\clsdsp{The DOMListener is responsible for recording events which occur in the context of websites. To do so, the DOMListener needs to inject a ContentScript into opened websites and collect the events sent by the ContentScript through the browser message API.}
+
+\begin{constructors}
+\begin{constructor}{constructor(callback : (event: BrowserEvent) => void)}{Create a new DOMListener.}
+\begin{parameters}
+\para{callback : (event : BrowserEvent) => void}{The function to invoke on created events.}
+\end{parameters}
+\end{constructor}
+\end{constructors}
+\begin{methods}
+\begin{method}{public start() : void}{Start the listener. While the listener is running, it will create events and invoke the callback function on them.}
+\end{method}
+\begin{method}{public stop() : void}{Stop the listener.}
+\end{method}
+\end{methods}
+\end{class}
+
+\begin{class}{TextSelectionEvent}
+
+\clsdiagram[width=0.5\textwidth]{resources/Classes/BrowserExtension/Listeners/TextSelectionEvent.png}
+
+\clsdcl{class TextSelectionEvent extends BrowserEvent}
+
+\clsdsp{A TextSelectionEvent occurs when the user selects text on a website. This event should not be triggered while the text selection is still pending, i. e. when the user has started selecting text, but not yet released the mouse button.}
+
+\begin{attributes}
+\attribute{public textSelection : string}{The selected text.}
+\end{attributes}
+\begin{constructors}
+\begin{constructor}{constructor(tabID : number, windowID: number, textSelection : string, url : string)}{Create a new TextSelectionEvent.}
+\begin{parameters}
+\para{tabID : number}{The ID of the tab in which the event occured in.}
+\para{windowID : number}{The ID of the window the tab with tabID belongs to.}
+\para{url : string}{The URL of the open webpage.}
+\para{textSelection : string}{The selected text.}
+\end{parameters}
+\end{constructor}
+\end{constructors}
+\begin{methods}
+\begin{method}{static deserialize(parsed : any, sender? : chrome.runtime.MessageSender) : TextSelectionEvent}{Deserialize a TextSelectionEvent from the supplied parsed JSON.}
+\begin{parameters}
+\para{parsed : any}{The parsed JSON to deserialize from.}
+\para{sender? : chrome.runtime.MessageSender}{The sender object of the serialized data. Will usually be a tabs.Tab.}
+\end{parameters}
+\end{method}
+\end{methods}
+\end{class}
+
+\begin{class}{TextInputEvent}
+
+\clsdiagram[width=0.5\textwidth]{resources/Classes/BrowserExtension/Listeners/TextInputEvent.png}
+
+\clsdcl{class TextInputEvent extends BrowserEvent}
+
+\clsdsp{A TextInputEvent occurs when the user inputs text into a DOM element, e. g. a textbox.}
+
+\begin{attributes}
+\attribute{public text : string}{The input text.}
+\attribute{public target : string}{String describing the target element which received the input, e. g. a textbox.}
+\end{attributes}
+\begin{constructors}
+\begin{constructor}{constructor(tabID : number, windowID: number, text : string, target : string, url : string)}{Create a new TextInputEvent.}
+\begin{parameters}
+\para{tabID : number}{The ID of the tab in which the event occured in.}
+\para{windowID : number}{The ID of the window the tab with tabID belongs to.}
+\para{text : string}{The input text.}
+\para{target}{String describing the target element which received the input, e. g. a textbox.}
+\para{url : string}{The URL of the open webpage.}
+\end{parameters}
+\end{constructor}
+\end{constructors}
+\begin{methods}
+\begin{method}{static deserialize(parsed : any, sender? : chrome.runtime.MessageSender) : TextInputEvent}{Deserialize a TextInputEvent from the supplied parsed JSON.}
+\begin{parameters}
+\para{parsed : any}{The parsed JSON to deserialize from.}
+\para{sender? : chrome.runtime.MessageSender}{The sender object of the serialized data. Will usually be a tabs.Tab.}
+\end{parameters}
+\end{method}
+\end{methods}
+\end{class}
+
+\begin{class}{ButtonClickEvent}
+
+\clsdiagram[width=0.5\textwidth]{resources/Classes/BrowserExtension/Listeners/ButtonClickEvent.png}
+
+\clsdcl{class ButtonClickEvent extends BrowserEvent}
+
+\clsdsp{A ButtonClickEvent occurs when the user clicks on a button element on a website.}
+
+\begin{attributes}
+\attribute{public buttonTitle : string}{The title/label of the button which was clicked.}
+\attribute{public buttonHref : string}{Optional. The URL which the clicked button links to.}
+\end{attributes}
+\begin{constructors}
+\begin{constructor}{constructor(tabID : number, windowID: number, buttonTitle : string, url : string, buttonHref? : string)}{Create a new ButtonClickEvent.}
+\begin{parameters}
+\para{tabID : number}{The ID of the tab in which the event occured in.}
+\para{windowID : number}{The ID of the window the tab with tabID belongs to.}
+\para{buttonTitle : string}{The title/label of the button which was clicked.}
+\para{url : string}{The URL of the open webpage.}
+\para{buttonHref : string}{Optional. The URL which the clicked button links to.}
+\end{parameters}
+\end{constructor}
+\end{constructors}
+\begin{methods}
+\begin{method}{static deserialize(parsed : any, sender? : chrome.runtime.MessageSender) : ButtonClickEvent}{Deserialize a ButtonClickEvent from the supplied parsed JSON.}
+\begin{parameters}
+\para{parsed : any}{The parsed JSON to deserialize from.}
+\para{sender? : chrome.runtime.MessageSender}{The sender object of the serialized data. Will usually be a tabs.Tab.}
+\end{parameters}
+\end{method}
+\end{methods}
+\end{class}
+
+\begin{class}{HoverEvent}
+
+\clsdcl{class HoverEvent extends BrowserEvent}
+
+\clsdiagram[width=0.5\textwidth]{resources/Classes/BrowserExtension/Listeners/HoverEvent.png}
+
+\clsdsp{A HoverEvent occurs when the user hovers the mouse over an element on a website.}
+
+\begin{attributes}
+\attribute{public target : string}{String describing the element which was hovered.}
+\end{attributes}
+\begin{constructors}
+\begin{constructor}{constructor(tabID : number, windowID: number, target : string, url : string)}{Create a new HoverEvent.}
+\begin{parameters}
+\para{tabID : number}{The ID of the tab in which the event occured in.}
+\para{windowID : number}{The ID of the window the tab with tabID belongs to.}
+\para{target : string}{String describing the element which was hovered.}
+\para{url : string}{The URL of the open webpage.}
+\end{parameters}
+\end{constructor}
+\end{constructors}
+\begin{methods}
+\begin{method}{static deserialize(parsed : any, sender? : chrome.runtime.MessageSender) : HoverEvent}{Deserialize a HoverEvent from the supplied parsed JSON.}
+\begin{parameters}
+\para{parsed : any}{The parsed JSON to deserialize from.}
+\para{sender? : chrome.runtime.MessageSender}{The sender object of the serialized data. Will usually be a tabs.Tab.}
+\end{parameters}
+\end{method}
+\end{methods}
+\end{class}
+%%End DOM%%
+
+%%Download%%
+\begin{class}{DownloadListener}
+
+\clsdiagram[width=0.5\textwidth]{resources/Classes/BrowserExtension/Listeners/DownloadListener.png}
+
+\clsdcl{class DownloadListener implements IListener}
+
+\clsdsp{The DownloadListener is responsible for recording events connected to the download browser-API.}
+
+\begin{constructors}
+\begin{constructor}{constructor(callback: (event : BrowserEvent) => void)}{Create a new DownloadListener.}
+\begin{parameters}
+\para{callback : (event : BrowserEvent) => void}{The function to invoke on created events.}
+\end{parameters}
+\end{constructor}
+\end{constructors}
+\begin{methods}
+\begin{method}{public start() : void}{Start the listener. While the listener is running, it will create events and invoke the callback function on them.}
+\end{method}
+\begin{method}{public stop() : void}{Stop the listener.}
+\end{method}
+\end{methods}
+\end{class}
+
+\begin{class}{DownloadEvent}
+
+\clsdiagram[width=0.5\textwidth]{resources/Classes/BrowserExtension/Listeners/DownloadEvent.png}
+
+\clsdcl{class DownloadEvent extends BrowserEvent}
+
+\clsdsp{A DownloadEvent occurs when the user starts downloading a file.}
+
+\begin{attributes}
+\attribute{public mimeType : string}{The MIME type of the downloaded file.}
+\attribute{public fileURL : string}{The URL of the downloaded file.}
+\end{attributes}
+\begin{constructors}
+\begin{constructor}{constructor(tabID : number, windowID : number, mimeType : string, fileURL : string, url : string)}{Create a new DownloadEvent.}
+\begin{parameters}
+\para{tabID : number}{The ID of the tab in which the event occured in.}
+\para{windowID : number}{The ID of the window the tab with tabID belongs to.}
+\para{mimeType : string}{The MIME type of the downloaded file.}
+\para{fileURL : string}{The URL of the downloaded file.}
+\para{url : string}{The URL of the opened webpage.}
+\end{parameters}
+\end{constructor}
+\end{constructors}
+\end{class}
+
+\begin{class}{DownloadEventFactory}
+
+\clsdiagram[width=0.5\textwidth]{resources/Classes/BrowserExtension/Listeners/DownloadEventFactory.png}
+
+\clsdcl{class DownloadEventFactory}
+
+\clsdsp{The DownloadEventFactory is responsible for creating DownloadEvent objects from the information a DownloadListener gathers.}
+
+\begin{methods}
+\begin{method}{createEvent(downloadItem: downloads.DownloadItem) : Promise<DownloadEvent>}{Asynchronously create a new DownloadEvent from a downloads.DownloadItem}
+\return{Promise<DownloadEvent>}{A promise which will be filled with a new DownloadEvent.}
+\begin{parameters}
+\para{downloadItem : downloads.DownloadItem}{The DownloadItem created by the browser when a download was started.}
+\end{parameters}
+\end{method}
+\end{methods}
+\end{class}
+%%End Download%%

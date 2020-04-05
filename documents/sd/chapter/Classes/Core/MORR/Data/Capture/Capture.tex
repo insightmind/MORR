@@ -1,0 +1,125 @@
+\subsection*{MORR.Core.Data.Capture}
+
+\begin{class}{CaptureException}
+    \clsdiagram{resources/Classes/Core/MORR/Data/Capture/CaptureException.png}
+
+    \clsdcl{public class CaptureException : Exception}
+
+    \clsdsp{A generic capture exception that all specialized capture exceptions derive from.}
+    
+    \begin{constructors}
+        \begin{constructor}{public CaptureException()}{Creates a new instance of a CaptureException without any specific error message.}
+        \end{constructor}
+        \begin{constructor}{public Exception(string message)}{Creates a new instance of a CaptureException with the specified error message.}
+            \begin{parameters}
+                \para{string message}{The error message to construct the instance with.}
+            \end{parameters}
+        \end{constructor}
+        \begin{constructor}{public CaptureException(string message, Exception innerException)}{Creates a new instance of a CaptureException with the specified error message and inner exception.}
+            \begin{parameters}
+                \para{string message}{The error message to construct the instance with.}
+                \para{Exception innerException}{The inner exception to construct the instance with.}
+            \end{parameters}
+        \end{constructor}
+    \end{constructors}
+\end{class}
+
+\subsection*{MORR.Core.Data.Capture.Video}
+
+\begin{class}{VideoSample}
+    \clsdiagram{resources/Classes/Core/MORR/Data/Capture/Video/VideoSample.png}
+
+    \clsdcl{public class VideoSample : Event}
+
+    \clsdsp{A single video capture sample.}  
+\end{class}
+
+\begin{class}{DirectXVideoSample}
+    \clsdiagram{resources/Classes/Core/MORR/Data/Capture/Video/DirectXVideoSample.png}
+
+    \clsdcl{public class DirectXVideoSample : VideoSample}
+    
+    \clsdsp{A single video capture sample in DirectX format.}
+
+    \begin{attributes}
+        \attribute{public IDirect3DSurface Surface \{ get; \}}{The surface containing the data for this sample.}
+    \end{attributes}
+\end{class}
+
+\subsection*{MORR.Core.Data.Capture.Video.Exceptions}
+
+\begin{class}{VideoCaptureException}
+    \clsdiagram{resources/Classes/Core/MORR/Data/Capture/Video/Exceptions/VideoCaptureException.png}
+
+    \clsdcl{public class VideoCaptureException : CaptureException}
+
+    \clsdsp{An exception thrown if video sample capturing fails.}
+
+    \begin{constructors}
+        \begin{constructor}{public VideoCaptureException()}{Creates a new instance of a VideoCaptureException without any specific error message.}
+        \end{constructor}
+        \begin{constructor}{public Exception(string message)}{Creates a new instance of a VideoCaptureException with the specified error message.}
+            \begin{parameters}
+                \para{string message}{The error message to construct the instance with.}
+            \end{parameters}
+        \end{constructor}
+        \begin{constructor}{public VideoCaptureException(string message, Exception innerException)}{Creates a new instance of a VideoCaptureException with the specified error message and inner exception.}
+            \begin{parameters}
+                \para{string message}{The error message to construct the instance with.}
+                \para{Exception innerException}{The inner exception to construct the instance with.}
+            \end{parameters}
+        \end{constructor}
+    \end{constructors}
+\end{class}
+
+\subsection*{MORR.Core.Data.Capture.Video.Desktop}
+
+\begin{class}{DesktopCapture}
+    \clsdiagram{resources/Classes/Core/MORR/Data/Capture/Video/Desktop/DesktopCapture.png}
+
+    \clsdcl{public class DesktopCapture : IModule}
+
+    \clsdsp{Capture video from the desktop using the Windows API.}
+
+    \begin{attributes}
+        \attribute{public bool IsActive \{ get; set; \}}{Indicates whether the module is active. True if it is active, false otherwise.}
+        \attribute{public Guid Identifier \{ get; \}}{The identifier of the module.}
+    \end{attributes}
+
+    \begin{methods}
+        \begin{method}{public void Initialize(bool isEnabled)}{Initializes the module.}
+            \begin{parameters}
+                \para{bool isEnabled}{Indicates whether the module should be enabled. True if it should be enabled, false otherwise.}
+            \end{parameters}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{DesktopCaptureConfiguration}
+    \clsdiagram{resources/Classes/Core/MORR/Data/Capture/Video/Desktop/DesktopCaptureConfiguration.png}
+
+    \clsdcl{public class DesktopCaptureConfiguration : IConfiguration}
+
+    \clsdsp{Encapsulates all desktop capture configuration options.}
+
+    \begin{attributes}
+        \attribute{public Index MonitorIndex \{ get; set;\}}{The index of the monitor to capture.}
+        \attribute{public bool PromptUserForMonitorSelection \{ get; set;\}}{Indicates whether the user should be prompted to manually select the monitor to capture. True if the user should be prompted, false otherwise.}
+    \end{attributes}
+
+    \begin{methods}
+        \begin{method}{public void Parse(RawConfiguration configuration)}{Parses the configuration from the provided value.}
+            \begin{parameters}
+                \para{RawConfiguration configuration}{The configuration value to parse from.}
+            \end{parameters}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{VideoSampleProducer}
+    \clsdiagram{resources/Classes/Core/MORR/Data/Capture/Video/Desktop/VideoSampleProducer.png}
+
+    \clsdcl{public class VideoSampleProducer : DefaultEncodeableEventQueue<DirectXVideoSample>}
+
+    \clsdsp{Provides the captured video samples.}
+\end{class}

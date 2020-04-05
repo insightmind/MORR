@@ -1,0 +1,18 @@
+@startuml
+skinparam linetype ortho
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+class DownloadListener {
+    + DownloadListener(callback : function(BrowserEvent) : void)
+    + start()
+    + stop()
+}
+interface IListener {
+    + IListener(callback : function(BrowserEvent) : void)
+    + start() : void
+    + stop() : void
+}
+DownloadListener .UP.|> IListener : implements
+DownloadListener ..> DownloadEvent : creates
+
+@enduml

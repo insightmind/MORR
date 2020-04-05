@@ -1,0 +1,22 @@
+@startuml ProcessCommand
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+hide empty fields
+
+!startsub default
+class ProcessCommand {
+    + <<create>> ProcessCommand(sessionManager: ISessionManager)
+    + <<create>> ProcessCommand(sessionManager: ISessionManager, consoleFormatter: IConsoleFormatter)
+    + Execute(options: ProcessOptions) : int
+}
+!endsub
+
+!includesub ProcessOptions.puml!default
+!includesub ../Command.puml!default
+!includesub ../CommandOptions.puml!default
+
+ProcessOptions --|> CommandOptions
+ProcessCommand ..> ProcessOptions : "uses"
+ProcessCommand ..|> "ICommand<T: CommandOptions>"
+
+@enduml

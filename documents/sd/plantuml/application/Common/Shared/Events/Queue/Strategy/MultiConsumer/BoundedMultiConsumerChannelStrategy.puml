@@ -1,0 +1,21 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
+
+class "BoundedMultiConsumerChannelStrategy<TEvent>" {
+  
+}
+interface "IEventQueueStorageStrategy<TEvent>"
+"IEventQueueStorageStrategy<TEvent>" <|-- "MultiConsumerChannelStrategy<TEvent>"
+abstract class "MultiConsumerChannelStrategy<TEvent>" {
+    + IsClosed : bool <<get>>
+   
+    + GetEvents(token: CancellationToken) : IAsyncEnumerable<TEvent>
+    + Enqueue(event: T) : void
+    + Open() : void
+    + Close() : void
+    }
+"MultiConsumerChannelStrategy<TEvent>" <|-- "BoundedMultiConsumerChannelStrategy<TEvent>"
+!endsub
+@enduml

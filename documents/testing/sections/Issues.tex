@@ -1,0 +1,60 @@
+\newcommand{\bug}[3]{\begin{minipage}{\textwidth}\textbf{Bug:} #1 \\ \textbf{Identified cause:} #2 \\ \textbf{Implemented fix:} #3 \end{minipage}\vskip.2\baselineskip}
+\newcommand{\knownissue}[3]{\begin{minipage}{\textwidth}\textbf{Prerequisite:} #1 \par\vspace{4pt} \textbf{Actual behavior:} #2 \par\vspace{4pt} \textbf{Desired behavior:} #3 \end{minipage}\vskip.2\baselineskip}
+
+\chapter{Resolved Issues}
+
+The primary purpose of the testing phase is to identify and correct issues with the MORR application. This chapter lists the issues that were found, along with their identified causes and the fixes that were implemented to resolve them.
+
+\raggedright
+
+\section{Core}
+
+\bug{DllNotFoundException thrown for vcruntime140\_cor3.dll when closing the application}{The mouse module has a dependency on PresentationCore.dll, which in turn has a dependency on DirectWriteForwarder.dll, which has a dependency on vcruntime140\_cor3.dll. As there is no direct dependency between the module and the DLL, the DLL will not be available to the application, causing the exception to be thrown.}{Copy vcruntime140\_cor3.dll to the output directory so it is available to the application.}
+\bug{Using the GraphicsCapturePicker when running from the UI causes an exception to be thrown.}{When running from the UI, there is no console window attached to the process and there may not always be an active window associated with the process when the picking mechanism is activated. As such, the call to IInitializeWithWindow.SetWindow on the GraphicsCapturePicker will not set a valid window and the attempt to pick a monitor or window will fail.}{When running from the UI, create a new Window from the WPF context that stays open for the duration of the picking operation and will be used in the call to IInitializeWithWindow.SetWindow.}
+
+\section{Shared}
+\bug{MultiConsumerChannelStrategy race condition}{The MultiConsumerChannelStrategy allows the queue to accept multiple consumers at once. Therefore GetEvents() may get called from different threads at the same time. As a result and because of a lack of synchronization primitives in the class, a race condition could occur. This race condition is would allow more consumers to be allowed to GetEvents() than specified by the maxChannelConsumers property defined.}{This race condition has been fixed by closing the critical sections via a Mutex primitve.}
+
+\bug{Race condition in both MultiConsumerChannelStrategy as well as SingleConsumerChannelStrategy}{ In both implementations of the event queue strategy a race condition could occur in which a already opened or closed queue would be not accessible or unexpectedly accessible by a consumer. This leads to some ambiguities to the connection and general producer consumer pattern.}{This race condition has been fixed by closing the critical sections via a Mutex primitve.}
+
+\section{Modules}
+
+\subsection{ClipboardModule}
+\bug{Copying non-text data into clipboard causes the crash of the application.}{GetClipboardText() method in NativeClipboard throws an exception which was not handled when user copies non-text data.}{ Handle the exception by not creating an event.}
+\bug{ClipboardCopyEvent wasn't recorded when user restarts the recording without quitting the application.}{ClipboardWindowMessageSink was disposed when user stops the recording and not recreated on the restart.}{Move the creating of ClipboardWindowMessageSink instance in StartCapture() method.}
+
+\subsection{KeyboardModule}
+\bug{Certain keypresses, especially when the ALT key is held down, are not recorded as events.}{System keys (such as F10 or ALT-combinations) trigger a specific WM\_SYSKEYDOWN message instead of WM\_KEYDOWN.}{Handle WM\_SYSKEYDOWN messages in addition to WM\_KEYDOWN.}
+
+\subsection{WebBrowserModule}
+\bug{The WebBrowserModule will accept connections from the browser extension even when the WebBrowserModule is deactivated.}{The internal listener will get started in the initialization routine, disregarding the passed parameter.}{The interal listener will only be started if "isEnabled" is true.}
+
+\chapter{Known issues}
+
+This chapter lists issues that have been identified and will not be fixed.
+
+\subsection{Core}
+
+\knownissue{A recording with video capture is active.}{When the system is put under high load, video capture may occasionally fail. In such cases, the user will not notice any change, as the recording indicator will stay visible.}{The video capture does not fail or the failure is conveyed to the user through the recording indicator.}
+\knownissue{Video capture is enabled and uses the MonitorPicker (either due to the configuration or by using Windows 10 1809).}{When starting a recording but cancelling the monitor/window selection through the "Cancel" button, MORR will close.}{MORR stays open and displays an error dialog.}
+\knownissue{Video capture is enabled and uses the MonitorPicker (either due to the configuration or by using Windows 10 1809).}{When starting a recording for the first time, the monitor/window selection sets the recording format for all subsequent recordings (until MORR is restarted):
+\begin{itemize}
+\item Selecting two monitors first and a single monitor in a subsequent recording leads to a distorted recording
+\item Selecting a single monitor first and two monitors in a subsequent recording leads to a recording only containing one monitor
+\end{itemize}}
+{The recordings are completely independent from one another.}
+\knownissue{A syntactically valid configuration is provided, but misses a subconfiguration for a specified component (e.g. JsonEncoder is enabled, but MORR.Core.Data.Transcoding.Json.JsonEncoderConfiguration is missing).}{MORR will start without an error, but crash as soon as a recording is started.}{The configuration error is detected during startup and the user is notified of this.}
+
+\subsection{Modules}
+
+\knownissue{A recording is active.}{Some events (clipboard copy event, clipboard cut event, clipboard paste event, keyboard interact event, mouse click event, mouse scroll event, window focus event, window movement event, window resizing event, window state changed event) are not recored if they occur in an application running with higher privileges than MORR (this includes the Windows start menu).}{Events are recorded regardless of privlege level.}
+
+\subsubsection{ClipboardModule}
+
+\knownissue{A recording is active and the clipboard module is activated.}{Depending on the application the user is using whilst cutting a selection, a ClipboardCopyEvent may be generated instead of a ClipboardCutEvent.}{When a user cuts a selection, a corresponding ClipboardCutEvent is generated regardless of the application that is being used.}
+\knownissue{A recording is active and the clipboard module is activated.}{Depending on the application the user is using whilst pasting from the clipboard, no event may be generated.}{When a user pastes from the clipboard, a corresponding ClipboardPasteEvent is generated regardless of the application that is being used.}
+\knownissue{A recording is active and the clipboard module is activated.}{Clipboard interactions may generate multiple events.}{Clipboard interactions should only generate one event for each interaction.}
+
+\subsubsection{WebBrowserModule}
+
+\knownissue{MORR is running, but no recording has been started since MORR was launched; the WebBrowserModule is enabled and the web extension is already running.}{When starting a recording, the web extension may take up to 5 seconds to start recording (as indicated by its status icon).}{In accordance with the Functional Specifications Document, the delay should be no more than 1 second.}

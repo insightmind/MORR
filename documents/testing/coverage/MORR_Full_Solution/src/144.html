@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\Clipboard\Native\NativeClipboard.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Runtime.InteropServices;
+
+namespace MORR.Modules.Clipboard.Native
+{
+    internal class NativeClipboard : INativeClipboard
+    {
+        #region Enums
+
+        public enum ClipboardFormat
+        {
+            CF_UNICODETEXT = 13
+        }
+
+        #endregion
+
+        #region Clipboard text helper
+
+        /// &lt;summary&gt;
+        ///     Gets the text from the clipboard
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;hwnd&quot;&gt;Pointer to the window that currently has clipboard&lt;/param&gt;
+        /// &lt;returns&gt;String representing text from the clipboard&lt;/returns&gt;
+        public string GetClipboardText()
+        {
+            OpenClipboard(GetOpenClipboardWindow());
+
+            //Gets pointer to clipboard data in the selected format
+            var clipboardDataPointer = GetClipboardData((uint) ClipboardFormat.CF_UNICODETEXT);
+
+            var clipboardLock = GlobalLock(clipboardDataPointer);
+
+            var text = Marshal.PtrToStringAuto(clipboardLock);
+
+            GlobalUnlock(clipboardLock);
+
+            CloseClipboard();
+
+            if (text == null)
+            {
+                throw new Exception(&quot;Failed to get clipboard text.&quot;);
+            }
+
+            return text;
+        }
+
+        short INativeClipboard.RegisterClass(ref INativeClipboard.WindowClass lpWndClass)
+        {
+            return RegisterClass(ref lpWndClass);
+        }
+
+        IntPtr INativeClipboard.CreateWindowEx(int dwExStyle,
+                                               [MarshalAs(UnmanagedType.LPWStr)] string lpClassName,
+                                               [MarshalAs(UnmanagedType.LPWStr)] string lpWindowName,
+                                               int dwStyle,
+                                               int x,
+                                               int y,
+                                               int nWidth,
+                                               int nHeight,
+                                               IntPtr hWndParent,
+                                               IntPtr hMenu,
+                                               IntPtr hInstance,
+                                               IntPtr lpParam)
+        {
+            return CreateWindowEx(dwExStyle, lpClassName, lpWindowName, dwStyle, x, y, nWidth, nHeight, hWndParent,
+                                  hMenu,
+                                  hInstance, lpParam);
+        }
+
+        bool INativeClipboard.AddClipboardFormatListener(IntPtr hwnd)
+        {
+            return AddClipboardFormatListener(hwnd);
+        }
+
+        IntPtr INativeClipboard.DefWindowProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+        {
+            return DefWindowProc(hWnd, msg, wParam, lParam);
+        }
+
+        bool INativeClipboard.RemoveClipboardFormatListener(IntPtr hwnd)
+        {
+            return RemoveClipboardFormatListener(hwnd);
+        }
+
+        bool INativeClipboard.DestroyWindow(IntPtr hWnd)
+        {
+            return DestroyWindow(hWnd);
+        }
+
+        #endregion
+
+        #region DllImports
+
+        [DllImport(&quot;user32.dll&quot;)]
+        private static extern bool OpenClipboard(IntPtr hWndNewOwner);
+
+        [DllImport(&quot;user32.dll&quot;)]
+        private static extern bool CloseClipboard();
+
+        [DllImport(&quot;user32.dll&quot;)]
+        private static extern IntPtr GetOpenClipboardWindow();
+
+        [DllImport(&quot;user32.dll&quot;)]
+        private static extern IntPtr GetClipboardData(uint uFormat);
+
+        [DllImport(&quot;kernel32.dll&quot;)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool GlobalUnlock(IntPtr hMem);
+
+        [DllImport(&quot;kernel32.dll&quot;)]
+        private static extern IntPtr GlobalLock(IntPtr hMem);
+
+
+        [DllImport(&quot;user32.dll&quot;, EntryPoint = &quot;CreateWindowExW&quot;)]
+        private static extern IntPtr CreateWindowEx(int dwExStyle,
+                                                    [MarshalAs(UnmanagedType.LPWStr)] string lpClassName,
+                                                    [MarshalAs(UnmanagedType.LPWStr)] string lpWindowName,
+                                                    int dwStyle,
+                                                    int x,
+                                                    int y,
+                                                    int nWidth,
+                                                    int nHeight,
+                                                    IntPtr hWndParent,
+                                                    IntPtr hMenu,
+                                                    IntPtr hInstance,
+                                                    IntPtr lpParam);
+
+        [DllImport(&quot;user32.dll&quot;, EntryPoint = &quot;RegisterClassW&quot;)]
+        private static extern short RegisterClass(ref INativeClipboard.WindowClass lpWndClass);
+
+
+        [DllImport(&quot;user32.dll&quot;)]
+        private static extern bool DestroyWindow(IntPtr hWnd);
+
+        [DllImport(&quot;user32.dll&quot;)]
+        private static extern IntPtr DefWindowProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
+
+        [DllImport(&quot;user32.dll&quot;, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool AddClipboardFormatListener(IntPtr hwnd);
+
+        [DllImport(&quot;user32.dll&quot;, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool RemoveClipboardFormatListener(IntPtr hwnd);
+
+        #endregion
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[25,9,25,10,0],[26,13,26,53,0],[29,13,29,96,0],[31,13,31,66,0],[33,13,33,63,0],[35,13,35,41,0],[37,13,37,30,0],[39,13,39,30,0],[40,13,40,14,0],[41,17,41,70,0],[44,13,44,25,0],[45,9,45,10,0],[48,9,48,10,1],[49,13,49,50,1],[50,9,50,10,1],[64,9,64,10,1],[65,13,67,55,1],[68,9,68,10,1],[71,9,71,10,1],[72,13,72,53,1],[73,9,73,10,1],[76,9,76,10,1],[77,13,77,61,1],[78,9,78,10,1],[81,9,81,10,1],[82,13,82,56,1],[83,9,83,10,1],[86,9,86,10,1],[87,13,87,40,1],[88,9,88,10,1]]);
+    </script>
+  </body>
+</html>

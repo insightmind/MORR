@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\MORRTest\Session\SessionManagerTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using MORR.Core;
+using MORR.Core.Configuration;
+using MORR.Core.Data.Transcoding;
+using MORR.Core.Modules;
+using MORR.Core.Session;
+using MORR.Core.Session.Exceptions;
+using MORR.Shared.Utility;
+using MORRTest.TestHelper.Decoder;
+using MORRTest.TestHelper.Encoder;
+using SharedTest.TestHelpers.INativeHook;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
+using System.Diagnostics;
+using System.IO;
+using System.IO.Abstractions.TestingHelpers;
+using System.Reflection;
+using System.Threading;
+
+namespace MORRTest.Session
+{
+    [TestClass]
+    public class SessionManagerTest
+    {
+        private SessionManager sessionManager;
+
+        /* MOCKS */
+        private CompositionContainer container;
+        private FilePath testFilePath;
+        private SessionConfiguration config;
+        private TestEncoder encoder;
+        private TestDecoder decoder;
+        private Mock&lt;IModuleManager&gt; moduleManagerMock;
+        private Mock&lt;IConfigurationManager&gt; configurationManagerMock;
+        private Mock&lt;IBootstrapper&gt; bootstrapperMock;
+        private MockFileSystem fileSystemMock;
+
+        [TestInitialize]
+        public void BeforeTest()
+        {
+            container = new CompositionContainer();
+            testFilePath = new FilePath(@&quot;C:\test&quot;, true);
+            config = new SessionConfiguration();
+            encoder = new TestEncoder();
+            decoder = new TestDecoder();
+
+            moduleManagerMock = new Mock&lt;IModuleManager&gt;();
+            configurationManagerMock = new Mock&lt;IConfigurationManager&gt;();
+            fileSystemMock = new MockFileSystem();
+            bootstrapperMock = new Mock&lt;IBootstrapper&gt;();
+
+            var hookMock = new HookNativeMethodsMock();
+            hookMock.AllowLibraryLoad();
+        }
+
+        [TestCleanup]
+        public void AfterTest()
+        {
+            container.Dispose();
+            container = null;
+            testFilePath = null;
+            config = null;
+            encoder = null;
+            decoder = null;
+            moduleManagerMock = null;
+            configurationManagerMock = null;
+            fileSystemMock = null;
+            bootstrapperMock = null;
+        }
+
+        /// &lt;summary&gt;
+        /// Prepares the bootstrapper by setting up the mock so it
+        /// loads the test imports correctly and composes the parts needed for the tests.
+        /// &lt;/summary&gt;
+        private void PrepareBootstrapper()
+        {
+            Debug.Assert(container != null);
+            Debug.Assert(bootstrapperMock != null);
+
+            bootstrapperMock.Setup(mock =&gt; mock.ComposeImports(It.IsAny&lt;object&gt;()))?
+                .Callback&lt;object&gt;((composeObject) =&gt; container.ComposeParts(composeObject));
+        }
+
+        /// &lt;summary&gt;
+        /// Configures a default config for the test which specifies the
+        /// encoder and decoders in use and defines the default recording directory.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;usingDecoder&quot;&gt;&lt;/param&gt;
+        private void ConfigureDefaultConfig(bool usingDecoder = true)
+        {
+            Debug.Assert(config != null);
+
+            if (usingDecoder)
+            {
+                config.Decoders = new[] { typeof(TestDecoder) };
+            }
+            
+            config.Encoders = new[] { typeof(TestEncoder) };
+
+            var assemblyPath = Assembly.GetExecutingAssembly().Location;
+            var validPath = Path.GetDirectoryName(assemblyPath) + &quot;\\&quot;;
+
+            config.RecordingDirectory = new DirectoryPath(validPath);
+        }
+
+        /// &lt;summary&gt;
+        /// Initializes the SessionManager using all provided mocks and
+        /// test objects. It also makes sure all objects are correctly imported into
+        /// the session manager.
+        /// &lt;/summary&gt;
+        private void InitializeSessionManager()
+        {
+            Debug.Assert(encoder != null);
+            Debug.Assert(decoder != null);
+            Debug.Assert(config != null);
+            Debug.Assert(container != null);
+
+            container.ComposeExportedValue&lt;IEncoder&gt;(encoder);
+            container.ComposeExportedValue&lt;IDecoder&gt;(decoder);
+            container.ComposeExportedValue(config);
+            PrepareBootstrapper();
+
+            Debug.Assert(bootstrapperMock?.Object != null);
+            Debug.Assert(moduleManagerMock?.Object != null);
+            Debug.Assert(configurationManagerMock?.Object != null);
+            Debug.Assert(fileSystemMock != null);
+
+            sessionManager = new SessionManager(testFilePath, bootstrapperMock.Object, configurationManagerMock.Object, moduleManagerMock.Object, fileSystemMock);
+        }
+
+        /// &lt;summary&gt;
+        /// Tests if the initializer correctly executes on correct parameters.
+        /// &lt;/summary&gt;
+        [TestMethod]
+        public void TestSessionManager_CorrectInitialization()
+        {
+            /* GIVEN */
+            ConfigureDefaultConfig();
+
+            /* WHEN */
+            InitializeSessionManager();
+
+            /* THEN */
+            Debug.Assert(configurationManagerMock != null, &quot;ConfigurationManagerMock should not be dismissed!&quot;);
+
+            Assert.IsNotNull(sessionManager, &quot;SessionManager unexpectedly null!&quot;);
+            configurationManagerMock.Verify(mock =&gt; mock.LoadConfiguration(testFilePath), Times.Once);
+        }
+
+        /// &lt;summary&gt;
+        /// Tests whether the session manager starts a recording session correctly.
+        /// &lt;/summary&gt;
+        [TestMethod]
+        public void TestSessionManager_StartRecordingCorrectly()
+        {
+            /* GIVEN */
+            ConfigureDefaultConfig();
+            InitializeSessionManager();
+
+            /* WHEN */
+            Debug.Assert(sessionManager != null, &quot;SessionManager should not be dismissed!&quot;);
+            sessionManager.StartRecording();
+
+            /* THEN */
+            Debug.Assert(moduleManagerMock != null, &quot;ModuleManagerMock should not be dismissed!&quot;);
+            Debug.Assert(encoder?.Mock != null, &quot;TestEncoder should not be dismissed!&quot;);
+
+            Assert.IsTrue(sessionManager.IsRecording);
+            Assert.IsNotNull(sessionManager.RecordingsFolder);
+
+            moduleManagerMock.Verify(mock =&gt; mock.InitializeModules(), Times.Once);
+            moduleManagerMock.Verify(mock =&gt; mock.NotifyModulesOnSessionStart(), Times.Once);
+            encoder.Mock.Verify(mock =&gt; mock.Encode(It.IsAny&lt;DirectoryPath&gt;()), Times.Once);
+        }
+
+        /// &lt;summary&gt;
+        /// Tests whether starting an already running recording session throws an error.
+        /// In this case the session manager should throw an AlreadyRecordingException.
+        /// &lt;/summary&gt;
+        [TestMethod]
+        public void TestSessionManager_ThrowsAlreadyRunning()
+        {
+            /* GIVEN */
+            ConfigureDefaultConfig();
+            InitializeSessionManager();
+
+            Debug.Assert(sessionManager != null, &quot;SessionManager should not be dismissed!&quot;);
+            sessionManager.StartRecording();
+
+            /* WHEN */
+            Assert.IsTrue(sessionManager.IsRecording);
+            Assert.ThrowsException&lt;AlreadyRecordingException&gt;(() =&gt; sessionManager.StartRecording());
+
+            /* THEN */
+            Debug.Assert(moduleManagerMock != null, &quot;ModuleManagerMock should not be dismissed!&quot;);
+            Debug.Assert(encoder?.Mock != null, &quot;TestEncoder should not be dismissed!&quot;);
+
+            Assert.IsTrue(sessionManager.IsRecording);
+
+            moduleManagerMock.Verify(mock =&gt; mock.InitializeModules(), Times.Once);
+            moduleManagerMock.Verify(mock =&gt; mock.NotifyModulesOnSessionStart(), Times.Once);
+            encoder.Mock.Verify(mock =&gt; mock.Encode(It.IsAny&lt;DirectoryPath&gt;()), Times.Once);
+        }
+
+        /// &lt;summary&gt;
+        /// Tests whether stopping a running recording session works as expected.
+        /// &lt;/summary&gt;
+        [TestMethod]
+        public void TestSessionManager_StopRecordingCorrectly()
+        {
+            /* GIVEN */
+            ConfigureDefaultConfig();
+            InitializeSessionManager();
+
+            Debug.Assert(sessionManager != null, &quot;SessionManager should not be dismissed!&quot;);
+            Debug.Assert(encoder?.Mock != null, &quot;TestEncoder should not be dismissed!&quot;);
+            sessionManager.StartRecording();
+
+            encoder.Mock.SetupGet(mock =&gt; mock.EncodeFinished)?
+                .Returns(new ManualResetEvent(true));
+
+            /* WHEN */
+            sessionManager.StopRecording();
+
+            /* THEN */
+            Debug.Assert(moduleManagerMock != null, &quot;ModuleManagerMock should not be dismissed!&quot;);
+
+            Assert.IsFalse(sessionManager.IsRecording);
+
+            moduleManagerMock.Verify(mock =&gt; mock.NotifyModulesOnSessionStop(), Times.Once);
+            encoder.Mock.VerifyGet(mock =&gt; mock.EncodeFinished, Times.Once);
+        }
+
+        /// &lt;summary&gt;
+        /// Tests whether the session manager throws if a not running recording session is stopped.
+        /// The session manager should throw in this case a NotRecordingException.
+        /// &lt;/summary&gt;
+        [TestMethod]
+        public void TestSessionManager_ThrowsAlreadyStopped()
+        {
+            /* GIVEN */
+            ConfigureDefaultConfig();
+            InitializeSessionManager();
+
+            Debug.Assert(sessionManager != null, &quot;SessionManager should not be dismissed!&quot;);
+
+            /* WHEN */
+            Assert.IsFalse(sessionManager.IsRecording);
+            Assert.ThrowsException&lt;NotRecordingException&gt;(() =&gt; sessionManager.StopRecording());
+
+            /* THEN */
+            Debug.Assert(moduleManagerMock != null, &quot;ModuleManagerMock should not be dismissed!&quot;);
+            Debug.Assert(encoder?.Mock != null, &quot;TestEncoder should not be dismissed!&quot;);
+
+            Assert.IsFalse(sessionManager.IsRecording);
+
+            moduleManagerMock.Verify(mock =&gt; mock.NotifyModulesOnSessionStop(), Times.Never);
+            encoder.Mock.VerifyGet(mock =&gt; mock.EncodeFinished, Times.Never);
+        }
+
+        /// &lt;summary&gt;
+        /// Tests whether processing with multiple directories works as expected!
+        /// &lt;/summary&gt;
+        [TestMethod]
+        public void TestSessionManager_ProcessCorrectlyMultipleDirectories()
+        {
+            /* GIVEN */
+            ConfigureDefaultConfig();
+            InitializeSessionManager();
+
+            Debug.Assert(sessionManager != null, &quot;SessionManager should not be dismissed prematuraly!&quot;);
+            Debug.Assert(encoder?.Mock != null, &quot;TestEncoder should not be dismissed!&quot;);
+            Debug.Assert(decoder?.Mock != null, &quot;TestEncoder should not be dismissed!&quot;);
+
+            encoder.Mock.SetupGet(mock =&gt; mock.EncodeFinished)?
+                .Returns(new ManualResetEvent(true));
+
+            decoder.Mock.SetupGet(mock =&gt; mock.DecodeFinished)?
+                .Returns(new ManualResetEvent(true));
+
+            const string directoryPath = &quot;someDirectory&quot;;
+            var someDirectory = new DirectoryPath(directoryPath, true);
+            var someOtherDirectory = new DirectoryPath(directoryPath, true);
+            var directories = new[] { someDirectory, someOtherDirectory };
+            var count = directories.Length;
+
+            /* WHEN */
+            Assert.IsFalse(sessionManager.IsRecording);
+            sessionManager.Process(directories);
+
+            /* THEN */
+            Debug.Assert(moduleManagerMock != null, &quot;ModuleManager should not be dismissed!&quot;);
+
+            decoder.Mock.Verify(mock =&gt; mock.Decode(It.IsAny&lt;DirectoryPath&gt;()), Times.Exactly(count));
+            decoder.Mock.VerifyGet(mock =&gt; mock.DecodeFinished, Times.Exactly(count));
+
+            encoder.Mock.Verify(mock =&gt; mock.Encode(It.IsAny&lt;DirectoryPath&gt;()), Times.Exactly(count));
+            encoder.Mock.VerifyGet(mock =&gt; mock.EncodeFinished, Times.Exactly(count));
+
+            moduleManagerMock.Verify(mock =&gt; mock.NotifyModulesOnSessionStart(), Times.Once);
+            moduleManagerMock.Verify(mock =&gt; mock.NotifyModulesOnSessionStop(), Times.Once);
+        }
+
+        /// &lt;summary&gt;
+        /// Tests whether processing fails if not decoder has been specified!
+        /// &lt;/summary&gt;
+        [TestMethod]
+        public void TestSessionManager_NoDecoder()
+        {
+            /* GIVEN */
+            ConfigureDefaultConfig(usingDecoder: false);
+            InitializeSessionManager();
+
+            Debug.Assert(sessionManager != null, &quot;SessionManager should not be dismissed prematuraly!&quot;);
+            Debug.Assert(encoder?.Mock != null, &quot;TestEncoder should not be dismissed!&quot;);
+
+            const string directoryPath = &quot;someDirectory&quot;;
+            var someDirectory = new DirectoryPath(directoryPath, true);
+            var directories = new[] { someDirectory };
+
+            /* WHEN */
+            Assert.IsFalse(sessionManager.IsRecording);
+            Assert.ThrowsException&lt;InvalidConfigurationException&gt;(() =&gt; sessionManager.Process(directories));
+        }
+
+        /// &lt;summary&gt;
+        /// Tests whether processing fails if the session manager is already running a recording session.
+        /// &lt;/summary&gt;
+        [TestMethod]
+        public void TestSessionManager_AlreadyRecording()
+        {
+            /* GIVEN */
+            ConfigureDefaultConfig();
+            InitializeSessionManager();
+
+            Debug.Assert(sessionManager != null, &quot;SessionManager should not be dismissed prematuraly!&quot;);
+            Debug.Assert(encoder?.Mock != null, &quot;TestEncoder should not be dismissed!&quot;);
+
+            const string directoryPath = &quot;someDirectory&quot;;
+            var someDirectory = new DirectoryPath(directoryPath, true);
+            var directories = new[] { someDirectory };
+
+            Assert.IsFalse(sessionManager.IsRecording);
+            sessionManager.StartRecording();
+            Assert.IsTrue(sessionManager.IsRecording);
+
+            /* WHEN */
+            Assert.ThrowsException&lt;AlreadyRecordingException&gt;(() =&gt; sessionManager.Process(directories));
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[41,9,41,10,1],[42,13,42,52,1],[43,13,43,59,1],[44,13,44,49,1],[45,13,45,41,1],[46,13,46,41,1],[48,13,48,60,1],[49,13,49,74,1],[50,13,50,51,1],[51,13,51,58,1],[53,13,53,56,1],[54,13,54,41,1],[55,9,55,10,1],[59,9,59,10,1],[60,13,60,33,1],[61,13,61,30,1],[62,13,62,33,1],[63,13,63,27,1],[64,13,64,28,1],[65,13,65,28,1],[66,13,66,38,1],[67,13,67,45,1],[68,13,68,35,1],[69,13,69,37,1],[70,9,70,10,1],[77,9,77,10,1],[78,13,78,45,1],[79,13,79,52,1],[81,13,82,54,1],[82,54,82,91,1],[82,91,82,93,1],[81,13,82,93,1],[83,9,83,10,1],[91,9,91,10,1],[92,13,92,42,1],[94,13,94,30,1],[95,13,95,14,1],[96,17,96,65,1],[97,13,97,14,1],[99,13,99,61,1],[101,13,101,73,1],[102,13,102,72,1],[104,13,104,70,1],[105,9,105,10,1],[113,9,113,10,1],[114,13,114,43,1],[115,13,115,43,1],[116,13,116,42,1],[117,13,117,45,1],[119,13,119,63,1],[120,13,120,63,1],[121,13,121,52,1],[122,13,122,35,1],[124,13,124,60,1],[125,13,125,61,1],[126,13,126,68,1],[127,13,127,50,1],[129,13,129,163,1],[130,9,130,10,1],[137,9,137,10,1],[139,13,139,38,1],[142,13,142,40,1],[145,13,145,113,1],[147,13,147,83,1],[148,13,148,103,1],[149,9,149,10,1],[156,9,156,10,1],[158,13,158,38,1],[159,13,159,40,1],[162,13,162,93,1],[163,13,163,45,1],[166,13,166,99,1],[167,13,167,89,1],[169,13,169,55,1],[170,13,170,63,1],[172,13,172,84,1],[173,13,173,94,1],[174,13,174,93,1],[175,9,175,10,1],[183,9,183,10,1],[185,13,185,38,1],[186,13,186,40,1],[188,13,188,93,1],[189,13,189,45,1],[192,13,192,55,1],[193,13,193,69,1],[193,69,193,100,1],[193,100,193,102,1],[193,13,193,102,1],[196,13,196,99,1],[197,13,197,89,1],[199,13,199,55,1],[201,13,201,84,1],[202,13,202,94,1],[203,13,203,93,1],[204,9,204,10,1],[211,9,211,10,1],[213,13,213,38,1],[214,13,214,40,1],[216,13,216,93,1],[217,13,217,89,1],[218,13,218,45,1],[220,13,221,54,1],[224,13,224,44,1],[227,13,227,99,1],[229,13,229,56,1],[231,13,231,93,1],[232,13,232,77,1],[233,9,233,10,1],[241,9,241,10,1],[243,13,243,38,1],[244,13,244,40,1],[246,13,246,93,1],[249,13,249,56,1],[250,13,250,65,1],[250,65,250,95,1],[250,95,250,97,1],[250,13,250,97,1],[253,13,253,99,1],[254,13,254,89,1],[256,13,256,56,1],[258,13,258,94,1],[259,13,259,78,1],[260,9,260,10,1],[267,9,267,10,1],[269,13,269,38,1],[270,13,270,40,1],[272,13,272,105,1],[273,13,273,89,1],[274,13,274,89,1],[276,13,277,54,1],[279,13,280,54,1],[283,13,283,72,1],[284,13,284,77,1],[285,13,285,75,1],[286,13,286,44,1],[289,13,289,56,1],[290,13,290,49,1],[293,13,293,95,1],[295,13,295,103,1],[296,13,296,87,1],[298,13,298,103,1],[299,13,299,87,1],[301,13,301,94,1],[302,13,302,93,1],[303,9,303,10,1],[310,9,310,10,1],[312,13,312,57,1],[313,13,313,40,1],[315,13,315,105,1],[316,13,316,89,1],[319,13,319,72,1],[320,13,320,55,1],[323,13,323,56,1],[324,13,324,73,1],[324,73,324,108,1],[324,108,324,110,1],[324,13,324,110,1],[325,9,325,10,1],[332,9,332,10,1],[334,13,334,38,1],[335,13,335,40,1],[337,13,337,105,1],[338,13,338,89,1],[341,13,341,72,1],[342,13,342,55,1],[344,13,344,56,1],[345,13,345,45,1],[346,13,346,55,1],[349,13,349,69,1],[349,69,349,104,1],[349,104,349,106,1],[349,13,349,106,1],[350,9,350,10,1]]);
+    </script>
+  </body>
+</html>

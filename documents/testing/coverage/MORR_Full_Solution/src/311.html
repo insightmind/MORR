@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\MORR\Data\IntermediateFormat\Json\JsonIntermediateFormatDeserializer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Text.Json;
+using System.Threading.Tasks;
+using MORR.Shared.Events;
+using MORR.Shared.Events.Queue;
+using MORR.Shared.Modules;
+using MORR.Shared.Utility;
+
+namespace MORR.Core.Data.IntermediateFormat.Json
+{
+    public class JsonIntermediateFormatDeserializer : IModule
+    {
+        private bool isActive;
+
+        [ImportMany]
+        private IEnumerable&lt;ISupportDeserializationEventQueue&lt;Event&gt;&gt; EventQueues { get; set; } = null!;
+
+        [Import]
+        private IDecodableEventQueue&lt;JsonIntermediateFormatSample&gt; IntermediateFormatSampleQueue { get; set; } = null!;
+
+        public bool IsActive
+        {
+            get =&gt; isActive;
+            set =&gt; Utility.SetAndDispatch(ref isActive, value, LinkAllQueues, delegate
+            {
+                /*
+                 * Cancel should happen automatically as this is a transforming module and awaits
+                 * closing of input event queues.
+                 */
+            });
+        }
+
+        public Guid Identifier { get; } = new Guid(&quot;03496342-BBAE-46A7-BCBE-98FACA083B74&quot;);
+
+        private void LinkAllQueues()
+        {
+            foreach (var eventQueue in EventQueues)
+            {
+                Task.Run(() =&gt; LinkSingleQueue(eventQueue));
+            }
+        }
+
+        private async void LinkSingleQueue(ISupportDeserializationEventQueue&lt;Event&gt; eventQueue)
+        {
+            await foreach (var sample in IntermediateFormatSampleQueue.GetEvents())
+            {
+                if (sample.Type == eventQueue?.EventType)
+                {
+                    var @event = JsonSerializer.Deserialize(sample.Data, sample.Type);
+                    eventQueue?.Enqueue(@event);
+                }
+            }
+
+            eventQueue.Close();
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[18,85,18,89,1],[18,90,18,94,1],[18,99,18,104,1],[21,100,21,104,1],[21,105,21,109,1],[21,114,21,119,1],[25,20,25,28,1],[26,20,27,13,1],[27,13,27,14,0],[27,14,32,13,1],[32,13,32,14,0],[32,14,32,15,1],[26,20,32,15,1],[35,34,35,38,0],[35,43,35,91,1],[38,9,38,10,1],[39,13,39,20,1],[39,22,39,36,1],[39,37,39,39,1],[39,40,39,51,1],[40,13,40,14,1],[41,17,41,32,1],[41,32,41,59,1],[41,59,41,61,1],[41,17,41,61,1],[42,13,42,14,1],[43,9,43,10,1],[46,9,46,10,1],[47,13,47,26,1],[47,28,47,38,1],[47,39,47,41,1],[47,42,47,83,1],[48,13,48,14,1],[49,17,49,58,1],[50,17,50,18,1],[51,21,51,87,1],[52,21,52,49,1],[53,17,53,18,1],[54,13,54,14,1],[56,13,56,32,1],[57,9,57,10,1]]);
+    </script>
+  </body>
+</html>

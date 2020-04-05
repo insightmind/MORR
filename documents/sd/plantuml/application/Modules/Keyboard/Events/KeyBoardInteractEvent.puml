@@ -1,0 +1,17 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
+class KeyboardInteractEvent {
+    + PressedKey_System_Windows_Input_Key : System.Windows.Input.Key <<get>> <<set>>
+    + PressedKeyName : string <<get>> <<set>>
+    + ModifierKeys_System_Windows_Input_ModifierKeys : System.Windows.Input.ModifierKeys <<get>> <<set>>
+    + ModifierKeysName : string <<get>> <<set>>
+    + MappedCharacter_Unicode : char <<get>> <<set>>
+}
+abstract class Event
+abstract class KeyboardEvent
+!endsub
+KeyboardEvent <|-- KeyboardInteractEvent
+Event <|-- KeyboardEvent
+@enduml

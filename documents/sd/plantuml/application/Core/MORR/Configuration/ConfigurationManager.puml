@@ -1,0 +1,13 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
+class ConfigurationManager {
+    + <<create>> ConfigurationManager()
+    + <<create>> ConfigurationManager(fileSystem:IFileSystem)
+    + LoadConfiguration(path:FilePath) : void
+}
+!endsub
+!include IConfigurationManager.puml
+ConfigurationManager .UP.|> IConfigurationManager : implements
+@enduml

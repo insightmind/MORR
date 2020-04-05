@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Common\Shared\Events\Queue\EventQueue.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Collections.Generic;
+using MORR.Shared.Events.Queue.Strategy;
+
+namespace MORR.Shared.Events.Queue
+{
+    /// &lt;summary&gt;
+    /// Provides the basic structure of an EventQueue.
+    /// &lt;/summary&gt;
+    /// &lt;typeparam name=&quot;TEvent&quot;&gt;The type of Events which can be queued&lt;/typeparam&gt;
+    public abstract class EventQueue&lt;TEvent&gt; where TEvent : Event
+    {
+        /// &lt;summary&gt;
+        /// Describes whether the queue is currently enabled to queue new events or not.
+        /// &lt;/summary&gt;
+        public bool IsClosed =&gt; storageStrategy.IsClosed;
+
+        private readonly IEventQueueStorageStrategy&lt;TEvent&gt; storageStrategy;
+
+        protected EventQueue(IEventQueueStorageStrategy&lt;TEvent&gt; storageStrategy) =&gt; this.storageStrategy = storageStrategy;
+
+        /// &lt;summary&gt;
+        ///     Asynchronously gets all events as concrete type &lt;typeparamref name=&quot;TEvent&quot; /&gt;
+        /// &lt;/summary&gt;
+        /// &lt;returns&gt;A stream of &lt;typeparamref name=&quot;T&quot; /&gt;&lt;/returns&gt;
+        public IAsyncEnumerable&lt;TEvent&gt; GetEvents() =&gt; storageStrategy.GetEvents();
+
+        /// &lt;summary&gt;
+        ///     Asynchronously enqueues a new event.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;event&quot;&gt;The event to enqueue&lt;/param&gt;
+        public void Enqueue(TEvent @event) =&gt; storageStrategy?.Enqueue(@event);
+
+        /// &lt;summary&gt;
+        ///     Opens the EventQueue so new events can be queued.
+        /// &lt;/summary&gt;
+        public void Open() =&gt; storageStrategy.Open();
+
+        /// &lt;summary&gt;
+        ///     Closes the EventQueue so no new event can be queued.
+        /// &lt;/summary&gt;
+        public void Close() =&gt; storageStrategy.Close();
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,33,15,57,1],[19,9,19,81,1],[19,85,19,123,1],[25,56,25,83,1],[31,47,31,79,1],[36,31,36,53,1],[41,32,41,55,1]]);
+    </script>
+  </body>
+</html>

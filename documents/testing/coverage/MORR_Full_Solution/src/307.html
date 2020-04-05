@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\MORR\Data\Transcoding\Json\JsonDecoderConfiguration.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.Text.Json;
+using MORR.Core.Configuration;
+using MORR.Shared.Configuration;
+using MORR.Shared.Utility;
+
+namespace MORR.Core.Data.Transcoding.Json
+{
+    public class JsonDecoderConfiguration : IConfiguration
+    {
+        /// &lt;summary&gt;
+        ///     The path to the file to store the data in relative to the recording directory.
+        /// &lt;/summary&gt;
+        public FilePath RelativeFilePath { get; set; } = null!;
+
+        public void Parse(RawConfiguration configuration)
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            var element = JsonDocument.Parse(configuration.RawValue).RootElement;
+
+            if (!element.TryGetProperty(nameof(RelativeFilePath), out var relativeFilePathElement))
+            {
+                throw new InvalidConfigurationException(&quot;Failed to parse relative file path.&quot;);
+            }
+
+            RelativeFilePath = new FilePath(relativeFilePathElement.GetString(), true);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is JsonDecoderConfiguration configuration
+                &amp;&amp; RelativeFilePath.Equals(configuration.RelativeFilePath);
+        }
+
+        public override int GetHashCode() =&gt; HashCode.Combine(RelativeFilePath);
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,44,15,48,1],[15,49,15,53,1],[15,58,15,63,1],[18,9,18,10,1],[19,13,19,39,1],[20,13,20,14,1],[21,17,21,51,1],[24,13,24,82,1],[26,13,26,100,1],[27,13,27,14,1],[28,17,28,96,1],[31,13,31,88,1],[32,9,32,10,1],[35,9,35,10,1],[36,13,37,76,1],[38,9,38,10,1],[40,46,40,80,1]]);
+    </script>
+  </body>
+</html>

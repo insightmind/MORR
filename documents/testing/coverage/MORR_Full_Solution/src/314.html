@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\MORR\Data\Capture\Video\Desktop\DesktopCapture.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.ComponentModel.Composition;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using Windows.Graphics.Capture;
+using MORR.Core.Data.Capture.Video.Desktop.Utility;
+using MORR.Core.Data.Capture.Video.Exceptions;
+using MORR.Shared.Modules;
+
+namespace MORR.Core.Data.Capture.Video.Desktop
+{
+    public class DesktopCapture : IModule
+    {
+        private bool isActive;
+
+        [Import]
+        private VideoSampleProducer VideoSampleProducer { get; set; } = null!;
+
+        [Import]
+        private DesktopCaptureConfiguration Configuration { get; set; } = null!;
+
+        public bool IsActive
+        {
+            get =&gt; isActive;
+            set =&gt; Shared.Utility.Utility.SetAndDispatch(ref isActive, value, StartCapture, StopCapture);
+        }
+
+        public Guid Identifier { get; } = new Guid(&quot;9F1D496E-9939-4BE1-9117-6DE21A3D1CFE&quot;);
+
+        public void Initialize(bool isEnabled)
+        {
+            if (isEnabled)
+            {
+                VideoSampleProducer.Open();
+            }
+            else
+            {
+                VideoSampleProducer.Close();
+            }
+        }
+
+        private bool TryGetGraphicsCaptureItem([NotNullWhen(true)] out GraphicsCaptureItem? item)
+        {
+            // On versions prior to 1903, the user will always have to manually select the window/monitor to capture
+            if (!GraphicsCaptureHelper.CanCreateItemWithoutPicker || Configuration.PromptUserForMonitorSelection)
+            {
+                var picker = new GraphicsCapturePicker();
+                using var handleWrapper = DesktopCaptureNativeMethods.GetAssociatedWindow();
+
+                picker.SetWindow(handleWrapper.Handle);
+                item = picker.PickSingleItemAsync().GetAwaiter().GetResult();
+                return item != null;
+            }
+
+            var monitors = MonitorEnumerationHelper.GetMonitors();
+            var monitor = monitors.ElementAtOrDefault(Configuration.MonitorIndex.Value);
+
+            item = monitor != null ? GraphicsCaptureHelper.CreateItemForMonitor(monitor.Hmon) : null;
+            return item != null;
+        }
+
+        private void StartCapture()
+        {
+            if (!GraphicsCaptureSession.IsSupported())
+            {
+                throw new VideoCaptureException(&quot;Screen capture is not supported on this device.&quot;);
+            }
+
+            if (TryGetGraphicsCaptureItem(out var item))
+            {
+                VideoSampleProducer.StartCapture(item);
+            }
+            else
+            {
+                throw new VideoCaptureException(&quot;Failed to acquire capture item.&quot;);
+            }
+        }
+
+        private void StopCapture()
+        {
+            VideoSampleProducer.StopCapture();
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[17,59,17,63,0],[17,64,17,68,0],[17,73,17,78,0],[20,61,20,65,0],[20,66,20,70,0],[20,75,20,80,0],[24,20,24,28,0],[25,20,25,105,0],[28,34,28,38,0],[28,43,28,91,0],[31,9,31,10,0],[32,13,32,27,0],[33,13,33,14,0],[34,17,34,44,0],[35,13,35,14,0],[37,13,37,14,0],[38,17,38,45,0],[39,13,39,14,0],[40,9,40,10,0],[43,9,43,10,0],[45,13,45,114,0],[46,13,46,14,0],[47,17,47,58,0],[48,17,48,93,0],[50,17,50,56,0],[51,17,51,78,0],[52,17,52,37,0],[55,13,55,67,0],[56,13,56,89,0],[58,13,58,102,0],[59,13,59,33,0],[60,9,60,10,0],[63,9,63,10,0],[64,13,64,55,0],[65,13,65,14,0],[66,17,66,100,0],[69,13,69,57,0],[70,13,70,14,0],[71,17,71,56,0],[72,13,72,14,0],[74,13,74,14,0],[75,17,75,84,0],[77,9,77,10,0],[80,9,80,10,0],[81,13,81,47,0],[82,9,82,10,0]]);
+    </script>
+  </body>
+</html>

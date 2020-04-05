@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\UI\Utility\SwitchConverter.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+// SwitchCaseConverter adapted from https://referencesource.microsoft.com/#System.Activities.Presentation/System.Activities.Presentation/System/Activities/Presentation/Base/Core/Internal/PropertyEditing/FromExpression/Framework/Data/SwitchConverter.cs
+// License below
+// -------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All Rights Reserved.
+// -------------------------------------------------------------------
+
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Windows;
+using System.Windows.Data;
+using System.Windows.Markup;
+
+namespace MORR.Core.UI.Utility
+{
+    // &lt;summary&gt;
+    // Transformer which maps from input values to output values, based on a list of SwitchCase children.
+    // This isn&#39;t strictly a C-style &#39;switch&#39; statement, since cases aren&#39;t guaranteed to be unique.
+    // &lt;/summary&gt;
+    //
+    [ContentProperty(&quot;Cases&quot;)]
+    internal class SwitchConverter : DependencyObject, IValueConverter
+    {
+        private static readonly DependencyProperty DefaultValueProperty =
+            DependencyProperty.Register(nameof(DefaultValue), typeof(object), typeof(SwitchConverter));
+
+        public SwitchConverter()
+        {
+            Cases = new List&lt;SwitchCase&gt;();
+        }
+
+        public List&lt;SwitchCase&gt; Cases { get; }
+
+        public object DefaultValue
+        {
+            get =&gt; GetValue(DefaultValueProperty);
+            set =&gt; SetValue(DefaultValueProperty, value);
+        }
+
+        // IValueConverter implementation
+        public object Convert(object o, Type targetType, object parameter, CultureInfo culture)
+        {
+            foreach (var switchCase in Cases.Where(switchCase =&gt; Equals(switchCase.In, o)))
+            {
+                return switchCase.Out;
+            }
+
+            return DefaultValue;
+        }
+
+        public object ConvertBack(object o, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException(&quot;Cannot convert back.&quot;);
+        }
+    }
+
+    // &lt;summary&gt;
+    // Represents a mapping from an input value to an output value.
+    // &lt;/summary&gt;
+    internal class SwitchCase : DependencyObject
+    {
+        private static readonly DependencyProperty InProperty =
+            DependencyProperty.Register(nameof(In), typeof(object), typeof(SwitchCase));
+
+        private static readonly DependencyProperty OutProperty =
+            DependencyProperty.Register(nameof(Out), typeof(object), typeof(SwitchCase));
+
+        public object In
+        {
+            get =&gt; GetValue(InProperty);
+            set =&gt; SetValue(InProperty, value);
+        }
+
+        public object Out
+        {
+            get =&gt; GetValue(OutProperty);
+            set =&gt; SetValue(OutProperty, value);
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[25,9,26,104,0],[28,9,28,33,0],[29,9,29,10,0],[30,13,30,44,0],[31,9,31,10,0],[33,41,33,45,0],[37,20,37,50,0],[38,20,38,57,0],[43,9,43,10,0],[44,13,44,20,0],[44,22,44,36,0],[44,37,44,39,0],[44,40,44,66,0],[44,66,44,90,0],[44,90,44,91,0],[44,40,44,91,0],[45,13,45,14,0],[46,17,46,39,0],[49,13,49,33,0],[50,9,50,10,0],[53,9,53,10,0],[54,13,54,69,0],[63,9,64,89,0],[66,9,67,90,0],[71,20,71,40,0],[72,20,72,47,0],[77,20,77,41,0],[78,20,78,48,0]]);
+    </script>
+  </body>
+</html>

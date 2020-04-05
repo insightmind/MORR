@@ -1,0 +1,71 @@
+\subsection*{MORR.Core.Data.IntermediateFormat}
+
+\begin{absclass}{IntermediateFormatSample}
+    \clsdiagram{resources/Classes/Core/MORR/Data/IntermediateFormat/IntermediateFormatSample.png}
+
+    \clsdcl{public abstract class IntermediateFormatSample : Event}
+
+    \clsdsp{A sample in an intermediate format.}
+
+    \begin{attributes}
+        \attribute{public Type Type \{ get; set; \}}{The type of the event that is serialized.}
+        \attribute{public byte[] Data \{ get; set; \}}{The data that is serialized.}
+    \end{attributes}
+\end{absclass}
+
+\subsection*{MORR.Core.Data.IntermediateFormat.Json}
+
+\begin{class}{JsonIntermediateFormatSample}
+    \clsdiagram{resources/Classes/Core/MORR/Data/IntermediateFormat/Json/JsonIntermediateFormatSample.png}
+
+    \clsdcl{public class JsonIntermediateFormatSample : IntermediateFormatSample}
+
+    \clsdsp{A sample in JSON intermediate format.}
+
+    \begin{attributes}
+        \attribute{public JsonDocument JsonEncodedData \{ get; \}}{The data that is serialized in JSON-compatible format.}
+        \attribute{public JsonEncodedText JsonEncodedType \{ get; \}}{The type of the event that is serialized in JSON-compatible format.}
+    \end{attributes}
+\end{class}
+
+\begin{class}{JsonIntermediateFormatSerializer}
+    \clsdiagram[width=\textwidth]{resources/Classes/Core/MORR/Data/IntermediateFormat/Json/JsonIntermediateFormatSerializer.png}
+
+    \clsdcl{public class JsonIntermediateFormatSerializer : \linebreak DefaultEncodeableEventQueue<JsonIntermediateFormatSample>, IModule}
+
+    \clsdsp{A serializer for converting typed events into their representation in the JSON-intermediate format.}
+
+    \begin{attributes}
+        \attribute{public bool IsActive \{ get; set; \}}{Indicates whether the module is active. True if it is active, false otherwise.}
+        \attribute{public Guid Identifier \{ get; \}}{The identifier of the module.}
+    \end{attributes}
+
+    \begin{methods}
+        \begin{method}{public bool Initialize(bool isEnabled)}{Initializes the module.}
+            \begin{parameters}
+                \para{bool isEnabled}{Indicates whether the module is enabled. True if it is enabled, false otherwise.}
+            \end{parameters}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{JsonIntermediateFormatDeserializer}
+    \clsdiagram{resources/Classes/Core/MORR/Data/IntermediateFormat/Json/JsonIntermediateFormatDeserializer.png}
+
+    \clsdcl{public class JsonIntermediateFormatDeserializer : IModule}
+
+    \clsdsp{A deserializer for converting events in their JSON-intermediate format representation to typed events.}
+
+    \begin{attributes}
+        \attribute{public bool IsActive \{ get; set; \}}{Indicates whether the module is active. True if it is active, false otherwise.}
+        \attribute{public Guid Identifier \{ get; \}}{The identifier of the module.}
+    \end{attributes}
+
+    \begin{methods}
+        \begin{method}{public bool Initialize(bool isEnabled)}{Initializes the module.}
+            \begin{parameters}
+                \para{bool isEnabled}{Indicates whether the module is enabled. True if it is enabled, false otherwise.}
+            \end{parameters}
+        \end{method}
+    \end{methods}
+\end{class}

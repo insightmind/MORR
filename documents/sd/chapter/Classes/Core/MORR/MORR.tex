@@ -1,0 +1,333 @@
+\subsection{MORR}
+
+\subsection*{MORR.Core}
+
+\begin{interface}{IBootstrapper}
+    \clsdiagram{resources/Classes/Core/MORR/IBootstrapper.png}
+
+    \clsdcl{public interface IBootstrapper}
+
+    \clsdsp{Responsible for bootstrapping the application and providing compositional facilities.}
+
+    \begin{methods}
+        \begin{method}{void ComposeImports(object @object)}{Composes the provided object.}
+            \begin{parameters}
+                \para{object @object}{The object to satisfy the imports on.}
+            \end{parameters}
+        \end{method}
+    \end{methods}
+\end{interface}
+
+\begin{class}{Bootstrapper}
+    \clsdiagram{resources/Classes/Core/MORR/Bootstrapper.png}
+    
+    \clsdcl{public class Bootstrapper : IBootstrapper}
+
+    \clsdsp{Bootstraps the application using MEF.}
+
+    \begin{methods}
+        \begin{method}{public Bootstrapper()}{Creates a new instance of the Bootstrapper and loads all .MORR-Module.dll assemblies from the Modules subdirectory relative to the directory of the current executing assembly.}
+        \end{method}
+        \begin{method}{public void ComposeImports(object @object)}{Satisfies the imports on the provided object.}
+            \begin{parameters}
+                \para{object @object}{The object to satisfy the imports on.}
+            \end{parameters}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{BootstrapperConventions}
+    \clsdiagram{resources/Classes/Core/MORR/BootstrapperConventions.png}
+
+    \clsdcl{public static class BootstrapperConventions}
+
+    \clsdsp{Provides conventions for composing objects with MEF.}
+
+    \begin{methods}
+        \begin{method}{public static RegistrationBuilder GetRegistrationBuilder()}{Gets a registration builder that contains all composition conventions.}
+            \return{RegistrationBuilder}{A RegistrationBuilder containing the composition conventions.}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\subsection*{MORR.Core.Configuration}
+
+\begin{interface}{IConfigurationManager}
+    \clsdiagram{resources/Classes/Core/MORR/Configuration/IConfigurationManager.png}
+
+    \clsdcl{public interface IConfigurationManager}
+
+    \clsdsp{Loads and manages the application's configuration.}
+
+    \begin{methods}
+        \begin{method}{void LoadConfiguration(FilePath path)}{Loads the configuration from the specified path.}
+            \begin{parameters}
+                \para{FilePath path}{The path to load the configuration from.}
+            \end{parameters}
+            \begin{exceptions}
+                \excp{InvalidConfigurationException}{Exception thrown if the specified configuration is invalid.}
+            \end{exceptions}
+        \end{method}
+    \end{methods}
+\end{interface}
+
+\begin{class}{ConfigurationManager}
+    \clsdiagram{resources/Classes/Core/MORR/Configuration/ConfigurationManager.png}
+
+    \clsdcl{public class ConfigurationManager : IConfigurationManager}
+
+    \clsdsp{Manages the application's configuration.}
+    
+    \begin{constructors}
+		\begin{constructor}{public ConfigurationManager())}{Creates a new instance of the ConfigurationManager}
+		\end{constructor}
+		\begin{constructor}{public ConfigurationManager(IFileSystem fileSystem))}{Creates a new instance of the ConfigurationManager with specified FileSystem}
+			\begin{parameters}
+				\para{IFileSystem fileSystem}{The file system to construct the instance with.}
+			\end{parameters}
+		\end{constructor}
+	\end{constructors}
+
+    \begin{methods}
+        \begin{method}{public void LoadConfiguration(FilePath path)}{Loads the configuration from the specified path.}
+            \begin{parameters}
+                \para{FilePath path}{The path to load the configuration from.}
+            \end{parameters}
+            \begin{exceptions}
+                \excp{InvalidConfigurationException}{Exception thrown if the specified configuration is invalid.}
+            \end{exceptions}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{InvalidConfigurationException}
+    \clsdiagram{resources/Classes/Core/MORR/Configuration/InvalidConfigurationException.png}
+
+    \clsdcl{public class InvalidConfigurationException : Exception}
+
+    \clsdsp{An exception thrown when the configuration is invalid.}
+
+    \begin{constructors}
+        \begin{constructor}{public InvalidConfigurationException()}{Creates a new instance of an InvalidConfigurationException without any specific error message.}
+        \end{constructor}
+        \begin{constructor}{public InvalidConfigurationException(string message)}{Creates a new instance of an InvalidConfigurationException with the specified error message.}
+            \begin{parameters}
+                \para{string message}{The error message to construct the instance with.}
+            \end{parameters}
+        \end{constructor}
+        \begin{constructor}{public InvalidConfigurationException(string message, Exception innerException)}{Creates a new instance of an InvalidConfigurationException with the specified error message and inner exception.}
+            \begin{parameters}
+                \para{string message}{The error message to construct the instance with.}
+                \para{Exception innerException}{The inner exception to construct the instance with.}
+            \end{parameters}
+        \end{constructor}
+    \end{constructors}
+\end{class}
+
+\subsection*{MORR.Core.Session}
+
+\begin{interface}{ISessionManager}
+    \clsdiagram{resources/Classes/Core/MORR/Session/ISessionManager.png}
+
+    \clsdcl{public interface ISessionManager}
+
+    \clsdsp{A manager responsible for all aspects of recording and processing.}
+
+    \begin{attributes}
+        \attribute{DirectoryPath? CurrentRecordingDirectory \{ get; \}}{The path to the directory containing the most recent recording or null if no recording has been created yet.}
+        \attribute{DirectoryPath? RecordingsFolder \{ get; \}}{The path to the top-level folder containing the recording subdirectories.}
+    \end{attributes}
+
+    \begin{methods}
+        \begin{method}{public void StartRecording()}{Starts a recording if no session is currently being recorded.}
+            \begin{exceptions}
+                \excp{AlreadyRecordingException}{Thrown if a recording is started while another recording is already running.}
+            \end{exceptions}
+        \end{method}
+        \begin{method}{public void StopRecording()}{Stops a recording if a session is currently being recorded.}
+            \begin{exceptions}
+                \excp{NotRecordingException}{Thrown if a recording is stopped while no recording is currently running.}
+            \end{exceptions}
+        \end{method}
+        \begin{method}{void Process(IEnumerable<DirectoryPath> recordings)}{Processes the specified recordings.}
+            \begin{parameters}
+                \para{IEnumerable<DirectoryPath> recordings}{The recordings to process.}
+            \end{parameters}
+        \end{method}
+    \end{methods}
+\end{interface}
+
+\begin{class}{SessionManager}
+    \clsdiagram[width=\textwidth]{resources/Classes/Core/MORR/Session/SessionManager.png}
+
+    \clsdcl{public class SessionManager : ISessionManager}
+
+    \clsdsp{A manager responsible for all aspects of recording and processing.}
+
+    \begin{attributes}
+        \attribute{DirectoryPath? CurrentRecordingDirectory \{ get; \}}{The path to the directory containt the most recent recording or null if no recording has been created yet.}
+        \attribute{DirectoryPath? RecordingsFolder \{ get; \}}{The path to the top-level folder containing the recording subdirectories.}
+    \end{attributes}
+
+    \begin{constructors}
+        \begin{constructor}{public SessionManager(FilePath configurationPath)}{Creates a new instance of a SessionManager with the specified configuration path and a default Bootstrapper, ConfigurationManager and ModuleManager}
+            \begin{parameters}
+                \para{FilePath configurationPath}{The configuration path to construct the instance with.}
+            \end{parameters}
+        \end{constructor}
+        \begin{constructor}{public SessionManager(FilePath configurationPath, IBootstrapper bootstrapper, IConfigurationManager configurationManager, IModuleManager moduleManager, IFileSystem fileSystem)}{Creates a new instance of a SessionManager with the specified configuration path, bootstrapper, configuration manager, module manager and file system}
+            \begin{parameters}
+                \para{FilePath configurationPath}{The configuration path to construct the instance with.}
+                \para{IBootstrapper bootstrapper}{The bootstrapper to construct the instance with.}
+                \para{IConfigurationManager configurationManager}{The configuration manager to construct the instance with.}
+                \para{IModuleManager moduleManager}{The module manager to construct the instance with.}
+                \para{IFileSystem fileSystem}{The file system to construct the instance with.}
+            \end{parameters}
+        \end{constructor}
+    \end{constructors}
+
+    \begin{methods}
+        \begin{method}{public void StartRecording()}{Starts a recording if no session is currently being recorded.}
+            \begin{exceptions}
+                \excp{AlreadyRecordingException}{Thrown if a recording is started while another recording is already running.}
+            \end{exceptions}
+        \end{method}
+        \begin{method}{public void StopRecording()}{Stops a recording if a session is currently being recorded.}
+            \begin{exceptions}
+                \excp{NotRecordingException}{Thrown if a recording is stopped while no recording is currently running.}
+            \end{exceptions}
+        \end{method}
+        \begin{method}{void Process(IEnumerable<DirectoryPath> recordings)}{Processes the specified recordings.}
+            \begin{parameters}
+                \para{IEnumerable<DirectoryPath> recordings}{The recordings to process.}
+            \end{parameters}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{SessionConfiguration}
+    \clsdiagram{resources/Classes/Core/MORR/Session/SessionConfiguration.png}
+
+    \clsdcl{public class Session : IConfiguration}
+
+    \clsdsp{Encapsulates all session configuration options.}
+
+    \begin{attributes}
+        \attribute{public IEnumerable<Type> Encoders \{ get; set; \}}{The types of the encoders to use.}
+        \attribute{public IEnumerable<Type>? Decoders \{ get; set; \}}{The types of the decoders to use.}
+        \attribute{public DirectoryPath RecordingDirectory \{ get; set; \}}{The directory in which to store new recordings.}
+    \end{attributes}
+    
+    \begin{methods}
+        \begin{method}{public void Parse(RawConfiguration configuration)}{Parses the configuration from the provided value.}
+            \begin{parameters}
+                \para{RawConfiguration configuration}{The configuration value to parse from.}
+            \end{parameters}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\subsection*{MORR.Core.Session.Crypto}
+
+\begin{class}{CryptoHelper}
+	\clsdiagram{resources/Classes/Core/MORR/Session/Crypto/CryptoHelper.png}
+	
+	\clsdcl{public static class CryptoHelper}
+	
+	\clsdsp{Helper class for encrypting the name of the user.}
+	
+	\begin{methods}
+		\begin{method}{public static string GenerateHash(string rawData)}{Generates a hash of the provided string using the SHA256 algorithm.}
+			\begin{parameters}
+                \para{string rawData}{The string to be hashed.}
+            \end{parameters}
+            \return{string}{The hashed version of the rawData string.}
+        \end{method}
+     \end{methods}
+\end{class}
+
+\subsection*{MORR.Core.Session.Exceptions}
+
+\begin{class}{RecordingException}
+    \clsdiagram{resources/Classes/Core/MORR/Session/Exceptions/RecordingException.png}
+
+    \clsdcl{public class RecordingException : Exception}
+
+    \clsdsp{A generic recording exception that all specialized recording exceptions derive from.}
+\end{class}
+
+\begin{class}{AlreadyRecordingException}
+    \clsdiagram{resources/Classes/Core/MORR/Session/Exceptions/AlreadyRecordingException.png}
+
+    \clsdcl{public class AlreadyRecordingException : RecordingException}
+
+    \clsdsp{An exception thrown if a recording is started while another recording is already running.}
+\end{class}
+
+\begin{class}{NotRecordingException}
+    \clsdiagram{resources/Classes/Core/MORR/Session/Exceptions/NotRecordingException.png}
+
+    \clsdcl{public class NotRecordingException : RecordingException}
+
+    \clsdsp{An exception thrown if a recording is stopped while no recording is currently running.}
+\end{class}
+
+\subsection*{MORR.Core.Modules}
+
+\begin{interface}{IModuleManager}
+    \clsdiagram{resources/Classes/Core/MORR/Modules/IModuleManager.png}
+
+    \clsdcl{public interface IModuleManager}
+
+    \clsdsp{Initializes and manages all modules.}
+
+    \begin{methods}
+        \begin{method}{void InitializeModules()}{Initializes all modules.}      
+        \end{method}
+        \begin{method}{void NotifyModulesOnSessionStart()}{Notifies all modules when a session starts.}
+        \end{method}
+        \begin{method}{void NotifyModulesOnSessionStop()}{Notifies all modules when a session stops.}
+        \end{method}
+    \end{methods}
+\end{interface}
+
+\begin{class}{ModuleManager}
+    \clsdiagram{resources/Classes/Core/MORR/Modules/ModuleManager.png}
+
+    \clsdcl{public class ModuleManager : IModuleManager}
+
+    \clsdsp{Initializes and manages all modules..}
+
+    \begin{methods}
+        \begin{method}{void InitializeModules()}{Initializes all modules.}      
+        \end{method}
+        \begin{method}{void NotifyModulesOnSessionStart()}{Notifies all modules when a session starts.}
+        \end{method}
+        \begin{method}{void NotifyModulesOnSessionStop()}{Notifies all modules when a session stops.}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{GlobalModuleConfiguration}
+    \clsdiagram{resources/Classes/Core/MORR/Modules/GlobalModuleConfiguration.png}
+
+    \clsdcl{public class GlobalModuleConfiguration : IConfiguration}
+
+    \clsdsp{Encapsulates all global module configuration options.}
+
+    \begin{attributes}
+        \attribute{public IEnumerable<Type> EnabledModules \{ get; set; \}}{The types of all IModule instances that should be enabled.}
+    \end{attributes}
+    
+    \begin{methods}
+        \begin{method}{public void Parse(RawConfiguration configuration)}{Parses the configuration from the provided value.}
+            \begin{parameters}
+                \para{RawConfiguration configuration}{The configuration value to parse from.}
+            \end{parameters}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\input{chapter/Classes/Core/MORR/Data/Capture/Capture}
+\input{chapter/Classes/Core/MORR/Data/IntermediateFormat/IntermediateFormat}
+\input{chapter/Classes/Core/MORR/Data/Transcoding/Transcoding}

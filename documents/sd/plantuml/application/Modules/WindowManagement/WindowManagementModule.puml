@@ -1,0 +1,20 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+class WindowManagementModule {
+}
+
+
+interface IModule {
+    + Identifier : System.Guid
+    + IsActive : bool <<get>> <<set>>
+    + Initialize() : void
+}
+
+IModule <|-- WindowManagementModule
+WindowManagementModule ..> WindowFocusEventProducer : "uses"
+WindowManagementModule ...> WindowMovementEventProducer : "uses"
+WindowManagementModule..> WindowResizingEventProducer : "uses"
+WindowManagementModule ...> WindowStateChangedEventProducer : "uses"
+@enduml

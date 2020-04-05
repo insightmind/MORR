@@ -1,0 +1,62 @@
+@startuml
+'skinparam monochrome true
+hide footbox
+title Browser Extension Initialization
+actor User
+create ":BackgroundScript" as BackgroundScript
+User -> BackgroundScript : open Browser
+activate BackgroundScript
+create ":ListenerManager" as ListenerManager
+BackgroundScript -> ListenerManager : <<create>>
+activate ListenerManager
+create ":TabListener" as TabListener
+ListenerManager -> TabListener : <<create>>
+create ":DOMListener" as DOMListener
+ListenerManager -> DOMListener : <<create>>
+create ":DownloadListener" as DownloadListener
+ListenerManager -> DownloadListener : <<create>>
+deactivate ListenerManager
+create boundary ":PostHTTPInterface" as PostHTTPInterface
+BackgroundScript -> PostHTTPInterface : <<create>>
+BackgroundScript -> PostHTTPInterface : establishConnection()
+activate PostHTTPInterface
+BackgroundScript <-- PostHTTPInterface : Promise<void>
+participant "Main application" as MORR <<external>> #AAFFFF
+deactivate BackgroundScript
+PostHTTPInterface [#blue]-> MORR : post request
+note right
+Will fail if
+main application is
+not running. This case
+has to be correctly
+handled.
+end note
+PostHTTPInterface <-[#blue] MORR : response
+BackgroundScript /-- PostHTTPInterface : resolve Promise
+deactivate PostHTTPInterface
+activate BackgroundScript
+BackgroundScript -> PostHTTPInterface : requestConfig()
+activate PostHTTPInterface
+BackgroundScript <-- PostHTTPInterface : Promise<string>
+
+
+deactivate BackgroundScript
+
+PostHTTPInterface [#blue]-> MORR : post request
+PostHTTPInterface <-[#blue] MORR : response(configurationString)
+BackgroundScript /-- PostHTTPInterface : resolve Promise(configurationString)
+deactivate PostHTTPInterface
+activate BackgroundScript
+BackgroundScript -> PostHTTPInterface : waitForStart()
+activate PostHTTPInterface
+BackgroundScript <-- PostHTTPInterface : Promise<void>
+deactivate BackgroundScript
+
+PostHTTPInterface [#blue]-> MORR : post request
+note right
+Main application will
+send a response
+upon recording start
+or program exit.
+end note
+@enduml

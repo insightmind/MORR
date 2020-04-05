@@ -1,0 +1,15 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
+class ApplicationViewModel {
+    + <<create>> ApplicationViewModel()
+    + IsRecording : bool <<get>> <<set>>
+}
+!endsub
+DependencyObject <|-- ApplicationViewModel
+/'ApplicationViewModel --> "OpenRecordingsDirectoryCommand" ICommand
+ApplicationViewModel --> "ExitCommand" ICommand
+ApplicationViewModel --> "ToggleRecordingCommand" ICommand
+ApplicationViewModel o-> "IsRecordingProperty" DependencyProperty '/
+@enduml

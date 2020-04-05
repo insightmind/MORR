@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\WebBrowserTest\WebBrowserModuleConfigurationTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MORR.Core.Configuration;
+using MORR.Modules.WebBrowser;
+using MORR.Shared.Configuration;
+
+namespace WebBrowserTest
+{
+    [TestClass]
+    public class WebBrowserModuleConfigurationTest
+    {
+        private WebBrowserModuleConfiguration config;
+
+        [TestInitialize]
+        public void TestInit()
+        {
+            config = new WebBrowserModuleConfiguration();
+        }
+
+        [TestMethod]
+        public void ParseTest()
+        {
+            config.Parse(new RawConfiguration(&quot;{\r\n    \&quot;UrlSuffix\&quot;: \&quot;60024/\&quot;\r\n  }&quot;));
+            Assert.AreEqual(&quot;60024/&quot;, config.UrlSuffix);
+        }
+
+        [TestMethod]
+        public void ParseInvalidTest()
+        {
+            Assert.ThrowsException&lt;InvalidConfigurationException&gt;(
+                () =&gt; config.Parse(new RawConfiguration(&quot;{ }&quot;)));
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,9,15,10,1],[16,13,16,58,1],[17,9,17,10,1],[21,9,21,10,1],[22,13,22,93,1],[23,13,23,57,1],[24,9,24,10,1],[28,9,28,10,1],[29,13,30,23,1],[30,23,30,64,1],[30,64,30,66,1],[29,13,30,66,1],[31,9,31,10,1]]);
+    </script>
+  </body>
+</html>

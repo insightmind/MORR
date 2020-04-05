@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\MORR\Data\Capture\Video\Desktop\DesktopCaptureConfiguration.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Text.Json;
+using MORR.Core.Configuration;
+using MORR.Shared.Configuration;
+
+namespace MORR.Core.Data.Capture.Video.Desktop
+{
+    public class DesktopCaptureConfiguration : IConfiguration
+    {
+        /// &lt;summary&gt;
+        ///     The index of the monitor to capture.
+        /// &lt;/summary&gt;
+        public Index MonitorIndex { get; set; }
+
+        /// &lt;summary&gt;
+        ///     Indicates whether the user should be prompted to manually select the monitor to capture.
+        ///     &lt;see langword=&quot;true&quot; /&gt; if the user should be prompted, &lt;see langword=&quot;false&quot; /&gt; otherwise.
+        /// &lt;/summary&gt;
+        public bool PromptUserForMonitorSelection { get; set; }
+
+        public void Parse(RawConfiguration configuration)
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            var element = JsonDocument.Parse(configuration.RawValue).RootElement;
+
+            if (!element.TryGetProperty(nameof(MonitorIndex), out var indexElement) ||
+                !indexElement.TryGetInt32(out var monitorIndex))
+            {
+                throw new InvalidConfigurationException(&quot;Failed to parse monitor index.&quot;);
+            }
+
+            MonitorIndex = Index.FromStart(monitorIndex);
+
+            if (!element.TryGetProperty(nameof(PromptUserForMonitorSelection), out var promptElement))
+            {
+                throw new InvalidConfigurationException(&quot;Failed to parse prompt behaviour.&quot;);
+            }
+
+            PromptUserForMonitorSelection = promptElement.GetBoolean();
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return (obj is DesktopCaptureConfiguration configuration)
+                   &amp;&amp; MonitorIndex.Value == configuration.MonitorIndex.Value
+                   &amp;&amp; PromptUserForMonitorSelection == configuration.PromptUserForMonitorSelection;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(MonitorIndex.Value, PromptUserForMonitorSelection);
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[13,37,13,41,1],[13,42,13,46,1],[19,53,19,57,1],[19,58,19,62,1],[22,9,22,10,1],[23,13,23,39,1],[24,13,24,14,1],[25,17,25,51,1],[28,13,28,82,1],[30,13,31,65,1],[32,13,32,14,1],[33,17,33,91,1],[36,13,36,58,1],[38,13,38,103,1],[39,13,39,14,1],[40,17,40,94,1],[43,13,43,72,1],[44,9,44,10,1],[47,9,47,10,1],[48,13,50,100,1],[51,9,51,10,1],[54,9,54,10,1],[55,13,55,88,1],[56,9,56,10,1]]);
+    </script>
+  </body>
+</html>

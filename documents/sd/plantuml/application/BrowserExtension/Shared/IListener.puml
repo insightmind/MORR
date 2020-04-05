@@ -1,0 +1,24 @@
+@startuml
+skinparam linetype ortho
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+class BrowserEvent {
+    + BrowserEvent(type : EventType, tabID : number, windowID: number, url : string)
+    + timeStamp : Date
+    + issuingModule : number
+    + type : EventType
+    + tabID : number
+    + url : URL
+    + windowID : number
+    + serialize(noUnderScore : boolean) : string
+}
+
+IListener .DOWN.> BrowserEvent : creates
+
+interface IListener {
+    + IListener(callback : function(BrowserEvent) : void)
+    + start() : void
+    + stop() : void
+}
+@enduml

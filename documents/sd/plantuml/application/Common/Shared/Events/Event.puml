@@ -1,0 +1,10 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
+abstract class Event {
+    + Timestamp : DateTime <<get>> <<set>>
+    + IssuingModule : Guid <<get>> <<set>>
+}
+!endsub
+@enduml

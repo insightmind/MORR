@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\WindowManagementTest\WindowStateChangedEventProducerTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
+using System.Diagnostics;
+using System.Threading;
+using System.Windows;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using MORR.Modules.WindowManagement;
+using MORR.Modules.WindowManagement.Events;
+using MORR.Modules.WindowManagement.Producers;
+using MORR.Shared.Hook;
+using SharedTest.TestHelpers.INativeHook;
+
+namespace WindowManagementTest
+{
+    [TestClass]
+    public class WindowStateChangedEventProducerTest
+    {
+        protected const int MaxWaitTime = 3000;
+
+        private CompositionContainer container;
+        private HookNativeMethodsMock hookNativeMethods;
+        private NativeWindowMock nativeWindowManagement;
+        private WindowFocusEventProducer windowFocusEventProducer;
+        private WindowManagementModule windowManagementModule;
+        private WindowMovementEventProducer windowMovementEventProducer;
+        private WindowResizingEventProducer windowResizingEventProducer;
+        private WindowStateChangedEventProducer windowStateChangedEventProducer;
+
+        [TestInitialize]
+        public void BeforeTest()
+        {
+            windowManagementModule = new WindowManagementModule();
+            windowFocusEventProducer = new WindowFocusEventProducer();
+            windowMovementEventProducer = new WindowMovementEventProducer();
+            windowResizingEventProducer = new WindowResizingEventProducer();
+            windowStateChangedEventProducer = new WindowStateChangedEventProducer();
+
+            container = new CompositionContainer();
+            container.ComposeExportedValue(windowFocusEventProducer);
+            container.ComposeExportedValue(windowMovementEventProducer);
+            container.ComposeExportedValue(windowResizingEventProducer);
+            container.ComposeExportedValue(windowStateChangedEventProducer);
+            container.ComposeParts(windowManagementModule);
+
+            nativeWindowManagement = new NativeWindowMock();
+
+            hookNativeMethods = new HookNativeMethodsMock();
+            hookNativeMethods.Initialize();
+        }
+
+        [TestCleanup]
+        public void AfterTest()
+        {
+            windowManagementModule = null;
+            windowFocusEventProducer = null;
+            nativeWindowManagement = null;
+            windowMovementEventProducer = null;
+            windowResizingEventProducer = null;
+            windowStateChangedEventProducer = null;
+            container.Dispose();
+            container = null;
+            hookNativeMethods = null;
+            nativeWindowManagement = null;
+        }
+
+        [TestMethod]
+        public void WindowStateChangedEventProducerCallbackTest()
+        {
+            /* PRECONDITIONS */
+            Debug.Assert(windowManagementModule != null);
+            Debug.Assert(windowStateChangedEventProducer != null);
+            Debug.Assert(hookNativeMethods != null);
+            Debug.Assert(hookNativeMethods.Mock != null);
+            Debug.Assert(nativeWindowManagement != null);
+
+            /* GIVEN */
+            var callback = GetCallback();
+
+            nativeWindowManagement.GetProcessName();
+            nativeWindowManagement.GetTitle();
+            nativeWindowManagement.IsRectSizeNotEqual();
+            nativeWindowManagement.GetWindowRect();
+
+            GlobalHook.HookMessage[] hookMessages =
+            {
+                new GlobalHook.HookMessage
+                {
+                    Type = (uint) GlobalHook.MessageType.WM_SIZE,
+                    wParam = (IntPtr) WindowState.Maximized,
+                    Hwnd = (IntPtr) 1
+                },
+                new GlobalHook.HookMessage
+                {
+                    Type = (uint) GlobalHook.MessageType.WM_SIZE,
+                    wParam = (IntPtr) WindowState.Minimized, Hwnd = (IntPtr) 1
+                },
+                new GlobalHook.HookMessage
+                    { Type = (uint) GlobalHook.MessageType.WM_ENTERSIZEMOVE, Hwnd = (IntPtr) 1 },
+                new GlobalHook.HookMessage
+                    { Type = (uint) GlobalHook.MessageType.WM_EXITSIZEMOVE, Hwnd = (IntPtr) 1 }
+            };
+
+            WindowStateChangedEvent[] expectedEvents =
+            {
+                new WindowStateChangedEvent
+                {
+                    ProcessName = &quot;ProcessName&quot;,
+                    Title = &quot;Title&quot;,
+                    WindowState = WindowState.Maximized
+                },
+
+                new WindowStateChangedEvent
+                {
+                    ProcessName = &quot;ProcessName&quot;,
+                    Title = &quot;Title&quot;,
+                    WindowState = WindowState.Minimized
+                },
+                new WindowStateChangedEvent
+                {
+                    ProcessName = &quot;ProcessName&quot;,
+                    Title = &quot;Title&quot;,
+                    WindowState = WindowState.Normal
+                }
+            };
+            Assert.IsTrue(hookMessages.Length == expectedEvents.Length + 1);
+
+            /* WHEN */
+            using var consumedEvent = new CountdownEvent(expectedEvents.Length);
+            Assert.IsTrue(consumedEvent.CurrentCount == expectedEvents.Length);
+            using var didStartConsumingEvent = new ManualResetEvent(false);
+
+            var thread = new Thread(async () =&gt;
+            {
+                await foreach (var @event in Await(
+                    windowStateChangedEventProducer.GetEvents(), didStartConsumingEvent))
+                {
+                    if (!IsWindowStateChangedEventFound(@event, expectedEvents))
+                    {
+                        continue;
+                    }
+
+                    consumedEvent.Signal();
+                }
+            });
+
+            thread.Start();
+
+            Assert.IsTrue(didStartConsumingEvent.WaitOne(MaxWaitTime));
+
+            foreach (var msg in hookMessages)
+            {
+                callback(msg);
+            }
+
+            /* THEN */
+            Assert.IsTrue(consumedEvent.Wait(MaxWaitTime),
+                          &quot;Did not find all matching window state changed event in time.&quot;);
+
+            windowStateChangedEventProducer.StopCapture();
+            windowManagementModule.Initialize(false);
+        }
+
+        private GlobalHook.CppGetMessageCallback GetCallback()
+        {
+            GlobalHook.CppGetMessageCallback callback = null;
+            hookNativeMethods.AllowMessageTypeRegistry(GlobalHook.MessageType.WM_SIZE);
+            hookNativeMethods.AllowMessageTypeRegistry(GlobalHook.MessageType.WM_ENTERSIZEMOVE);
+            hookNativeMethods.AllowMessageTypeRegistry(GlobalHook.MessageType.WM_EXITSIZEMOVE);
+
+            hookNativeMethods.AllowLibraryLoad();
+            var callbackReceivedEvent = new AutoResetEvent(false);
+
+            hookNativeMethods.Mock
+                             .Setup(
+                                 hook =&gt; hook.SetHook(It.IsAny&lt;GlobalHook.CppGetMessageCallback&gt;(), It.IsAny&lt;bool&gt;()))?
+                             .Callback((GlobalHook.CppGetMessageCallback cppCallback, bool isBlocking) =&gt;
+                             {
+                                 callback = cppCallback;
+                                 callbackReceivedEvent.Set();
+                             });
+
+            //here the SetHook() method is called!
+            windowManagementModule.Initialize(true);
+            windowStateChangedEventProducer.StartCapture(nativeWindowManagement.Mock.Object);
+
+            //wait for the hookNativeMethodsMock.Mock.Callback is called!
+            Assert.IsTrue(callbackReceivedEvent.WaitOne(MaxWaitTime), &quot;Did not receive callback in time!&quot;);
+            Assert.IsNotNull(callback, &quot;Callback received however unexpectedly null!&quot;);
+            return callback;
+        }
+
+        public static T Await&lt;T&gt;(T awaitedObject, ManualResetEvent expectation)
+        {
+            expectation.Set();
+            return awaitedObject;
+        }
+
+        private static bool IsWindowStateChangedEventFound(WindowStateChangedEvent @event,
+                                                           WindowStateChangedEvent[] expectedEvents)
+        {
+            foreach (var e in expectedEvents)
+            {
+                if (@event.Title.Equals(e.Title) &amp;&amp; @event.ProcessName.Equals(e.ProcessName) &amp;&amp;
+                    @event.WindowState.Equals(e.WindowState))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[33,9,33,10,1],[34,13,34,67,1],[35,13,35,71,1],[36,13,36,77,1],[37,13,37,77,1],[38,13,38,85,1],[40,13,40,52,1],[41,13,41,70,1],[42,13,42,73,1],[43,13,43,73,1],[44,13,44,77,1],[45,13,45,60,1],[47,13,47,61,1],[49,13,49,61,1],[50,13,50,44,1],[51,9,51,10,1],[55,9,55,10,1],[56,13,56,43,1],[57,13,57,45,1],[58,13,58,43,1],[59,13,59,48,1],[60,13,60,48,1],[61,13,61,52,1],[62,13,62,33,1],[63,13,63,30,1],[64,13,64,38,1],[65,13,65,43,1],[66,9,66,10,1],[70,9,70,10,1],[72,13,72,58,1],[73,13,73,67,1],[74,13,74,53,1],[75,13,75,58,1],[76,13,76,58,1],[79,13,79,42,1],[81,13,81,53,1],[82,13,82,47,1],[83,13,83,57,1],[84,13,84,52,1],[86,13,103,15,1],[105,13,126,15,1],[127,13,127,77,1],[130,13,130,81,1],[131,13,131,80,1],[132,13,132,76,1],[134,13,135,13,1],[135,13,135,14,1],[135,14,136,17,1],[136,17,136,30,1],[136,30,136,32,1],[136,32,136,42,1],[136,42,136,43,1],[136,43,136,45,1],[136,45,136,46,1],[136,46,137,89,1],[137,89,138,17,1],[138,17,138,18,1],[138,18,139,21,1],[139,21,139,81,1],[139,81,140,21,1],[140,21,140,22,0],[140,22,141,25,1],[141,25,141,34,0],[141,34,144,21,1],[144,21,144,44,1],[144,44,145,17,1],[145,17,145,18,1],[145,18,146,13,1],[146,13,146,14,1],[146,14,146,16,1],[134,13,146,16,1],[148,13,148,28,1],[150,13,150,72,1],[152,13,152,20,1],[152,22,152,29,1],[152,30,152,32,1],[152,33,152,45,1],[153,13,153,14,1],[154,17,154,31,1],[155,13,155,14,1],[158,13,159,92,1],[161,13,161,59,1],[162,13,162,54,1],[163,9,163,10,1],[163,9,163,10,1],[166,9,166,10,1],[167,13,167,62,1],[168,13,168,88,1],[169,13,169,97,1],[170,13,170,96,1],[172,13,172,50,1],[173,13,173,67,1],[175,13,179,30,1],[179,30,179,31,1],[179,31,180,34,1],[180,34,180,57,1],[180,57,181,34,1],[181,34,181,62,1],[181,62,182,30,1],[182,30,182,31,1],[182,31,182,33,1],[175,13,182,33,1],[185,13,185,53,1],[186,13,186,94,1],[189,13,189,108,1],[190,13,190,88,1],[191,13,191,29,1],[192,9,192,10,1],[195,9,195,10,1],[196,13,196,31,1],[197,13,197,34,1],[198,9,198,10,1],[202,9,202,10,1],[203,13,203,20,1],[203,22,203,27,1],[203,28,203,30,1],[203,31,203,45,1],[204,13,204,14,1],[205,17,206,62,1],[207,17,207,18,1],[208,21,208,33,1],[210,13,210,14,1],[212,13,212,26,0],[213,9,213,10,1]]);
+    </script>
+  </body>
+</html>

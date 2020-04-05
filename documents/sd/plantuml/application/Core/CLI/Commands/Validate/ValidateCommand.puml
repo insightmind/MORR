@@ -1,0 +1,21 @@
+@startuml ValidateCommand
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+!startsub default
+class ValidateCommand {
+    + <<create>> ValidateCommand()
+    + <<create>> ValidateCommand(configurationManager: IConfigurationManager, consoleFormatter: IConsoleFormatter, bootstrapper: IBootstrapper)
+    + Execute(options: ValidateOptions) : int
+}
+!endsub
+
+!includesub ValidateOptions.puml!default
+!includesub ../Command.puml!default
+!includesub ../CommandOptions.puml!default
+
+ValidateOptions --|> CommandOptions
+ValidateCommand ..> ValidateOptions : "uses"
+ValidateCommand ..|> "ICommand<T: CommandOptions>"
+
+@enduml

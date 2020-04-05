@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\UI\Controls\NotifyIcon\NotifyIcon.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Drawing;
+using System.Runtime.InteropServices;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
+using System.Windows.Interop;
+using MORR.Core.UI.Utility;
+using Point = System.Windows.Point;
+
+namespace MORR.Core.UI.Controls.NotifyIcon
+{
+    /// &lt;summary&gt;
+    ///     Manages a tray icon
+    /// &lt;/summary&gt;
+    public class NotifyIcon : Control, IDisposable
+    {
+        private static readonly WindowMessageSink MessageSink = new WindowMessageSink();
+        private NativeMethods.NotifyIconData iconData;
+        private bool isNotifyIconCreated;
+
+        public NotifyIcon()
+        {
+            CreateDefaultIconData();
+
+            if (MessageSink != null)
+            {
+                MessageSink.TaskbarCreated += OnTaskbarCreated;
+                MessageSink.WindowMessage += OnWindowMessage;
+            }
+
+            CreateNotifyIcon();
+
+            if (Application.Current != null)
+            {
+                Application.Current.Exit += OnExit;
+            }
+        }
+
+        private void CreateNotifyIcon()
+        {
+            lock (this)
+            {
+                if (isNotifyIconCreated)
+                {
+                    return;
+                }
+
+                WriteIconData(NativeMethods.NotifyIconMessage.NIM_ADD,
+                              NativeMethods.NotifyIconFlags.NIF_MESSAGE | NativeMethods.NotifyIconFlags.NIF_ICON |
+                              NativeMethods.NotifyIconFlags.NIF_TIP | NativeMethods.NotifyIconFlags.NIF_GUID);
+                isNotifyIconCreated = true;
+            }
+        }
+
+        private void RemoveNotifyIcon()
+        {
+            lock (this)
+            {
+                if (!isNotifyIconCreated)
+                {
+                    return;
+                }
+
+                WriteIconData(NativeMethods.NotifyIconMessage.NIM_DELETE,
+                              NativeMethods.NotifyIconFlags.NIF_MESSAGE | NativeMethods.NotifyIconFlags.NIF_GUID);
+                isNotifyIconCreated = false;
+            }
+        }
+
+        #region Event handlers
+
+        private static void OnTooltipChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is NotifyIcon notifyIcon &amp;&amp; e.NewValue is string tooltip)
+            {
+                notifyIcon.iconData.szTip = tooltip;
+                notifyIcon.WriteIconData(NativeMethods.NotifyIconMessage.NIM_MODIFY,
+                                         NativeMethods.NotifyIconFlags.NIF_TIP |
+                                         NativeMethods.NotifyIconFlags.NIF_GUID);
+            }
+        }
+
+        private static void IconUriChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is NotifyIcon notifyIcon &amp;&amp; e.NewValue is Uri uri)
+            {
+                notifyIcon.SetIcon(uri);
+            }
+        }
+
+        private void OnWindowMessage(uint messageId, IntPtr wParam, IntPtr lParam)
+        {
+            if (messageId != iconData.uCallbackMessage)
+            {
+                // Ignore messages not associated with this icon
+                return;
+            }
+
+            switch (lParam.ToInt32())
+            {
+                case (int) NativeMethods.WindowMessages.WM_LBUTTONDOWN:
+                case (int) NativeMethods.WindowMessages.WM_LBUTTONDBLCLK:
+                {
+                    // Invoke the command object on left click
+                    if (Command != null &amp;&amp; Command.CanExecute(CommandParameter))
+                    {
+                        Command.Execute(CommandParameter);
+                    }
+                }
+                    break;
+
+                case (int) NativeMethods.WindowMessages.WM_RBUTTONDOWN:
+                {
+                    // Open the context menu on right click
+                    var cursorPosition = new NativeMethods.Win32Point();
+                    NativeMethods.GetCursorPos(ref cursorPosition);
+
+                    using (var hWndSource = new HwndSource(new HwndSourceParameters()))
+                    {
+                        // Adjust for non-standard DPI settings
+                        var scaleFactor = new Point(hWndSource?.CompositionTarget?.TransformToDevice.M11 ?? 1,
+                                                    hWndSource?.CompositionTarget?.TransformToDevice.M22 ?? 1);
+                        cursorPosition = new NativeMethods.Win32Point
+                        {
+                            X = (int) (cursorPosition.X / scaleFactor.X), Y = (int) (cursorPosition.Y / scaleFactor.Y)
+                        };
+                    }
+
+                    if (ContextMenu != null &amp;&amp; MessageSink != null)
+                    {
+                        ContextMenu.DataContext = DataContext;
+                        ContextMenu.Placement = PlacementMode.AbsolutePoint;
+                        ContextMenu.HorizontalOffset = cursorPosition.X;
+                        ContextMenu.VerticalOffset = cursorPosition.Y;
+                        ContextMenu.IsOpen = true;
+
+                        var handle = (PresentationSource.FromVisual(ContextMenu) as HwndSource)?.Handle ??
+                                     MessageSink.WindowHandle;
+
+                        NativeMethods.SetForegroundWindow(handle);
+                    }
+                }
+                    break;
+            }
+        }
+
+        private void OnTaskbarCreated()
+        {
+            // Recreate the icon if the taskbar gets recreated
+            // This might happen if explorer.exe is manually restarted
+            isNotifyIconCreated = false;
+            CreateNotifyIcon();
+        }
+
+        #endregion
+
+        #region Dependency properties
+
+        public static readonly DependencyProperty CommandProperty =
+            DependencyProperty.Register(nameof(Command), typeof(ICommand), typeof(NotifyIcon),
+                                        new PropertyMetadata(null));
+
+        public static readonly DependencyProperty CommandParameterProperty =
+            DependencyProperty.Register(nameof(CommandParameter), typeof(object), typeof(NotifyIcon),
+                                        new PropertyMetadata(null));
+
+        public new static readonly DependencyProperty ContextMenuProperty =
+            DependencyProperty.Register(nameof(ContextMenu), typeof(ContextMenu), typeof(NotifyIcon),
+                                        new PropertyMetadata(null));
+
+        public static readonly DependencyProperty TooltipProperty =
+            DependencyProperty.Register(nameof(Tooltip), typeof(string), typeof(NotifyIcon),
+                                        new PropertyMetadata(string.Empty, OnTooltipChanged));
+
+        public static readonly DependencyProperty IconUriProperty =
+            DependencyProperty.Register(nameof(IconUri), typeof(Uri), typeof(NotifyIcon),
+                                        new PropertyMetadata(null, IconUriChanged));
+
+        /// &lt;summary&gt;
+        ///     The tooltip shown during hovering
+        /// &lt;/summary&gt;
+        public string Tooltip
+        {
+            get =&gt; (string) GetValue(TooltipProperty);
+            set =&gt; SetValue(TooltipProperty, value);
+        }
+
+        /// &lt;summary&gt;
+        ///     The icon shown in the tray
+        /// &lt;/summary&gt;
+        public Uri IconUri
+        {
+            get =&gt; (Uri) GetValue(IconUriProperty);
+            set =&gt; SetValue(IconUriProperty, value);
+        }
+
+        /// &lt;summary&gt;
+        ///     The command to execute on left click
+        /// &lt;/summary&gt;
+        public ICommand Command
+        {
+            get =&gt; (ICommand) GetValue(CommandProperty);
+            set =&gt; SetValue(CommandProperty, value);
+        }
+
+        /// &lt;summary&gt;
+        ///     The parameter of the command to execute on left click
+        /// &lt;/summary&gt;
+        public object CommandParameter
+        {
+            get =&gt; GetValue(CommandParameterProperty);
+            set =&gt; SetValue(CommandParameterProperty, value);
+        }
+
+        /// &lt;summary&gt;
+        ///     The context menu to show on right click
+        /// &lt;/summary&gt;
+        public new ContextMenu ContextMenu
+        {
+            get =&gt; (ContextMenu) GetValue(ContextMenuProperty);
+            set =&gt; SetValue(ContextMenuProperty, value);
+        }
+
+        #endregion
+
+        #region Utility
+
+        private void SetIcon(Uri uri)
+        {
+            var resourceInfo = Application.GetResourceStream(uri);
+
+            if (resourceInfo == null)
+            {
+                return;
+            }
+
+            iconData.hIcon = new Icon(resourceInfo.Stream).Handle;
+            WriteIconData(NativeMethods.NotifyIconMessage.NIM_MODIFY,
+                          NativeMethods.NotifyIconFlags.NIF_ICON | NativeMethods.NotifyIconFlags.NIF_GUID);
+        }
+
+        private void CreateDefaultIconData()
+        {
+            iconData = new NativeMethods.NotifyIconData();
+
+            iconData.cbSize = (uint) Marshal.SizeOf(iconData);
+            iconData.hWnd = MessageSink?.WindowHandle ?? IntPtr.Zero;
+            const int callbackMessageMin = 0x2;
+            const int callbackMessageMax = 0x1FFFF;
+            // The callback ID is used to identify the icon instance that sent the message and therefore needs to be unique
+            iconData.uCallbackMessage = (uint) new Random().Next(callbackMessageMin, callbackMessageMax);
+            iconData.uTimeoutOrVersion = (uint) NativeMethods.NotifyIconVersion.NOTIFY_ICON_VERSION_4;
+            iconData.hIcon = IntPtr.Zero;
+            iconData.dwState = NativeMethods.NotifyIconState.NIS_HIDDEN;
+            iconData.dwStateMask = NativeMethods.NotifyIconState.NIS_HIDDEN;
+            iconData.guidItem = Guid.NewGuid();
+            iconData.szTip = iconData.szInfo = iconData.szInfoTitle = string.Empty;
+        }
+
+        private bool WriteIconData(NativeMethods.NotifyIconMessage message, NativeMethods.NotifyIconFlags flags)
+        {
+            iconData.uFlags = flags;
+            return NativeMethods.Shell_NotifyIcon(message, ref iconData);
+        }
+
+        #endregion
+
+        #region Dispose
+
+        private bool isDisposed;
+
+        private void OnExit(object sender, EventArgs e)
+        {
+            // Remove the icon from the tray when the application is closed
+            Dispose();
+        }
+
+        ~NotifyIcon()
+        {
+            Dispose(false);
+        }
+
+        /// &lt;summary&gt;
+        ///     Frees all unmanaged resources
+        /// &lt;/summary&gt;
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (isDisposed || !disposing)
+            {
+                return;
+            }
+
+            lock (this)
+            {
+                isDisposed = true;
+
+                if (Application.Current != null)
+                {
+                    Application.Current.Exit -= OnExit;
+                }
+
+                MessageSink?.Dispose();
+                RemoveNotifyIcon();
+            }
+        }
+
+        #endregion
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[19,9,19,89,0],[23,9,23,28,0],[24,9,24,10,0],[25,13,25,37,0],[27,13,27,37,0],[28,13,28,14,0],[29,17,29,64,0],[30,17,30,62,0],[31,13,31,14,0],[33,13,33,32,0],[35,13,35,45,0],[36,13,36,14,0],[37,17,37,52,0],[38,13,38,14,0],[39,9,39,10,0],[42,9,42,10,0],[43,13,43,24,0],[44,13,44,14,0],[45,17,45,41,0],[46,17,46,18,0],[47,21,47,28,0],[50,17,52,111,0],[53,17,53,44,0],[54,13,54,14,0],[55,9,55,10,0],[58,9,58,10,0],[59,13,59,24,0],[60,13,60,14,0],[61,17,61,42,0],[62,17,62,18,0],[63,21,63,28,0],[66,17,67,115,0],[68,17,68,45,0],[69,13,69,14,0],[70,9,70,10,0],[75,9,75,10,0],[76,13,76,76,0],[77,13,77,14,0],[78,17,78,53,0],[79,17,81,82,0],[82,13,82,14,0],[83,9,83,10,0],[86,9,86,10,0],[87,13,87,69,0],[88,13,88,14,0],[89,17,89,41,0],[90,13,90,14,0],[91,9,91,10,0],[94,9,94,10,0],[95,13,95,56,0],[96,13,96,14,0],[98,17,98,24,0],[101,13,101,38,0],[105,17,105,18,0],[107,21,107,81,0],[108,21,108,22,0],[109,25,109,59,0],[110,21,110,22,0],[111,17,111,18,0],[112,21,112,27,0],[115,17,115,18,0],[117,21,117,73,0],[118,21,118,68,0],[120,28,120,87,0],[121,21,121,22,0],[123,25,124,112,0],[125,25,128,27,0],[129,21,129,22,0],[131,21,131,68,0],[132,21,132,22,0],[133,25,133,63,0],[134,25,134,77,0],[135,25,135,73,0],[136,25,136,71,0],[137,25,137,51,0],[139,25,140,63,0],[142,25,142,67,0],[143,21,143,22,0],[144,17,144,18,0],[145,21,145,27,0],[147,9,147,10,0],[150,9,150,10,0],[153,13,153,41,0],[154,13,154,32,0],[155,9,155,10,0],[161,9,163,69,0],[165,9,167,69,0],[169,9,171,69,0],[173,9,175,95,0],[177,9,179,85,0],[186,20,186,54,0],[187,20,187,52,0],[195,20,195,51,0],[196,20,196,52,0],[204,20,204,56,0],[205,20,205,52,0],[213,20,213,54,0],[214,20,214,61,0],[222,20,222,63,0],[223,20,223,56,0],[231,9,231,10,0],[232,13,232,67,0],[234,13,234,38,0],[235,13,235,14,0],[236,17,236,24,0],[239,13,239,67,0],[240,13,241,108,0],[242,9,242,10,0],[245,9,245,10,0],[246,13,246,59,0],[248,13,248,63,0],[249,13,249,70,0],[253,13,253,106,0],[254,13,254,103,0],[255,13,255,42,0],[256,13,256,73,0],[257,13,257,77,0],[258,13,258,48,0],[259,13,259,84,0],[260,9,260,10,0],[263,9,263,10,0],[264,13,264,37,0],[265,13,265,74,0],[266,9,266,10,0],[275,9,275,10,0],[277,13,277,23,0],[278,9,278,10,0],[281,9,281,10,0],[281,9,281,10,0],[282,13,282,28,0],[283,9,283,10,0],[283,9,283,10,0],[289,9,289,10,0],[290,13,290,27,0],[291,9,291,10,0],[294,9,294,10,0],[295,13,295,42,0],[296,13,296,14,0],[297,17,297,24,0],[300,13,300,24,0],[301,13,301,14,0],[302,17,302,35,0],[304,17,304,49,0],[305,17,305,18,0],[306,21,306,56,0],[307,17,307,18,0],[309,17,309,40,0],[310,17,310,36,0],[311,13,311,14,0],[312,9,312,10,0]]);
+    </script>
+  </body>
+</html>

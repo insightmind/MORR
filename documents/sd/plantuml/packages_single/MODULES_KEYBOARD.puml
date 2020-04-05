@@ -1,0 +1,39 @@
+@startuml MODULES_KEYBOARD
+skinparam monochrome true
+'skinparam linetype ortho
+skinparam classAttributeIconSize 0
+
+left to right direction
+hide empty fields
+!startsub default
+package "KEYBOARD" #BFBFBF {
+    class KeyboardModule {
+    
+    }
+
+    abstract class KeyboardEvent {
+    }
+    package "EVENTS" <<Rectangle>> {
+    class KeyboardInteractEvent {
+        + PressedKey_System_Windows_Input_Key : System.Windows.Input.Key <<get>> <<set>>
+        + PressedKeyName : string <<get>> <<set>>
+        + ModifierKeys_System_Windows_Input_ModifierKeys : System.Windows.Input.ModifierKeys <<get>> <<set>>
+        + ModifierKeysName : string <<get>> <<set>>
+        + MappedCharacter_Unicode : char <<get>> <<set>>
+    }
+    }
+    package "PRODUCERS" <<Rectangle>>{
+        class KeyboardInteractEventProducer
+    }
+}
+
+' Keyboard
+
+abstract class Event
+interface IModule
+Event <|-- KeyboardEvent
+IModule <|.. KeyboardModule
+KeyboardEvent <|-- KeyboardInteractEvent
+KeyboardModule ..> KeyboardInteractEventProducer : "uses"
+!endsub
+@enduml

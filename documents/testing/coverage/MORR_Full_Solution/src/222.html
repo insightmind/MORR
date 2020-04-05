@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\ClipboardTest\ClipboardEventTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MORR.Modules.Clipboard.Events;
+
+namespace ClipboardTest
+{
+    [TestClass]
+    public class ClipboardEventTest
+    {
+        [TestMethod]
+        public void TestClipboardEvent_Text()
+        {
+            /* GIVEN */
+            var @event = new ClipboardEventImp();
+            var clipboardText = &quot;sampleText&quot;;
+
+            /* WHEN */
+            @event.ClipboardText = clipboardText;
+
+            /* THEN */
+            Assert.AreEqual(clipboardText, @event.ClipboardText);
+        }
+
+        public class ClipboardEventImp : ClipboardEvent { }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[11,9,11,10,1],[13,13,13,50,1],[14,13,14,46,1],[17,13,17,50,1],[20,13,20,66,1],[21,9,21,10,1]]);
+    </script>
+  </body>
+</html>

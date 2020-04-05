@@ -1,0 +1,19 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+class ClipboardModule {
+}
+
+
+interface IModule {
+    + Identifier : System.Guid
+    + IsActive : bool <<get>> <<set>>
+    + Initialize() : void
+}
+
+IModule <|-- ClipboardModule
+ClipboardModule ..> ClipboardCopyEventProducer : "uses"
+ClipboardModule ..> ClipboardCutEventProducer : "uses"
+ClipboardModule ..> ClipboardPasteEventProducer : "uses"
+@enduml

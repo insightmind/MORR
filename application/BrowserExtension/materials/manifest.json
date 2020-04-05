@@ -1,0 +1,23 @@
+{
+  "name": "MORR Browser Extension",
+  "version": "1.0.0",
+  "description": "The MORR browser extension",
+  "permissions": ["<all_urls>", "activeTab", "storage", "tabs", "webNavigation", "downloads"],
+  "icons": {
+    "128": "logos/morr_default.png"
+  },
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": true
+  },
+  "options_ui": {
+    "page": "options.html"
+  },
+  "browser_action": {
+    "default_title": "MORR Browser Extension",
+    "default_icon": {
+      "128": "logos/morr_default.png"
+    }
+  },
+  "manifest_version": 2
+}

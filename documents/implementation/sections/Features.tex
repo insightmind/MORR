@@ -1,0 +1,87 @@
+%%the minipage-usage in the following command ensured that all lines of each entry are kept on the same page
+\newcommand{\feature}[3]{\begin{minipage}{\textwidth}\textbf{Feature:} #1\\ \textbf{Status:} #2 \\%
+\ifthenelse{\isempty{#3}}{}{\textbf{Comment:} #3}\end{minipage}\vskip.2\baselineskip}
+\newcommand{\ok}{\textcolor{green}{Ok}}
+\newcommand{\partially}{\textcolor{orange}{Limited functionality}}
+\newcommand{\cancelled}{\textcolor{red}{Cancelled}}
+\chapter{Features}
+This chapter provides information on the implementation status of the features/specifications listed in the functional specification document.
+
+\section{High-level specification}
+\feature{FS10 - Identifiable sessions}{\ok}{}
+\feature{FS20 - Event timings}{\ok}{}
+\feature{FS30 - Event types}{\ok}{}
+\feature{FS40 - Event processing}{\partially}{Event processing does allow to import an exisiting json file using the JsonDecoder. However the software does not provide implementations for altering the events or encoding those using a encoder different to the default JsonEncoder. }
+\feature{FS50 - Configurability}{\ok}{}
+\feature{FS51 - Configuring active modules}{\ok}{}
+\feature{FS52 - Configuring video recording}{\ok}{}
+\feature{FS54 - Configuring saving path}{\ok}{}
+\feature{FS60 - Error detection}{\ok}{}
+\feature{FS70 - User controllability (start)}{\ok}{}
+\feature{FS80 - User instruction}{\ok}{}
+\feature{FS90 - User controllability (stop)}{\ok}{}
+\feature{FS100 - User controllability (quit)}{\ok}{}
+\feature{FS110 - Quit while recording}{\ok}{}
+\feature{FS120 - Save prompt}{\ok}{}
+\feature{FS130 - User reviewability}{\ok}{}
+
+\section{Core application specification}
+\feature{FS200 - Video stream recording}{\ok}{}
+\feature{FS210 - System module invocation}{\ok}{}
+\feature{FS220 - System module configuration}{\ok}{}
+\feature{FS230 - On-demand module registration}{\ok}{}
+\feature{FS240 - On-demand module initial registration}{\ok}{}
+\feature{FS250 - Data serialization}{\ok}{}
+\feature{FS260 - Combinability of modules}{\ok}{}
+
+\section{User interface specification}
+\feature{FS300 - Recording indicator}{\ok}{}
+\feature{FS310 - Error dialog}{\ok}{}
+\feature{FS320 - Save dialog}{\ok}{}
+\feature{FS330 - Event-Data extraction}{\cancelled}{As the data is directly serialized to a JSON file while recording, this feature is no longer needed.}
+\feature{FS340 - Tray-Icon}{\ok}{}
+\feature{FS350 - Tray-Menu}{\ok}{}
+
+\section{Per-module specification}
+\subsection{Window management module}
+\feature{FS400 - Window management events}{\ok}{}
+\feature{FS401 - Focusing a window}{\ok}{}
+\feature{FS402 - Moving a window}{\ok}{}
+\feature{FS403 - Resizing a window}{\ok}{}
+\feature{FS404 - Minimizing/Maximizing/Restoring a window}{\partially}{Window restoring is not implemented due to amount of false positives.}
+
+\subsection{Mouse module}
+\feature{FS410 - Mouse interaction events}{\ok}{}
+\feature{FS411 - Mouse Click}{\ok}{}
+\feature{FS412 - Scroll Wheel}{\ok}{}
+\feature{FS413 - Mouse Movement}{\ok}{}
+
+\subsection{Keyboard module}
+\feature{FS420 - Keyboard interaction events}{\ok}{}
+\feature{FS421 - Releasing/Pressing a key}{\ok}{}
+
+\subsection{Clipboard module}
+\feature{FS430 - Clipboard Events}{\ok}{}
+\feature{FS431 - Copying to the clipboard}{\ok}{}
+\feature{FS432 - Pasting from the clipboard}{\partially}{This event is not detectable in many cases, as the observable WM\_PASTE message is not used by many programs.}
+
+\subsection{Browser module}
+\feature{FS440 - Browser events}{\ok}{}
+\feature{FS441 - Opening a new tab}{\ok}{}
+\feature{FS442 - Switching to a tab}{\ok}{}
+\feature{FS443 - Closing a tab}{\ok}{}
+\feature{FS444 - Navigation}{\ok}{}
+\feature{FS445 - Text input}{\partially}{Will only be created for html elements tagged with \textit{textarea} and \textit{input}, and only after the respective html element loses focus.}
+\feature{FS446 - Button click}{\partially}{As we can not determine if a html element has a click-listener attached to it or not, this event will be created whenever the user clicks on an element tagged
+as \textit{button}, \textit{a} or \textit{input} with an appropriate type (submit, checkbox etc.). As websites sometimes use different tags for buttons (\textit{span} etc.), this event may not be reliably
+created on all websites.}
+\feature{FS447 - Hovering}{\ok}{False positives may occur as we can not determine if an element has a MOUSEENTER listener (or similar) attached to it. The current implementation
+will create HoverEvents for most HTML elements regardless of them reacting to a hover or not. The avoid too many false positives, HTML elements
+with tags which are usually uninteresting in this context are filtered out, e.g. \textit{p} and \textit{body}.}
+\feature{FS448 - Text selection}{\ok}{}
+\feature{FS449 - File download}{\ok}{}
+
+\section{Optional criteria}
+\feature{OC10 - Session duration}{\cancelled}{}
+\feature{OC20 - Inactivity}{\cancelled}{}
+\feature{OC30 - Data visualization}{\cancelled}{}

@@ -1,0 +1,13 @@
+@startuml
+skinparam monochrome true
+skinparam ClassAttributeIconSize 0
+!startsub default
+class MouseModuleConfiguration {
+    + SamplingRateInHz : uint <<get>> <<set>>
+    + Threshold : int <<get>> <<set>>
+    + Parse(configuration:RawConfiguration) : void
+}
+interface IConfiguration
+!endsub
+IConfiguration <|-- MouseModuleConfiguration
+@enduml

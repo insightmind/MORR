@@ -1,0 +1,54 @@
+\subsection{Keyboard}
+\begin{class}{KeyboardModule} 
+    \clsdiagram[scale = 0.7]{resources/Classes/Modules/Keyboard/KeyboardModule.png}
+
+    \clsdcl{public class KeyboardModule : IModule}
+
+    \clsdsp{The KeyboardModule is responsible for recording all keyboard related user interactions.}
+\end{class}
+
+\subsection*{Events}
+
+\begin{absclass}{KeyboardEvent} 
+    \clsdiagram{resources/Classes/Modules/Keyboard/Events/KeyboardEvent.png}
+
+    \clsdcl{public abstract class KeyboardEvent : Event}
+
+    \clsdsp{A generic keyboard event which all specific KeyboardEvents inherit from.}
+\end{absclass}
+
+\begin{class}{KeyboardInteractEvent} 
+    \clsdiagram{resources/Classes/Modules/Keyboard/Events/KeyBoardInteractEvent.png}
+
+    \clsdcl{public class KeyboardInteractEvent : KeyboardEvent}
+
+    \clsdsp{A keyboard user interaction.}
+
+    \begin{attributes}
+        \attribute{public System.Windows.Input.Key PressedKey\_System\_Windows\_Input\_Key}{The key that was pressed.}
+        \attribute{public string PressedKeyName}{The name of the key on the keyboard that is pressed.}
+        \attribute{public System.Windows.Input.ModifierKeys ModifierKeys\_System\_Windows\_Input\_ModifierKeys}{The modifier keys to the key pressed.}
+        \attribute{public string ModifierKeysName}{The names of the modifierkeys on the keyboard that are pressed.}
+        \attribute{public char MappedCharacter\_Unicode}{The actual user input according to the input locale.}
+    \end{attributes}
+\end{class}
+
+\subsection*{Producers}
+
+\begin{class}{KeyboardInteractEventProducer} 
+	\clsdiagram[scale = 0.9]{resources/Classes/Modules/Keyboard/Producers/KeyboardInteractEventProducer.png}
+    
+    \clsdcl{public class KeyboardInteractEventProducer:\\\ DefaultEventQueue<KeyboardInteractEvent>}
+
+    \clsdsp{Provides single-writer-multiple-reader queue for KeyboardInteractEvent}
+
+    \begin{methods}
+        \begin{method}{public void StartCapture(INativeKeyboard nativeK)}{Starts capturing keyboard interaction events}
+        	\begin{parameters}
+        		\para{INativeKeyboard nativeK}{Required for capturing KeyboardInteractEvent.}
+        	\end{parameters}
+        \end{method}
+        \begin{method}{public void StopCapture()}{Stops capturing keyboard interaction events}
+        \end{method}
+    \end{methods}
+\end{class}

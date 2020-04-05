@@ -1,0 +1,55 @@
+@startuml MODULES_WINDOWMANAGEMENT
+skinparam monochrome true
+'skinparam linetype ortho
+skinparam classAttributeIconSize 0
+
+left to right direction
+hide empty fields
+!startsub default
+package "WINDOWMANAGEMENT" #BFBFBF {
+    class WindowManagementModule 
+
+    package "EVENTS" {
+        abstract class WindowEvent {
+            + Title : string <<get>> <<set>>
+            + ProcessName : string <<get>> <<set>>
+        }
+        
+        class WindowFocusEvent
+
+        class WindowMovementEvent {
+            + OldLocation: System.Windows.Point 
+            + NewLocation: System.Windows.Point
+        }
+
+        class WindowResizingEvent {
+            + OldSize: System.Drawing.Size
+            + NewSize: System.Drawing.Size
+        }
+
+        class WindowStateChangedEvent {
+            + State: System.Windows.WindowState
+        }
+    }
+    package "PRODUCERS" {
+        class WindowFocusEventProducer
+        class WindowMovementEventProducer
+        class WindowResizingEventProducer
+        class WindowStateChangedEventProducer
+    }
+}
+abstract class Event
+interface IModule
+' WindowManagement
+Event <|-- WindowEvent
+IModule <|.. WindowManagementModule
+WindowEvent <|-- WindowFocusEvent
+WindowEvent <|-- WindowMovementEvent
+WindowEvent <|-- WindowResizingEvent
+WindowEvent <|-- WindowStateChangedEvent
+WindowManagementModule ..> WindowFocusEventProducer : "uses"
+WindowManagementModule ..> WindowMovementEventProducer : "uses"
+WindowManagementModule..> WindowResizingEventProducer : "uses"
+WindowManagementModule ..> WindowStateChangedEventProducer : "uses"
+!endsub
+@enduml

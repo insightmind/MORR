@@ -1,0 +1,33 @@
+\chapter{Libraries}
+\label{ch:libraries}
+
+\newcommand{\lib}[2]{\item{\textbf{#1: }{#2}}}
+
+This chapter provides an overview over the libraries that have been chosen for use in the application and the specific use cases that have been identified for them.
+
+\subsection*{General}
+
+\begin{itemize}
+    \lib{.NET Core 3.1}{All C\# projects target .NET Core 3.1}
+    \lib{.NET Framework}{All projects have access to the .NET Framework, which provides access to APIs related to Mouse/Keyboard devices and types related to Win32-specific objects}
+    \lib{user32.dll}{Provides access to the Win32-API which exposes Mouse, Keyboard, Clipboard or Window events through message hooks}
+\end{itemize}
+
+\subsection*{CLI}
+
+\begin{itemize}
+    \lib{CommandLineParser}{Provides command line parsing for command line arguments}
+\end{itemize}
+
+\subsection*{MORR}
+
+\begin{itemize}
+    \lib{System.ComponentModel.Composition}{Provides contract-based object imports/exports for dynamic composition}
+    \lib{SharpDX.Direct3D11}{Provides C\#-friendly access to Direct3D11 utilized in screen capture}
+\end{itemize}
+
+\subsection*{UI}
+
+\begin{itemize}
+    \lib{WPF (version compatible with .NET Core 3 and later)}{Framework (not library) that provides UI-related objects}
+\end{itemize}

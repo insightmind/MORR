@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\MORRTest\TestHelper\Decoder\TestDecoder.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Moq;
+using MORR.Core.Data.Transcoding;
+using MORR.Shared.Utility;
+using System.Diagnostics;
+using System.Threading;
+
+namespace MORRTest.TestHelper.Decoder
+{
+    /// &lt;summary&gt;
+    /// The TestModule class encapsulates a IDecoder mock.
+    /// The Purpose for this class is to inject a mock into a given configuration.
+    /// As this requires discovering the decoder via its class name we
+    /// cannot simply inject the Mock Object itself and therefore need to wrap it using
+    /// this class.
+    ///
+    /// Finally this results into a class which simply propagates the values to the mock object.
+    /// &lt;/summary&gt;
+    public class TestDecoder : IDecoder
+    {
+        /// &lt;summary&gt;
+        /// The Mock which can be used to verify calls using Moq
+        /// &lt;/summary&gt;
+        public readonly Mock&lt;IDecoder&gt; Mock = new Mock&lt;IDecoder&gt;();
+
+        public ManualResetEvent DecodeFinished =&gt; Mock?.Object?.DecodeFinished;
+
+        public void Decode(DirectoryPath recordingDirectoryPath)
+        {
+            Debug.Assert(Mock?.Object != null);
+            Mock.Object.Decode(recordingDirectoryPath);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[23,9,23,68,1],[25,51,25,79,1],[28,9,28,10,1],[29,13,29,48,1],[30,13,30,56,1],[31,9,31,10,1]]);
+    </script>
+  </body>
+</html>

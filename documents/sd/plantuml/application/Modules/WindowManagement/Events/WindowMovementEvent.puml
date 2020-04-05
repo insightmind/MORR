@@ -1,0 +1,12 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
+class WindowMovementEvent {
+    + OldLocation: System.Windows.Point
+    + NewLocation: System.Windows.Point
+}
+WindowEvent <|-- WindowMovementEvent
+!endsub
+!include WindowEvent.puml
+@enduml

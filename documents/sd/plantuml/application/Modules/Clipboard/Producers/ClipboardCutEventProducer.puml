@@ -1,0 +1,13 @@
+@startuml
+skinparam monochrome true
+skinparam ClassAttributeIconSize 0
+!startsub default
+class ClipboardCutEventProducer {
+    + StartCapture(windowMessageSink:IClipboardWindowMessageSink, nativeClip:INativeClipboard) : void
+    + StopCapture() : void
+}
+class "DefaultEventQueue<T>" {
+}
+!endsub
+"DefaultEventQueue<T>" "     <ClipboardCutEvent>" <|-- ClipboardCutEventProducer
+@enduml

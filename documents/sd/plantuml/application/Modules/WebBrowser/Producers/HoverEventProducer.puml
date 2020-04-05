@@ -1,0 +1,14 @@
+@startuml
+skinparam monochrome true
+skinparam ClassAttributeIconSize 0
+!startsub default
+class HoverEventProducer {
+    + <<override>> Notify(eventJson:System.Text.Json.JsonElement) : void
+}
+abstract class "WebBrowserEventProducer<T>" {
+}
+enum "EventLabel"
+!endsub
+"WebBrowserEventProducer<T>" "<HoverEvent>" <|-- HoverEventProducer
+HoverEventProducer --> "HandledEventLabel" EventLabel
+@enduml

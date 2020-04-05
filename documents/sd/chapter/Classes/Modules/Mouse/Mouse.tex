@@ -1,0 +1,122 @@
+\subsection{Mouse}
+
+\begin{class}{MouseModule} 
+    \clsdiagram[width=0.80\textwidth]{resources/Classes/Modules/Mouse/MouseModule.png}
+
+    \clsdcl{public class MouseModule : IModule}
+
+    \clsdsp{The MouseModule is responsible for recording all mouse related user interactions.}
+\end{class}
+
+\subsection*{Configuration}
+
+\begin{class}{MouseModuleConfiguration}
+	\clsdiagram[scale = 1]{resources/Classes/Modules/Mouse/MouseModuleConfiguration.png}
+	
+	\clsdcl{public class MouseModuleConfiguration: IConfiguration}
+	
+	\clsdsp{Configuration for Mouse module}
+	
+	\begin{attributes}
+		\attribute{public uint SamplingRateInHz}{The sampling rate of the mouse position capture, in Hz.}
+		\attribute{public int Threshold}{ The minimal distance(computed with screen coordinates) a mouse move must reach in a period to be recorded.}
+	\end{attributes}
+\end{class}
+
+\subsection*{Events}
+
+\begin{absclass}{MouseEvent} 
+    \clsdiagram{resources/Classes/Modules/Mouse/Events/MouseEvent.png}
+
+    \clsdcl{public abstract class MouseEvent: Event}
+
+    \clsdsp{A generic mouse event which all specific MouseEvents inherit from.}
+    
+    \begin{attributes}
+    	\attribute{public System.Windows.Point MousePosition}{The current position of the mouse in screen coordinates}
+    \end{attributes}
+\end{absclass}
+
+\begin{class}{MouseClickEvent} 
+    \clsdiagram{resources/Classes/Modules/Mouse/Events/MouseClickEvent.png}
+
+    \clsdcl{public class MouseClickEvent : MouseEvent}
+
+    \clsdsp{ A mouse click user interaction.}
+
+    \begin{attributes}
+        \attribute{public System.Windows.Input.MouseAction MouseAction}{Specifies constants that define actions performed by the mouse.}
+        \attribute{public string HWnd}{The handle of the window in which the mouse click occurred.}
+    \end{attributes}
+\end{class}
+
+\begin{class}{MouseMoveEvent} 
+    \clsdiagram{resources/Classes/Modules/Mouse/Events/MouseMoveEvent.png}
+
+    \clsdcl{public class MouseMoveEvent : MouseEvent}
+
+    \clsdsp{A mouse move user interaction.}
+\end{class}
+
+\begin{class}{MouseScrollEvent} 
+    \clsdiagram{resources/Classes/Modules/Mouse/Events/MouseScrollEvent.png}
+
+    \clsdcl{public class MouseScrollEvent : MouseEvent}
+
+    \clsdsp{A mouse scroll user interaction.}
+
+    \begin{attributes}
+        \attribute{public short ScrollAmount}{The amount of the wheel being scrolled.}
+        \attribute{public string HWnd}{The handle of the window in which the mouse scroll occurred.}
+    \end{attributes}
+\end{class}
+
+\subsection*{Producers}
+
+\begin{class}{MouseClickEventProducer} 
+	\clsdiagram[scale = 0.9]{resources/Classes/Modules/Mouse/Producers/MouseClickEventProducer.png}
+    
+    \clsdcl{public class MouseClickEventProducer : DefaultEventQueue<MouseClickEvent>}
+
+    \clsdsp{Provides single-writer-multiple-reader queue for MouseClickEvent}
+
+    \begin{methods}
+        \begin{method}{public void StartCapture()}{Starts capturing mouse click events}
+        \end{method}
+        \begin{method}{public void StopCapture()}{Stop capturing mouse click events}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{MouseMoveEventProducer} 
+	\clsdiagram[scale = 0.9]{resources/Classes/Modules/Mouse/Producers/MouseMoveEventProducer.png}
+    
+    \clsdcl{public class MouseMoveEventProducer : DefaultEventQueue<MouseMoveEvent>}
+
+    \clsdsp{A single-writer-multiple-reader queue for MouseMoveEvent}
+
+    \begin{methods}
+        \begin{method}{public void StartCapture(INativeMouse nativeM)}{Starts capturing mouse move events}
+        	\begin{parameters}
+        		\para{INativeMouse nativeM}{Required for capturing MouseMoveEvent.}
+        	\end{parameters}
+        \end{method}
+        \begin{method}{public void StopCapture()}{Stop capturing mouse move events}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{MouseScrollEventProducer} 
+	\clsdiagram[scale = 0.9]{resources/Classes/Modules/Mouse/Producers/MouseScrollEventProducer.png}
+    
+    \clsdcl{public class MouseScrollEventProducer : DefaultEventQueue<MouseScrollEvent>}
+
+    \clsdsp{Provides single-writer-multiple-reader queue for MouseScrollEvent}
+
+    \begin{methods}
+        \begin{method}{public void StartCapture()}{Starts capturing mouse scroll events}
+        \end{method}
+        \begin{method}{public void StopCapture()}{Stop capturing mouse scroll events}
+        \end{method}
+    \end{methods}
+\end{class}

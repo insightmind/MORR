@@ -1,0 +1,11 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
+class TextSelectionEvent {
+    + SelectedText : string <<get>> <<set>>
+}
+!endsub
+WebBrowserEvent <|-- TextSelectionEvent
+!include WebBrowserEvent.puml
+@enduml

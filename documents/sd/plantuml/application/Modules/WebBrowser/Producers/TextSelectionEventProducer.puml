@@ -1,0 +1,14 @@
+@startuml
+skinparam monochrome true
+skinparam ClassAttributeIconSize 0
+!startsub default
+class TextSelectionEventProducer {
+    + <<override>> Notify(eventJson:System.Text.Json.JsonElement) : void
+}
+abstract class "WebBrowserEventProducer<T>" {
+}
+enum "EventLabel"
+!endsub
+"WebBrowserEventProducer<T>" "    <TextSelectionEvent>" <|-- TextSelectionEventProducer
+TextSelectionEventProducer --> "HandledEventLabel" EventLabel
+@enduml

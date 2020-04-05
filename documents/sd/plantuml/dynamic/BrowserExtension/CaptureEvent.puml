@@ -1,0 +1,52 @@
+@startuml
+'skinparam monochrome true
+
+hide footbox
+title Capturing a text selection event
+actor User
+User --> Browser : selects text
+box "Website Context" #LightBlue
+participant ":ContentScript" as ContentScript
+participant ":DOMEventFactory" as DOMEventFactory
+participant "e : TextSelectionEvent" as e
+end box
+Browser --\ ContentScript : handleEvent(DOMEvent)
+activate ContentScript
+ContentScript -> DOMEventFactory : createEvent(DOMEvent)
+activate DOMEventFactory
+Create e
+DOMEventFactory -> e : <<create>>
+ContentScript <-- DOMEventFactory : e
+deactivate DOMEventFactory
+ContentScript -> e : serialize()
+activate e
+ContentScript <-- e : eventString
+deactivate e
+ContentScript --\ Browser : runtime.sendMessage(eventString)
+deactivate ContentScript
+destroy e
+participant ":DOMListener" as DOMListener
+Browser --\ DOMListener : onMessage(eventString)
+activate DOMListener
+DOMListener -> DOMListener : deserializeEvent(eventString)
+activate DOMListener
+create "e : TextSelectionEvent" as e2
+DOMListener -> e2 : <<create>>
+DOMListener <-- DOMListener : e
+deactivate DOMListener
+participant ":BackgroundScript" as BackgroundScript
+DOMListener -> BackgroundScript : callback(e)
+activate BackgroundScript
+BackgroundScript -> e2 : serialize()
+activate e2
+e2 --> BackgroundScript : eventString
+deactivate e2
+participant ":PostHTTPInterface" as PostHTTPInterface
+BackgroundScript --\ PostHTTPInterface : sendData(eventString)
+note right
+The string will be sent
+to the main application
+by the PostHTTPInterface
+end note
+BackgroundScript --> DOMListener
+@enduml

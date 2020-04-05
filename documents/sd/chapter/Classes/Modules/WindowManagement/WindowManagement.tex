@@ -1,0 +1,144 @@
+\subsection{WindowManagement}
+
+\begin{class}{WindowManagementModule} 
+    \clsdiagram[width=0.80\textwidth]{resources/Classes/Modules/WindowManagement/WindowManagementModule.png}
+
+    \clsdcl{public class WindowManagementModule : IModule}
+
+    \clsdsp{The WindowManagementModule is responsible for recording all window related user interactions.}
+\end{class}
+
+\subsection*{Events}
+
+\begin{absclass}{WindowEvent} 
+    \clsdiagram{resources/Classes/Modules/WindowManagement/Events/WindowEvent.png}
+
+    \clsdcl{public abstract class WindowEvent: Event}
+
+    \clsdsp{A window management event which all specific WindowEvents inherit from.}
+
+    \begin{attributes}
+        \attribute{public string Title}{The title of the interacted window.}
+        \attribute{public string ProcessName}{The name of the process associated with the window}
+    \end{attributes}
+\end{absclass}
+
+\begin{class}{WindowFocusEvent} 
+    \clsdiagram{resources/Classes/Modules/WindowManagement/Events/WindowFocusEvent.png}
+
+    \clsdcl{public class WindowFocusEvent : WindowEvent}
+
+    \clsdsp{A window focus user interaction.}
+\end{class}
+
+\begin{class}{WindowMovementEvent} 
+    \clsdiagram{resources/Classes/Modules/WindowManagement/Events/WindowMovementEvent.png}
+
+    \clsdcl{public class WindowMovementEvent : WindowEvent}
+
+    \clsdsp{ A window movement user interaction.}
+
+    \begin{attributes}
+        \attribute{public System.Windows.Point OldLocation}{The old location of the window.}
+        \attribute{public System.Windows.Point NewLocation}{The new location of the window.}
+    \end{attributes}
+\end{class}
+
+\begin{class}{WindowResizingEvent} 
+    \clsdiagram{resources/Classes/Modules/WindowManagement/Events/WindowResizingEvent.png}
+
+    \clsdcl{public class WindowResizingEvent : WindowEvent}
+
+    \clsdsp{A window resizing user interaction.}
+
+    \begin{attributes}
+        \attribute{public System.Drawing.Size OldSize}{The old size of the window.}
+        \attribute{public System.Drawing.Size NewSize}{The new size of the window.}
+    \end{attributes}
+\end{class}
+
+\begin{class}{WindowStateChangedEvent} 
+    \clsdiagram{resources/Classes/Modules/WindowManagement/Events/WindowStateChangedEvent.png}
+
+    \clsdcl{public class WindowStateChangedEvent : WindowEvent}
+
+    \clsdsp{An user interaction that changes the state of a window.}
+
+    \begin{attributes}
+        \attribute{public System.Windows.WindowState State}{The new state of the window.}
+    \end{attributes}
+\end{class}
+
+\subsection*{Producers}
+
+\begin{class}{WindowFocusEventProducer} 
+	\clsdiagram[scale = 0.9]{resources/Classes/Modules/WindowManagement/Producers/WindowFocusEventProducer.png}
+    
+    \clsdcl{public class WindowFocusEventProducer : DefaultEventQueue<WindowFocusEvent>}
+
+    \clsdsp{A single-writer-multiple-reader queue for WindowFocusEvent}
+
+    \begin{methods}
+        \begin{method}{public void StartCapture(INativeWindowManagement nativeWinManagement)}{Starts capturing window focus events}
+        	\begin{parameters}
+    			\para{INativeWindowManagement nativeWinManagement}{Required for capturing WindowFocusEvent.}
+    		\end{parameters}
+        \end{method}
+        \begin{method}{public void StopCapture()}{Stop capturing window focus events}
+    	\end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{WindowMovementEventProducer} 
+	\clsdiagram[scale = 0.9]{resources/Classes/Modules/WindowManagement/Producers/WindowMovementEventProducer.png}
+    
+    \clsdcl{public class WindowMovementEventProducer : DefaultEventQueue<WindowMovementEvent>}
+
+    \clsdsp{A single-writer-multiple-reader queue for WindowMovementEvent}
+
+    \begin{methods}
+    	\begin{method}{public void StartCapture(INativeWindowManagement nativeWinManagement)}{Starts capturing window movement events}
+    		\begin{parameters}
+    			\para{INativeWindowManagement nativeWinManagement}{Required for capturing WindowMovementEvent.}
+    		\end{parameters}
+        \end{method}
+        \begin{method}{public void StopCapture()}{Stop capturing window movement events}
+    	\end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{WindowResizingEventProducer} 
+	\clsdiagram[scale = 0.9]{resources/Classes/Modules/WindowManagement/Producers/WindowResizingEventProducer.png}
+    
+    \clsdcl{public class WindowResizingEventProducer : DefaultEventQueue<WindowResizingEvent>>}
+
+    \clsdsp{A single-writer-multiple-reader queue for WindowResizingEvent}
+
+    \begin{methods}
+        \begin{method}{public void StartCapture(INativeWindowManagement nativeWinManagement)}{Starts capturing window resizing events}
+        	\begin{parameters}
+    			\para{INativeWindowManagement nativeWinManagement}{Required for capturing WindowResizingEvent.}
+    		\end{parameters}
+        \end{method}
+        \begin{method}{public void StopCapture()}{Stop capturing window resizing events}
+    	\end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{WindowStateChangedEventProducer} 
+	\clsdiagram[scale = 0.9]{resources/Classes/Modules/WindowManagement/Producers/WindowStateChangedEventProducer.png}
+    
+    \clsdcl{public class WindowStateChangedEventProducer:\\\ DefaultEventQueue<WindowStateChangedEvent>}
+
+    \clsdsp{A single-writer-multiple-reader queue for WindowStateChangedEvent}
+
+    \begin{methods}
+        \begin{method}{public void StartCapture(INativeWindowManagement nativeWinManagement)}{Starts capturing window state changed events}
+        	\begin{parameters}
+    			\para{INativeWindowManagement nativeWinManagement}{Required for capturing WindowStateChangedEvent.}
+    		\end{parameters}
+        \end{method}
+        \begin{method}{public void StopCapture()}{Stop capturing window state changed events}
+    	\end{method}
+    \end{methods}
+\end{class}

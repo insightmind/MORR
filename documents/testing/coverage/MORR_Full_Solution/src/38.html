@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\MORR\Data\Capture\Video\Desktop\Utility\GraphicsCaptureHelper.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+//  ---------------------------------------------------------------------------------
+//  Copyright (c) Microsoft Corporation.  All rights reserved.
+// 
+//  The MIT License (MIT)
+// 
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the &quot;Software&quot;), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+// 
+//  The above copyright notice and this permission notice shall be included in
+//  all copies or substantial portions of the Software.
+// 
+//  THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+//  THE SOFTWARE.
+//  ---------------------------------------------------------------------------------
+
+using System;
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Foundation;
+using Windows.Foundation.Metadata;
+using Windows.Graphics.Capture;
+
+namespace MORR.Core.Data.Capture.Video.Desktop.Utility
+{
+    /// &lt;summary&gt;
+    ///     Provides utility methods for interacting with GraphicsCapture objects.
+    /// &lt;/summary&gt;
+    internal static class GraphicsCaptureHelper
+    {
+        private static readonly Guid GraphicsCaptureItemGuid = new Guid(&quot;79C3F95B-31F7-4EC2-A464-632EF5D30760&quot;);
+
+        /// &lt;summary&gt;
+        ///     Indicates whether the device supports creating a &lt;see cref=&quot;GraphicsCaptureItem&quot; /&gt; by API instead of by using the
+        ///     &lt;see cref=&quot;GraphicsCapturePicker&quot; /&gt;. &lt;see langword=&quot;true&quot; /&gt; if creation by API is supported,
+        ///     &lt;see langword=&quot;false&quot; /&gt;
+        ///     otherwise.
+        /// &lt;/summary&gt;
+        internal static bool CanCreateItemWithoutPicker
+        {
+            get
+            {
+                var contractName = typeof(UniversalApiContract).FullName;
+                return contractName != null &amp;&amp; ApiInformation.IsApiContractPresent(contractName, 8);
+            }
+        }
+
+        /// &lt;summary&gt;
+        ///     Initializes a &lt;see cref=&quot;GraphicsCapturePicker&quot; /&gt; with a window.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;picker&quot;&gt;The &lt;see cref=&quot;GraphicsCapturePicker&quot; /&gt; to initialize.&lt;/param&gt;
+        /// &lt;param name=&quot;hWnd&quot;&gt;The handle of the window to initialize the picker with.&lt;/param&gt;
+        internal static void SetWindow(this GraphicsCapturePicker picker, IntPtr hWnd)
+        {
+            // Cast via object as direct cast is not supported for imported interface
+            var interop = picker as object as IInitializeWithWindow;
+            interop?.Initialize(hWnd);
+        }
+
+        /// &lt;summary&gt;
+        ///     Creates a &lt;see cref=&quot;GraphicsCaptureItem&quot; /&gt; for a provided monitor. This requires
+        ///     &lt;see cref=&quot;CanCreateItemWithoutPicker&quot; /&gt; to be &lt;see langword=&quot;true&quot; /&gt;.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;hMon&quot;&gt;The handle of the monitor to create the item for.&lt;/param&gt;
+        /// &lt;returns&gt;The created &lt;see cref=&quot;GraphicsCaptureItem&quot; /&gt;.&lt;/returns&gt;
+        internal static GraphicsCaptureItem? CreateItemForMonitor(IntPtr hMon)
+        {
+            var factory = WindowsRuntimeMarshal.GetActivationFactory(typeof(GraphicsCaptureItem));
+            var interop = factory as IGraphicsCaptureItemInterop;
+
+            var itemPointer = interop?.CreateForMonitor(hMon, GraphicsCaptureItemGuid);
+
+            if (itemPointer != null)
+            {
+                var item = Marshal.GetObjectForIUnknown(itemPointer.Value) as GraphicsCaptureItem;
+                Marshal.Release(itemPointer.Value);
+                return item;
+            }
+
+            return null;
+        }
+
+        [ComImport]
+        [System.Runtime.InteropServices.Guid(&quot;3E68D4BD-7135-4D10-8018-9FB6D9F33FA1&quot;)]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        [ComVisible(true)]
+        private interface IInitializeWithWindow
+        {
+            void Initialize(IntPtr hWnd);
+        }
+
+        [ComImport]
+        [System.Runtime.InteropServices.Guid(&quot;3628E81B-3CAC-4C60-B7F4-23CE0E0C3356&quot;)]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        [ComVisible(true)]
+        private interface IGraphicsCaptureItemInterop
+        {
+            IntPtr CreateForWindow([In] IntPtr window,
+                                   [In] ref Guid iid);
+
+            IntPtr CreateForMonitor([In] IntPtr monitor,
+                                    [In] ref Guid iid);
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[39,9,39,113,0],[50,13,50,14,0],[51,17,51,74,0],[52,17,52,101,0],[53,13,53,14,0],[62,9,62,10,0],[64,13,64,69,0],[65,13,65,39,0],[66,9,66,10,0],[75,9,75,10,0],[76,13,76,99,0],[77,13,77,66,0],[79,13,79,88,0],[81,13,81,37,0],[82,13,82,14,0],[83,17,83,99,0],[84,17,84,52,0],[85,17,85,29,0],[88,13,88,25,0],[89,9,89,10,0]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,264 @@
+\subsection*{MORR.Core.Data.Transcoding}
+
+\begin{interface}{IEncoder}
+    \clsdiagram{resources/Classes/Core/MORR/Data/Transcoding/IEncoder.png}
+
+    \clsdcl{public interface IEncoder}
+
+    \clsdsp{Encodes the provided samples into a file at a path.}
+
+    \begin{attributes}
+        \attribute{ManualResetEvent EncodeFinished \{ get; \}}{An event raised when encoding finishes.}
+    \end{attributes}
+
+    \begin{methods}
+        \begin{method}{void Encode(DirectoryPath recordingDirectoryPath)}{Encodes all provided samples to a recording at the specified location.}
+            \begin{parameters}
+                \para{DirectPath recordingDirectoryPath}{The DirectoryPath to contain the recording.}
+            \end{parameters}
+            \begin{exceptions}
+                \excp{EncodingException}{Exception thrown if the encoding fails.}
+            \end{exceptions}
+        \end{method}
+    \end{methods}
+\end{interface}
+
+\begin{interface}{IDecoder}
+    \clsdiagram{resources/Classes/Core/MORR/Data/Transcoding/IDecoder.png}
+
+    \clsdcl{public interface IDecoder}
+
+    \clsdsp{Decodes samples stored in a file at a path and provides the decoded samples.}
+
+    \begin{attributes}
+        \attribute{ManualResetEvent DecodeFinished \{ get; \}}{An event raised when decoding finishes.}
+    \end{attributes}
+
+    \begin{methods}
+        \begin{method}{void Decode(DirectoryPath recordingDirectoryPath)}{Decodes samples contained in a recording at a specified location.}
+            \begin{parameters}
+                \para{DirectoryPath recordingDirectoryPath}{The DirectoryPath of the file to decode from.}
+            \end{parameters}
+            \begin{exceptions}
+                \excp{DecodingException}{Exception thrown if decoding fails.}
+            \end{exceptions}
+        \end{method}
+    \end{methods}
+\end{interface}
+
+\subsection*{MORR.Core.Data.Transcoding.Exceptions}
+
+\begin{class}{EncodingException}
+    \clsdiagram{resources/Classes/Core/MORR/Data/Transcoding/Exceptions/EncodingException.png}
+
+    \clsdcl{public class EncodingException : Exception}
+
+    \clsdsp{A generic encoding exception that all specialized encoding exceptions derive from.}
+
+    \begin{constructors}
+        \begin{constructor}{public EncodingException()}{Creates a new instance of a EncodingException without any specific error message.}
+        \end{constructor}
+        \begin{constructor}{public EncodingException(string message)}{Creates a new instance of a EncodingException with the specified error message.}
+            \begin{parameters}
+                \para{string message}{The error message to construct the instance with.}
+            \end{parameters}
+        \end{constructor}
+        \begin{constructor}{public EncodingException(string message, Exception innerException)}{Creates a new instance of a EncodingException with the specified error message and inner exception.}
+            \begin{parameters}
+                \para{string message}{The error message to construct the instance with.}
+                \para{Exception innerException}{The inner exception to construct the instance with.}
+            \end{parameters}
+        \end{constructor}
+    \end{constructors}
+\end{class}
+
+\begin{class}{DecodingException}
+    \clsdiagram{resources/Classes/Core/MORR/Data/Transcoding/Exceptions/DecodingException.png}
+
+    \clsdcl{public class DecodingException : Exception}
+
+    \clsdsp{A generic decoding exception that all specialized decoding exceptions derive from.}
+
+    \begin{constructors}
+        \begin{constructor}{public DecodingException()}{Creates a new instance of a DecodingException without any specific error message.}
+        \end{constructor}
+        \begin{constructor}{public DecodingException(string message)}{Creates a new instance of a DecodingException with the specified error message.}
+            \begin{parameters}
+                \para{string message}{The error message to construct the instance with.}
+            \end{parameters}
+        \end{constructor}
+        \begin{constructor}{public DecodingException(string message, Exception innerException)}{Creates a new instance of a DecodingException with the specified error message and inner exception.}
+            \begin{parameters}
+                \para{string message}{The error message to construct the instance with.}
+                \para{Exception innerException}{The inner exception to construct the instance with.}
+            \end{parameters}
+        \end{constructor}
+    \end{constructors}
+\end{class}
+
+\subsection*{MORR.Core.Data.Transcoding.Json}
+
+\begin{class}{JsonDecoder}
+    \clsdiagram[width=\textwidth]{resources/Classes/Core/MORR/Data/Transcoding/Json/JsonDecoder.png}
+
+    \clsdcl{public class JsonDecoder : \linebreak DefaultDecodeableEventQueue<JsonIntermediateFormatSample>, IDecoder}
+    
+    \clsdsp{Decodes samples from a recording previously created with the JsonEncoder.}
+    
+    \begin{constructors}
+		\begin{constructor}{public JsonDecoder())}{Creates a new instance of the JsonDecoder}
+		\end{constructor}
+		\begin{constructor}{public JsonDecoder(IFileSystem fileSystem))}{Creates a new instance of the JsonDecoder with specified FileSystem}
+			\begin{parameters}
+				\para{IFileSystem fileSystem}{The file system to construct the instance with.}
+			\end{parameters}
+		\end{constructor}
+	\end{constructors}
+
+    \begin{attributes}
+        \attribute{public ManualResetEvent DecodeFinished \{ get; \}}{An event raised when decoding finishes.}
+    \end{attributes}
+
+    \begin{methods}
+        \begin{method}{void Decode(DirectoryPath recordingDirectoryPath)}{Decodes samples contained in a recording at a specified location.}
+            \begin{parameters}
+                \para{DirectoryPath recordingDirectoryPath}{The DirectoryPath of the file to decode from.}
+            \end{parameters}
+            \begin{exceptions}
+                \excp{DecodingException}{Exception thrown if decoding fails.}
+            \end{exceptions}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{JsonEncoder}
+    \clsdiagram{resources/Classes/Core/MORR/Data/Transcoding/Json/JsonEncoder.png}
+
+    \clsdcl{public class JsonEncoder : IEncoder}
+
+    \clsdsp{Encodes samples into a recording in JSON format.}
+
+    \begin{attributes}
+        \attribute{public ManualResetEvent EncodeFinished \{ get; \}}{An event raised when encoding finishes.}
+    \end{attributes}
+    
+     \begin{constructors}
+		\begin{constructor}{public JsonEncoder())}{Creates a new instance of the JsonEncoder}
+		\end{constructor}
+		\begin{constructor}{public JsonEncoder(IFileSystem fileSystem))}{Creates a new instance of the JsonEncoder with specified FileSystem}
+			\begin{parameters}
+				\para{IFileSystem fileSystem}{The file system to construct the instance with.}
+			\end{parameters}
+		\end{constructor}
+	\end{constructors}
+
+    \begin{methods}
+        \begin{method}{void Encode(DirectoryPath recordingDirectoryPath)}{Encodes all provided samples to a recording at the specified location.}
+            \begin{parameters}
+                \para{DirectoryPath recordingDirectoryPath}{The DirectoryPath of the file to encode to.}
+            \end{parameters}
+            \begin{exceptions}
+                \excp{EncodingException}{Exception thrown if encoding fails.}
+            \end{exceptions}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{JsonDecoderConfiguration}
+    \clsdiagram{resources/Classes/Core/MORR/Data/Transcoding/Json/JsonDecoderConfiguration.png}
+
+    \clsdcl{public class JsonDecoderConfiguration : IConfiguration}
+
+    \clsdsp{Encapsulates all JSON decoding configuration options.}
+
+    \begin{attributes}
+        \attribute{public FilePath RelativeFilePath \{ get; set; \}}{The path to the file to store the data in relative to the recording directory.}
+    \end{attributes}
+    
+    \begin{methods}
+        \begin{method}{public void Parse(RawConfiguration configuration)}{Parses the configuration from the provided value.}
+            \begin{parameters}
+                \para{RawConfiguration configuration}{The configuration value to parse from.}
+            \end{parameters}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{JsonEncoderConfiguration}
+    \clsdiagram{resources/Classes/Core/MORR/Data/Transcoding/Json/JsonEncoderConfiguration.png}
+
+    \clsdcl{public class JsonEncoderConfiguration : IConfiguration}
+
+    \clsdsp{Encapsulates all JSON encoding configuration options.}
+
+    \begin{attributes}
+        \attribute{public FilePath RelativeFilePath \{ get; set; \}}{The path to the file to store the data in relative to the recording directory.}
+    \end{attributes}
+    
+    \begin{methods}
+        \begin{method}{public void Parse(RawConfiguration configuration)}{Parses the configuration from the provided value.}
+            \begin{parameters}
+                \para{RawConfiguration configuration}{The configuration value to parse from.}
+            \end{parameters}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\subsection*{MORR.Core.Data.Transcoding.Mpeg}
+
+\begin{class}{MpegEncoder}
+    \clsdiagram{resources/Classes/Core/MORR/Data/Transcoding/Mpeg/MPEGEncoder.png}
+
+    \clsdcl{public class MpegEncoder : IEncoder}
+
+    \clsdsp{Encodes samples into a recording in MPEG format.}
+
+    \begin{attributes}
+        \attribute{public ManualResetEvent EncodeFinished \{ get; \}}{An event raised when encoding finishes.}
+    \end{attributes}
+    
+     \begin{constructors}
+		\begin{constructor}{public MpegEncoder())}{Creates a new instance of the MpegEncoder}
+		\end{constructor}
+		\begin{constructor}{public MpegEncoder(IFileSystem fileSystem))}{Creates a new instance of the MpegEncoder with specified FileSystem}
+			\begin{parameters}
+				\para{IFileSystem fileSystem}{The file system to construct the instance with.}
+			\end{parameters}
+		\end{constructor}
+	\end{constructors}
+
+    \begin{methods}
+        \begin{method}{void Encode(DirectoryPath recordingDirectoryPath)}{Encodes all provided samples to a recording at the specified location.}
+            \begin{parameters}
+                \para{DirectoryPath recordingDirectoryPath}{The DirectoryPath of the file to encode to.}
+            \end{parameters}
+            \begin{exceptions}
+                \excp{EncodingException}{Exception thrown if encoding fails.}
+            \end{exceptions}
+        \end{method}
+    \end{methods}
+\end{class}
+
+\begin{class}{MpegEncoderConfiguration}
+    \clsdiagram{resources/Classes/Core/MORR/Data/Transcoding/Mpeg/MPEGEncoderConfiguration.png}
+
+    \clsdcl{public class MpegEncoderConfiguration : IConfiguration}
+
+    \clsdsp{Encapsulates all MPEG encoding configuration options.}
+
+    \begin{attributes}
+        \attribute{public uint Width \{ get; set; \}}{The width in pixels of the resulting video stream.}
+        \attribute{public uint Height \{ get; set; \}}{The height in pixels of the resulting video stream.}
+        \attribute{public uint KiloBitsPerSecond \{ get; set; \}}{The bit rate in kilo bits per second of the resulting video stream.}
+        \attribute{public uint FramesPerSecond \{ get; set; \}}{The frame rate in frames per second of the resulting video stream.}
+        \attribute{public FilePath RelativeFilePath \{ get; set; \}}{The path to the file to store the data in relative to the recording directory.}
+    \end{attributes}
+    
+    \begin{methods}
+        \begin{method}{public void Parse(RawConfiguration configuration)}{Parses the configuration from the provided value.}
+            \begin{parameters}
+                \para{RawConfiguration configuration}{The configuration value to parse from.}
+            \end{parameters}
+        \end{method}
+    \end{methods}
+\end{class}

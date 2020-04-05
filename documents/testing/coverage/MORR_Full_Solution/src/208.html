@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\WebBrowser\Events\FileDownloadEvent.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Text.Json;
+
+namespace MORR.Modules.WebBrowser.Events
+{
+    /// &lt;summary&gt;
+    ///     A file download user interaction
+    /// &lt;/summary&gt;
+    public class FileDownloadEvent : WebBrowserEvent
+    {
+        private const string serializedFileUrlField = &quot;fileURL&quot;;
+        private const string serializedMimeTypeField = &quot;mimeType&quot;;
+
+        /// &lt;summary&gt;
+        ///     The URL of the file that was downloaded
+        /// &lt;/summary&gt;
+        public Uri FileURL { get; set; }
+
+        /// &lt;summary&gt;
+        ///     MIME type of the file that was downloaded
+        /// &lt;/summary&gt;
+        public string MIMEType { get; set; }
+
+        protected override void DeserializeSpecificAttributes(JsonElement parsed)
+        {
+            FileURL = new Uri(parsed.GetProperty(serializedFileUrlField).GetString());
+            MIMEType = parsed.GetProperty(serializedMimeTypeField).GetString();
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[17,30,17,34,1],[17,35,17,39,1],[22,34,22,38,1],[22,39,22,43,1],[25,9,25,10,1],[26,13,26,87,1],[27,13,27,80,1],[28,9,28,10,1]]);
+    </script>
+  </body>
+</html>

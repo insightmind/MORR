@@ -1,0 +1,59 @@
+@startuml packages
+skinparam monochrome true
+skinparam linetype ortho
+
+package "MORR" {
+    package "CORE" #E6E6E6 {
+        package "TRANSCODING" #E6E6E6 {
+            package "MPEG" #BFBFBF {
+
+            }
+
+            package "JSON" #BFBFBF {
+
+            } 
+        }
+    }
+
+    package "UI" #E6E6E6 {
+
+    }
+
+    package "CLI" #E6E6E6 {
+
+    }
+
+    package "MODULES" #E6E6E6 {
+        package "CLIPBOARD" #BFBFBF {
+
+        }
+
+        package "KEYBOARD" #BFBFBF {
+
+        }
+
+        package "MOUSE" #BFBFBF {
+
+        }
+
+        package "WEBBROWSER" #BFBFBF {
+
+        }
+
+        package "WINDOWMANAGEMENT" #BFBFBF {
+
+        }
+    }
+    
+
+    package "SHARED" #E6E6E6 {
+
+    }
+
+    CLI --> CORE
+    UI --> CORE
+    CORE --> SHARED
+    CORE --> MODULES
+    MODULES --> SHARED
+}
+@enduml

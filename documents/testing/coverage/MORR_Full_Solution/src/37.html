@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Core\MORR\Data\Capture\Video\Desktop\Utility\Direct3D11Helper.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Runtime.InteropServices;
+using Windows.Graphics.DirectX.Direct3D11;
+using SharpDX.Direct3D;
+using SharpDX.Direct3D11;
+using SharpDX.DXGI;
+using Device = SharpDX.Direct3D11.Device;
+using Device3 = SharpDX.DXGI.Device3;
+
+namespace MORR.Core.Data.Capture.Video.Desktop.Utility
+{
+    [ComImport]
+    [Guid(&quot;A9B3D012-3DF2-4EE3-B8D1-8695F457D3C1&quot;)]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    [ComVisible(true)]
+    internal interface IDirect3DDxgiInterfaceAccess
+    {
+        IntPtr GetInterface([In] ref Guid iid);
+    }
+
+    /// &lt;summary&gt;
+    ///     Provides utility methods for using Direct3D and SharpDX objects.
+    /// &lt;/summary&gt;
+    internal static class Direct3D11Helper
+    {
+        private static readonly Guid ID3D11Device = new Guid(&quot;db6f6ddb-ac77-4e88-8253-819df9bbf140&quot;);
+        private static readonly Guid ID3D11Texture2D = new Guid(&quot;6f15aaf2-d208-4e89-9ab4-489535d34f9c&quot;);
+
+        [DllImport(&quot;d3d11.dll&quot;, EntryPoint = &quot;CreateDirect3D11DeviceFromDXGIDevice&quot;, SetLastError = true,
+                   CharSet = CharSet.Unicode, ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
+        private static extern uint CreateDirect3D11DeviceFromDXGIDevice(IntPtr dxgiDevice, out IntPtr graphicsDevice);
+
+        [DllImport(&quot;d3d11.dll&quot;, EntryPoint = &quot;CreateDirect3D11SurfaceFromDXGISurface&quot;, SetLastError = true,
+                   CharSet = CharSet.Unicode, ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
+        private static extern uint CreateDirect3D11SurfaceFromDXGISurface(IntPtr dxgiSurface,
+                                                                          out IntPtr graphicsSurface);
+
+        /// &lt;summary&gt;
+        ///     Creates a new Direct3D device.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;useWARP&quot;&gt;
+        ///     Indicates if the device should use WARP emulation (software rendering). &lt;see langword=&quot;true&quot; /&gt;
+        ///     if the device should use WARP, &lt;see langword=&quot;false&quot; /&gt; otherwise.
+        /// &lt;/param&gt;
+        /// &lt;returns&gt;The new Direct3D device.&lt;/returns&gt;
+        internal static IDirect3DDevice? CreateDevice(bool useWARP = false)
+        {
+            using var d3dDevice = new Device(useWARP ? DriverType.Software : DriverType.Hardware,
+                                             DeviceCreationFlags.BgraSupport);
+            IDirect3DDevice? device = null;
+
+            // Acquire the DXGI interface for the Direct3D device.
+            using (var dxgiDevice = d3dDevice.QueryInterface&lt;Device3&gt;())
+            {
+                // Wrap the native device using a WinRT interop object.
+                var hr = CreateDirect3D11DeviceFromDXGIDevice(dxgiDevice.NativePointer, out var pUnknown);
+
+                if (hr == 0)
+                {
+                    device = Marshal.GetObjectForIUnknown(pUnknown) as IDirect3DDevice;
+                    Marshal.Release(pUnknown);
+                }
+            }
+
+            return device;
+        }
+
+        /// &lt;summary&gt;
+        ///     Creates a Direct3D surface from a SharpDX texture.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;texture&quot;&gt;The texture to create a Direct3D surface for.&lt;/param&gt;
+        /// &lt;returns&gt;The created Direct3D surface.&lt;/returns&gt;
+        internal static IDirect3DSurface? CreateDirect3DSurfaceFromSharpDXTexture(Texture2D texture)
+        {
+            IDirect3DSurface? surface = null;
+
+            // Acquire the DXGI interface for the Direct3D surface.
+            using (var dxgiSurface = texture.QueryInterface&lt;Surface&gt;())
+            {
+                // Wrap the native device using a WinRT interop object.
+                var hr = CreateDirect3D11SurfaceFromDXGISurface(dxgiSurface.NativePointer, out var pUnknown);
+
+                if (hr == 0)
+                {
+                    surface = Marshal.GetObjectForIUnknown(pUnknown) as IDirect3DSurface;
+                    Marshal.Release(pUnknown);
+                }
+            }
+
+            return surface;
+        }
+
+        /// &lt;summary&gt;
+        ///     Creates a SharpDX device from a Direct3D device.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;device&quot;&gt;The device to create the SharpDX device from.&lt;/param&gt;
+        /// &lt;returns&gt;The created SharpDX device.&lt;/returns&gt;
+        internal static Device? CreateSharpDXDevice(IDirect3DDevice device)
+        {
+            var access = device as IDirect3DDxgiInterfaceAccess;
+            var d3dPointer = access?.GetInterface(ID3D11Device);
+
+            if (d3dPointer != null)
+            {
+                var d3dDevice = new Device(d3dPointer.Value);
+                return d3dDevice;
+            }
+
+            return null;
+        }
+
+        /// &lt;summary&gt;
+        ///     Creates a SharpDX texture from a Direct3D surface.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;surface&quot;&gt;The surface to create the SharpDX texture from.&lt;/param&gt;
+        /// &lt;returns&gt;The created SharpDX texture.&lt;/returns&gt;
+        internal static Texture2D? CreateSharpDXTexture2D(IDirect3DSurface surface)
+        {
+            var access = surface as IDirect3DDxgiInterfaceAccess;
+            var d3dPointer = access?.GetInterface(ID3D11Texture2D);
+
+            if (d3dPointer != null)
+            {
+                var d3dSurface = new Texture2D(d3dPointer.Value);
+                return d3dSurface;
+            }
+
+            return null;
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[26,9,26,102,0],[27,9,27,105,0],[47,9,47,10,0],[48,13,49,79,0],[50,13,50,44,0],[53,20,53,72,0],[54,13,54,14,0],[56,17,56,107,0],[58,17,58,29,0],[59,17,59,18,0],[60,21,60,88,0],[61,21,61,47,0],[62,17,62,18,0],[63,13,63,14,0],[65,13,65,27,0],[66,9,66,10,0],[74,9,74,10,0],[75,13,75,46,0],[78,20,78,71,0],[79,13,79,14,0],[81,17,81,110,0],[83,17,83,29,0],[84,17,84,18,0],[85,21,85,90,0],[86,21,86,47,0],[87,17,87,18,0],[88,13,88,14,0],[90,13,90,28,0],[91,9,91,10,0],[99,9,99,10,0],[100,13,100,65,0],[101,13,101,65,0],[103,13,103,36,0],[104,13,104,14,0],[105,17,105,62,0],[106,17,106,34,0],[109,13,109,25,0],[110,9,110,10,0],[118,9,118,10,0],[119,13,119,66,0],[120,13,120,68,0],[122,13,122,36,0],[123,13,123,14,0],[124,17,124,66,0],[125,17,125,35,0],[128,13,128,25,0],[129,9,129,10,0]]);
+    </script>
+  </body>
+</html>

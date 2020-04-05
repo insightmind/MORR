@@ -1,0 +1,38 @@
+@startuml MODULES_CLIPBOARD
+skinparam monochrome true
+'skinparam linetype ortho
+skinparam classAttributeIconSize 0
+
+left to right direction
+hide empty fields
+!startsub default
+package "CLIPBOARD" #BFBFBF {
+    class ClipboardModule 
+    
+    package "EVENTS" <<rectangle>> {
+        abstract class ClipboardEvent {
+            + Text : string <<get>> <<set>>
+        }
+        class ClipboardCopyEvent
+        class ClipboardCutEvent
+        class ClipboardPasteEvent
+    }
+
+    package "PRODUCERS" <<rectangle>>{
+        class ClipboardPasteEventProducer
+        class ClipboardCutEventProducer
+        class ClipboardCopyEventProducer
+    }
+}
+
+'Clipboard
+IModule <|.. ClipboardModule
+Event <|-- ClipboardEvent
+ClipboardEvent <|-- ClipboardCopyEvent
+ClipboardEvent <|-- ClipboardCutEvent
+ClipboardEvent <|-- ClipboardPasteEvent
+ClipboardModule ..> ClipboardCopyEventProducer : "uses"
+ClipboardModule ..> ClipboardCutEventProducer : "uses"
+ClipboardModule ..> ClipboardPasteEventProducer : "uses"
+!endsub
+@enduml

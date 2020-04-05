@@ -1,0 +1,12 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
+class TextInputEvent {
+    + InputtedText : string <<get>> <<set>>
+    + Textbox : string <<get>> <<set>>
+}
+!endsub
+WebBrowserEvent <|-- TextInputEvent
+!include WebBrowserEvent.puml
+@enduml

@@ -1,0 +1,14 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+interface IConfiguration
+!startsub default
+class DesktopCaptureConfiguration {
+    + MonitorIndex: Index <<get>> <<set>>
+    + PromptUserForMonitorSelection: bool <<get>> <<set>>
+    + Parse(configuration: RawConfiguration) : void
+}
+!endsub
+IConfiguration <|-- DesktopCaptureConfiguration
+@enduml

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Common\Shared\Utility\FilePath.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+
+namespace MORR.Shared.Utility
+{
+    /// &lt;summary&gt;
+    ///     Encapsulates a local file path.
+    /// &lt;/summary&gt;
+    public sealed class FilePath
+    {
+        private readonly string value;
+
+        /// &lt;summary&gt;
+        ///     Creates a new &lt;see cref=&quot;FilePath&quot; /&gt; with the provided value.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;value&quot;&gt;The value to create the &lt;see cref=&quot;FilePath&quot; /&gt; with.&lt;/param&gt;
+        /// &lt;param name=&quot;skipValidation&quot;&gt;
+        ///     Whether to skip path validation. &lt;see langword=&quot;true&quot; /&gt; to skip validation,
+        ///     &lt;see langword=&quot;false&quot; /&gt; otherwise.
+        /// &lt;/param&gt;
+        public FilePath(string value, bool skipValidation = false)
+        {
+            if (skipValidation)
+            {
+                this.value = value;
+            }
+            else
+            {
+                var result = TryGetLocalFilePath(value);
+
+                if (result == null)
+                {
+                    throw new ArgumentException($&quot;The specified value \&quot;{value}\&quot; is not a valid file path.&quot;);
+                }
+
+                this.value = result;
+            }
+        }
+
+        /// &lt;summary&gt;
+        ///     Verifies the provided string and gets a local file path from it.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;path&quot;&gt;The path to verify.&lt;/param&gt;
+        /// &lt;returns&gt;Returns an optional string which is null if the the local file path could not be resolved.&lt;/returns&gt;
+        private static string? TryGetLocalFilePath(string path)
+        {
+            if (!Uri.TryCreate(path, UriKind.Absolute, out var parsedUri) || !parsedUri.IsFile ||
+                string.IsNullOrEmpty(Path.GetExtension(path)))
+            {
+                return null;
+            }
+
+            return parsedUri.LocalPath;
+        }
+
+        /// &lt;summary&gt;
+        ///     A &lt;see cref=&quot;string&quot; /&gt; representation of the file path.
+        /// &lt;/summary&gt;
+        /// &lt;returns&gt;A &lt;see cref=&quot;string&quot; /&gt; representation of the file path.&lt;/returns&gt;
+        public override string ToString()
+        {
+            return value;
+        }
+
+        public override bool Equals(object? obj) =&gt; obj is FilePath path &amp;&amp; value.Equals(path.value);
+
+        public override int GetHashCode() =&gt; HashCode.Combine(value);
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[22,9,22,67,1],[23,9,23,10,1],[24,13,24,32,1],[25,13,25,14,1],[26,17,26,36,1],[27,13,27,14,1],[29,13,29,14,1],[30,17,30,57,1],[32,17,32,36,1],[33,17,33,18,1],[34,21,34,111,1],[37,17,37,37,1],[38,13,38,14,1],[39,9,39,10,1],[47,9,47,10,1],[48,13,49,63,1],[50,13,50,14,1],[51,17,51,29,1],[54,13,54,40,1],[55,9,55,10,1],[62,9,62,10,1],[63,13,63,26,1],[64,9,64,10,1],[66,53,66,101,1],[68,46,68,69,1]]);
+    </script>
+  </body>
+</html>

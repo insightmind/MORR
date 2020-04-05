@@ -1,0 +1,14 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+!startsub default
+class VideoCaptureException {
+    + <<create>> VideoCaptureException()
+    + <<create>> VideoCaptureException(message: string)
+    + <<create>> VideoCaptureException(message: string, innerException: Exception)
+}
+!endsub
+CaptureException <|-- VideoCaptureException
+Exception <|-- CaptureException
+@enduml

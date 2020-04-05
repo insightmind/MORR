@@ -1,0 +1,12 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
+class ButtonClickEvent {
+    + Button : string <<get>> <<set>>
+    + Href : string <<get>> <<set>>
+}
+!endsub
+WebBrowserEvent <|-- ButtonClickEvent
+!include WebBrowserEvent.puml 
+@enduml

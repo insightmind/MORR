@@ -1,0 +1,80 @@
+@startuml CLI
+skinparam monochrome true
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+
+left to right direction
+hide empty fields
+!startsub default
+package "CLI" #E6E6E6 {
+    !includesub ../application/Core/CLI/Program.puml!default
+
+    together {
+        !includesub ../application/Core/CLI/Interactive/InteractiveCommandLine.puml!default
+        !includesub ../application/Core/CLI/Interactive/IInteractiveCommandLine.puml!default
+
+        InteractiveCommandLine ..|> IInteractiveCommandLine
+    }
+
+    together {
+        !includesub ../application/Core/CLI/Output/ConsoleFormatter.puml!default
+        !includesub ../application/Core/CLI/Output/IConsoleFormatter.puml!default
+
+        ConsoleFormatter ..|> IConsoleFormatter
+    }
+
+    together {
+        !includesub ../application/Core/CLI/Utility/MessageLoop.puml!default
+        !includesub ../application/Core/CLI/Utility/IMessageLoop.puml!default
+
+        MessageLoop ..|> IMessageLoop
+    }
+
+    together {
+        !includesub ../application/Core/CLI/Commands/Command.puml!default
+
+        !includesub ../application/Core/CLI/Commands/CommandOptions.puml!default
+
+        Program ..> "ICommand<T: CommandOptions>": "uses"
+        Program ..> CommandOptions : "uses"
+        "ICommand<T: CommandOptions>" .up.> CommandOptions
+
+        together {
+            !includesub ../application/Core/CLI/Commands/Processing/ProcessCommand.puml!default
+
+            !includesub ../application/Core/CLI/Commands/Processing/ProcessOptions.puml!default
+
+            ProcessCommand .up.> ProcessOptions
+            ProcessCommand .down.> IConsoleFormatter
+            ProcessCommand .right.|> "ICommand<T: CommandOptions>"
+            ProcessOptions -up-|> CommandOptions
+        }
+        
+
+        together {
+            !includesub ../application/Core/CLI/Commands/Record/RecordCommand.puml!default
+
+            !includesub ../application/Core/CLI/Commands/Record/RecordOptions.puml!default
+
+            RecordCommand .up.> RecordOptions
+            RecordCommand .down.> IConsoleFormatter
+            RecordCommand .down.> IInteractiveCommandLine
+            RecordCommand .down.> IMessageLoop
+            RecordCommand .right.|> "ICommand<T: CommandOptions>"
+            RecordOptions -up-|> CommandOptions
+        }
+
+        together {
+            !includesub ../application/Core/CLI/Commands/Validate/ValidateCommand.puml!default
+
+            !includesub ../application/Core/CLI/Commands/Validate/ValidateOptions.puml!default
+
+            ValidateCommand .up.> ValidateOptions
+            ValidateCommand .right.|> "ICommand<T: CommandOptions>"
+            ValidateOptions -up-|> CommandOptions
+            ValidateCommand .down.> IConsoleFormatter
+        }
+    }
+}
+!endsub
+@enduml

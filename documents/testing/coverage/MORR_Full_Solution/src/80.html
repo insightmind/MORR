@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Common\Shared\Events\Queue\SupportDeserializationEventQueue.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using MORR.Shared.Events.Queue.Strategy;
+
+namespace MORR.Shared.Events.Queue
+{
+    /// &lt;summary&gt;
+    ///     Provides a single-writer-multiple-reader event queue for &lt;see cref=&quot;Event&quot; /&gt; types which may be deserialized for
+    ///     processing.
+    /// &lt;/summary&gt;
+    /// &lt;typeparam name=&quot;T&quot;&gt;The type of &lt;see cref=&quot;Event&quot; /&gt; in this queue.&lt;/typeparam&gt;
+    public abstract class SupportDeserializationEventQueue&lt;T&gt; : EventQueue&lt;T&gt;, IReadOnlyEventQueue&lt;T&gt;, ISupportDeserializationEventQueue&lt;T&gt; where T : Event
+    {
+        protected SupportDeserializationEventQueue(IEventQueueStorageStrategy&lt;T&gt; storageStrategy) : base(storageStrategy) { }
+
+        public void Enqueue(object @event)
+        {
+            if (!(@event is T typedEvent))
+            {
+                throw new ArgumentException($&quot;Cannot convert event type {@event.GetType()} to expected type {typeof(T)}.&quot;);
+            }
+
+            base.Enqueue(typedEvent);
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[13,101,13,122,1],[13,123,13,124,1],[13,125,13,126,1],[16,9,16,10,1],[17,13,17,43,1],[18,13,18,14,1],[19,17,19,124,1],[22,13,22,38,1],[23,9,23,10,1]]);
+    </script>
+  </body>
+</html>

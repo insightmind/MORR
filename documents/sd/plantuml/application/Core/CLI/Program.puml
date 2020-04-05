@@ -1,0 +1,19 @@
+@startuml Program
+skinparam monochrome true
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+hide empty fields
+!startsub default
+class Program {
+    + {static} Main(args:string[]) : int
+}
+!endsub
+
+!includesub Commands/Command.puml!default
+!includesub Commands/CommandOptions.puml!default
+
+Program ..> "ICommand<T: CommandOptions>" : "uses"
+Program ..> CommandOptions : "uses"
+"ICommand<T: CommandOptions>" ..> CommandOptions
+
+@enduml

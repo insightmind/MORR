@@ -1,0 +1,320 @@
+\subsection{Webbrowser}
+
+\begin{class}{WebBrowserModule} 
+	\clsdiagram[width=0.80\textwidth]{resources/Classes/Modules/WebBrowser/WebBrowserModule.png}
+	
+    \clsdcl{public class WebBrowserModule : IModule}
+
+    \clsdsp{The WebBrowserModule is responsible for recording all browser related user interactions}
+
+\end{class}
+
+\begin{enum}{EventLabel}	
+	\clsdiagram[scale = 1]{resources/Classes/Modules/WebBrowser/EventLabel.png}
+	
+	\clsdcl{public enum EventLabel}	
+	
+	\clsdsp{Enum used to map the incoming serialized data (from the browser extension)}
+	
+	\begin{elements}
+		\element{BUTTONCLICK}{Maps to button click event}
+		\element{CLOSETAB}{Maps to close tab event}
+		\element{DOWNLOAD}{Maps to file download event}
+		\element{HOVER}{Maps to hover event}
+		\element{NAVIGATION}{Maps to navigation event}
+		\element{OPENTAB}{Maps to open tab event}
+		\element{SWITCHTAB}{Maps to switch tab event}
+		\element{TEXTINPUT}{Maps to text input event}
+		\element{TEXTSELECTION}{Maps to text selection event}
+	\end{elements}
+
+\end{enum}
+
+\subsection*{Configuration}
+
+\begin{class}{WebBrowserModuleConfiguration}
+	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/WebBrowserModuleConfiguration.png}
+	
+	\clsdcl{public class WebBrowserModuleConfiguration: IConfiguration}
+	
+	\clsdsp{Configuration for WebBrowser module}
+	
+	\begin{attributes}
+		\attribute{public string UrlSuffix}{A combination of port number and optionally directory.}
+	\end{attributes}
+\end{class}
+
+\subsection*{Events}
+
+\begin{absclass}{WebBrowserEvent}
+	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Events/WebBrowserEvent.png}
+
+    \clsdcl{public abstract class WebBrowserEvent : Event}
+
+    \clsdsp{A generic web browser event which all specific WebBrowserEvents inherit from}
+
+    \begin{attributes}
+        \attribute{public int TabID}{The identifier of the tab where the web browser event occured in}
+        \attribute{public System.Uri CurrentURL}{The URL of the website where the web browser event occured in}
+    \end{attributes}
+    
+    \begin{methods}
+    	\begin{method}{public void Deserialize(string serialized)}{Deserialize a browser event from a string.}
+    		\begin{parameters}
+    			\para{string serialized}{The serialized event}
+    		\end{parameters}
+    	\end{method}
+    	\begin{method}{public void Deserialize(System.Text.Json.JsonElement parsed)}{Deserialize a browser event from a JSONElement instance.}
+    		\begin{parameters}	
+    			\para{System.Text.Json.JsonElement parsed}{A JSONElement parsed from a serialized event.}
+    		\end{parameters}
+    	\end{method}
+    \end{methods}
+
+\end{absclass}
+
+\begin{class}{ButtonClickEvent : WebBrowserEvent} 
+	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Events/ButtonClickEvent.png}
+    
+    \clsdcl{public class ButtonClickEvent}
+
+    \clsdsp{A button click user interaction}
+
+    \begin{attributes}
+        \attribute{public string Button}{The title of the button item that was clicked on the website}
+        \attribute{public string Href}{The URL of the website that the button is linked to}
+    \end{attributes}
+\end{class}
+
+\begin{class}{CloseTabEvent} 
+    \clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Events/CloseTabEvent.png}
+    	
+    \clsdcl{public class CloseTabEvent : WebBrowserEvent}
+
+    \clsdsp{A close tab user interaction}
+
+\end{class}
+
+\begin{class}{FileDownloadEvent} 
+ 	\clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Events/FileDownloadEvent.png}
+ 	   
+    \clsdcl{public class FileDownloadEvent : WebBrowserEvent}
+
+    \clsdsp{A file download user interaction}
+
+    \begin{attributes}
+        \attribute{public string MIMEType}{MIME type of the file that was downloaded}
+        \attribute{public System.Uri FileURL}{The URL of the file that was downloaded}
+    \end{attributes}
+\end{class}
+
+\begin{class}{HoverEvent} 
+    \clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Events/HoverEvent.png}
+    	
+    \clsdcl{public class HoverEvent : WebBrowserEvent}
+
+    \clsdsp{A hover user interaction}
+
+    \begin{attributes}
+        \attribute{public string HoveredElement}{The element on the website that has been hovered}
+    \end{attributes}
+\end{class}
+
+\begin{class}{NavigationEvent} 
+    \clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Events/NavigationEvent.png}
+    
+    \clsdcl{public class NavigationEvent : WebBrowserEvent}
+
+    \clsdsp{A navigation user interaction}
+
+\end{class}
+
+\begin{class}{OpenTabEvent} 
+    \clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Events/OpenTabEvent.png}
+    
+    \clsdcl{public class OpenTabEvent : WebBrowserEvent}
+
+    \clsdsp{An open tab user interaction}
+
+\end{class}
+
+\begin{class}{SwitchTabEvent} 
+    \clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Events/SwitchTabEvent.png}
+    
+    \clsdcl{public class SwitchTabEvent : WebBrowserEvent}
+
+    \clsdsp{A switch tab user interaction}
+
+    \begin{attributes}
+        \attribute{public int NewTabID}{The identifier of the tab that the user switched to}
+    \end{attributes}
+\end{class}
+
+\begin{class}{TextInputEvent} 
+    \clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Events/TextInputEvent.png}
+    
+    \clsdcl{public class TextInputEvent : WebBrowserEvent}
+
+    \clsdsp{A text input user interaction}
+
+    \begin{attributes}
+        \attribute{public string InputtedText}{The text that was inputted by the user on the website}
+        \attribute{public string Textbox}{The textbox where the text was inputted in}
+    \end{attributes}
+\end{class}
+
+\begin{class}{TextSelectionEvent} 
+    \clsdiagram[scale = 0.7]{resources/Classes/Modules/WebBrowser/Events/TextSelectionEvent.png}
+    
+    \clsdcl{public class TextSelectionEvent : WebBrowserEvent}
+
+    \clsdsp{A text selection user interaction}
+
+    \begin{attributes}
+        \attribute{public string SelectedText}{The text that was selected on the website}
+    \end{attributes}
+\end{class}
+
+\subsection*{Producers}
+
+\begin{absclass}{WebBrowserEventProducer}
+	\clsdiagram[scale = 0.9]{resources/Classes/Modules/WebBrowser/Producers/WebBrowserEventProducer.png}
+	
+	\clsdcl{public abstract class WebBrowserEventProducer<T> : DefaultEventQueue<T>, IWebBrowserEventObserver where T : WebBrowserEvent}
+	
+	\clsdsp{A generic producer for WebBrowserEvents, which will need to be subscribed to a IWebBrowserEventObserver to gather incoming event data.}
+	
+	\begin{attributes}
+		\attribute{public virtual EventLabel HandledEventLabel}{The BrowserEvent label to be handled by the producer.}
+	\end{attributes}
+	
+	\begin{methods}
+		\begin{method}{public virtual void Notify(System.Text.Json.JsonElement eventJson)}{Simply forward the event to the internal queue if its of the appropriate type. Ignore otherwise.}
+			\begin{parameters}
+				\para{System.Text.Json.JsonElement eventJson}{A JsonElement holding an event.}
+			\end{parameters}
+			
+			\begin{exceptions}
+				\excp{NotSupportedException}{Exception is thrown when trying to invoke notify() on abstract WebBrowserEventProducer.}
+			\end{exceptions}
+			
+		\end{method}
+		
+		\begin{method}{public void EnqueueFinished()}{Lets consumers know that no more events will be enqueued.}
+		\end{method}
+	
+	\end{methods}
+\end{absclass}
+			
+\begin{class}{ButtonClickEventProducer}
+ 
+	\clsdiagram[scale = 0.9]{resources/Classes/Modules/WebBrowser/Producers/ButtonClickEventProducer.png}
+    
+    \clsdcl{public class ButtonClickEventProducer : WebBrowserEventProducer<ButtonClickEvent>}
+
+    \clsdsp{Provides single-writer-multiple-reader queue for ButtonClickEvent}
+    
+    \begin{attributes}
+    	\attribute{public override EventLabel HandledEventLabel => EventLabel.BUTTONCLICK}{The BrowserEvent label to be handled by ButtonClickEventProducer.}
+    \end{attributes}
+    
+\end{class}
+
+\begin{class}{CloseTabEventProducer} 
+	\clsdiagram[scale = 0.9]{resources/Classes/Modules/WebBrowser/Producers/CloseTabEventProducer.png}
+    
+    \clsdcl{public class CloseTabEventProducer : WebBrowserEventProducer<CloseTabEvent>}
+
+    \clsdsp{Provides single-writer-multiple-reader queue for CloseTabEvent}
+    
+    \begin{attributes}
+    	\attribute{public override EventLabel HandledEventLabel => EventLabel.CLOSETAB}{The BrowserEvent label to be handled by CloseTabEventProducer.}
+    \end{attributes}
+
+\end{class}
+
+\begin{class}{FileDownloadEventProducer} 
+	\clsdiagram[scale = 0.9]{resources/Classes/Modules/WebBrowser/Producers/FileDownloadEventProducer.png}
+    
+    \clsdcl{public class FileDownloadEventProducer :  WebBrowserEventProducer<FileDownloadEvent>}
+
+    \clsdsp{Provides single-writer-multiple-reader queue for FileDownloadEvent}
+
+    \begin{attributes}
+    	\attribute{public override EventLabel HandledEventLabel => EventLabel.DOWNLOAD}{The BrowserEvent label to be handled by FileDownloadEventProducer.}
+    \end{attributes}
+    
+\end{class}
+
+\begin{class}{HoverEventProducer} 
+	\clsdiagram[scale = 0.9]{resources/Classes/Modules/WebBrowser/Producers/HoverEventProducer.png}
+    
+    \clsdcl{public class HoverEventProducer : WebBrowserEventProducer<HoverEvent>}
+
+    \clsdsp{Provides single-writer-multiple-reader queue for HoverEvent}
+
+    \begin{attributes}
+    	\attribute{public override EventLabel HandledEventLabel => EventLabel.HOVER}{The BrowserEvent label to be handled by HoverEventProducer.}
+    \end{attributes}
+\end{class}
+
+\begin{class}{NavigationEventProducer} 
+	\clsdiagram[scale = 0.9]{resources/Classes/Modules/WebBrowser/Producers/NavigationEventProducer.png}
+    
+    \clsdcl{public class NavigationEventProducer :  WebBrowserEventProducer<NavigationEvent>}
+
+    \clsdsp{Provides single-writer-multiple-reader queue for NavigationEvent}
+
+    \begin{attributes}
+    	\attribute{public override EventLabel HandledEventLabel => EventLabel.NAVIGATION}{The BrowserEvent label to be handled by NavigationEventProducer.}
+    \end{attributes}
+\end{class}
+
+\begin{class}{OpenTabEventProducer} 
+	\clsdiagram[scale = 0.9]{resources/Classes/Modules/WebBrowser/Producers/OpenTabEventProducer.png}
+    
+    \clsdcl{public class OpenTabEventProducer : WebBrowserEventProducer<OpenTabEvent>}
+
+    \clsdsp{Provides single-writer-multiple-reader queue for OpenTabEvent}
+
+    \begin{attributes}
+    	\attribute{public override EventLabel HandledEventLabel => EventLabel.OPENTAB}{The BrowserEvent label to be handled by OpenTabEventProducer.}
+    \end{attributes}
+\end{class}
+
+\begin{class}{SwitchTabEventProducer} 
+	\clsdiagram[scale = 0.9]{resources/Classes/Modules/WebBrowser/Producers/SwitchTabEventProducer.png}
+    
+    \clsdcl{public class SwitchTabEventProducer : WebBrowserEventProducer<SwitchTabEvent>}
+
+    \clsdsp{Provides single-writer-multiple-reader queue for SwitchTabEvent}
+
+    \begin{attributes}
+    	\attribute{public override EventLabel HandledEventLabel => EventLabel.SWITCHTAB}{The BrowserEvent label to be handled by SwitchTabEventProducer.}
+    \end{attributes}
+\end{class}
+
+\begin{class}{TextInputEventProducer} 
+	\clsdiagram[scale = 0.9]{resources/Classes/Modules/WebBrowser/Producers/TextInputEventProducer.png}
+    
+    \clsdcl{public class TextInputEventProducer : WebBrowserEventProducer<TextInputEvent>}
+
+    \clsdsp{Provides single-writer-multiple-reader queue for TextInputEvent}
+
+    \begin{attributes}
+    	\attribute{public override EventLabel HandledEventLabel => EventLabel.TEXTINPUT}{The BrowserEvent label to be handled by TextInputEventProducer.}
+    \end{attributes}
+\end{class}
+
+\begin{class}{TextSelectionEventProducer} 
+	\clsdiagram[scale = 0.9]{resources/Classes/Modules/WebBrowser/Producers/TextSelectionEventProducer.png}
+    
+    \clsdcl{public class TextSelectionEventProducer:\\\ WebBrowserEventProducer<TextSelectionEvent>}
+
+    \clsdsp{Provides single-writer-multiple-reader queue for TextSelectionEvent}
+
+    \begin{attributes}
+    	\attribute{public override EventLabel HandledEventLabel => EventLabel.TEXTSELECTION}{The BrowserEvent label to be handled by TextSelectionEventProducer.}
+    \end{attributes}
+\end{class}
+

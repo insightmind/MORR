@@ -1,42 +1,26 @@
-# Application for aquisition of research activities
-(PSE Team 2)
+# MORR - Medical Online Research Recorder
 
-## General
+![Build + Test](https://github.com/insightmind/MORR/workflows/Build%20+%20Test/badge.svg)
 
-Team Communication via Slack
+## The project
 
-## Phases
+MORR is an application which collects information about user behavior during online research, particularly in the medical field. The application enables recording of user interactions, such as mouse, keyboard and web browser events. The recorded data is stored and can later viewed and worked with, for example for gaining insights on research behavior by using them as training data for machine learning.
 
-### 1. Functional Specification
+## Target platform
 
-Leadership: Irma Suppes (ullpq@student.kit.edu)
+### Operating System
+- Windows 10 64bit (1809 and later)
 
-Deadline: 22. November 2019
+### Supported Browsers
+- Google Chrome (version 57 and later)
+- Mozilla Firefox (version 57 and later)
 
-### 2. Softwaredesign
+### Development tools
+- The main application was developed in C# using **Microsoft Visual Studio** and the .NET Core SDK. It also contains a few components written in C++.
+- The application supports extension by adding additional modules managed with **MEF** (Managed Extensibility Framework)
+- The browser extension is written in TypeScript and built with **npm** (NodeJS)
 
-Leadership: Mingyi Li (ucpcg@student.kit.edu)
+## Wiki
+The [Wiki](https://github.com/insightmind/MORR/wiki) contains instructions on how to install and use this software as well as guides for developers who wish to contribute to and extend the software.
 
-Deadline: 13. December 2019
-
-### 3. Implementation
-
-Deadline: 14. February 2020
-
-#### 3.1 Phase 1
-Leadership: Niklas Bülow (urpdf@student.kit.edu)
-
-#### 3.2 Phase 2
-Leadership: Karl Rubel (udwvh@student.kit.edu)
-
-### 4. Quality Assurance
-
-Leadership: Sönke Jendral (uynfo@student.kit.edu)
-
-Deadline: 6. March 2020
-
-### 5. Acceptance
-
-Internal Acceptance: 9. - 13. March 2020
-
-Final presentation: 16. - 20. March 2020
+The wiki also contains a [Quick Start Guide](https://github.com/insightmind/MORR/wiki/Quick-Start-Guide) which only covers the essentials.

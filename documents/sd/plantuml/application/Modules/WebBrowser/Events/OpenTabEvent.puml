@@ -1,0 +1,10 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+!startsub default
+class OpenTabEvent {
+}
+!endsub
+!include WebBrowserEvent.puml
+WebBrowserEvent <|-- OpenTabEvent
+@enduml

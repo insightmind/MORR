@@ -1,0 +1,26 @@
+@startuml
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+class WebBrowserModule {
+}
+
+
+interface IModule {
+    + Identifier : System.Guid
+    + IsActive : bool <<get>> <<set>>
+    + Initialize() : void
+}
+
+IModule <|-- WebBrowserModule
+WebBrowserModule ..> WebBrowserModuleConfiguration : "uses"
+WebBrowserModule ...> ButtonClickEventProducer : "uses"
+WebBrowserModule ..> CloseTabEventProducer : "uses"
+WebBrowserModule ...> FileDownloadEventProducer : "uses"
+WebBrowserModule ..> HoverEventProducer : "uses"
+WebBrowserModule ...> NavigationEventProducer : "uses"
+WebBrowserModule .> OpenTabEventProducer : "uses"
+WebBrowserModule ...> SwitchTabEventProducer : "uses"
+WebBrowserModule ..> TextInputEventProducer : "uses"
+WebBrowserModule .> TextSelectionEventProducer : "uses"
+@enduml

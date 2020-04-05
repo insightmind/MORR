@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>H:\Documents\data\pse\git\pse-evaluation-team-2\application\Modules\Keyboard\KeyboardModule.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.ComponentModel.Composition;
+using MORR.Modules.Keyboard.Native;
+using MORR.Modules.Keyboard.Producers;
+using MORR.Shared.Modules;
+using MORR.Shared.Utility;
+
+namespace MORR.Modules.Keyboard
+{
+    /// &lt;summary&gt;
+    ///     The &lt;see cref=&quot;KeyboardModule&quot; /&gt; is responsible for recording all keyboard related user interactions.
+    /// &lt;/summary&gt;
+    public class KeyboardModule : IModule
+    {
+        private bool isActive;
+
+        [Import]
+        private KeyboardInteractEventProducer KeyboardInteractEventProducer { get; set; }
+
+        /// &lt;summary&gt;
+        ///     Indicates whether the module is active or not.
+        ///     When a module is being active, the keyboard hook will be set.
+        ///     When a module is being inactive, the keyboard hook will be released.
+        /// &lt;/summary&gt;
+        public bool IsActive
+        {
+            get =&gt; isActive;
+            set =&gt; Utility.SetAndDispatch(ref isActive, value, StartCapture, StopCapture);
+        }
+
+        public static Guid Identifier { get; } = new Guid(&quot;99F679D6-0D20-40EE-8604-F128F0E5AE3B&quot;);
+        Guid IModule.Identifier =&gt; Identifier;
+
+        public void Initialize(bool isEnable)
+        {
+            if (isEnable)
+            {
+                KeyboardInteractEventProducer?.Open();
+            }
+            else
+            {
+                KeyboardInteractEventProducer?.Close();
+            }
+        }
+
+        private void StartCapture()
+        {
+            KeyboardInteractEventProducer?.StartCapture(new NativeKeyboard());
+        }
+
+        private void StopCapture()
+        {
+            KeyboardInteractEventProducer?.StopCapture();
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[18,79,18,83,1],[18,84,18,88,1],[27,20,27,28,1],[28,20,28,90,1],[31,41,31,45,1],[31,50,31,98,1],[32,36,32,46,0],[35,9,35,10,1],[36,13,36,26,1],[37,13,37,14,1],[38,17,38,55,1],[39,13,39,14,1],[41,13,41,14,1],[42,17,42,56,1],[43,13,43,14,1],[44,9,44,10,1],[47,9,47,10,1],[48,13,48,79,1],[49,9,49,10,1],[52,9,52,10,1],[53,13,53,58,1],[54,9,54,10,1]]);
+    </script>
+  </body>
+</html>
